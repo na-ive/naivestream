@@ -9,10 +9,11 @@ export interface TooltipProps {
   children: React.ReactNode;
   position?: 'top' | 'bottom' | 'left' | 'right';
   className?: string;
+  wrapperClassName?: string;
   delay?: number;
 }
 
-export function Tooltip({ content, children, position = 'top', className, delay = 0 }: TooltipProps) {
+export function Tooltip({ content, children, position = 'top', className, wrapperClassName, delay = 0 }: TooltipProps) {
   const [isVisible, setIsVisible] = useState(false);
   const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null);
 
@@ -63,7 +64,7 @@ export function Tooltip({ content, children, position = 'top', className, delay 
 
   return (
     <div 
-      className="relative inline-flex"
+      className={cn("relative inline-flex", wrapperClassName)}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       onFocus={handleMouseEnter}

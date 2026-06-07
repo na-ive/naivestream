@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState, Suspense, use, useCallback } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { AnimeAPI } from '@/lib/api';
 import { useHistory } from '@/lib/hooks/useHistory';
 import { ChevronRight, Layout, Loader2, Video, Server, Monitor, RectangleHorizontal } from 'lucide-react';
@@ -10,6 +10,7 @@ import { Tooltip } from '@/components/ui/Tooltip';
 
 export default function WatchContent({ id }: { id: string }) {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const animeId = searchParams.get('anime') || '';
   const animeTitle = searchParams.get('title') || '';
   const animeImg = searchParams.get('img') || '';
@@ -32,17 +33,34 @@ export default function WatchContent({ id }: { id: string }) {
     }
   }, []);
 
-  const toggleTheaterMode = () => {
-    const newValue = !isTheaterMode;
-    setIsTheaterMode(newValue);
-    localStorage.setItem('theaterMode', String(newValue));
-  };
+  const toggleTheaterMode = useCallback(() => {
+    setIsTheaterMode(prev => {
+      const newValue = !prev;
+      localStorage.setItem('theaterMode', String(newValue));
+      return newValue;
+    });
+  }, []);
 
-  // Handle Escape key and Body Scroll for Cinema Mode
+  // Handle Keyboard Shortcuts
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      // Ignore if typing in an input
+      if (['INPUT', 'TEXTAREA', 'SELECT'].includes((e.target as HTMLElement)?.tagName)) return;
+
       if (e.key === 'Escape' && isCinemaMode) {
         setIsCinemaMode(false);
+      }
+      if (e.key.toLowerCase() === 't' && !e.ctrlKey && !e.metaKey) {
+        toggleTheaterMode();
+      }
+      if (e.key.toLowerCase() === 'f' && !e.ctrlKey && !e.metaKey) {
+        setIsCinemaMode(prev => !prev);
+      }
+      if (e.key.toLowerCase() === 'n' && e.shiftKey && episodeData?.nextEpisode) {
+        router.push(`/watch/${episodeData.nextEpisode.episodeId}?anime=${animeId}&title=${encodeURIComponent(animeTitle)}&img=${encodeURIComponent(animeImg)}&source=${source}`);
+      }
+      if (e.key.toLowerCase() === 'p' && e.shiftKey && episodeData?.prevEpisode) {
+        router.push(`/watch/${episodeData.prevEpisode.episodeId}?anime=${animeId}&title=${encodeURIComponent(animeTitle)}&img=${encodeURIComponent(animeImg)}&source=${source}`);
       }
     };
 
@@ -50,7 +68,7 @@ export default function WatchContent({ id }: { id: string }) {
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [isCinemaMode]);
+  }, [isCinemaMode, toggleTheaterMode, episodeData, router, animeId, animeTitle, animeImg, source]);
 
   const fetchEpisode = useCallback(async () => {
     if (!id || id === 'undefined') return;
@@ -200,7 +218,7 @@ export default function WatchContent({ id }: { id: string }) {
             </div>
 
             <div className="relative z-10 shrink-0 flex items-center gap-3">
-              <Tooltip content={isTheaterMode ? 'Default View' : 'Theater Mode'} position="top">
+              <Tooltip content={isTheaterMode ? 'Default View (T)' : 'Theater Mode (T)'} position="top">
                 <button
                   onClick={toggleTheaterMode}
                   className={`p-3 transition-all border ${isTheaterMode ? 'bg-secondary text-black border-secondary shadow-[0_0_20px_rgba(34,197,94,0.4)]' : 'bg-secondary/10 text-secondary hover:bg-secondary hover:text-black border-secondary/30 hover:border-secondary shadow-[0_0_10px_rgba(34,197,94,0.1)] hover:shadow-[0_0_20px_rgba(34,197,94,0.4)]'}`}
@@ -209,7 +227,7 @@ export default function WatchContent({ id }: { id: string }) {
                   <RectangleHorizontal className="w-4 h-4" />
                 </button>
               </Tooltip>
-              <Tooltip content={isCinemaMode ? 'Exit Focus' : 'Focus Mode'} position="top">
+              <Tooltip content={isCinemaMode ? 'Exit Focus (F)' : 'Focus Mode (F)'} position="top">
                 <button
                   onClick={() => setIsCinemaMode(!isCinemaMode)}
                   className={`p-3 transition-all border ${isCinemaMode ? 'bg-secondary text-black border-secondary shadow-[0_0_20px_rgba(34,197,94,0.4)]' : 'bg-secondary/10 text-secondary hover:bg-secondary hover:text-black border-secondary/30 hover:border-secondary shadow-[0_0_10px_rgba(34,197,94,0.1)] hover:shadow-[0_0_20px_rgba(34,197,94,0.4)]'}`}
@@ -235,29 +253,37 @@ export default function WatchContent({ id }: { id: string }) {
             </div>
             <div className="grid grid-cols-2 gap-3 relative z-10">
               {episodeData.prevEpisode ? (
-                <Link
-                  href={`/watch/${episodeData.prevEpisode.episodeId}?anime=${animeId}&title=${encodeURIComponent(animeTitle)}&img=${encodeURIComponent(animeImg)}&source=${source}`}
-                  className="btn-accent w-full py-2.5 text-[10px] tracking-[0.2em] flex items-center justify-center text-center"
-                >
-                  Prev
-                </Link>
+                <Tooltip content="Shift + P" position="top" wrapperClassName="w-full">
+                  <Link
+                    href={`/watch/${episodeData.prevEpisode.episodeId}?anime=${animeId}&title=${encodeURIComponent(animeTitle)}&img=${encodeURIComponent(animeImg)}&source=${source}`}
+                    className="btn-accent w-full py-2.5 text-[10px] tracking-[0.2em] flex items-center justify-center text-center"
+                  >
+                    Prev
+                  </Link>
+                </Tooltip>
               ) : (
-                <div className="btn-accent w-full py-2.5 text-[10px] tracking-[0.2em] flex items-center justify-center text-center opacity-30 pointer-events-none grayscale cursor-not-allowed">
-                  Prev
-                </div>
+                <Tooltip content="Shift + P" position="top" wrapperClassName="w-full">
+                  <div className="btn-accent w-full py-2.5 text-[10px] tracking-[0.2em] flex items-center justify-center text-center opacity-30 pointer-events-none grayscale cursor-not-allowed">
+                    Prev
+                  </div>
+                </Tooltip>
               )}
 
               {episodeData.nextEpisode ? (
-                <Link
-                  href={`/watch/${episodeData.nextEpisode.episodeId}?anime=${animeId}&title=${encodeURIComponent(animeTitle)}&img=${encodeURIComponent(animeImg)}&source=${source}`}
-                  className="btn-primary w-full py-2.5 text-[10px] tracking-[0.2em] flex items-center justify-center text-center"
-                >
-                  Next
-                </Link>
+                <Tooltip content="Shift + N" position="top" wrapperClassName="w-full">
+                  <Link
+                    href={`/watch/${episodeData.nextEpisode.episodeId}?anime=${animeId}&title=${encodeURIComponent(animeTitle)}&img=${encodeURIComponent(animeImg)}&source=${source}`}
+                    className="btn-primary w-full py-2.5 text-[10px] tracking-[0.2em] flex items-center justify-center text-center"
+                  >
+                    Next
+                  </Link>
+                </Tooltip>
               ) : (
-                <div className="btn-primary w-full py-2.5 text-[10px] tracking-[0.2em] flex items-center justify-center text-center opacity-30 pointer-events-none grayscale cursor-not-allowed">
-                  Next
-                </div>
+                <Tooltip content="Shift + N" position="top" wrapperClassName="w-full">
+                  <div className="btn-primary w-full py-2.5 text-[10px] tracking-[0.2em] flex items-center justify-center text-center opacity-30 pointer-events-none grayscale cursor-not-allowed">
+                    Next
+                  </div>
+                </Tooltip>
               )}
             </div>
 
