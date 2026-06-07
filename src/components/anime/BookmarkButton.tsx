@@ -55,7 +55,7 @@ export function BookmarkButton({ animeId, animeTitle, animeImage, className, var
 
   // Icon variant
   return (
-    <Tooltip content={active ? "Remove from Watchlist" : "Add to Watchlist"} position="left">
+    <Tooltip content={active ? "Remove from Watchlist" : "Add to Watchlist"} position="top">
       <button
         onClick={handleClick}
         className={cn(
