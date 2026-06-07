@@ -74,7 +74,7 @@ export default async function AnimeDetailPage(props: { params: Promise<{ id: str
 
   const poster = jikanData?.images?.webp?.large_image_url || data.poster || data.image;
   const episodes = data.episodeList || data.episode_list || [];
-  const genres = jikanData?.genres || data.genreList || data.genres || [];
+  const genres = data.genreList || data.genres || jikanData?.genres || [];
   const synopsis = jikanData?.synopsis || data.synopsis?.paragraphs?.join('\n\n') || 
                     (typeof data.synopsis === 'string' ? data.synopsis : "No synopsis available.");
   const rating = jikanData?.score || (typeof data.score === 'object' ? data.score.value : data.score);
@@ -159,17 +159,17 @@ export default async function AnimeDetailPage(props: { params: Promise<{ id: str
                       <span className="text-muted-text">Season</span>
                       <span className="text-foreground text-right capitalize">{season}</span>
                     </div>
-                    <div className="flex justify-between text-xs font-bold uppercase tracking-wider">
-                      <span className="text-muted-text">Studio</span>
-                      <span className="text-foreground text-right">{studios}</span>
+                    <div className="flex justify-between items-start text-xs font-bold uppercase tracking-wider gap-4">
+                      <span className="text-muted-text shrink-0">Studio</span>
+                      <span className="text-foreground text-right leading-relaxed">{studios}</span>
                     </div>
-                    <div className="flex justify-between text-xs font-bold uppercase tracking-wider">
-                      <span className="text-muted-text">Aired</span>
-                      <span className="text-foreground text-right">{aired}</span>
+                    <div className="flex justify-between items-start text-xs font-bold uppercase tracking-wider gap-4">
+                      <span className="text-muted-text shrink-0">Aired</span>
+                      <span className="text-foreground text-right leading-relaxed">{aired}</span>
                     </div>
-                    <div className="flex justify-between text-xs font-bold uppercase tracking-wider">
-                      <span className="text-muted-text">Rating</span>
-                      <span className="text-foreground text-right max-w-[150px] truncate" title={ageRating}>{ageRating}</span>
+                    <div className="flex justify-between items-start text-xs font-bold uppercase tracking-wider gap-4">
+                      <span className="text-muted-text shrink-0">Rating</span>
+                      <span className="text-foreground text-right leading-relaxed">{ageRating}</span>
                     </div>
                   </>
                 )}
@@ -177,13 +177,13 @@ export default async function AnimeDetailPage(props: { params: Promise<{ id: str
 
               {/* Sidebar Trailer */}
               {trailerUrl && (
-                <div className="aspect-video w-full bg-black border-4 border-background shadow-2xl relative overflow-hidden group">
+                <div className="aspect-video w-full bg-black border-4 border-background shadow-2xl relative group">
                   <iframe
                     src={trailerUrl}
                     className="absolute inset-0 w-full h-full pointer-events-auto"
                     title="Anime Trailer"
                   />
-                  <div className="absolute inset-0 pointer-events-none ring-1 ring-secondary/20" />
+                  <div className="absolute inset-0 pointer-events-none border-2 border-secondary/20 group-hover:border-secondary/50 transition-colors duration-300" />
                 </div>
               )}
 
