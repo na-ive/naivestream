@@ -30,7 +30,7 @@ export function EpisodeList({
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
       {episodes.map((ep: any, index: number) => {
-        const epNum = ep.eps || episodes.length - index;
+        const epNum = ep.eps || (typeof ep.title === 'number' ? ep.title : null) || episodes.length - index;
         const currentEpId = ep.episodeId || ep.id;
         const isLastWatched = lastEpId === currentEpId;
 
