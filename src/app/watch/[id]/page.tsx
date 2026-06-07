@@ -139,9 +139,13 @@ function WatchContent({ id }: { id: string }) {
 
         {/* Sidebar: Controls & Info */}
         <div className="w-full lg:w-[350px] space-y-8 shrink-0">
-          <div className="bg-card border-2 border-secondary/10 p-6 space-y-4">
-             <div className="flex items-center justify-between border-b border-secondary/10 pb-4">
-                <h3 className="font-serif font-black uppercase tracking-widest text-sm">Navigation</h3>
+          <div 
+            className="bg-card/50 border-l-4 border-secondary/50 p-6 space-y-4 relative overflow-hidden group"
+            style={{ clipPath: 'polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px)' }}
+          >
+             <div className="absolute inset-0 bg-gradient-to-r from-secondary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
+             <div className="flex items-center justify-between border-b border-white/10 pb-4 relative z-10">
+                <h3 className="font-serif font-black uppercase tracking-widest text-sm text-foreground">Navigation</h3>
                 <Layout className="w-4 h-4 text-secondary" />
              </div>
              <div className="grid grid-cols-1 gap-3">
@@ -162,8 +166,11 @@ function WatchContent({ id }: { id: string }) {
              </div>
           </div>
 
-          <div className="bg-card border-2 border-secondary/10 p-6 space-y-6">
-            <h3 className="flex items-center text-xs font-black uppercase tracking-[0.2em] text-muted-text">
+          <div 
+            className="bg-card/50 border-l-4 border-secondary/30 p-6 space-y-6 relative"
+            style={{ clipPath: 'polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px)' }}
+          >
+            <h3 className="flex items-center text-[10px] font-black uppercase tracking-[0.2em] text-muted-text border-b border-white/5 pb-3">
               <Video className="w-4 h-4 mr-2 text-secondary" />
               Video Servers
             </h3>
@@ -179,7 +186,7 @@ function WatchContent({ id }: { id: string }) {
                       <button
                         key={server.serverId}
                         onClick={() => changeServer(server.serverId)}
-                        className="px-3 py-2 bg-background border border-secondary/20 text-[10px] font-bold uppercase tracking-tighter hover:border-secondary hover:text-secondary transition-all cursor-pointer"
+                        className="px-3 py-2 bg-background/50 border-l-2 border-secondary/20 text-[10px] font-bold uppercase tracking-tighter hover:bg-secondary/10 hover:border-secondary hover:text-secondary transition-all cursor-pointer text-left"
                       >
                         {server.title}
                       </button>

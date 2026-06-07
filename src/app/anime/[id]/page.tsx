@@ -72,23 +72,30 @@ export default async function AnimeDetailPage(props: { params: Promise<{ id: str
             
             <div className="space-y-4">
               {rating && (
-                <div className="flex items-center justify-between p-4 bg-card border-2 border-secondary/10">
-                  <div className="flex items-center space-x-2">
+                <div 
+                  className="flex items-center justify-between p-4 bg-card/50 border-l-4 border-secondary/50 relative overflow-hidden group hover:border-secondary transition-colors"
+                  style={{ clipPath: 'polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px)' }}
+                >
+                  <div className="absolute inset-0 bg-gradient-to-r from-secondary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <div className="flex items-center space-x-2 relative z-10">
                     <Star className="text-secondary w-5 h-5 fill-current" />
-                    <span className="font-serif font-black">{rating}</span>
+                    <span className="font-serif font-black text-xl">{rating}</span>
                   </div>
-                  <span className="text-[10px] text-muted-text uppercase font-black tracking-widest">Score</span>
+                  <span className="text-[10px] text-muted-text uppercase font-black tracking-widest relative z-10">Score</span>
                 </div>
               )}
               
-              <div className="p-4 bg-card border-2 border-secondary/10 space-y-3">
+              <div 
+                className="p-5 bg-card/50 border-l-4 border-secondary/20 space-y-4 relative"
+                style={{ clipPath: 'polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px)' }}
+              >
                 <div className="flex justify-between text-xs font-bold uppercase tracking-wider">
                   <span className="text-muted-text">Status</span>
                   <span className="text-secondary">{data.status}</span>
                 </div>
                 <div className="flex justify-between text-xs font-bold uppercase tracking-wider">
                   <span className="text-muted-text">Episodes</span>
-                  <span>{data.episodes || '??'}</span>
+                  <span className="text-foreground">{data.episodes || '??'}</span>
                 </div>
                 <div className="flex justify-between text-xs font-bold uppercase tracking-wider">
                   <span className="text-muted-text">Provider</span>

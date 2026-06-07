@@ -112,46 +112,54 @@ export default async function HomePage() {
 
         {/* Today's Schedule Section */}
         {todayAnimeList.length > 0 && (
-          <section className="bg-card border-2 border-secondary/20 p-6 relative overflow-hidden mt-12">
-            <div className="absolute top-0 right-0 p-8 opacity-5">
-              <Calendar className="w-48 h-48 text-secondary" />
-            </div>
-            
-            <div className="flex items-center justify-between mb-6 relative z-10 border-b-2 border-secondary/20 pb-4">
+          <section 
+            className="bg-card/40 border-t border-b border-secondary/30 p-8 md:p-12 relative overflow-hidden mt-20"
+            style={{ clipPath: 'polygon(30px 0, 100% 0, 100% calc(100% - 30px), calc(100% - 30px) 100%, 0 100%, 0 30px)' }}
+          >
+            <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 relative z-10 border-b border-white/10 pb-6">
               <div className="space-y-1 flex items-center gap-4">
-                <Calendar className="w-8 h-8 text-secondary" />
+                <div className="p-3 bg-secondary/10 text-secondary" style={{ clipPath: 'polygon(5px 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 5px)' }}>
+                  <Calendar className="w-8 h-8" />
+                </div>
                 <div>
-                  <h2 className="text-2xl font-black uppercase tracking-widest text-foreground">
+                  <h2 className="text-2xl font-serif font-black uppercase tracking-tighter text-foreground leading-none">
                     Today's Schedule
                   </h2>
-                  <p className="text-xs font-bold uppercase tracking-[0.2em] text-secondary">
+                  <p className="text-[10px] font-mono font-bold uppercase tracking-[0.3em] text-secondary mt-1">
                     {todayFormatted}
                   </p>
                 </div>
               </div>
             </div>
             
-            <div className="space-y-3 relative z-10">
-              {todayAnimeList.slice(0, 5).map((anime: any) => (
+            <div className="space-y-2 relative z-10">
+              {todayAnimeList.slice(0, 5).map((anime: any, index: number) => (
                 <Link 
                   key={anime.slug} 
                   href={`/anime/${anime.slug}`}
-                  className="group flex items-center justify-between p-4 bg-background border border-secondary/10 hover:border-secondary hover:bg-secondary/5 transition-all"
+                  className="group flex items-center justify-between p-4 bg-background/30 hover:bg-secondary/10 border-b border-white/5 last:border-0 transition-all relative overflow-hidden"
                 >
-                  <span className="font-bold text-sm group-hover:text-secondary line-clamp-1 pr-4 uppercase tracking-wider">
-                    {anime.title}
-                  </span>
-                  <ChevronRight className="w-5 h-5 text-muted-text group-hover:text-secondary shrink-0 transition-transform group-hover:translate-x-1" />
+                  <div className="absolute inset-y-0 left-0 w-1 bg-secondary scale-y-0 group-hover:scale-y-100 transition-transform origin-top" />
+                  <div className="flex items-center gap-4 pl-2">
+                    <span className="text-[10px] font-mono text-muted-text/50">{(index + 1).toString().padStart(2, '0')}</span>
+                    <span className="font-bold text-sm group-hover:text-secondary line-clamp-1 uppercase tracking-wider transition-colors">
+                      {anime.title}
+                    </span>
+                  </div>
+                  <ChevronRight className="w-4 h-4 text-muted-text group-hover:text-secondary shrink-0 transition-transform group-hover:translate-x-1" />
                 </Link>
               ))}
               
               {todayAnimeList.length > 5 && (
-                <Link 
-                  href={`/schedule?day=${todayString}`}
-                  className="block text-center p-4 bg-secondary text-background hover:bg-secondary/90 transition-colors text-sm font-black uppercase tracking-widest mt-6 border-2 border-secondary"
-                >
-                  Show More ({todayAnimeList.length - 5} Others)
-                </Link>
+                <div className="pt-6 text-center">
+                  <Link 
+                    href={`/schedule?day=${todayString}`}
+                    className="inline-block px-10 py-4 bg-secondary text-background hover:bg-secondary/90 transition-colors text-xs font-black uppercase tracking-[0.2em] shadow-[0_0_20px_rgba(34,197,94,0.2)]"
+                    style={{ clipPath: 'polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px)' }}
+                  >
+                    Load Full Schedule ({todayAnimeList.length - 5} More)
+                  </Link>
+                </div>
               )}
             </div>
           </section>

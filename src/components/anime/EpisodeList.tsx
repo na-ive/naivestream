@@ -39,34 +39,53 @@ export function EpisodeList({
             key={`${currentEpId}-${index}`}
             href={`/watch/${currentEpId}?anime=${animeId}&title=${encodeURIComponent(animeTitle)}&img=${encodeURIComponent(poster)}&source=${source}`}
             className={cn(
-              "flex items-center p-4 transition-all group border-2 relative",
+              "flex items-center p-3 transition-all group relative overflow-hidden",
               isLastWatched 
-                ? "bg-secondary/20 border-secondary shadow-[0_0_15px_rgba(34,197,94,0.2)]" 
-                : "bg-card border-secondary/10 hover:border-secondary hover:bg-secondary/5"
+                ? "bg-secondary/10 border-l-4 border-secondary shadow-[inset_4px_0_0_0_rgba(34,197,94,1)]" 
+                : "bg-card/50 hover:bg-secondary/5 border-l-4 border-transparent hover:border-secondary"
             )}
+            style={{ clipPath: 'polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px)' }}
           >
-            {isLastWatched && (
-              <div className="absolute -top-2.5 -right-2 px-2 py-0.5 bg-secondary text-black text-[9px] font-black uppercase tracking-widest z-10 skew-x-[-10deg]">
-                Last Watched
-              </div>
-            )}
+            {/* Episode Number Block */}
             <div className={cn(
-              "w-12 h-12 flex items-center justify-center font-bold text-sm transition-colors shrink-0",
-              isLastWatched ? "bg-secondary text-black" : "bg-background group-hover:bg-secondary group-hover:text-background"
+              "relative w-12 h-12 flex items-center justify-center font-black text-lg transition-all shrink-0 z-10",
+              isLastWatched ? "text-secondary" : "text-muted-text group-hover:text-foreground"
             )}>
+              <span className="absolute text-[8px] top-0 left-0 text-secondary/50 font-mono tracking-tighter">EP</span>
               {epNum}
             </div>
-            <div className="ml-4 flex-grow min-w-0">
-              <p className={cn(
-                "text-sm font-bold truncate",
-                isLastWatched ? "text-secondary" : ""
-              )}>Episode {epNum}</p>
-              <p className="text-[11px] text-muted-text mt-0.5">{ep.date || ep.uploaded_on || 'Released'}</p>
+
+            {/* Episode Info */}
+            <div className="ml-4 flex-grow min-w-0 z-10 flex flex-col justify-center">
+              <div className="flex items-center gap-2">
+                <p className={cn(
+                  "text-sm font-bold truncate uppercase tracking-widest transition-colors",
+                  isLastWatched ? "text-secondary" : "group-hover:text-secondary"
+                )}>Episode {epNum}</p>
+                {isLastWatched && (
+                  <span className="px-1.5 py-0.5 bg-secondary text-background text-[8px] font-black uppercase tracking-[0.2em] skew-x-[-15deg]">
+                    RESUME
+                  </span>
+                )}
+              </div>
+              <p className="text-[10px] text-muted-text font-mono mt-0.5 uppercase tracking-wider">{ep.date || ep.uploaded_on || 'Released'}</p>
             </div>
-            <Play className={cn(
-              "w-4 h-4 transition-colors shrink-0",
-              isLastWatched ? "text-secondary fill-current" : "text-muted-text group-hover:text-secondary"
-            )} />
+
+            {/* Play Icon */}
+            <div 
+              className={cn(
+                "w-8 h-8 flex items-center justify-center border transition-all z-10 shrink-0",
+                isLastWatched 
+                  ? "border-secondary bg-secondary/10 shadow-[0_0_10px_rgba(34,197,94,0.3)]" 
+                  : "border-secondary/20 group-hover:border-secondary bg-background"
+              )}
+              style={{ clipPath: 'polygon(4px 0, 100% 0, 100% calc(100% - 4px), calc(100% - 4px) 100%, 0 100%, 0 4px)' }}
+            >
+              <Play className={cn(
+                "w-3.5 h-3.5 transition-colors translate-x-[1px]",
+                isLastWatched ? "text-secondary fill-current" : "text-muted-text group-hover:text-secondary group-hover:fill-secondary/50"
+              )} />
+            </div>
           </Link>
         );
       })}
