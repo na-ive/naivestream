@@ -2,14 +2,15 @@
 @import "tailwindcss";
 
 @theme {
-  --color-background: #020617;
-  --color-foreground: #F8FAFC;
-  --color-primary: #0F172A;
-  --color-secondary: #22C55E; /* Neon Green */
-  --color-accent: #22C55E;
-  --color-card: #0F172A;
-  --color-card-foreground: #F8FAFC;
-  --color-border: #1E293B;
+  /* Default (Light) Theme - Maintaining Cyberpunk but visible */
+  --color-background: #F8FAFC;
+  --color-foreground: #0F172A;
+  --color-primary: #1E293B;
+  --color-secondary: #16A34A; /* Slightly darker green for light mode */
+  --color-accent: #16A34A;
+  --color-card: #FFFFFF;
+  --color-card-foreground: #0F172A;
+  --color-border: #E2E8F0;
 
   --font-sans: 'Exo 2', ui-sans-serif, system-ui, sans-serif;
   --font-serif: 'Orbitron', ui-serif, Georgia, serif;
@@ -19,57 +20,41 @@
   --color-background: #020617;
   --color-foreground: #F8FAFC;
   --color-primary: #0F172A;
-  --color-secondary: #22C55E;
+  --color-secondary: #22C55E; /* Neon Green */
   --color-accent: #22C55E;
   --color-card: #0F172A;
   --color-card-foreground: #F8FAFC;
-  --color-border: #22C55E22; /* Faint Neon Green */
+  --color-border: #1E293B;
 }
 
 @layer base {
   body {
-    @apply bg-background text-foreground font-sans antialiased;
-    background-image: 
-      radial-gradient(circle at 50% 50%, rgba(34, 197, 94, 0.05) 0%, transparent 50%),
-      linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%),
-      linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
-    background-size: 100% 100%, 100% 4px, 100% 100%;
+    @apply bg-background text-foreground font-sans antialiased transition-colors duration-300;
   }
 
   h1, h2, h3, h4, h5, h6 {
     @apply font-serif uppercase tracking-widest;
-    text-shadow: 0 0 10px rgba(34, 197, 94, 0.3);
   }
 }
 
 @layer components {
   .btn-primary {
-    @apply px-6 py-3 bg-secondary text-black rounded-none font-bold transition-all hover:bg-secondary/80 hover:shadow-[0_0_20px_rgba(34,197,94,0.5)] active:scale-95 disabled:opacity-50 uppercase tracking-tighter;
+    @apply px-6 py-3 bg-secondary text-white dark:text-black rounded-none font-bold transition-all hover:opacity-90 active:scale-95 disabled:opacity-50 uppercase tracking-tighter cursor-pointer;
     clip-path: polygon(10% 0, 100% 0, 100% 70%, 90% 100%, 0 100%, 0 30%);
   }
 
   .btn-accent {
-    @apply px-6 py-3 bg-secondary/10 text-secondary border border-secondary rounded-none font-bold transition-all hover:bg-secondary hover:text-black active:scale-95 disabled:opacity-50 uppercase tracking-tighter;
+    @apply px-6 py-3 border border-secondary text-secondary rounded-none font-bold transition-all hover:bg-secondary hover:text-white dark:hover:text-black active:scale-95 disabled:opacity-50 uppercase tracking-tighter cursor-pointer;
     clip-path: polygon(10% 0, 100% 0, 100% 70%, 90% 100%, 0 100%, 0 30%);
   }
 
   .card {
-    @apply bg-card/80 backdrop-blur-sm border-l-2 border-r-2 border-secondary/30 rounded-none overflow-hidden transition-all hover:border-secondary hover:shadow-[0_0_15px_rgba(34,197,94,0.2)] hover:-translate-y-1;
+    @apply bg-card border-l-2 border-r-2 border-secondary/30 rounded-none overflow-hidden transition-all hover:border-secondary hover:-translate-y-1;
     position: relative;
   }
 
-  .card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(34, 197, 94, 0.5), transparent);
-  }
-
   .glass {
-    @apply bg-black/40 backdrop-blur-xl border border-white/5;
+    @apply bg-card/60 backdrop-blur-xl border border-border;
   }
 }
 
@@ -100,18 +85,9 @@
   }
 }
 
-/* Scrollbar Utility */
-@utility no-scrollbar {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-  &::-webkit-scrollbar {
-    display: none;
-  }
-}
-
 /* Custom Cyberpunk Utilities */
 @utility neon-glow {
-  box-shadow: 0 0 10px var(--color-secondary), 0 0 20px var(--color-secondary);
+  box-shadow: 0 0 10px var(--color-secondary);
 }
 
 @utility text-neon {

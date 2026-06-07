@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { Search, Moon, Sun, Menu, X, Cpu } from 'lucide-react';
+import { Search, Moon, Sun, Menu, X, Play } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
 
@@ -35,21 +35,17 @@ export function Navbar() {
   ];
 
   return (
-    <nav className="sticky top-0 z-50 w-full bg-background/90 backdrop-blur-xl border-b-2 border-secondary/20 shadow-[0_0_15px_rgba(34,197,94,0.1)]">
+    <nav className="sticky top-0 z-50 w-full bg-background/80 backdrop-blur-xl border-b-2 border-secondary/20 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20">
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-3 group">
-            <div className="relative w-12 h-12 bg-black border-2 border-secondary flex items-center justify-center group-hover:shadow-[0_0_15px_rgba(34,197,94,0.5)] transition-all">
-               <div className="absolute inset-0 bg-secondary/10 animate-pulse" />
-               <Cpu className="text-secondary w-7 h-7 relative z-10" />
+            <div className="relative w-10 h-10 bg-secondary flex items-center justify-center transition-all shadow-[0_0_10px_rgba(34,197,94,0.3)]">
+               <Play className="text-white dark:text-black fill-current w-5 h-5 relative z-10" />
             </div>
             <div className="flex flex-col">
               <span className="text-xl font-serif font-black tracking-tighter text-foreground leading-none">
                 NAIVE<span className="text-secondary">STREAM</span>
-              </span>
-              <span className="text-[10px] font-bold text-secondary tracking-[0.2em] uppercase leading-none mt-1">
-                Media System
               </span>
             </div>
           </Link>
@@ -57,15 +53,14 @@ export function Navbar() {
           {/* Desktop Search */}
           <div className="hidden lg:flex flex-1 max-w-lg mx-12">
             <form onSubmit={handleSearch} className="relative w-full group">
-              <div className="absolute inset-0 bg-secondary/5 -skew-x-12 group-focus-within:bg-secondary/10 transition-colors" />
               <input
                 type="text"
-                placeholder="EXECUTE SEARCH..."
+                placeholder="Search..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full bg-transparent border-2 border-secondary/20 group-focus-within:border-secondary/50 rounded-none py-3 pl-12 pr-4 focus:outline-none transition-all font-bold text-sm tracking-widest text-secondary placeholder:text-secondary/30"
+                className="w-full bg-card border-2 border-secondary/20 focus:border-secondary rounded-none py-2.5 pl-12 pr-4 focus:outline-none transition-all font-bold text-sm tracking-widest text-foreground placeholder:text-muted-foreground"
               />
-              <Search className="absolute left-4 top-3.5 text-secondary w-5 h-5" />
+              <Search className="absolute left-4 top-3 text-secondary w-5 h-5" />
             </form>
           </div>
 
@@ -77,7 +72,7 @@ export function Navbar() {
                 href={link.href}
                 className={cn(
                   "text-xs font-bold uppercase tracking-[0.2em] transition-all hover:text-secondary relative group py-2",
-                  pathname === link.href ? "text-secondary" : "text-gray-400"
+                  pathname === link.href ? "text-secondary" : "text-foreground/70"
                 )}
               >
                 {link.name}
@@ -89,8 +84,8 @@ export function Navbar() {
             ))}
             <button
               onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-              className="p-3 bg-black border border-secondary/30 hover:border-secondary text-secondary transition-all"
-              aria-label="System mode"
+              className="p-2.5 rounded-none border border-secondary/30 hover:border-secondary text-secondary transition-all cursor-pointer"
+              aria-label="Toggle theme"
             >
               {!mounted ? (
                 <div className="w-5 h-5" />
@@ -106,13 +101,13 @@ export function Navbar() {
           <div className="flex md:hidden items-center space-x-4">
             <button
               onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-              className="p-2 text-secondary"
+              className="p-2 text-secondary cursor-pointer"
             >
               {theme === 'dark' ? <Sun className="w-6 h-6" /> : <Moon className="w-6 h-6" />}
             </button>
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="p-2 bg-secondary text-black"
+              className="p-2 bg-secondary text-white dark:text-black cursor-pointer"
             >
               {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
@@ -122,15 +117,15 @@ export function Navbar() {
 
       {/* Mobile Menu */}
       {isMenuOpen && (
-        <div className="md:hidden bg-background/95 backdrop-blur-2xl border-b-2 border-secondary animate-in slide-in-from-top duration-300">
+        <div className="md:hidden bg-background border-b-2 border-secondary/30 animate-in slide-in-from-top duration-300">
           <div className="px-4 py-8 space-y-6">
             <form onSubmit={handleSearch} className="relative w-full">
               <input
                 type="text"
-                placeholder="SEARCH_DB..."
+                placeholder="Search..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full bg-black border-2 border-secondary/50 rounded-none py-4 pl-12 pr-4 focus:outline-none text-secondary"
+                className="w-full bg-card border-2 border-secondary/30 rounded-none py-4 pl-12 pr-4 focus:outline-none text-foreground"
               />
               <Search className="absolute left-4 top-4.5 text-secondary w-5 h-5" />
             </form>
@@ -144,7 +139,7 @@ export function Navbar() {
                     "flex items-center p-5 font-bold uppercase tracking-widest border-l-4 transition-all",
                     pathname === link.href 
                       ? "bg-secondary/10 border-secondary text-secondary" 
-                      : "border-transparent text-gray-500"
+                      : "border-transparent text-foreground/50"
                   )}
                 >
                   {link.name}
