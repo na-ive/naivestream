@@ -85,7 +85,7 @@ export function HeroCarousel({ items }: HeroCarouselProps) {
             </div>
           </div>
 
-          <p className="!text-gray-700 dark:text-gray-300 text-sm md:text-lg leading-relaxed max-w-lg font-bold">
+          <p className="text-muted-text text-sm md:text-lg leading-relaxed max-w-lg font-bold">
             Stream the latest episodes of {current.title} and stay updated with your favorite series.
           </p>
 

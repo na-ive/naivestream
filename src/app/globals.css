@@ -6,29 +6,31 @@
   --color-background: #F8FAFC;
   --color-foreground: #0F172A;
   --color-primary: #1E293B;
-  --color-secondary: #16A34A; /* Slightly darker green for light mode */
+  --color-secondary: #16A34A;
   --color-accent: #16A34A;
   --color-card: #FFFFFF;
   --color-card-foreground: #0F172A;
   --color-border: #E2E8F0;
+  
+  /* Custom sub-text color for reliable theme switching */
+  --color-muted-text: #374151; /* gray-700 */
 
   --font-sans: 'Exo 2', ui-sans-serif, system-ui, sans-serif;
   --font-serif: 'Orbitron', ui-serif, Georgia, serif;
 }
 
-/* 
-   IMPORTANT: For Tailwind CSS v4 to recognize dark mode correctly with next-themes,
-   we should use the .dark selector to override variables.
-*/
+/* Hard override for dark mode */
 .dark {
   --color-background: #020617;
   --color-foreground: #F8FAFC;
   --color-primary: #0F172A;
-  --color-secondary: #22C55E; /* Neon Green */
+  --color-secondary: #22C55E;
   --color-accent: #22C55E;
   --color-card: #0F172A;
   --color-card-foreground: #F8FAFC;
   --color-border: #1E293B;
+  
+  --color-muted-text: #D1D5DB; /* gray-300 */
 }
 
 @layer base {
