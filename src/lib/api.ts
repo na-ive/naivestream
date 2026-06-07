@@ -49,6 +49,9 @@ export const AnimeAPI = {
     getEpisode: (slug: string) => fetchWithRetry(`/episode/${slug}`),
     getServer: (id: string) => fetchWithRetry(`/server/${id}`),
     search: (query: string) => fetchWithRetry(`/search/${query}`, { cache: 'no-store' }),
+    getAZList: () => fetchWithRetry('/unlimited', { 
+      next: { revalidate: 2592000, tags: ['az-list'] } // 30 days
+    }),
   },
 
   // Fallback Source: Samehadaku

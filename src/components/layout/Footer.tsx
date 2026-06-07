@@ -3,8 +3,25 @@ import Link from 'next/link';
 
 export function Footer() {
   return (
-    <footer className="w-full border-t-2 border-secondary/20 bg-background py-12 relative overflow-hidden">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+    <footer className="w-full border-t-2 border-secondary/20 bg-background relative overflow-hidden">
+      {/* A-Z Navigation Bar */}
+      <div className="border-b border-secondary/10 bg-card/50 py-4">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-wrap justify-center gap-1.5 md:gap-2">
+            {["ALL", "#", "0-9", ..."ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("")].map((letter) => (
+              <Link
+                key={letter}
+                href={`/az-list?letter=${letter}`}
+                className="text-[9px] md:text-[10px] font-black hover:text-secondary transition-colors text-muted-text w-6 h-6 md:w-8 md:h-8 flex items-center justify-center border border-transparent hover:border-secondary/30"
+              >
+                {letter}
+              </Link>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 relative z-10">
         <div className="flex flex-col md:flex-row justify-between items-center space-y-8 md:space-y-0">
           <div className="flex flex-col items-center md:items-start">
             <span className="text-xl font-serif font-black tracking-tighter text-foreground">
