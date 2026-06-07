@@ -65,18 +65,28 @@ export function CharacterCarousel({ characters }: CharacterCarouselProps) {
           
           return (
             <div key={character.mal_id} className="min-w-[120px] max-w-[120px] flex-shrink-0 space-y-2 snap-start group">
-              <div className="aspect-[3/4] relative overflow-hidden bg-card border border-white/5">
+              <div className="aspect-[3/4] relative overflow-hidden bg-black ring-1 ring-white/5 group-hover:ring-secondary/50 transition-all duration-300" style={{ clipPath: 'polygon(15px 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%, 0 15px)' }}>
+                {/* Image */}
                 <img 
                   src={character.images?.webp?.image_url} 
                   alt={character.name} 
-                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                  className="w-full h-full object-cover transition-all duration-500 group-hover:scale-110 group-hover:opacity-80"
                 />
+                
+                {/* Cyber Overlay Hover */}
+                <div className="absolute inset-0 bg-secondary/20 mix-blend-overlay opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <div className="absolute top-0 left-0 w-full h-[2px] bg-secondary opacity-0 group-hover:opacity-100 transform -translate-y-full group-hover:translate-y-[160px] transition-all duration-500 ease-linear shadow-[0_0_10px_rgba(34,197,94,0.8)]" />
+
+                {/* Voice Actor Inset */}
                 {va && (
-                  <div className="absolute -bottom-1 -right-1 w-10 h-10 border-2 border-background overflow-hidden z-10 rounded-tl-lg bg-black">
+                  <div 
+                    className="absolute bottom-0 right-0 w-12 h-12 border-l-2 border-t-2 border-secondary/50 overflow-hidden z-10 bg-black group-hover:border-secondary transition-colors"
+                    style={{ clipPath: 'polygon(10px 0, 100% 0, 100% 100%, 0 100%, 0 10px)' }}
+                  >
                     <img 
                       src={va.images?.jpg?.image_url} 
                       alt={va.name}
-                      className="w-full h-full object-cover"
+                      className="w-full h-full object-cover grayscale opacity-80 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-300"
                       title={`VA: ${va.name}`}
                     />
                   </div>
