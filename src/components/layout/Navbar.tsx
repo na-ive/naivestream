@@ -133,7 +133,7 @@ export function Navbar() {
                       onClick={() => setOpenDropdown(prev => prev === link.name ? null : link.name)}
                       className={cn(
                         "flex items-center text-xs font-mono font-bold uppercase tracking-[0.2em] transition-all hover:text-secondary cursor-pointer",
-                        openDropdown === link.name ? "text-secondary" : "text-foreground/70"
+                        (openDropdown === link.name || link.items?.some(item => pathname.startsWith(item.href))) ? "text-secondary" : "text-foreground/70"
                       )}
                     >
                       {link.name}
@@ -149,7 +149,7 @@ export function Navbar() {
                               onClick={() => setOpenDropdown(null)}
                               className={cn(
                                 "px-4 py-3 text-xs font-mono font-bold uppercase tracking-[0.2em] transition-all hover:bg-secondary/10 hover:text-secondary border-b border-white/5 last:border-0",
-                                pathname === item.href ? "text-secondary bg-secondary/5" : "text-foreground/70"
+                                pathname.startsWith(item.href) ? "text-secondary bg-secondary/5" : "text-foreground/70"
                               )}
                             >
                               {item.name}
@@ -251,7 +251,10 @@ export function Navbar() {
                 if (link.type === 'dropdown') {
                   return (
                     <div key={link.name} className="flex flex-col">
-                      <div className="p-5 font-mono font-bold uppercase tracking-widest text-foreground/70 bg-white/5">
+                      <div className={cn(
+                        "p-5 font-mono font-bold uppercase tracking-widest bg-white/5",
+                        link.items?.some(item => pathname.startsWith(item.href)) ? "text-secondary" : "text-foreground/70"
+                      )}>
                         {link.name}
                       </div>
                       <div className="flex flex-col pl-4 border-l-4 border-transparent">
@@ -262,7 +265,7 @@ export function Navbar() {
                             onClick={() => setIsMenuOpen(false)}
                             className={cn(
                               "flex items-center p-4 font-mono font-bold uppercase tracking-widest border-l-4 transition-all",
-                              pathname === item.href 
+                              pathname.startsWith(item.href) 
                                 ? "bg-secondary/10 border-secondary text-secondary" 
                                 : "border-transparent text-foreground/50 hover:text-foreground"
                             )}
