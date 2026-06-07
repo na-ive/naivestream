@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { Play, Star } from 'lucide-react';
+import { Play, Star, Terminal } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 interface AnimeCardProps {
@@ -18,57 +18,68 @@ interface AnimeCardProps {
 export function AnimeCard({ id, title, image, status, rating, episode, type }: AnimeCardProps) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
+      initial={{ opacity: 0, scale: 0.95 }}
+      animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.3 }}
       className="group relative flex flex-col"
     >
-      <Link href={`/anime/${id}`} className="block relative aspect-[3/4] rounded-2xl overflow-hidden bg-gray-800">
+      <Link href={`/anime/${id}`} className="block relative aspect-[3/4] overflow-hidden bg-slate-900 border-2 border-secondary/20 group-hover:border-secondary transition-all">
+        {/* Decorative Corner */}
+        <div className="absolute top-0 right-0 w-8 h-8 bg-secondary/20 transition-all group-hover:bg-secondary/40 clip-path-corner-tr" />
+        
         <img
           src={image}
           alt={title}
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 group-hover:rotate-1"
           loading="lazy"
         />
         
         {/* Overlays */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-          <div className="w-12 h-12 bg-secondary rounded-full flex items-center justify-center scale-0 group-hover:scale-100 transition-transform duration-300 delay-100">
-            <Play className="text-white fill-current w-6 h-6 ml-1" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-300" />
+        
+        <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+          <div className="w-16 h-16 bg-secondary text-black flex items-center justify-center shadow-[0_0_25px_rgba(34,197,94,0.6)] animate-pulse">
+            <Play className="fill-current w-8 h-8 ml-1" />
           </div>
         </div>
 
         {/* Badges */}
-        <div className="absolute top-2 left-2 flex flex-col gap-1">
+        <div className="absolute top-3 left-3 flex flex-col gap-2">
           {rating && (
-            <div className="flex items-center space-x-1 px-2 py-1 bg-black/60 backdrop-blur-md rounded-lg text-[10px] font-bold text-yellow-400">
+            <div className="flex items-center space-x-1.5 px-2 py-1 bg-black/80 backdrop-blur-md border border-secondary/50 text-[10px] font-black text-secondary uppercase tracking-tighter">
               <Star className="w-3 h-3 fill-current" />
               <span>{rating}</span>
             </div>
           )}
           {type && (
-            <div className="px-2 py-1 bg-secondary rounded-lg text-[10px] font-bold text-white uppercase">
+            <div className="px-2 py-1 bg-secondary text-black text-[10px] font-black uppercase tracking-tighter">
               {type}
             </div>
           )}
         </div>
 
         {episode && (
-          <div className="absolute bottom-2 right-2 px-2 py-1 bg-black/60 backdrop-blur-md rounded-lg text-[10px] font-bold text-white">
+          <div className="absolute bottom-3 right-3 px-3 py-1 bg-black/80 backdrop-blur-md border-r-4 border-secondary text-[10px] font-black text-white tracking-widest uppercase">
             EP {episode}
           </div>
         )}
+
+        {/* Scanline Effect */}
+        <div className="absolute inset-0 pointer-events-none bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.1)_50%),linear-gradient(90deg,rgba(255,0,0,0.02),rgba(0,255,0,0.01),rgba(0,0,255,0.02))] bg-[length:100%_4px,100%_100%]" />
       </Link>
 
-      <div className="mt-3 space-y-1">
-        <h3 className="text-sm font-bold line-clamp-2 group-hover:text-secondary transition-colors">
+      <div className="mt-4 space-y-2">
+        <h3 className="text-xs font-serif font-black uppercase tracking-widest line-clamp-2 group-hover:text-secondary transition-colors h-8">
           {title}
         </h3>
-        {status && (
-          <p className="text-[10px] text-gray-500 font-medium uppercase tracking-wider">
-            {status}
-          </p>
-        )}
+        <div className="flex items-center justify-between">
+          {status && (
+            <div className="flex items-center space-x-1 text-[9px] text-secondary font-bold uppercase tracking-[0.2em]">
+              <Terminal className="w-3 h-3" />
+              <span>{status}</span>
+            </div>
+          )}
+        </div>
       </div>
     </motion.div>
   );
