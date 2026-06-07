@@ -35,18 +35,24 @@ export function Tooltip({ content, children, position = 'top', className, wrappe
   };
 
   useEffect(() => {
-    const handleWindowBlur = () => {
+    const handleHide = () => {
       setIsVisible(false);
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+        setTimeoutId(null);
+      }
     };
 
-    window.addEventListener('blur', handleWindowBlur);
-    document.addEventListener('visibilitychange', handleWindowBlur);
+    window.addEventListener('blur', handleHide);
+    document.addEventListener('visibilitychange', handleHide);
+    window.addEventListener('scroll', handleHide, true); // Use capture phase to catch all scrolling
 
     return () => {
-      window.removeEventListener('blur', handleWindowBlur);
-      document.removeEventListener('visibilitychange', handleWindowBlur);
+      window.removeEventListener('blur', handleHide);
+      document.removeEventListener('visibilitychange', handleHide);
+      window.removeEventListener('scroll', handleHide, true);
     };
-  }, []);
+  }, [timeoutId]);
 
   const positionClasses = {
     top: 'bottom-full left-1/2 -translate-x-1/2 mb-2',
