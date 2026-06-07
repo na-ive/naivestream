@@ -41,13 +41,13 @@ export function Pagination({ currentPage, totalPages, baseUrl }: PaginationProps
 
   return (
     <div className="flex flex-col items-center space-y-6 py-16">
-      <div className="flex items-center gap-1 sm:gap-3">
+      <div className="flex items-center gap-2 sm:gap-3">
         {/* First Page */}
         <Link
           href={getHref(1)}
           className={cn(
-            "p-3 bg-card border-2 border-secondary/20 transition-all cursor-pointer",
-            currentPage <= 1 ? "opacity-30 pointer-events-none" : "hover:border-secondary hover:text-secondary hover:shadow-[0_0_10px_rgba(34,197,94,0.3)]"
+            "p-3 bg-card border border-white/5 transition-all cursor-pointer flex items-center justify-center",
+            currentPage <= 1 ? "opacity-30 pointer-events-none" : "hover:border-secondary/50 hover:bg-secondary/10 hover:text-secondary hover:shadow-[0_0_10px_rgba(34,197,94,0.3)]"
           )}
           aria-label="First page"
         >
@@ -58,19 +58,19 @@ export function Pagination({ currentPage, totalPages, baseUrl }: PaginationProps
         <Link
           href={getHref(Math.max(1, currentPage - 1))}
           className={cn(
-            "p-3 bg-card border-2 border-secondary/20 transition-all cursor-pointer",
-            currentPage <= 1 ? "opacity-30 pointer-events-none" : "hover:border-secondary hover:text-secondary hover:shadow-[0_0_10px_rgba(34,197,94,0.3)]"
+            "p-3 bg-card border border-white/5 transition-all cursor-pointer flex items-center justify-center",
+            currentPage <= 1 ? "opacity-30 pointer-events-none" : "hover:border-secondary/50 hover:bg-secondary/10 hover:text-secondary hover:shadow-[0_0_10px_rgba(34,197,94,0.3)]"
           )}
           aria-label="Previous page"
         >
           <ChevronLeft className="w-5 h-5" />
         </Link>
 
-        <div className="flex items-center bg-card border-2 border-secondary/10 p-1">
+        <div className="flex items-center gap-1 sm:gap-2">
           {rangeWithDots.map((p, idx) => {
             if (p === '...') {
               return (
-                <div key={`dot-${idx}`} className="w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center text-secondary/30">
+                <div key={`dot-${idx}`} className="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center text-secondary/30">
                   <MoreHorizontal className="w-4 h-4" />
                 </div>
               );
@@ -82,10 +82,10 @@ export function Pagination({ currentPage, totalPages, baseUrl }: PaginationProps
                 key={`page-${pageNum}`}
                 href={getHref(pageNum)}
                 className={cn(
-                  "w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center font-serif font-black text-sm transition-all cursor-pointer",
+                  "w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center font-mono font-black text-sm transition-all cursor-pointer border",
                   currentPage === pageNum
-                    ? "bg-secondary text-white dark:text-black shadow-[0_0_15px_rgba(34,197,94,0.5)] z-10"
-                    : "text-foreground/50 hover:bg-secondary/10 hover:text-secondary"
+                    ? "bg-secondary text-background border-secondary shadow-[0_0_15px_rgba(34,197,94,0.5)] z-10"
+                    : "bg-card border-white/5 text-foreground/50 hover:bg-secondary/10 hover:text-secondary hover:border-secondary/50"
                 )}
               >
                 {pageNum}
@@ -98,8 +98,8 @@ export function Pagination({ currentPage, totalPages, baseUrl }: PaginationProps
         <Link
           href={getHref(Math.min(totalPages, currentPage + 1))}
           className={cn(
-            "p-3 bg-card border-2 border-secondary/20 transition-all cursor-pointer",
-            currentPage >= totalPages ? "opacity-30 pointer-events-none" : "hover:border-secondary hover:text-secondary hover:shadow-[0_0_10px_rgba(34,197,94,0.3)]"
+            "p-3 bg-card border border-white/5 transition-all cursor-pointer flex items-center justify-center",
+            currentPage >= totalPages ? "opacity-30 pointer-events-none" : "hover:border-secondary/50 hover:bg-secondary/10 hover:text-secondary hover:shadow-[0_0_10px_rgba(34,197,94,0.3)]"
           )}
           aria-label="Next page"
         >
@@ -110,8 +110,8 @@ export function Pagination({ currentPage, totalPages, baseUrl }: PaginationProps
         <Link
           href={getHref(totalPages)}
           className={cn(
-            "p-3 bg-card border-2 border-secondary/20 transition-all cursor-pointer",
-            currentPage >= totalPages ? "opacity-30 pointer-events-none" : "hover:border-secondary hover:text-secondary hover:shadow-[0_0_10px_rgba(34,197,94,0.3)]"
+            "p-3 bg-card border border-white/5 transition-all cursor-pointer flex items-center justify-center",
+            currentPage >= totalPages ? "opacity-30 pointer-events-none" : "hover:border-secondary/50 hover:bg-secondary/10 hover:text-secondary hover:shadow-[0_0_10px_rgba(34,197,94,0.3)]"
           )}
           aria-label="Last page"
         >
