@@ -36,6 +36,8 @@
 @layer base {
   body {
     @apply bg-background text-foreground font-sans antialiased transition-colors duration-300;
+    scrollbar-width: thin !important;
+    scrollbar-color: var(--color-secondary) var(--color-background) !important;
   }
 
   h1, h2, h3, h4, h5, h6 {
@@ -110,4 +112,33 @@
 
 @utility clip-path-polygon-small {
   clip-path: polygon(5% 0, 100% 0, 100% 70%, 95% 100%, 0 100%, 0 30%);
+}
+
+/* Custom Global Cyberpunk Scrollbar */
+::-webkit-scrollbar {
+  width: 10px !important;
+  height: 10px !important;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-background) !important;
+  border-left: none !important;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-secondary) !important;
+  border-radius: 0 !important;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-muted-text) !important;
+}
+
+/* Custom Scrollbar for smaller inner areas like Modals */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px !important;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent !important;
+  border-left: none !important;
 }
