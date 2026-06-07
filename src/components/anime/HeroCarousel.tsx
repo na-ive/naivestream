@@ -90,7 +90,7 @@ export function HeroCarousel({ items }: HeroCarouselProps) {
             <span>Trending Now<span className="opacity-70">_</span></span>
           </div>
           
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif font-black leading-tight tracking-tighter text-foreground">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif font-black leading-tight tracking-tighter text-foreground line-clamp-2">
             {current.title}
           </h1>
 
