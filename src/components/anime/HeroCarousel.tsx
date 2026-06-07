@@ -142,13 +142,16 @@ export function HeroCarousel({ items }: HeroCarouselProps) {
           </button>
 
           {/* Indicators */}
-          <div className="absolute bottom-6 right-6 md:right-10 flex space-x-2 z-40">
+          <div className="absolute bottom-6 right-6 md:right-10 flex items-center space-x-2.5 z-40">
             {items.map((_, i) => (
               <button
                 key={i}
                 onClick={() => setCurrentPage(i)}
-                className={`transition-all duration-300 w-8 h-1 ${
-                  currentIndex === i ? 'bg-secondary' : 'bg-secondary/20 hover:bg-secondary/40'
+                aria-label={`Go to slide ${i + 1}`}
+                className={`transition-all duration-500 ease-out h-1.5 skew-x-[-20deg] ${
+                  currentIndex === i 
+                    ? 'w-10 bg-secondary shadow-[0_0_8px_rgba(34,197,94,0.8)]' 
+                    : 'w-4 bg-secondary/20 hover:bg-secondary/50'
                 } cursor-pointer`}
               />
             ))}
