@@ -34,7 +34,7 @@ export function HeroCarousel({ items }: HeroCarouselProps) {
 
   return (
     <section 
-      className="relative w-full h-[80vh] min-h-[550px] overflow-hidden group bg-background transition-colors duration-300"
+      className="relative w-full h-[60vh] min-h-[450px] overflow-hidden group bg-background transition-colors duration-300"
       onMouseEnter={() => setIsAutoPlaying(false)}
       onMouseLeave={() => setIsAutoPlaying(true)}
     >
@@ -56,21 +56,23 @@ export function HeroCarousel({ items }: HeroCarouselProps) {
             to fully visible (right side) — no overlay div, no hard edge possible.
           */}
           <div
-            className="absolute right-0 top-0 h-full w-[40%] overflow-hidden"
+            className="absolute right-0 top-0 h-full w-[60%] overflow-hidden"
             style={{
-              maskImage: 'linear-gradient(to right, transparent 0%, rgba(0,0,0,0.05) 10%, rgba(0,0,0,0.2) 20%, rgba(0,0,0,0.6) 35%, rgba(0,0,0,0.9) 55%, black 75%)',
-              WebkitMaskImage: 'linear-gradient(to right, transparent 0%, rgba(0,0,0,0.05) 10%, rgba(0,0,0,0.2) 20%, rgba(0,0,0,0.6) 35%, rgba(0,0,0,0.9) 55%, black 75%)',
+              maskImage: 'linear-gradient(to right, transparent 0%, rgba(0,0,0,0.1) 20%, rgba(0,0,0,0.4) 40%, rgba(0,0,0,0.8) 60%, black 80%)',
+              WebkitMaskImage: 'linear-gradient(to right, transparent 0%, rgba(0,0,0,0.1) 20%, rgba(0,0,0,0.4) 40%, rgba(0,0,0,0.8) 60%, black 80%)',
             }}
           >
             <img
               src={current.poster || current.image}
               alt={current.title}
-              className="w-full h-full object-cover object-center"
+              className="w-full h-full object-cover object-center opacity-90 brightness-75 dark:brightness-[0.6] contrast-110"
             />
+            {/* Additional overlay for ensuring text legibility */}
+            <div className="absolute inset-0 bg-gradient-to-r from-background via-background/50 to-transparent" />
           </div>
 
           {/* Bottom fade to background */}
-          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/20 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent pointer-events-none" />
         </motion.div>
       </AnimatePresence>
 
@@ -87,7 +89,7 @@ export function HeroCarousel({ items }: HeroCarouselProps) {
             <span>Trending Now</span>
           </div>
           
-          <h1 className="text-4xl md:text-7xl font-serif font-black leading-tight tracking-tighter text-foreground">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif font-black leading-tight tracking-tighter text-foreground">
             {current.title}
           </h1>
 
@@ -101,7 +103,7 @@ export function HeroCarousel({ items }: HeroCarouselProps) {
             </div>
           </div>
 
-          <p className="text-muted-text text-sm md:text-lg leading-relaxed max-w-lg font-bold">
+          <p className="text-muted-text text-sm md:text-base leading-relaxed max-w-lg font-bold">
             Stream the latest episodes of {current.title} and stay updated with your favorite series.
           </p>
 
@@ -110,11 +112,11 @@ export function HeroCarousel({ items }: HeroCarouselProps) {
               animeId={current.animeId || current.id} 
               animeTitle={current.title} 
               animeImage={current.poster || current.image} 
-              className="px-8 py-4 shadow-[0_0_15px_rgba(34,197,94,0.3)]"
+              className="px-6 py-3 text-sm shadow-[0_0_15px_rgba(34,197,94,0.3)]"
             />
             <Link 
               href={`/anime/${current.animeId || current.id}`} 
-              className="btn-accent px-8 py-4 text-sm"
+              className="btn-accent px-6 py-3 text-sm"
             >
               View Details
             </Link>
@@ -139,7 +141,7 @@ export function HeroCarousel({ items }: HeroCarouselProps) {
           </button>
 
           {/* Indicators */}
-          <div className="absolute bottom-10 right-10 flex space-x-2 z-40">
+          <div className="absolute bottom-6 right-6 md:right-10 flex space-x-2 z-40">
             {items.map((_, i) => (
               <button
                 key={i}

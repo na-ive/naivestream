@@ -54,7 +54,7 @@ export default async function HomePage() {
   const trendingItems = ongoing?.slice(0, 5) || [];
 
   return (
-    <div className="pb-20">
+    <div className="pb-20 -mt-20">
       {/* Hero Carousel Section */}
       <HeroCarousel items={trendingItems} />
 

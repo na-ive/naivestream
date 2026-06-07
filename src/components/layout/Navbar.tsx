@@ -13,6 +13,7 @@ export function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+  const [isScrolled, setIsScrolled] = useState(false);
   const dropdownRef = React.useRef<HTMLDivElement>(null);
   const { theme, setTheme } = useTheme();
   const pathname = usePathname();
@@ -21,6 +22,16 @@ export function Navbar() {
   // Handle mounting on client to avoid hydration mismatch
   useEffect(() => {
     setMounted(true);
+    
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 0);
+    };
+    
+    // Check initial scroll position
+    handleScroll();
+    
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   const handleSearch = (e: React.FormEvent) => {
@@ -58,7 +69,14 @@ export function Navbar() {
   ];
 
   return (
-    <nav className="sticky top-0 z-50 w-full bg-background/80 backdrop-blur-xl border-b border-secondary/10 shadow-[0_4px_30px_rgba(34,197,94,0.03)]">
+    <nav 
+      className={cn(
+        "fixed top-0 z-50 w-full transition-all duration-300",
+        isScrolled 
+          ? "bg-background/80 backdrop-blur-xl border-b border-secondary/10 shadow-[0_4px_30px_rgba(34,197,94,0.03)]" 
+          : "bg-transparent border-b border-transparent shadow-none"
+      )}
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20">
           {/* Logo */}

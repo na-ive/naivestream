@@ -48,14 +48,14 @@ export default async function AnimeDetailPage(props: { params: Promise<{ id: str
   const rating = typeof data.score === 'object' ? data.score.value : data.score;
 
   return (
-    <div className="pb-20">
+    <div className="pb-20 -mt-20">
       {/* Backdrop Header */}
       <div className="relative w-full h-[40vh] min-h-[300px] overflow-hidden">
         <div className="absolute inset-0">
           <img
             src={poster}
             alt={data.title}
-            className="w-full h-full object-cover blur-sm brightness-[0.3]"
+            className="w-full h-full object-cover blur-sm opacity-50 dark:opacity-100 brightness-110 dark:brightness-[0.3]"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-background to-transparent" />
         </div>
