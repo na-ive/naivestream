@@ -204,7 +204,7 @@ function WatchContent({ id }: { id: string }) {
                <Tooltip content={isTheaterMode ? 'Default View' : 'Theater Mode'} position="top">
                  <button 
                    onClick={() => setIsTheaterMode(!isTheaterMode)}
-                   className="p-3 bg-secondary/10 hover:bg-secondary text-secondary hover:text-black transition-all border border-secondary/30 hover:border-secondary shadow-[0_0_10px_rgba(34,197,94,0.1)] hover:shadow-[0_0_20px_rgba(34,197,94,0.4)]"
+                   className={`p-3 transition-all border ${isTheaterMode ? 'bg-secondary text-black border-secondary shadow-[0_0_20px_rgba(34,197,94,0.4)]' : 'bg-secondary/10 text-secondary hover:bg-secondary hover:text-black border-secondary/30 hover:border-secondary shadow-[0_0_10px_rgba(34,197,94,0.1)] hover:shadow-[0_0_20px_rgba(34,197,94,0.4)]'}`}
                    style={{ clipPath: 'polygon(5px 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 5px)' }}
                  >
                    <RectangleHorizontal className="w-4 h-4" />
@@ -213,7 +213,7 @@ function WatchContent({ id }: { id: string }) {
                <Tooltip content={isCinemaMode ? 'Exit Focus' : 'Focus Mode'} position="top">
                  <button 
                    onClick={() => setIsCinemaMode(!isCinemaMode)}
-                   className="p-3 bg-secondary/10 hover:bg-secondary text-secondary hover:text-black transition-all border border-secondary/30 hover:border-secondary shadow-[0_0_10px_rgba(34,197,94,0.1)] hover:shadow-[0_0_20px_rgba(34,197,94,0.4)]"
+                   className={`p-3 transition-all border ${isCinemaMode ? 'bg-secondary text-black border-secondary shadow-[0_0_20px_rgba(34,197,94,0.4)]' : 'bg-secondary/10 text-secondary hover:bg-secondary hover:text-black border-secondary/30 hover:border-secondary shadow-[0_0_10px_rgba(34,197,94,0.1)] hover:shadow-[0_0_20px_rgba(34,197,94,0.4)]'}`}
                    style={{ clipPath: 'polygon(5px 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 5px)' }}
                  >
                    <Monitor className="w-4 h-4" />
