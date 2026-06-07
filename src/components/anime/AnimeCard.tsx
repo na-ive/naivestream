@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { Play, Star, Terminal } from 'lucide-react';
+import { Bookmark, Play, Star, Terminal } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { BookmarkButton } from './BookmarkButton';
 import { cn } from '@/lib/utils';

@@ -4,6 +4,7 @@ import React from 'react';
 import { Bookmark } from 'lucide-react';
 import { useWatchlist } from '@/lib/hooks/useWatchlist';
 import { cn } from '@/lib/utils';
+import { Tooltip } from '@/components/ui/Tooltip';
 
 interface BookmarkButtonProps {
   animeId: string;
@@ -54,21 +55,22 @@ export function BookmarkButton({ animeId, animeTitle, animeImage, className, var
 
   // Icon variant
   return (
-    <button
-      onClick={handleClick}
-      title={active ? "Remove from Watchlist" : "Add to Watchlist"}
-      className={cn(
-        "p-2 bg-background/90 backdrop-blur-md border transition-all relative overflow-hidden group",
-        active ? "border-secondary text-secondary" : "border-white/10 text-muted-text hover:border-secondary/50 hover:text-foreground",
-        className
-      )}
-      style={{ clipPath: 'polygon(5px 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 5px)' }}
-    >
-      <div className={cn(
-        "absolute bottom-0 left-0 h-1 w-full transition-all",
-        active ? "bg-secondary scale-x-100" : "bg-secondary scale-x-0 group-hover:scale-x-100"
-      )} />
-      <Bookmark className={cn("w-4 h-4 relative z-10", active && "fill-current")} />
-    </button>
+    <Tooltip content={active ? "Remove from Watchlist" : "Add to Watchlist"} position="left">
+      <button
+        onClick={handleClick}
+        className={cn(
+          "p-2 bg-background/90 backdrop-blur-md border transition-all relative overflow-hidden group",
+          active ? "border-secondary text-secondary hover:border-red-500 hover:text-red-500 hover:bg-red-500/10" : "border-white/10 text-muted-text hover:border-secondary/50 hover:text-foreground",
+          className
+        )}
+        style={{ clipPath: 'polygon(5px 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 5px)' }}
+      >
+        <div className={cn(
+          "absolute bottom-0 left-0 h-1 w-full transition-all",
+          active ? "bg-secondary scale-x-100 group-hover:bg-red-500" : "bg-secondary scale-x-0 group-hover:scale-x-100"
+        )} />
+        <Bookmark className={cn("w-4 h-4 relative z-10", active && "fill-current")} />
+      </button>
+    </Tooltip>
   );
 }
