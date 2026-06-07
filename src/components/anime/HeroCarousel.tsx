@@ -34,7 +34,7 @@ export function HeroCarousel({ items }: HeroCarouselProps) {
 
   return (
     <section 
-      className="relative w-full h-[80vh] min-h-[550px] overflow-hidden group bg-black"
+      className="relative w-full h-[80vh] min-h-[550px] overflow-hidden group bg-background transition-colors duration-300"
       onMouseEnter={() => setIsAutoPlaying(false)}
       onMouseLeave={() => setIsAutoPlaying(true)}
     >
@@ -50,9 +50,10 @@ export function HeroCarousel({ items }: HeroCarouselProps) {
           <img
             src={current.poster || current.image}
             alt={current.title}
-            className="w-full h-full object-cover opacity-60"
+            className="w-full h-full object-cover opacity-40 dark:opacity-60"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-background via-background/50 to-transparent" />
+          {/* Gradients that perfectly match theme colors for contrast */}
+          <div className="absolute inset-0 bg-gradient-to-r from-background via-background/70 to-transparent" />
           <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent" />
         </motion.div>
       </AnimatePresence>
@@ -70,7 +71,7 @@ export function HeroCarousel({ items }: HeroCarouselProps) {
             <span>Trending Now</span>
           </div>
           
-          <h1 className="text-4xl md:text-7xl font-serif font-black leading-tight tracking-tighter text-white">
+          <h1 className="text-4xl md:text-7xl font-serif font-black leading-tight tracking-tighter text-foreground">
             {current.title}
           </h1>
 
@@ -84,7 +85,7 @@ export function HeroCarousel({ items }: HeroCarouselProps) {
             </div>
           </div>
 
-          <p className="text-gray-300 text-sm md:text-lg leading-relaxed max-w-lg">
+          <p className="text-foreground dark:text-gray-300 text-sm md:text-lg leading-relaxed max-w-lg font-bold">
             Stream the latest episodes of {current.title} and stay updated with your favorite series.
           </p>
 
@@ -93,11 +94,11 @@ export function HeroCarousel({ items }: HeroCarouselProps) {
               animeId={current.animeId || current.id} 
               animeTitle={current.title} 
               animeImage={current.poster || current.image} 
-              className="px-8 py-4"
+              className="px-8 py-4 shadow-[0_0_15px_rgba(34,197,94,0.3)]"
             />
             <Link 
               href={`/anime/${current.animeId || current.id}`} 
-              className="px-8 py-4 border-2 border-secondary/40 hover:border-secondary text-white transition-all font-serif font-black uppercase tracking-widest text-sm"
+              className="btn-accent px-8 py-4 text-sm"
             >
               View Details
             </Link>
@@ -110,13 +111,13 @@ export function HeroCarousel({ items }: HeroCarouselProps) {
         <>
           <button 
             onClick={prevSlide}
-            className="absolute left-6 top-1/2 -translate-y-1/2 w-12 h-12 flex items-center justify-center bg-black/40 border border-secondary/20 text-secondary opacity-0 group-hover:opacity-100 hover:bg-secondary hover:text-white dark:hover:text-black transition-all cursor-pointer"
+            className="absolute left-6 top-1/2 -translate-y-1/2 w-12 h-12 flex items-center justify-center bg-card/80 dark:bg-black/40 border border-secondary/20 text-secondary opacity-0 group-hover:opacity-100 hover:bg-secondary hover:text-white dark:hover:text-black transition-all cursor-pointer shadow-lg"
           >
             <ChevronLeft className="w-6 h-6" />
           </button>
           <button 
             onClick={nextSlide}
-            className="absolute right-6 top-1/2 -translate-y-1/2 w-12 h-12 flex items-center justify-center bg-black/40 border border-secondary/20 text-secondary opacity-0 group-hover:opacity-100 hover:bg-secondary hover:text-white dark:hover:text-black transition-all cursor-pointer"
+            className="absolute right-6 top-1/2 -translate-y-1/2 w-12 h-12 flex items-center justify-center bg-card/80 dark:bg-black/40 border border-secondary/20 text-secondary opacity-0 group-hover:opacity-100 hover:bg-secondary hover:text-white dark:hover:text-black transition-all cursor-pointer shadow-lg"
           >
             <ChevronRight className="w-6 h-6" />
           </button>
@@ -128,7 +129,7 @@ export function HeroCarousel({ items }: HeroCarouselProps) {
                 key={i}
                 onClick={() => setCurrentPage(i)}
                 className={`transition-all duration-300 w-8 h-1 ${
-                  currentIndex === i ? 'bg-secondary' : 'bg-secondary/20'
+                  currentIndex === i ? 'bg-secondary' : 'bg-secondary/20 hover:bg-secondary/40'
                 } cursor-pointer`}
               />
             ))}
