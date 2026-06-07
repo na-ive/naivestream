@@ -50,7 +50,7 @@ export const AnimeAPI = {
     getDetails: (slug: string) => fetchWithRetry(`/anime/${slug}`),
     getEpisode: (slug: string) => fetchWithRetry(`/episode/${slug}`),
     getServer: (id: string) => fetchWithRetry(`/server/${id}`),
-    search: (query: string) => fetchWithRetry(`/search?q=${encodeURIComponent(query)}`),
+    search: (query: string) => fetchWithRetry(`/search/${encodeURIComponent(query)}`),
     getAZList: () => fetchWithRetry('/unlimited', { 
       next: { revalidate: 2592000, tags: ['az-list'] } // 30 days
     }),

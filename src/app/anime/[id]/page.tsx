@@ -12,12 +12,18 @@ async function getAnimeDetails(id: string) {
   // Try Otakudesu first
   const res = await AnimeAPI.otakudesu.getDetails(id);
   if (res && res.ok !== false && res.data) {
+    if (!res.data.title) {
+      res.data.title = res.data.english || res.data.japanese || res.data.synonyms?.split(',')[0] || id.replace(/-/g, ' ');
+    }
     return { source: 'otakudesu', data: res.data };
   }
 
   // Fallback to Samehadaku
   const fallbackRes = await AnimeAPI.samehadaku.getDetails(id);
   if (fallbackRes && fallbackRes.ok !== false && fallbackRes.data) {
+    if (!fallbackRes.data.title) {
+      fallbackRes.data.title = fallbackRes.data.english || fallbackRes.data.japanese || fallbackRes.data.synonyms?.split(',')[0] || id.replace(/-/g, ' ');
+    }
     return { source: 'samehadaku', data: fallbackRes.data };
   }
 
