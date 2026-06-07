@@ -12,6 +12,8 @@ export function Navbar() {
   const [mounted, setMounted] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+  const dropdownRef = React.useRef<HTMLDivElement>(null);
   const { theme, setTheme } = useTheme();
   const pathname = usePathname();
   const router = useRouter();
@@ -29,6 +31,17 @@ export function Navbar() {
     }
   };
 
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setOpenDropdown(null);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
   const navLinks = [
     { name: 'Home', href: '/' },
     { 
@@ -45,7 +58,7 @@ export function Navbar() {
   ];
 
   return (
-    <nav className="sticky top-0 z-50 w-full bg-background/80 backdrop-blur-xl border-b-2 border-secondary/20 shadow-sm">
+    <nav className="sticky top-0 z-50 w-full bg-background/80 backdrop-blur-xl border-b border-secondary/10 shadow-[0_4px_30px_rgba(34,197,94,0.03)]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20">
           {/* Logo */}
@@ -70,9 +83,12 @@ export function Navbar() {
                 placeholder="Search..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full bg-card border-2 border-secondary/20 focus:border-secondary rounded-none py-2.5 pl-12 pr-10 focus:outline-none transition-all font-bold text-sm tracking-widest text-foreground placeholder:text-muted-foreground"
+                className="w-full bg-card/40 border border-secondary/20 hover:border-secondary/40 focus:border-secondary focus:bg-card rounded-none py-2.5 pl-14 pr-10 focus:outline-none transition-all font-mono font-bold text-sm tracking-widest text-foreground placeholder:text-muted-foreground"
+                style={{ clipPath: 'polygon(12px 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%, 0 12px)' }}
               />
-              <Search className="absolute left-4 top-3 text-secondary w-5 h-5" />
+              <div className="absolute left-1.5 top-1.5 bottom-1.5 w-10 bg-secondary/20 flex items-center justify-center pointer-events-none transition-colors group-focus-within:bg-secondary/30" style={{ clipPath: 'polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px)' }}>
+                <Search className="text-secondary w-3.5 h-3.5" />
+              </div>
               {searchQuery && (
                 <button
                   type="button"
@@ -92,27 +108,37 @@ export function Navbar() {
             {navLinks.map((link) => {
               if (link.type === 'dropdown') {
                 return (
-                  <div key={link.name} className="relative group py-2 cursor-pointer">
-                    <span className="flex items-center text-xs font-bold uppercase tracking-[0.2em] transition-all hover:text-secondary text-foreground/70 group-hover:text-secondary">
+                  <div key={link.name} className="relative py-2" ref={dropdownRef}>
+                    <button 
+                      type="button"
+                      onClick={() => setOpenDropdown(prev => prev === link.name ? null : link.name)}
+                      className={cn(
+                        "flex items-center text-xs font-mono font-bold uppercase tracking-[0.2em] transition-all hover:text-secondary cursor-pointer",
+                        openDropdown === link.name ? "text-secondary" : "text-foreground/70"
+                      )}
+                    >
                       {link.name}
-                      <ChevronDown className="w-4 h-4 ml-1 transition-transform group-hover:rotate-180" />
-                    </span>
-                    <div className="absolute top-full left-0 w-48 pt-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
-                      <div className="bg-card border-2 border-secondary/20 shadow-xl flex flex-col">
-                        {link.items?.map((item) => (
-                          <Link
-                            key={item.href}
-                            href={item.href}
-                            className={cn(
-                              "px-4 py-3 text-xs font-bold uppercase tracking-[0.2em] transition-all hover:bg-secondary/10 hover:text-secondary border-b border-white/5 last:border-0",
-                              pathname === item.href ? "text-secondary bg-secondary/5" : "text-foreground/70"
-                            )}
-                          >
-                            {item.name}
-                          </Link>
-                        ))}
+                      <ChevronDown className={cn("w-4 h-4 ml-1 transition-transform", openDropdown === link.name ? "rotate-180" : "")} />
+                    </button>
+                    {openDropdown === link.name && (
+                      <div className="absolute top-full left-0 w-48 pt-2 z-50 animate-in fade-in slide-in-from-top-2 duration-200">
+                        <div className="bg-card border-2 border-secondary/20 shadow-xl flex flex-col">
+                          {link.items?.map((item) => (
+                            <Link
+                              key={item.href}
+                              href={item.href}
+                              onClick={() => setOpenDropdown(null)}
+                              className={cn(
+                                "px-4 py-3 text-xs font-mono font-bold uppercase tracking-[0.2em] transition-all hover:bg-secondary/10 hover:text-secondary border-b border-white/5 last:border-0",
+                                pathname === item.href ? "text-secondary bg-secondary/5" : "text-foreground/70"
+                              )}
+                            >
+                              {item.name}
+                            </Link>
+                          ))}
+                        </div>
                       </div>
-                    </div>
+                    )}
                   </div>
                 );
               }
@@ -122,7 +148,7 @@ export function Navbar() {
                   key={link.href}
                   href={link.href}
                   className={cn(
-                    "text-xs font-bold uppercase tracking-[0.2em] transition-all hover:text-secondary relative group py-2",
+                    "text-xs font-mono font-bold uppercase tracking-[0.2em] transition-all hover:text-secondary relative group py-2",
                     pathname === link.href ? "text-secondary" : "text-foreground/70"
                   )}
                 >
@@ -181,9 +207,12 @@ export function Navbar() {
                 placeholder="Search..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full bg-card border-2 border-secondary/30 rounded-none py-4 pl-12 pr-12 focus:outline-none text-foreground font-bold text-sm tracking-widest"
+                className="w-full bg-card/40 border border-secondary/20 focus:border-secondary focus:bg-card rounded-none py-4 pl-14 pr-12 focus:outline-none transition-all text-foreground font-mono font-bold text-sm tracking-widest"
+                style={{ clipPath: 'polygon(12px 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%, 0 12px)' }}
               />
-              <Search className="absolute left-4 top-[18px] text-secondary w-5 h-5" />
+              <div className="absolute left-2 top-2 bottom-2 w-10 bg-secondary/20 flex items-center justify-center pointer-events-none" style={{ clipPath: 'polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px)' }}>
+                <Search className="text-secondary w-4 h-4" />
+              </div>
               {searchQuery && (
                 <button
                   type="button"
@@ -201,7 +230,7 @@ export function Navbar() {
                 if (link.type === 'dropdown') {
                   return (
                     <div key={link.name} className="flex flex-col">
-                      <div className="p-5 font-bold uppercase tracking-widest text-foreground/70 bg-white/5">
+                      <div className="p-5 font-mono font-bold uppercase tracking-widest text-foreground/70 bg-white/5">
                         {link.name}
                       </div>
                       <div className="flex flex-col pl-4 border-l-4 border-transparent">
@@ -211,7 +240,7 @@ export function Navbar() {
                             href={item.href}
                             onClick={() => setIsMenuOpen(false)}
                             className={cn(
-                              "flex items-center p-4 font-bold uppercase tracking-widest border-l-4 transition-all",
+                              "flex items-center p-4 font-mono font-bold uppercase tracking-widest border-l-4 transition-all",
                               pathname === item.href 
                                 ? "bg-secondary/10 border-secondary text-secondary" 
                                 : "border-transparent text-foreground/50 hover:text-foreground"
@@ -231,7 +260,7 @@ export function Navbar() {
                     href={link.href}
                     onClick={() => setIsMenuOpen(false)}
                     className={cn(
-                      "flex items-center p-5 font-bold uppercase tracking-widest border-l-4 transition-all",
+                      "flex items-center p-5 font-mono font-bold uppercase tracking-widest border-l-4 transition-all",
                       pathname === link.href 
                         ? "bg-secondary/10 border-secondary text-secondary" 
                         : "border-transparent text-foreground/50 hover:text-foreground"
