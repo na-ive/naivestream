@@ -69,7 +69,6 @@ export default async function SchedulePage({ searchParams }: SchedulePageProps) 
                     ? 'bg-secondary text-background shadow-[0_0_15px_rgba(34,197,94,0.4)] pointer-events-none'
                     : 'bg-background/80 text-foreground/70 hover:bg-secondary/20 hover:text-secondary border border-secondary/20 hover:border-secondary/50'
                 }`}
-                style={{ clipPath: 'polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px)' }}
               >
                 {day}
               </Link>

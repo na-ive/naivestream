@@ -67,7 +67,6 @@ export default async function AZListPage(props: { searchParams: Promise<{ letter
                   ? "bg-secondary text-background shadow-[0_0_15px_rgba(34,197,94,0.4)]"
                   : "bg-background/80 text-foreground/70 hover:bg-secondary/20 hover:text-secondary border border-secondary/20 hover:border-secondary/50"
               }`}
-              style={{ clipPath: 'polygon(4px 0, 100% 0, 100% calc(100% - 4px), calc(100% - 4px) 100%, 0 100%, 0 4px)' }}
             >
               {letter}
             </Link>
@@ -88,12 +87,13 @@ export default async function AZListPage(props: { searchParams: Promise<{ letter
               <Link
                 key={`${anime.animeId}-${idx}`}
                 href={`/anime/${anime.animeId}`}
-                className="group p-4 bg-card border border-secondary/10 hover:border-secondary hover:bg-secondary/5 transition-all flex items-center justify-between"
+                className="group p-4 bg-background/30 hover:bg-secondary/10 border-b border-white/5 transition-all flex items-center justify-between relative overflow-hidden"
               >
-                <span className="font-bold text-sm group-hover:text-secondary line-clamp-1 mr-4">
+                <div className="absolute inset-y-0 left-0 w-1 bg-secondary scale-y-0 group-hover:scale-y-100 transition-transform origin-top" />
+                <span className="font-bold text-sm group-hover:text-secondary line-clamp-1 mr-4 uppercase tracking-wider transition-colors pl-2">
                   {anime.title}
                 </span>
-                <ChevronRight className="w-4 h-4 text-muted-text group-hover:text-secondary shrink-0" />
+                <ChevronRight className="w-4 h-4 text-muted-text group-hover:text-secondary shrink-0 transition-transform group-hover:translate-x-1" />
               </Link>
             ))}
           </div>
