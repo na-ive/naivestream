@@ -50,15 +50,15 @@ export function HeroCarousel({ items }: HeroCarouselProps) {
           <img
             src={current.poster || current.image}
             alt={current.title}
-            className="w-full h-full object-cover opacity-40 dark:opacity-60"
+            className="w-full h-full object-cover opacity-40 dark:opacity-60 transition-opacity duration-500"
           />
           {/* Gradients that perfectly match theme colors for contrast */}
-          <div className="absolute inset-0 bg-gradient-to-r from-background via-background/70 to-transparent" />
-          <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-r from-background via-background/70 to-transparent z-10" />
+          <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent z-10" />
         </motion.div>
       </AnimatePresence>
 
-      <div className="relative h-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col justify-center">
+      <div className="relative z-20 h-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col justify-center">
         <motion.div 
           key={`content-${current.animeId || current.id}`}
           initial={{ y: 20, opacity: 0 }}
@@ -106,30 +106,30 @@ export function HeroCarousel({ items }: HeroCarouselProps) {
         </motion.div>
       </div>
 
-      {/* Controls */}
+      {/* Controls with theme-aware colors */}
       {items.length > 1 && (
         <>
           <button 
             onClick={prevSlide}
-            className="absolute left-6 top-1/2 -translate-y-1/2 w-12 h-12 flex items-center justify-center bg-card/80 dark:bg-black/40 border border-secondary/20 text-secondary opacity-0 group-hover:opacity-100 hover:bg-secondary hover:text-white dark:hover:text-black transition-all cursor-pointer shadow-lg"
+            className="absolute left-6 top-1/2 -translate-y-1/2 w-12 h-12 flex items-center justify-center bg-control-bg border border-control-border text-secondary opacity-0 group-hover:opacity-100 hover:bg-secondary hover:text-white dark:hover:text-black transition-all cursor-pointer shadow-lg z-30"
           >
             <ChevronLeft className="w-6 h-6" />
           </button>
           <button 
             onClick={nextSlide}
-            className="absolute right-6 top-1/2 -translate-y-1/2 w-12 h-12 flex items-center justify-center bg-card/80 dark:bg-black/40 border border-secondary/20 text-secondary opacity-0 group-hover:opacity-100 hover:bg-secondary hover:text-white dark:hover:text-black transition-all cursor-pointer shadow-lg"
+            className="absolute right-6 top-1/2 -translate-y-1/2 w-12 h-12 flex items-center justify-center bg-control-bg border border-control-border text-secondary opacity-0 group-hover:opacity-100 hover:bg-secondary hover:text-white dark:hover:text-black transition-all cursor-pointer shadow-lg z-30"
           >
             <ChevronRight className="w-6 h-6" />
           </button>
 
           {/* Indicators */}
-          <div className="absolute bottom-10 right-10 flex space-x-2">
+          <div className="absolute bottom-10 right-10 flex space-x-2 z-30">
             {items.map((_, i) => (
               <button
                 key={i}
                 onClick={() => setCurrentPage(i)}
                 className={`transition-all duration-300 w-8 h-1 ${
-                  currentIndex === i ? 'bg-secondary' : 'bg-secondary/20 hover:bg-secondary/40'
+                  currentIndex === i ? 'bg-secondary' : 'bg-control-border hover:bg-secondary/40'
                 } cursor-pointer`}
               />
             ))}

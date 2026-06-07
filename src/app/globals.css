@@ -12,8 +12,10 @@
   --color-card-foreground: #0F172A;
   --color-border: #E2E8F0;
   
-  /* Custom sub-text color for reliable theme switching */
+  /* Custom theme-aware variables */
   --color-muted-text: #374151; /* gray-700 */
+  --color-control-bg: rgba(255, 255, 255, 0.8);
+  --color-control-border: rgba(22, 163, 74, 0.2);
 
   --font-sans: 'Exo 2', ui-sans-serif, system-ui, sans-serif;
   --font-serif: 'Orbitron', ui-serif, Georgia, serif;
@@ -31,6 +33,8 @@
   --color-border: #1E293B;
   
   --color-muted-text: #D1D5DB; /* gray-300 */
+  --color-control-bg: rgba(0, 0, 0, 0.4);
+  --color-control-border: rgba(34, 197, 94, 0.2);
 }
 
 @layer base {
