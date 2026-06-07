@@ -164,8 +164,8 @@ export function Navbar() {
 
               return (
                 <Link
-                  key={link.href}
-                  href={link.href}
+                  key={link.name}
+                  href={link.href as string}
                   className={cn(
                     "text-xs font-mono font-bold uppercase tracking-[0.2em] transition-all hover:text-secondary relative group py-2",
                     pathname === link.href ? "text-secondary" : "text-foreground/70"
@@ -277,8 +277,8 @@ export function Navbar() {
 
                 return (
                   <Link
-                    key={link.href}
-                    href={link.href}
+                    key={link.name}
+                    href={link.href as string}
                     onClick={() => setIsMenuOpen(false)}
                     className={cn(
                       "flex items-center p-5 font-mono font-bold uppercase tracking-widest border-l-4 transition-all",
