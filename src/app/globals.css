@@ -6,15 +6,15 @@
 
 @theme {
   /* Default (Light) Theme */
-  --color-background: #F8FAFC;
-  --color-foreground: #0F172A;
-  --color-primary: #1E293B;
+  --color-background: #ECF5F0;
+  --color-foreground: #0A2617;
+  --color-primary: #D7E8DE;
   --color-secondary: #16A34A;
   --color-accent: #16A34A;
-  --color-card: #FFFFFF;
-  --color-card-foreground: #0F172A;
-  --color-border: #E2E8F0;
-  --color-muted-text: #64748B;
+  --color-card: #F4F9F6;
+  --color-card-foreground: #0A2617;
+  --color-border: #C5DACF;
+  --color-muted-text: #527A65;
 
   --font-sans: 'Exo 2', ui-sans-serif, system-ui, sans-serif;
   --font-serif: 'Orbitron', ui-serif, Georgia, serif;
@@ -22,15 +22,15 @@
 
 /* Hard override for variable-based styling */
 .dark {
-  --color-background: #020617;
-  --color-foreground: #F8FAFC;
-  --color-primary: #0F172A;
+  --color-background: #040D09;
+  --color-foreground: #ECFDF5;
+  --color-primary: #0A2118;
   --color-secondary: #22C55E;
   --color-accent: #22C55E;
-  --color-card: #0F172A;
-  --color-card-foreground: #F8FAFC;
-  --color-border: #1E293B;
-  --color-muted-text: #94A3B8;
+  --color-card: #081711;
+  --color-card-foreground: #ECFDF5;
+  --color-border: #113224;
+  --color-muted-text: #A1BBAF;
 }
 
 @layer base {
