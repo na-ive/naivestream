@@ -1,6 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;500;600;700&family=Orbitron:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
 
+/* Enable manual dark mode toggling in Tailwind v4 */
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
   /* Default (Light) Theme */
   --color-background: #F8FAFC;
@@ -11,17 +14,12 @@
   --color-card: #FFFFFF;
   --color-card-foreground: #0F172A;
   --color-border: #E2E8F0;
-  
-  /* Custom theme-aware variables */
-  --color-muted-text: #374151; /* gray-700 */
-  --color-control-bg: rgba(255, 255, 255, 0.8);
-  --color-control-border: rgba(22, 163, 74, 0.2);
 
   --font-sans: 'Exo 2', ui-sans-serif, system-ui, sans-serif;
   --font-serif: 'Orbitron', ui-serif, Georgia, serif;
 }
 
-/* Hard override for dark mode */
+/* Hard override for variable-based styling */
 .dark {
   --color-background: #020617;
   --color-foreground: #F8FAFC;
@@ -31,10 +29,6 @@
   --color-card: #0F172A;
   --color-card-foreground: #F8FAFC;
   --color-border: #1E293B;
-  
-  --color-muted-text: #D1D5DB; /* gray-300 */
-  --color-control-bg: rgba(0, 0, 0, 0.4);
-  --color-control-border: rgba(34, 197, 94, 0.2);
 }
 
 @layer base {
