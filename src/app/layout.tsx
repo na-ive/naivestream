@@ -18,8 +18,11 @@ const serif = Orbitron({
 });
 
 export const metadata: Metadata = {
-  title: "NaiveStream - High-Bandwidth Media System",
-  description: "Futuristic media streaming platform for high-priority visual data.",
+  title: {
+    template: "%s | NaiveStream",
+    default: "NaiveStream",
+  },
+  description: "A personal anime streaming web interface.",
 };
 
 export default function RootLayout({

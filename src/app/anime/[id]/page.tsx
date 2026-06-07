@@ -1,4 +1,5 @@
 import { AnimeAPI } from "@/lib/api";
+import type { Metadata } from 'next';
 import { ChevronRight, Play, Info, List, Star } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -24,6 +25,26 @@ async function getAnimeDetails(id: string) {
   }
 
   return null;
+}
+
+export async function generateMetadata(props: { params: Promise<{ id: string }> }): Promise<Metadata> {
+  const params = await props.params;
+  const { id } = params;
+  
+  if (!id || id === 'undefined') {
+    return { title: 'Not Found' };
+  }
+
+  const result = await getAnimeDetails(id);
+  
+  if (!result || !result.data) {
+    return { title: 'Not Found' };
+  }
+
+  return {
+    title: result.data.title || 'Anime Details',
+    description: `Watch ${result.data.title} on NaiveStream`,
+  };
 }
 
 export default async function AnimeDetailPage(props: { params: Promise<{ id: string }> }) {
