@@ -85,6 +85,7 @@ export default async function AnimeDetailPage(props: { params: Promise<{ id: str
   const animeType = jikanData?.type || 'Unknown';
   const animeSource = jikanData?.source || 'Unknown';
   const ageRating = jikanData?.rating || 'Unknown';
+  const duration = jikanData?.duration || 'Unknown';
   const season = jikanData?.season ? `${jikanData.season} ${jikanData.year}` : 'Unknown';
   let trailerUrl = jikanData?.trailer?.embed_url;
   if (trailerUrl) {
@@ -166,6 +167,10 @@ export default async function AnimeDetailPage(props: { params: Promise<{ id: str
                     <div className="flex justify-between items-start text-xs font-bold uppercase tracking-wider gap-4">
                       <span className="text-muted-text shrink-0">Aired</span>
                       <span className="text-foreground text-right leading-relaxed">{aired}</span>
+                    </div>
+                    <div className="flex justify-between items-start text-xs font-bold uppercase tracking-wider gap-4">
+                      <span className="text-muted-text shrink-0">Duration</span>
+                      <span className="text-foreground text-right leading-relaxed">{duration}</span>
                     </div>
                     <div className="flex justify-between items-start text-xs font-bold uppercase tracking-wider gap-4">
                       <span className="text-muted-text shrink-0">Rating</span>
