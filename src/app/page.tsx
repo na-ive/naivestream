@@ -61,13 +61,32 @@ export default async function HomePage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12 space-y-16">
         {/* Ongoing Section */}
         <section>
-          <div className="flex items-center justify-between mb-8">
-            <div className="space-y-1">
-              <h2 className="text-2xl font-bold">Ongoing Anime</h2>
-              <p className="text-sm text-muted-text">Recently updated series</p>
+          <div className="flex items-end justify-between mb-8 border-b border-white/5 pb-4">
+            <div className="space-y-2">
+              <div className="flex items-baseline space-x-3">
+                <span className="text-secondary font-mono font-black text-xl leading-none">{'//'}</span>
+                <h2 className="text-2xl md:text-3xl font-serif font-black uppercase tracking-tighter">Ongoing Anime</h2>
+              </div>
+              <p className="text-[10px] font-mono font-bold uppercase tracking-[0.3em] text-muted-text pl-8">
+                Recently updated series
+              </p>
             </div>
-            <Link href="/ongoing" className="flex items-center text-sm font-medium text-secondary hover:underline">
-              View All <ChevronRight className="w-4 h-4 ml-1" />
+            <Link 
+              href="/ongoing" 
+              className="group hidden sm:flex items-center space-x-2 px-4 py-2 bg-card/30 hover:bg-secondary/10 border border-white/5 hover:border-secondary/30 transition-colors text-[10px] uppercase font-black tracking-widest text-muted-text hover:text-foreground"
+            >
+              <span>View All</span> 
+              <ChevronRight className="w-3.5 h-3.5 text-secondary group-hover:translate-x-1 transition-transform" />
+            </Link>
+          </div>
+          {/* Mobile View All */}
+          <div className="sm:hidden mb-6 flex justify-end">
+            <Link 
+              href="/ongoing" 
+              className="group flex items-center space-x-2 text-[10px] uppercase font-black tracking-widest text-secondary"
+            >
+              <span>View All</span> 
+              <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
             </Link>
           </div>
           <div className="anime-grid">
@@ -87,13 +106,32 @@ export default async function HomePage() {
 
         {/* Complete Section */}
         <section>
-          <div className="flex items-center justify-between mb-8">
-            <div className="space-y-1">
-              <h2 className="text-2xl font-bold">Completed Series</h2>
-              <p className="text-sm text-muted-text">Watch the full story</p>
+          <div className="flex items-end justify-between mb-8 border-b border-white/5 pb-4">
+            <div className="space-y-2">
+              <div className="flex items-baseline space-x-3">
+                <span className="text-secondary font-mono font-black text-xl leading-none">{'//'}</span>
+                <h2 className="text-2xl md:text-3xl font-serif font-black uppercase tracking-tighter">Completed Series</h2>
+              </div>
+              <p className="text-[10px] font-mono font-bold uppercase tracking-[0.3em] text-muted-text pl-8">
+                Watch the full story
+              </p>
             </div>
-            <Link href="/completed" className="flex items-center text-sm font-medium text-secondary hover:underline">
-              View All <ChevronRight className="w-4 h-4 ml-1" />
+            <Link 
+              href="/completed" 
+              className="group hidden sm:flex items-center space-x-2 px-4 py-2 bg-card/30 hover:bg-secondary/10 border border-white/5 hover:border-secondary/30 transition-colors text-[10px] uppercase font-black tracking-widest text-muted-text hover:text-foreground"
+            >
+              <span>View All</span> 
+              <ChevronRight className="w-3.5 h-3.5 text-secondary group-hover:translate-x-1 transition-transform" />
+            </Link>
+          </div>
+          {/* Mobile View All */}
+          <div className="sm:hidden mb-6 flex justify-end">
+            <Link 
+              href="/completed" 
+              className="group flex items-center space-x-2 text-[10px] uppercase font-black tracking-widest text-secondary"
+            >
+              <span>View All</span> 
+              <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
             </Link>
           </div>
           <div className="anime-grid">
