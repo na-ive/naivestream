@@ -4,7 +4,7 @@ import React, { useEffect, useState, Suspense, use, useCallback } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { AnimeAPI } from '@/lib/api';
 import { useHistory } from '@/lib/hooks/useHistory';
-import { ChevronRight, Layout, Play, Settings, Share2, Loader2, Video, Terminal } from 'lucide-react';
+import { ChevronRight, Layout, Play, Settings, Share2, Loader2, Video, Server } from 'lucide-react';
 import Link from 'next/link';
 
 function WatchContent({ id }: { id: string }) {
@@ -35,9 +35,6 @@ function WatchContent({ id }: { id: string }) {
     
     if (data) {
       setEpisodeData(data);
-      
-      // RESTORE THUMBNAIL: Use defaultStreamingUrl initially 
-      // It usually points to a cleaner embed player with metadata/thumbnails.
       setCurrentUrl(data.defaultStreamingUrl || '');
       
       // Save to history
@@ -96,9 +93,9 @@ function WatchContent({ id }: { id: string }) {
     <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
       {/* Breadcrumbs */}
       <div className="flex items-center space-x-2 text-[10px] font-black uppercase tracking-[0.2em] text-gray-500 mb-6 overflow-hidden whitespace-nowrap">
-        <Link href="/" className="hover:text-secondary">Home</Link>
+        <Link href="/" className="hover:text-secondary transition-colors">Home</Link>
         <ChevronRight className="w-4 h-4 shrink-0" />
-        <Link href={`/anime/${animeId}`} className="hover:text-secondary truncate max-w-[200px]">{animeTitle}</Link>
+        <Link href={`/anime/${animeId}`} className="hover:text-secondary truncate max-w-[200px] transition-colors">{animeTitle}</Link>
         <ChevronRight className="w-4 h-4 shrink-0" />
         <span className="text-secondary truncate">{episodeData.title}</span>
       </div>
@@ -133,8 +130,8 @@ function WatchContent({ id }: { id: string }) {
              <div className="p-8 bg-card border-l-4 border-secondary shadow-lg">
                 <h1 className="text-3xl font-serif font-black tracking-tighter uppercase leading-none">{episodeData.title}</h1>
                 <p className="text-secondary font-bold text-xs mt-3 tracking-[0.3em] uppercase opacity-60 flex items-center">
-                  <Terminal className="w-3 h-3 mr-2" />
-                  Streaming from {source} node
+                  <Server className="w-3 h-3 mr-2" />
+                  Streaming from {source} provider
                 </p>
              </div>
           </div>
@@ -160,7 +157,7 @@ function WatchContent({ id }: { id: string }) {
                   href={`/anime/${animeId}`}
                   className="btn-accent w-full py-4 text-xs tracking-[0.2em]"
                 >
-                  Unit List
+                  Episode List
                 </Link>
              </div>
           </div>
@@ -168,7 +165,7 @@ function WatchContent({ id }: { id: string }) {
           <div className="bg-card border-2 border-secondary/10 p-6 space-y-6">
             <h3 className="flex items-center text-xs font-black uppercase tracking-[0.2em] text-gray-500">
               <Video className="w-4 h-4 mr-2 text-secondary" />
-              Source Matrix
+              Video Servers
             </h3>
             <div className="space-y-6 max-h-[400px] overflow-y-auto pr-2 no-scrollbar">
               {episodeData.server?.qualities?.map((quality: any) => (
@@ -182,7 +179,7 @@ function WatchContent({ id }: { id: string }) {
                       <button
                         key={server.serverId}
                         onClick={() => changeServer(server.serverId)}
-                        className="px-3 py-2 bg-background border border-secondary/20 text-[10px] font-bold uppercase tracking-tighter hover:border-secondary hover:text-secondary transition-all"
+                        className="px-3 py-2 bg-background border border-secondary/20 text-[10px] font-bold uppercase tracking-tighter hover:border-secondary hover:text-secondary transition-all cursor-pointer"
                       >
                         {server.title}
                       </button>

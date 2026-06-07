@@ -80,7 +80,7 @@ export function HeroCarousel({ items }: HeroCarouselProps) {
             </div>
             <div className="flex items-center space-x-2 px-3 py-1 border border-secondary/30 bg-card/40 backdrop-blur-md font-bold text-xs text-secondary tracking-widest skew-x-[-15deg]">
               <Calendar className="w-4 h-4 mr-1 inline-block skew-x-[15deg]" />
-              <span className="inline-block skew-x-[15deg]">{current.releaseDay || current.day || 'Live'}</span>
+              <span className="inline-block skew-x-[15deg]">{current.releaseDay || current.day || 'Airing'}</span>
             </div>
           </div>
 

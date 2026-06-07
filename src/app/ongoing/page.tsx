@@ -25,7 +25,7 @@ export default async function OngoingPage(props: { searchParams: Promise<{ page?
       {error && ongoing.length === 0 && (
         <div className="flex flex-col items-center justify-center py-20 text-center space-y-4 border-2 border-dashed border-secondary/20">
           <Frown className="w-12 h-12 text-foreground/20" />
-          <p className="text-foreground/40 font-bold">UPLINK_FAILURE: DATA NOT FOUND</p>
+          <p className="text-foreground/40 font-bold uppercase tracking-widest text-xs">Failed to load data. Please try again later.</p>
         </div>
       )}
 
