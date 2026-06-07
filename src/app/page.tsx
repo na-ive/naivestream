@@ -55,6 +55,7 @@ export default async function HomePage() {
                 id={anime.animeId || anime.id}
                 title={anime.title}
                 image={anime.poster || anime.image}
+                rating={anime.score || anime.rating}
                 episode={anime.episodes || anime.episode}
                 status={anime.releaseDay || anime.day}
               />

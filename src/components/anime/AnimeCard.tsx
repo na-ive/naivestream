@@ -51,6 +51,12 @@ export function AnimeCard({ id, title, image, status, rating, episode, type }: A
               <span>{rating}</span>
             </div>
           )}
+          {status && (
+            <div className="flex items-center space-x-1.5 px-2 py-1 bg-secondary text-background text-[10px] font-black uppercase tracking-tighter">
+              <Terminal className="w-3 h-3" />
+              <span>{status}</span>
+            </div>
+          )}
           {type && (
             <div className="px-2 py-1 bg-secondary text-background text-[10px] font-black uppercase tracking-tighter">
               {type}
@@ -72,14 +78,6 @@ export function AnimeCard({ id, title, image, status, rating, episode, type }: A
         <h3 className="text-xs font-serif font-black uppercase tracking-widest line-clamp-2 group-hover:text-secondary transition-colors h-8">
           {title}
         </h3>
-        <div className="flex items-center justify-between">
-          {status && (
-            <div className="flex items-center space-x-1 text-[9px] text-secondary font-bold uppercase tracking-[0.2em]">
-              <Terminal className="w-3 h-3" />
-              <span>{status}</span>
-            </div>
-          )}
-        </div>
       </div>
     </motion.div>
   );
