@@ -88,21 +88,65 @@ export const AnimeAPI = {
   // Extra Metadata: Jikan API (MyAnimeList)
   jikan: {
     searchAnime: async (query: string) => {
-      // Jikan has rate limits, be careful not to spam
-      const url = `https://api.jikan.moe/v4/anime?q=${encodeURIComponent(query)}&limit=1`;
+      // Clean query for better accuracy (remove Sub Indo, S2 -> Season 2)
+      let cleanQuery = query.replace(/Subtitle Indonesia|Sub Indo/gi, '').trim();
+      cleanQuery = cleanQuery.replace(/\bS(\d+)\b/gi, 'Season $1');
+
+      // Jikan has rate limits, be careful not to spam. Add 350ms throttle.
+      await new Promise(r => setTimeout(r, 350));
+      
+      const url = `https://api.jikan.moe/v4/anime?q=${encodeURIComponent(cleanQuery)}&limit=3`;
       try {
         const res = await fetch(url, {
-          next: { revalidate: 86400 }, // Cache for 24 hours since MAL data rarely changes
+          next: { revalidate: 86400 }, // Cache for 24 hours
           headers: { 'Accept': 'application/json' }
         });
         if (!res.ok) return null;
         const json = await res.json();
+        
+        // Simple heuristic: If we asked for a specific season, try to find it in the top 3
         if (json && json.data && json.data.length > 0) {
+          const seasonMatch = cleanQuery.match(/Season (\d+)/i);
+          if (seasonMatch) {
+            const num = seasonMatch[1];
+            // Match formats: "Season 2", "2nd Season", "Part 2", " II", etc.
+            const romanMap: Record<string, string> = {'2': 'II', '3': 'III', '4': 'IV', '5': 'V'};
+            const roman = romanMap[num];
+            const suffix = num === '1' ? 'st' : num === '2' ? 'nd' : num === '3' ? 'rd' : 'th';
+            
+            const seasonRegex = new RegExp(`(Season ${num}|${num}${suffix} Season|Part ${num}|\\b${num}\\b${roman ? `|\\b${roman}\\b` : ''})`, 'i');
+            
+            const exactMatch = json.data.find((anime: any) => 
+              seasonRegex.test(anime.title) ||
+              (anime.title_english && seasonRegex.test(anime.title_english)) ||
+              (anime.title_synonyms && anime.title_synonyms.some((syn: string) => seasonRegex.test(syn)))
+            );
+            if (exactMatch) return exactMatch;
+          }
           return json.data[0];
         }
         return null;
       } catch (error) {
         console.error(`[Jikan API Error] ${error}`);
+        return null;
+      }
+    },
+    getCharacters: async (mal_id: number) => {
+      await new Promise(r => setTimeout(r, 350));
+      const url = `https://api.jikan.moe/v4/anime/${mal_id}/characters`;
+      try {
+        const res = await fetch(url, {
+          next: { revalidate: 86400 }, // Cache for 24 hours
+          headers: { 'Accept': 'application/json' }
+        });
+        if (!res.ok) return null;
+        const json = await res.json();
+        if (json && json.data) {
+          return json.data;
+        }
+        return null;
+      } catch (error) {
+        console.error(`[Jikan Characters Error] ${error}`);
         return null;
       }
     }

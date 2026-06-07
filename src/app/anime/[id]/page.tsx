@@ -6,6 +6,7 @@ import { notFound } from "next/navigation";
 import { ContinueWatching } from "@/components/anime/ContinueWatching";
 import { EpisodeList } from "@/components/anime/EpisodeList";
 import { BookmarkButton } from "@/components/anime/BookmarkButton";
+import { CharacterCarousel } from "@/components/anime/CharacterCarousel";
 
 async function getAnimeDetails(id: string) {
   // Try Otakudesu first
@@ -65,6 +66,11 @@ export default async function AnimeDetailPage(props: { params: Promise<{ id: str
   
   // Fetch extra Jikan info seamlessly
   const jikanData = await AnimeAPI.jikan.searchAnime(data.title);
+  
+  let charactersData = null;
+  if (jikanData?.mal_id) {
+    charactersData = await AnimeAPI.jikan.getCharacters(jikanData.mal_id);
+  }
 
   const poster = jikanData?.images?.webp?.large_image_url || data.poster || data.image;
   const episodes = data.episodeList || data.episode_list || [];
@@ -76,7 +82,14 @@ export default async function AnimeDetailPage(props: { params: Promise<{ id: str
   const numEpisodes = jikanData?.episodes || data.episodes || '??';
   const studios = jikanData?.studios?.map((s: any) => s.name).join(', ') || 'Unknown';
   const aired = jikanData?.aired?.string || 'Unknown';
-  const trailerUrl = jikanData?.trailer?.embed_url;
+  const animeType = jikanData?.type || 'Unknown';
+  const animeSource = jikanData?.source || 'Unknown';
+  const ageRating = jikanData?.rating || 'Unknown';
+  const season = jikanData?.season ? `${jikanData.season} ${jikanData.year}` : 'Unknown';
+  let trailerUrl = jikanData?.trailer?.embed_url;
+  if (trailerUrl) {
+    trailerUrl = trailerUrl.replace('autoplay=1', 'autoplay=0');
+  }
 
   return (
     <div className="pb-20 -mt-20">
@@ -135,6 +148,18 @@ export default async function AnimeDetailPage(props: { params: Promise<{ id: str
                 {jikanData && (
                   <>
                     <div className="flex justify-between text-xs font-bold uppercase tracking-wider pt-2 border-t border-white/5">
+                      <span className="text-muted-text">Type</span>
+                      <span className="text-foreground text-right">{animeType}</span>
+                    </div>
+                    <div className="flex justify-between text-xs font-bold uppercase tracking-wider">
+                      <span className="text-muted-text">Source</span>
+                      <span className="text-foreground text-right">{animeSource}</span>
+                    </div>
+                    <div className="flex justify-between text-xs font-bold uppercase tracking-wider">
+                      <span className="text-muted-text">Season</span>
+                      <span className="text-foreground text-right capitalize">{season}</span>
+                    </div>
+                    <div className="flex justify-between text-xs font-bold uppercase tracking-wider">
                       <span className="text-muted-text">Studio</span>
                       <span className="text-foreground text-right">{studios}</span>
                     </div>
@@ -142,9 +167,25 @@ export default async function AnimeDetailPage(props: { params: Promise<{ id: str
                       <span className="text-muted-text">Aired</span>
                       <span className="text-foreground text-right">{aired}</span>
                     </div>
+                    <div className="flex justify-between text-xs font-bold uppercase tracking-wider">
+                      <span className="text-muted-text">Rating</span>
+                      <span className="text-foreground text-right max-w-[150px] truncate" title={ageRating}>{ageRating}</span>
+                    </div>
                   </>
                 )}
               </div>
+
+              {/* Sidebar Trailer */}
+              {trailerUrl && (
+                <div className="aspect-video w-full bg-black border-4 border-background shadow-2xl relative overflow-hidden group">
+                  <iframe
+                    src={trailerUrl}
+                    className="absolute inset-0 w-full h-full pointer-events-auto"
+                    title="Anime Trailer"
+                  />
+                  <div className="absolute inset-0 pointer-events-none ring-1 ring-secondary/20" />
+                </div>
+              )}
 
               {/* Continue Watching Button */}
               <ContinueWatching 
@@ -167,7 +208,7 @@ export default async function AnimeDetailPage(props: { params: Promise<{ id: str
           </div>
 
           {/* Info & Content */}
-          <div className="flex-grow space-y-8 mt-8 md:mt-0">
+          <div className="flex-grow min-w-0 space-y-8 mt-8 md:mt-0">
             <div className="space-y-4">
               <h1 className="text-3xl md:text-6xl font-serif font-black leading-none tracking-tighter">{data.title || "Unknown Title"}</h1>
               <div className="flex flex-wrap gap-2">
@@ -222,24 +263,8 @@ export default async function AnimeDetailPage(props: { params: Promise<{ id: str
               />
             </div>
 
-            {/* Trailer Section */}
-            {trailerUrl && (
-              <div className="space-y-6 pt-8 mt-8 border-t-2 border-secondary/20">
-                <div className="flex items-center space-x-3 text-lg font-serif font-black uppercase tracking-widest">
-                  <div className="w-1.5 h-6 bg-secondary" />
-                  <Video className="w-5 h-5 text-secondary" />
-                  <h2>Trailer<span className="text-secondary opacity-70">_</span></h2>
-                </div>
-                <div className="relative w-full aspect-video border-4 border-background shadow-[0_0_30px_rgba(34,197,94,0.15)] ring-1 ring-secondary/30 bg-black max-w-4xl">
-                  <iframe
-                    src={trailerUrl}
-                    className="absolute inset-0 w-full h-full"
-                    allowFullScreen
-                    title="Anime Trailer"
-                  />
-                </div>
-              </div>
-            )}
+            {/* Characters Section */}
+            <CharacterCarousel characters={charactersData} />
           </div>
         </div>
       </div>
