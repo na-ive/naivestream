@@ -302,7 +302,7 @@ export default function LibraryPage() {
                         }}
                       >
                         <span className="text-[11px] font-bold truncate pr-3 group-hover/ep:text-secondary transition-colors uppercase tracking-widest leading-relaxed">
-                          {item.lastEpisodeTitle}
+                          Episode {item.lastEpisodeTitle.match(/Episode\s*(\d+)/i)?.[1] || item.lastEpisodeTitle.match(/(\d+)/)?.[0] || '??'}
                         </span>
                         <div className="w-6 h-6 bg-secondary/10 flex items-center justify-center group-hover/ep:bg-secondary/20 transition-colors shrink-0">
                           <CaretRight className="w-3 h-3 text-secondary fill-current" />
