@@ -1,7 +1,13 @@
+import { Metadata } from 'next';
 import { AnimeAPI } from "@/lib/api";
 import Link from "next/link";
 import { FolderGit2, Frown, ChevronRight } from "lucide-react";
 import { Pagination } from "@/components/layout/Pagination";
+
+export const metadata: Metadata = {
+  title: 'A-Z List - NaiveStream',
+  description: 'Browse all anime from A to Z.',
+};
 
 export default async function AZListPage(props: { searchParams: Promise<{ letter?: string, page?: string }> }) {
   const searchParams = await props.searchParams;

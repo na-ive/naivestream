@@ -1,7 +1,13 @@
+import { Metadata } from 'next';
 import { AnimeAPI } from "@/lib/api";
 import { AnimeCard } from "@/components/anime/AnimeCard";
 import { Activity, Frown } from "lucide-react";
 import { Pagination } from "@/components/layout/Pagination";
+
+export const metadata: Metadata = {
+  title: 'Ongoing Anime - NaiveStream',
+  description: 'Browse currently airing anime series.',
+};
 
 export default async function OngoingPage(props: { searchParams: Promise<{ page?: string }> }) {
   const searchParams = await props.searchParams;

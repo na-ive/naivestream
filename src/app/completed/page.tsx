@@ -1,7 +1,13 @@
+import { Metadata } from 'next';
 import { AnimeAPI } from "@/lib/api";
 import { AnimeCard } from "@/components/anime/AnimeCard";
 import { CheckCircle2, Frown } from "lucide-react";
 import { Pagination } from "@/components/layout/Pagination";
+
+export const metadata: Metadata = {
+  title: 'Completed Anime - NaiveStream',
+  description: 'Browse all completed anime series.',
+};
 
 export default async function CompletedPage(props: { searchParams: Promise<{ page?: string }> }) {
   const searchParams = await props.searchParams;
