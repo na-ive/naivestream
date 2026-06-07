@@ -7,6 +7,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { Search, Moon, Sun, Menu, X, Play, ChevronDown } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
+import { Tooltip } from '@/components/ui/Tooltip';
 
 export function Navbar() {
   const [mounted, setMounted] = useState(false);
@@ -180,17 +181,19 @@ export function Navbar() {
             })}
             
             {/* Theme Toggle with mounting check */}
-            <button
-              onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-              className="p-2.5 rounded-none border border-secondary/30 hover:border-secondary text-secondary transition-all cursor-pointer min-w-[44px] min-h-[44px] flex items-center justify-center"
-              aria-label="Toggle theme"
-            >
-              {mounted ? (
-                theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />
-              ) : (
-                <div className="w-5 h-5" /> // Empty placeholder to prevent mismatch
-              )}
-            </button>
+            <Tooltip content={mounted && theme === 'dark' ? "Switch to Light Mode" : "Switch to Dark Mode"} position="bottom">
+              <button
+                onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+                className="p-2.5 rounded-none border border-secondary/30 hover:border-secondary text-secondary transition-all cursor-pointer min-w-[44px] min-h-[44px] flex items-center justify-center"
+                aria-label="Toggle theme"
+              >
+                {mounted ? (
+                  theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />
+                ) : (
+                  <div className="w-5 h-5" /> // Empty placeholder to prevent mismatch
+                )}
+              </button>
+            </Tooltip>
           </div>
 
           {/* Mobile Actions */}
