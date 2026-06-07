@@ -23,37 +23,36 @@ export function Footer() {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 relative z-10">
-        <div className="flex flex-col md:flex-row justify-between items-center space-y-8 md:space-y-0">
-          <div className="flex flex-col items-center md:items-start space-y-3">
-            <Link href="/" className="relative w-40 h-8 block">
-              <Image
-                src="/naivestream_logo.png"
-                alt="NaiveStream"
-                fill
-                sizes="160px"
-                className="object-contain grayscale opacity-70 hover:grayscale-0 hover:opacity-100 transition-all duration-300"
-              />
+        <div className="flex flex-col items-center justify-center space-y-8">
+          <Link href="/" className="relative w-60 h-12 block">
+            <Image
+              src="/naivestream_logo.png"
+              alt="NaiveStream"
+              fill
+              sizes="240px"
+              className="object-contain opacity-90 hover:opacity-100 transition-all duration-300 drop-shadow-[0_0_15px_rgba(34,197,94,0.1)]"
+            />
+          </Link>
+          
+          <div className="flex items-center justify-center space-x-8 md:space-x-12">
+            <Link href="/about" className="text-[10px] font-black uppercase tracking-[0.2em] text-foreground/50 hover:text-secondary transition-colors">
+              About
             </Link>
+            <Link href="/privacy" className="text-[10px] font-black uppercase tracking-[0.2em] text-foreground/50 hover:text-secondary transition-colors">
+              Privacy
+            </Link>
+            <Link href="/dmca" className="text-[10px] font-black uppercase tracking-[0.2em] text-foreground/50 hover:text-secondary transition-colors">
+              DMCA
+            </Link>
+          </div>
+
+          <div className="flex flex-col items-center space-y-3 pt-8 w-full max-w-md relative">
+            {/* Subtle Cyberpunk Accent Line */}
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-24 h-[2px] bg-secondary/50" style={{ clipPath: 'polygon(10% 0, 100% 0, 90% 100%, 0 100%)' }} />
+            
             <span className="text-[10px] font-bold text-foreground/50 uppercase tracking-[0.2em]">
               © {new Date().getFullYear()} NaiveStream
             </span>
-          </div>
-
-          <div className="flex flex-col items-center md:items-end space-y-4">
-            <div className="flex items-center space-x-8">
-              <Link href="/about" className="text-[10px] font-black uppercase tracking-widest text-foreground/50 hover:text-secondary transition-colors">
-                About
-              </Link>
-              <Link href="/privacy" className="text-[10px] font-black uppercase tracking-widest text-foreground/50 hover:text-secondary transition-colors">
-                Privacy
-              </Link>
-              <Link href="/dmca" className="text-[10px] font-black uppercase tracking-widest text-foreground/50 hover:text-secondary transition-colors">
-                DMCA
-              </Link>
-            </div>
-            <div className="text-[10px] font-bold text-foreground/30 uppercase tracking-tighter">
-              Powered by Sanka API
-            </div>
           </div>
         </div>
       </div>
