@@ -4,6 +4,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ContinueWatching } from "@/components/anime/ContinueWatching";
 import { EpisodeList } from "@/components/anime/EpisodeList";
+import { BookmarkButton } from "@/components/anime/BookmarkButton";
 
 async function getAnimeDetails(id: string) {
   // Try Otakudesu first
@@ -110,6 +111,15 @@ export default async function AnimeDetailPage(props: { params: Promise<{ id: str
                 animeImage={poster} 
                 source={source} 
                 episodes={episodes}
+              />
+
+              {/* Bookmark Button */}
+              <BookmarkButton 
+                animeId={id} 
+                animeTitle={data.title} 
+                animeImage={poster} 
+                variant="full"
+                className="w-full mt-3"
               />
             </div>
           </div>

@@ -4,6 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import { Play, Star, Terminal } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { BookmarkButton } from './BookmarkButton';
 
 interface AnimeCardProps {
   id: string;
@@ -13,9 +14,10 @@ interface AnimeCardProps {
   rating?: string;
   episode?: string;
   type?: string;
+  hideBookmark?: boolean;
 }
 
-export function AnimeCard({ id, title, image, status, rating, episode, type }: AnimeCardProps) {
+export function AnimeCard({ id, title, image, status, rating, episode, type, hideBookmark = false }: AnimeCardProps) {
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.95 }}
@@ -73,6 +75,13 @@ export function AnimeCard({ id, title, image, status, rating, episode, type }: A
         {/* Scanline Effect */}
         <div className="absolute inset-0 pointer-events-none bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.1)_50%),linear-gradient(90deg,rgba(255,0,0,0.02),rgba(0,255,0,0.01),rgba(0,0,255,0.02))] bg-[length:100%_4px,100%_100%]" />
       </Link>
+
+      {/* Bookmark Button (Outside Link) */}
+      {!hideBookmark && (
+        <div className="absolute top-2 right-2 z-20 opacity-0 group-hover:opacity-100 transition-opacity">
+          <BookmarkButton animeId={id} animeTitle={title} animeImage={image} />
+        </div>
+      )}
 
       <div className="mt-4 space-y-2">
         <h3 className="text-xs font-serif font-black uppercase tracking-widest line-clamp-2 group-hover:text-secondary transition-colors h-8">

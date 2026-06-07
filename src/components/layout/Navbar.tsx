@@ -65,7 +65,7 @@ export function Navbar() {
       ]
     },
     { name: 'Schedule', href: '/schedule' },
-    { name: 'History', href: '/history' },
+    { name: 'Library', href: '/library' },
   ];
 
   return (
