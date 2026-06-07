@@ -17,15 +17,15 @@ export default async function CompletedPage(props: { searchParams: Promise<{ pag
       <div className="space-y-4 mb-12">
         <div className="flex items-center space-x-3 text-secondary">
           <CheckCircle2 className="w-8 h-8" />
-          <h1 className="text-3xl md:text-4xl font-bold">Completed Anime</h1>
+          <h1 className="text-3xl md:text-5xl font-black">Completed</h1>
         </div>
-        <p className="text-gray-500">Binge-watch your favorite series from start to finish.</p>
+        <p className="text-foreground/60 font-bold uppercase tracking-widest text-xs">Finished series library</p>
       </div>
 
       {error && complete.length === 0 && (
-        <div className="flex flex-col items-center justify-center py-20 text-center space-y-4">
-          <Frown className="w-12 h-12 text-gray-400" />
-          <p className="text-gray-500">Failed to load completed anime. Please try again later.</p>
+        <div className="flex flex-col items-center justify-center py-20 text-center space-y-4 border-2 border-dashed border-secondary/20">
+          <Frown className="w-12 h-12 text-foreground/20" />
+          <p className="text-foreground/40 font-bold">UPLINK_FAILURE: DATA NOT FOUND</p>
         </div>
       )}
 

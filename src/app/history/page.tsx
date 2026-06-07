@@ -15,9 +15,9 @@ export default function HistoryPage() {
         <div className="space-y-2">
           <div className="flex items-center space-x-3 text-secondary">
             <HistoryIcon className="w-8 h-8" />
-            <h1 className="text-3xl md:text-4xl font-bold">Your History</h1>
+            <h1 className="text-3xl md:text-5xl font-black">History</h1>
           </div>
-          <p className="text-gray-500">Continue where you left off. Saved locally on your device.</p>
+          <p className="text-foreground/60 font-bold uppercase tracking-widest text-xs">Your locally saved watch progress</p>
         </div>
         
         {history.length > 0 && (
@@ -28,7 +28,7 @@ export default function HistoryPage() {
                 window.location.reload();
               }
             }}
-            className="flex items-center space-x-2 px-4 py-2 text-red-500 hover:bg-red-500/10 rounded-lg transition-colors font-bold text-sm"
+            className="flex items-center space-x-2 px-6 py-3 bg-red-500/10 text-red-500 border border-red-500/20 hover:bg-red-500 hover:text-white transition-all font-bold text-xs uppercase tracking-widest cursor-pointer"
           >
             <Trash2 className="w-4 h-4" />
             <span>Clear History</span>
@@ -37,16 +37,16 @@ export default function HistoryPage() {
       </div>
 
       {history.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-20 space-y-6 text-center">
-          <div className="w-20 h-20 bg-card rounded-full flex items-center justify-center border border-border">
-            <Clock className="w-10 h-10 text-gray-400" />
+        <div className="flex flex-col items-center justify-center py-20 space-y-6 text-center border-2 border-dashed border-secondary/10">
+          <div className="w-20 h-20 bg-card flex items-center justify-center border-2 border-secondary/20 shadow-[0_0_15px_rgba(34,197,94,0.1)]">
+            <Clock className="w-10 h-10 text-foreground/20" />
           </div>
           <div className="space-y-2">
-            <h2 className="text-xl font-bold">No history found</h2>
-            <p className="text-gray-500 max-w-xs mx-auto">Start watching some anime to track your progress here!</p>
+            <h2 className="text-xl font-bold uppercase">No history detected</h2>
+            <p className="text-foreground/40 text-xs font-bold uppercase tracking-widest">Start watching to track progress</p>
           </div>
           <Link href="/" className="btn-primary">
-            Explore Anime
+            Browse Anime
           </Link>
         </div>
       ) : (
@@ -57,25 +57,24 @@ export default function HistoryPage() {
                 id={item.animeId}
                 title={item.animeTitle}
                 image={item.animeImage}
-                status="Recently Watched"
               />
               
-              <div className="mt-2 p-3 bg-card rounded-xl border border-border group-hover:border-secondary transition-all">
-                <p className="text-[10px] text-gray-500 font-bold uppercase tracking-wider mb-1">Last Episode</p>
+              <div className="mt-4 p-4 bg-card border-2 border-secondary/10 group-hover:border-secondary transition-all">
+                <p className="text-[10px] text-secondary font-black uppercase tracking-[0.2em] mb-2">Resume Point</p>
                 <Link 
                   href={`/watch/${item.lastEpisodeId}?anime=${item.animeId}&title=${encodeURIComponent(item.animeTitle)}&img=${encodeURIComponent(item.animeImage)}`}
                   className="flex items-center justify-between group/ep"
                 >
-                  <span className="text-xs font-bold truncate pr-2 group-hover/ep:text-secondary transition-colors">
+                  <span className="text-xs font-black truncate pr-4 group-hover/ep:text-secondary transition-colors uppercase tracking-widest">
                     {item.lastEpisodeTitle}
                   </span>
-                  <Play className="w-3 h-3 text-secondary fill-current shrink-0" />
+                  <Play className="w-4 h-4 text-secondary fill-current shrink-0 shadow-[0_0_10px_rgba(34,197,94,0.3)]" />
                 </Link>
               </div>
 
               <button
                 onClick={() => removeFromHistory(item.animeId)}
-                className="absolute top-2 right-2 p-2 bg-black/60 backdrop-blur-md rounded-lg text-white opacity-0 group-hover:opacity-100 transition-opacity hover:text-red-500"
+                className="absolute top-3 right-3 w-8 h-8 bg-black/80 backdrop-blur-md border border-red-500/50 text-red-500 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all hover:bg-red-500 hover:text-white cursor-pointer z-20"
               >
                 <Trash2 className="w-4 h-4" />
               </button>

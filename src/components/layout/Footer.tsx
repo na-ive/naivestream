@@ -3,17 +3,15 @@ import Link from 'next/link';
 
 export function Footer() {
   return (
-    <footer className="w-full border-t-2 border-secondary/20 bg-card py-12 relative overflow-hidden">
+    <footer className="w-full border-t-2 border-secondary/20 bg-background py-12 relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="flex flex-col md:flex-row justify-between items-center space-y-8 md:space-y-0">
           <div className="flex flex-col items-center md:items-start">
-            <div className="flex items-center space-x-2">
-              <span className="text-xl font-serif font-black tracking-tighter text-foreground">
-                NAIVE<span className="text-secondary">STREAM</span>
-              </span>
-            </div>
-            <span className="text-[10px] font-bold text-foreground/50 uppercase tracking-[0.3em] mt-2">
-              © {new Date().getFullYear()}
+            <span className="text-xl font-serif font-black tracking-tighter text-foreground">
+              NAIVE<span className="text-secondary">STREAM</span>
+            </span>
+            <span className="text-[10px] font-bold text-foreground/50 uppercase tracking-[0.2em] mt-2">
+              © {new Date().getFullYear()} NaiveStream
             </span>
           </div>
           
@@ -30,10 +28,7 @@ export function Footer() {
           </div>
           
           <div className="flex flex-col items-center md:items-end">
-            <div className="text-[10px] font-black text-secondary uppercase tracking-[0.2em]">
-              Status: <span className="animate-pulse">Online</span>
-            </div>
-            <div className="text-[10px] font-bold text-foreground/30 mt-1 uppercase tracking-tighter">
+            <div className="text-[10px] font-bold text-foreground/30 uppercase tracking-tighter">
               Powered by Sanka Vollerei API
             </div>
           </div>
