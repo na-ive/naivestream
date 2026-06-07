@@ -67,9 +67,20 @@ export function Navbar() {
                 placeholder="Search..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full bg-card border-2 border-secondary/20 focus:border-secondary rounded-none py-2.5 pl-12 pr-4 focus:outline-none transition-all font-bold text-sm tracking-widest text-foreground placeholder:text-muted-foreground"
+                className="w-full bg-card border-2 border-secondary/20 focus:border-secondary rounded-none py-2.5 pl-12 pr-10 focus:outline-none transition-all font-bold text-sm tracking-widest text-foreground placeholder:text-muted-foreground"
               />
               <Search className="absolute left-4 top-3 text-secondary w-5 h-5" />
+              {searchQuery && (
+                <button
+                  type="button"
+                  onClick={() => setSearchQuery('')}
+                  className="absolute right-2 top-2 w-7 h-7 bg-red-950/50 border border-red-900/50 hover:bg-red-900/80 text-red-500 hover:text-red-400 flex items-center justify-center transition-all"
+                  style={{ clipPath: 'polygon(5px 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 5px)' }}
+                  aria-label="Clear search"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              )}
             </form>
           </div>
 
@@ -167,9 +178,20 @@ export function Navbar() {
                 placeholder="Search..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full bg-card border-2 border-secondary/30 rounded-none py-4 pl-12 pr-4 focus:outline-none text-foreground"
+                className="w-full bg-card border-2 border-secondary/30 rounded-none py-4 pl-12 pr-12 focus:outline-none text-foreground font-bold text-sm tracking-widest"
               />
-              <Search className="absolute left-4 top-4.5 text-secondary w-5 h-5" />
+              <Search className="absolute left-4 top-[18px] text-secondary w-5 h-5" />
+              {searchQuery && (
+                <button
+                  type="button"
+                  onClick={() => setSearchQuery('')}
+                  className="absolute right-4 top-4 w-8 h-8 bg-red-950/50 border border-red-900/50 hover:bg-red-900/80 text-red-500 hover:text-red-400 flex items-center justify-center transition-all"
+                  style={{ clipPath: 'polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px)' }}
+                  aria-label="Clear search"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              )}
             </form>
             <div className="grid grid-cols-1 gap-2">
               {navLinks.map((link) => {
