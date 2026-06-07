@@ -48,7 +48,7 @@ export const AnimeAPI = {
     getDetails: (slug: string) => fetchWithRetry(`/anime/${slug}`),
     getEpisode: (slug: string) => fetchWithRetry(`/episode/${slug}`),
     getServer: (id: string) => fetchWithRetry(`/server/${id}`),
-    search: (query: string) => fetchWithRetry(`/search/${query}`, { cache: 'no-store' }),
+    search: (query: string) => fetchWithRetry(`/search?q=${encodeURIComponent(query)}`),
     getAZList: () => fetchWithRetry('/unlimited', { 
       next: { revalidate: 2592000, tags: ['az-list'] } // 30 days
     }),
@@ -83,5 +83,28 @@ export const AnimeAPI = {
     const samehadakuRes = await AnimeAPI.samehadaku.search(query);
     const samehadakuData = samehadakuRes?.data?.animeList || samehadakuRes?.data || samehadakuRes || [];
     return { source: 'samehadaku', data: Array.isArray(samehadakuData) ? samehadakuData : [] };
+  },
+  
+  // Extra Metadata: Jikan API (MyAnimeList)
+  jikan: {
+    searchAnime: async (query: string) => {
+      // Jikan has rate limits, be careful not to spam
+      const url = `https://api.jikan.moe/v4/anime?q=${encodeURIComponent(query)}&limit=1`;
+      try {
+        const res = await fetch(url, {
+          next: { revalidate: 86400 }, // Cache for 24 hours since MAL data rarely changes
+          headers: { 'Accept': 'application/json' }
+        });
+        if (!res.ok) return null;
+        const json = await res.json();
+        if (json && json.data && json.data.length > 0) {
+          return json.data[0];
+        }
+        return null;
+      } catch (error) {
+        console.error(`[Jikan API Error] ${error}`);
+        return null;
+      }
+    }
   }
 };

@@ -1,6 +1,6 @@
 import { AnimeAPI } from "@/lib/api";
 import type { Metadata } from 'next';
-import { ChevronRight, Play, Info, List, Star } from "lucide-react";
+import { ChevronRight, Play, Info, List, Star, Video } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ContinueWatching } from "@/components/anime/ContinueWatching";
@@ -62,12 +62,21 @@ export default async function AnimeDetailPage(props: { params: Promise<{ id: str
   }
 
   const { data, source } = result;
-  const poster = data.poster || data.image;
+  
+  // Fetch extra Jikan info seamlessly
+  const jikanData = await AnimeAPI.jikan.searchAnime(data.title);
+
+  const poster = jikanData?.images?.webp?.large_image_url || data.poster || data.image;
   const episodes = data.episodeList || data.episode_list || [];
-  const genres = data.genreList || data.genres || [];
-  const synopsis = data.synopsis?.paragraphs?.join('\n\n') || 
+  const genres = jikanData?.genres || data.genreList || data.genres || [];
+  const synopsis = jikanData?.synopsis || data.synopsis?.paragraphs?.join('\n\n') || 
                     (typeof data.synopsis === 'string' ? data.synopsis : "No synopsis available.");
-  const rating = typeof data.score === 'object' ? data.score.value : data.score;
+  const rating = jikanData?.score || (typeof data.score === 'object' ? data.score.value : data.score);
+  const status = jikanData?.status || data.status;
+  const numEpisodes = jikanData?.episodes || data.episodes || '??';
+  const studios = jikanData?.studios?.map((s: any) => s.name).join(', ') || 'Unknown';
+  const aired = jikanData?.aired?.string || 'Unknown';
+  const trailerUrl = jikanData?.trailer?.embed_url;
 
   return (
     <div className="pb-20 -mt-20">
@@ -113,16 +122,28 @@ export default async function AnimeDetailPage(props: { params: Promise<{ id: str
               >
                 <div className="flex justify-between text-xs font-bold uppercase tracking-wider">
                   <span className="text-muted-text">Status</span>
-                  <span className="text-secondary">{data.status}</span>
+                  <span className="text-secondary">{status}</span>
                 </div>
                 <div className="flex justify-between text-xs font-bold uppercase tracking-wider">
                   <span className="text-muted-text">Episodes</span>
-                  <span className="text-foreground">{data.episodes || '??'}</span>
+                  <span className="text-foreground">{numEpisodes}</span>
                 </div>
                 <div className="flex justify-between text-xs font-bold uppercase tracking-wider">
                   <span className="text-muted-text">Provider</span>
                   <span className="text-secondary">{source}</span>
                 </div>
+                {jikanData && (
+                  <>
+                    <div className="flex justify-between text-xs font-bold uppercase tracking-wider pt-2 border-t border-white/5">
+                      <span className="text-muted-text">Studio</span>
+                      <span className="text-foreground text-right">{studios}</span>
+                    </div>
+                    <div className="flex justify-between text-xs font-bold uppercase tracking-wider">
+                      <span className="text-muted-text">Aired</span>
+                      <span className="text-foreground text-right">{aired}</span>
+                    </div>
+                  </>
+                )}
               </div>
 
               {/* Continue Watching Button */}
@@ -150,15 +171,23 @@ export default async function AnimeDetailPage(props: { params: Promise<{ id: str
             <div className="space-y-4">
               <h1 className="text-3xl md:text-6xl font-serif font-black leading-none tracking-tighter">{data.title || "Unknown Title"}</h1>
               <div className="flex flex-wrap gap-2">
-                {genres.map((genre: any, idx: number) => (
-                  <Link 
-                    key={genre.genreId || `genre-${idx}`} 
-                    href={`/genre/${genre.genreId}`}
-                    className="px-3 py-1 bg-secondary text-background text-[10px] font-black uppercase tracking-widest clip-path-polygon-small hover:bg-secondary/80 transition-colors"
-                  >
-                    {genre.title || genre.name}
-                  </Link>
-                ))}
+                {genres.map((genre: any, idx: number) => {
+                  const isJikan = !!genre.mal_id;
+                  const name = genre.name || genre.title;
+                  const href = isJikan ? `https://myanimelist.net/anime/genre/${genre.mal_id}` : `/genre/${genre.genreId}`;
+                  
+                  return (
+                    <Link 
+                      key={genre.mal_id || genre.genreId || `genre-${idx}`} 
+                      href={href}
+                      target={isJikan ? "_blank" : "_self"}
+                      rel={isJikan ? "noopener noreferrer" : ""}
+                      className="px-3 py-1 bg-secondary text-background text-[10px] font-black uppercase tracking-widest clip-path-polygon-small hover:bg-secondary/80 transition-colors"
+                    >
+                      {name}
+                    </Link>
+                  );
+                })}
               </div>
             </div>
 
@@ -192,6 +221,25 @@ export default async function AnimeDetailPage(props: { params: Promise<{ id: str
                 source={source} 
               />
             </div>
+
+            {/* Trailer Section */}
+            {trailerUrl && (
+              <div className="space-y-6 pt-8 mt-8 border-t-2 border-secondary/20">
+                <div className="flex items-center space-x-3 text-lg font-serif font-black uppercase tracking-widest">
+                  <div className="w-1.5 h-6 bg-secondary" />
+                  <Video className="w-5 h-5 text-secondary" />
+                  <h2>Trailer<span className="text-secondary opacity-70">_</span></h2>
+                </div>
+                <div className="relative w-full aspect-video border-4 border-background shadow-[0_0_30px_rgba(34,197,94,0.15)] ring-1 ring-secondary/30 bg-black max-w-4xl">
+                  <iframe
+                    src={trailerUrl}
+                    className="absolute inset-0 w-full h-full"
+                    allowFullScreen
+                    title="Anime Trailer"
+                  />
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
