@@ -41,7 +41,7 @@ export function EpisodeList({
             className={cn(
               "flex items-center p-3 transition-all group relative overflow-hidden",
               isLastWatched 
-                ? "bg-secondary/10 border-l-4 border-secondary shadow-[inset_4px_0_0_0_rgba(34,197,94,1)]" 
+                ? "bg-secondary/10 border-l-4 border-secondary" 
                 : "bg-card/50 hover:bg-secondary/5 border-l-4 border-transparent hover:border-secondary"
             )}
             style={{ clipPath: 'polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px)' }}

@@ -132,9 +132,10 @@ export default async function AnimeDetailPage(props: { params: Promise<{ id: str
             </div>
 
             <div className="space-y-4">
-              <div className="flex items-center space-x-2 text-lg font-serif font-black uppercase tracking-widest">
+              <div className="flex items-center space-x-3 text-lg font-serif font-black uppercase tracking-widest">
+                <div className="w-1.5 h-6 bg-secondary" />
                 <Info className="w-5 h-5 text-secondary" />
-                <h2>Synopsis</h2>
+                <h2>Synopsis<span className="text-secondary opacity-70">_</span></h2>
               </div>
               <p className="text-foreground/70 leading-relaxed text-sm md:text-base whitespace-pre-line border-l-4 border-secondary/20 pl-6 pr-6 py-4 bg-secondary/[0.02]">
                 {synopsis}
@@ -144,9 +145,10 @@ export default async function AnimeDetailPage(props: { params: Promise<{ id: str
             {/* Episode List Section */}
             <div className="space-y-6 pt-4">
               <div className="flex items-center justify-between border-b-2 border-secondary/20 pb-4">
-                <div className="flex items-center space-x-2 text-lg font-serif font-black uppercase tracking-widest">
+                <div className="flex items-center space-x-3 text-lg font-serif font-black uppercase tracking-widest">
+                  <div className="w-1.5 h-6 bg-secondary" />
                   <List className="w-5 h-5 text-secondary" />
-                  <h2>Episode List</h2>
+                  <h2>Episode List<span className="text-secondary opacity-70">_</span></h2>
                 </div>
                 <span className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-text">{episodes.length} Total Units</span>
               </div>
