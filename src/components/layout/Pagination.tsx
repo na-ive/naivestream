@@ -13,7 +13,7 @@ interface PaginationProps {
 export function Pagination({ currentPage, totalPages, baseUrl }: PaginationProps) {
   if (totalPages <= 1) return null;
 
-  // Logic to show page numbers (e.g., 2 before and 2 after)
+  // Logic to show page numbers
   const delta = 2;
   const range = [];
   const rangeWithDots = [];
@@ -41,13 +41,13 @@ export function Pagination({ currentPage, totalPages, baseUrl }: PaginationProps
 
   return (
     <div className="flex flex-col items-center space-y-6 py-16">
-      <div className="flex items-center gap-1 sm:gap-2">
+      <div className="flex items-center gap-1 sm:gap-3">
         {/* First Page */}
         <Link
           href={getHref(1)}
           className={cn(
-            "p-2 rounded-xl bg-card border border-border transition-all",
-            currentPage <= 1 ? "opacity-50 pointer-events-none" : "hover:border-secondary hover:text-secondary"
+            "p-3 bg-card border-2 border-secondary/20 transition-all cursor-pointer",
+            currentPage <= 1 ? "opacity-30 pointer-events-none" : "hover:border-secondary hover:text-secondary hover:shadow-[0_0_10px_rgba(34,197,94,0.3)]"
           )}
           aria-label="First page"
         >
@@ -58,19 +58,19 @@ export function Pagination({ currentPage, totalPages, baseUrl }: PaginationProps
         <Link
           href={getHref(Math.max(1, currentPage - 1))}
           className={cn(
-            "p-2 rounded-xl bg-card border border-border transition-all",
-            currentPage <= 1 ? "opacity-50 pointer-events-none" : "hover:border-secondary hover:text-secondary"
+            "p-3 bg-card border-2 border-secondary/20 transition-all cursor-pointer",
+            currentPage <= 1 ? "opacity-30 pointer-events-none" : "hover:border-secondary hover:text-secondary hover:shadow-[0_0_10px_rgba(34,197,94,0.3)]"
           )}
           aria-label="Previous page"
         >
           <ChevronLeft className="w-5 h-5" />
         </Link>
 
-        <div className="flex items-center bg-card border border-border rounded-2xl p-1 sm:px-2">
+        <div className="flex items-center bg-card border-2 border-secondary/10 p-1">
           {rangeWithDots.map((p, idx) => {
             if (p === '...') {
               return (
-                <div key={`dot-${idx}`} className="w-9 h-9 sm:w-11 sm:h-11 flex items-center justify-center text-gray-500">
+                <div key={`dot-${idx}`} className="w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center text-secondary/30">
                   <MoreHorizontal className="w-4 h-4" />
                 </div>
               );
@@ -82,10 +82,10 @@ export function Pagination({ currentPage, totalPages, baseUrl }: PaginationProps
                 key={`page-${pageNum}`}
                 href={getHref(pageNum)}
                 className={cn(
-                  "w-9 h-9 sm:w-11 sm:h-11 flex items-center justify-center rounded-xl text-sm font-bold transition-all",
+                  "w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center font-serif font-black text-sm transition-all cursor-pointer",
                   currentPage === pageNum
-                    ? "bg-secondary text-white shadow-lg shadow-secondary/30 scale-110 z-10"
-                    : "hover:bg-secondary/10"
+                    ? "bg-secondary text-white dark:text-black shadow-[0_0_15px_rgba(34,197,94,0.5)] z-10"
+                    : "text-foreground/50 hover:bg-secondary/10 hover:text-secondary"
                 )}
               >
                 {pageNum}
@@ -98,8 +98,8 @@ export function Pagination({ currentPage, totalPages, baseUrl }: PaginationProps
         <Link
           href={getHref(Math.min(totalPages, currentPage + 1))}
           className={cn(
-            "p-2 rounded-xl bg-card border border-border transition-all",
-            currentPage >= totalPages ? "opacity-50 pointer-events-none" : "hover:border-secondary hover:text-secondary"
+            "p-3 bg-card border-2 border-secondary/20 transition-all cursor-pointer",
+            currentPage >= totalPages ? "opacity-30 pointer-events-none" : "hover:border-secondary hover:text-secondary hover:shadow-[0_0_10px_rgba(34,197,94,0.3)]"
           )}
           aria-label="Next page"
         >
@@ -110,8 +110,8 @@ export function Pagination({ currentPage, totalPages, baseUrl }: PaginationProps
         <Link
           href={getHref(totalPages)}
           className={cn(
-            "p-2 rounded-xl bg-card border border-border transition-all",
-            currentPage >= totalPages ? "opacity-50 pointer-events-none" : "hover:border-secondary hover:text-secondary"
+            "p-3 bg-card border-2 border-secondary/20 transition-all cursor-pointer",
+            currentPage >= totalPages ? "opacity-30 pointer-events-none" : "hover:border-secondary hover:text-secondary hover:shadow-[0_0_10px_rgba(34,197,94,0.3)]"
           )}
           aria-label="Last page"
         >
@@ -119,8 +119,9 @@ export function Pagination({ currentPage, totalPages, baseUrl }: PaginationProps
         </Link>
       </div>
       
-      <div className="flex items-center space-x-2 text-xs font-medium uppercase tracking-widest text-gray-500">
-        <span>Page {currentPage} of {totalPages}</span>
+      <div className="flex items-center space-x-2 text-[10px] font-black uppercase tracking-[0.3em] text-foreground/40">
+        <span className="w-1.5 h-1.5 bg-secondary" />
+        <span>Page {currentPage} // {totalPages}</span>
       </div>
     </div>
   );
