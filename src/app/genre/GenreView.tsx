@@ -78,9 +78,6 @@ export function GenreView({ genres }: GenreViewProps) {
                 {genre.title}
               </span>
               <div className="flex items-center gap-4">
-                <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-text/50 group-hover:text-secondary/70 hidden sm:block transition-colors">
-                  Explore
-                </span>
                 <ChevronRight className="w-5 h-5 text-muted-text group-hover:text-secondary transition-transform group-hover:translate-x-1" />
               </div>
             </Link>
