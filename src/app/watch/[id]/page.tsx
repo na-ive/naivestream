@@ -4,7 +4,7 @@ import React, { useEffect, useState, Suspense, use, useCallback } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { AnimeAPI } from '@/lib/api';
 import { useHistory } from '@/lib/hooks/useHistory';
-import { ChevronRight, Layout, Play, Settings, Share2, Loader2, Video, Server } from 'lucide-react';
+import { ChevronRight, Layout, Play, Settings, Share2, Loader2, Video, Server, Monitor } from 'lucide-react';
 import Link from 'next/link';
 
 function WatchContent({ id }: { id: string }) {
@@ -19,7 +19,37 @@ function WatchContent({ id }: { id: string }) {
   const [currentUrl, setCurrentUrl] = useState<string>('');
   const [loading, setLoading] = useState(true);
   const [serverLoading, setServerLoading] = useState(false);
+  const [isCinemaMode, setIsCinemaMode] = useState(false);
   const { saveToHistory } = useHistory();
+
+  // Handle Escape key and Body Scroll for Cinema Mode
+  useEffect(() => {
+    let timeoutId: NodeJS.Timeout;
+    
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isCinemaMode) {
+        setIsCinemaMode(false);
+      }
+    };
+    
+    if (isCinemaMode) {
+      // Ensure the player is in view with smooth scroll
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      // Delay locking the overflow to allow the smooth scroll animation to finish
+      timeoutId = setTimeout(() => {
+        document.body.style.overflow = 'hidden';
+      }, 600);
+    } else {
+      document.body.style.overflow = '';
+    }
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      clearTimeout(timeoutId);
+      window.removeEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = '';
+    };
+  }, [isCinemaMode]);
 
   const fetchEpisode = useCallback(async () => {
     if (!id || id === 'undefined') return;
@@ -120,9 +150,18 @@ function WatchContent({ id }: { id: string }) {
       </div>
 
       <div className="flex flex-col lg:flex-row gap-8">
+        {/* Cinema Mode Overlay */}
+        {isCinemaMode && (
+          <div 
+            className="fixed inset-0 bg-black/95 backdrop-blur-sm z-[60] transition-all duration-500 cursor-pointer"
+            onClick={() => setIsCinemaMode(false)}
+            title="Click to exit focus mode"
+          />
+        )}
+
         {/* Main Content: Video Player */}
-        <div className="flex-grow lg:max-w-[calc(100%-400px)] space-y-6">
-          <div className="relative aspect-video bg-black border-b-4 border-secondary/20 shadow-2xl overflow-hidden group">
+        <div className={`flex-grow lg:max-w-[calc(100%-400px)] space-y-6 transition-all duration-500 self-start ${isCinemaMode ? 'relative z-[60]' : ''}`}>
+          <div className={`relative aspect-video bg-black border-b-4 border-secondary/20 shadow-2xl overflow-hidden group transition-all duration-500 ${isCinemaMode ? 'shadow-[0_0_50px_rgba(34,197,94,0.15)] ring-1 ring-secondary/30' : ''}`}>
             {serverLoading && (
               <div className="absolute inset-0 z-20 bg-black/60 backdrop-blur-sm flex items-center justify-center">
                 <Loader2 className="w-10 h-10 text-secondary animate-spin" />
@@ -145,9 +184,9 @@ function WatchContent({ id }: { id: string }) {
             <div className="absolute inset-0 pointer-events-none border-x border-white/5 z-10" />
           </div>
 
-          <div className="hidden lg:block space-y-6">
+          <div className={`hidden lg:block space-y-6 transition-all duration-500 relative ${isCinemaMode ? 'z-[60]' : ''}`}>
              <div 
-               className="px-6 py-4 bg-card shadow-lg relative overflow-hidden group"
+               className="px-6 py-4 bg-card shadow-lg relative overflow-hidden group flex flex-col sm:flex-row sm:items-center justify-between gap-4"
                style={{ clipPath: 'polygon(0 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%)' }}
              >
                 <div className="relative z-10">
@@ -156,6 +195,17 @@ function WatchContent({ id }: { id: string }) {
                     <Server className="w-3 h-3 mr-2" />
                     Streaming from {source} provider
                   </p>
+                </div>
+
+                <div className="relative z-10 shrink-0">
+                  <button 
+                    onClick={() => setIsCinemaMode(!isCinemaMode)}
+                    className="px-4 py-2.5 bg-secondary/10 hover:bg-secondary text-secondary hover:text-black font-bold uppercase tracking-[0.2em] text-[10px] flex items-center gap-2 transition-all border border-secondary/30 hover:border-secondary shadow-[0_0_10px_rgba(34,197,94,0.1)] hover:shadow-[0_0_20px_rgba(34,197,94,0.4)]"
+                    style={{ clipPath: 'polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px)' }}
+                  >
+                    <Monitor className="w-3.5 h-3.5" />
+                    <span>{isCinemaMode ? 'Exit Focus' : 'Focus Mode'}</span>
+                  </button>
                 </div>
              </div>
           </div>
