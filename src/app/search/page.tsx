@@ -11,6 +11,8 @@ function SearchContent() {
   const query = searchParams.get('q') || '';
   const [results, setResults] = useState<any>(null);
   const [loading, setLoading] = useState(false);
+  const [filterStatus, setFilterStatus] = useState<string>('All');
+  const [filterGenre, setFilterGenre] = useState<string>('All');
 
   useEffect(() => {
     async function doSearch() {
@@ -42,13 +44,59 @@ function SearchContent() {
         </div>
       ) : results?.data?.length > 0 ? (
         <div className="space-y-8">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-card border-2 border-secondary/20 p-4">
             <span className="text-sm font-bold text-muted-text uppercase tracking-widest">
               Found {results.data.length} Results from {results.source}
             </span>
+
+            {/* Filters */}
+            <div className="flex flex-col sm:flex-row gap-4">
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-bold uppercase tracking-widest text-muted-text">Status:</span>
+                <select 
+                  className="bg-background border-2 border-secondary/20 text-foreground text-sm font-bold uppercase tracking-wider p-2 outline-none focus:border-secondary transition-colors"
+                  value={filterStatus}
+                  onChange={(e) => setFilterStatus(e.target.value)}
+                >
+                  <option value="All">All Status</option>
+                  <option value="Ongoing">Ongoing</option>
+                  <option value="Completed">Completed</option>
+                </select>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-bold uppercase tracking-widest text-muted-text">Genre:</span>
+                <select 
+                  className="bg-background border-2 border-secondary/20 text-foreground text-sm font-bold uppercase tracking-wider p-2 outline-none focus:border-secondary transition-colors"
+                  value={filterGenre}
+                  onChange={(e) => setFilterGenre(e.target.value)}
+                >
+                  <option value="All">All Genres</option>
+                  {/* Extract unique genres from results */}
+                  {Array.from(new Set(
+                    results.data.flatMap((anime: any) => 
+                      anime.genreList?.map((g: any) => g.title) || []
+                    )
+                  )).sort().map((genre: any) => (
+                    <option key={genre} value={genre}>{genre}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
           </div>
+
+          {/* Filtered Grid */}
           <div className="anime-grid">
-            {results.data.map((anime: any) => (
+            {results.data
+              .filter((anime: any) => {
+                if (filterStatus !== 'All' && anime.status !== filterStatus) return false;
+                if (filterGenre !== 'All') {
+                  const animeGenres = anime.genreList?.map((g: any) => g.title) || [];
+                  if (!animeGenres.includes(filterGenre)) return false;
+                }
+                return true;
+              })
+              .map((anime: any) => (
               <AnimeCard
                 key={anime.animeId || anime.id}
                 id={anime.animeId || anime.id}

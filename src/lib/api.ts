@@ -55,6 +55,12 @@ export const AnimeAPI = {
     getSchedule: () => fetchWithRetry('/schedule', {
       next: { revalidate: 3600 } // 1 hour
     }),
+    getGenreList: () => fetchWithRetry('/genre', {
+      next: { revalidate: 86400 } // 24 hours
+    }),
+    getGenreAnime: (slug: string, page = 1) => fetchWithRetry(`/genre/${slug}?page=${page}`, {
+      next: { revalidate: 3600 } // 1 hour
+    }),
   },
 
   // Fallback Source: Samehadaku

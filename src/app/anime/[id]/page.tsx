@@ -113,9 +113,13 @@ export default async function AnimeDetailPage(props: { params: Promise<{ id: str
               <h1 className="text-3xl md:text-6xl font-serif font-black leading-none tracking-tighter">{data.title || "Unknown Title"}</h1>
               <div className="flex flex-wrap gap-2">
                 {genres.map((genre: any, idx: number) => (
-                  <span key={genre.genreId || `genre-${idx}`} className="px-3 py-1 bg-secondary text-background text-[10px] font-black uppercase tracking-widest clip-path-polygon-small">
+                  <Link 
+                    key={genre.genreId || `genre-${idx}`} 
+                    href={`/genre/${genre.genreId}`}
+                    className="px-3 py-1 bg-secondary text-background text-[10px] font-black uppercase tracking-widest clip-path-polygon-small hover:bg-secondary/80 transition-colors"
+                  >
                     {genre.title || genre.name}
-                  </span>
+                  </Link>
                 ))}
               </div>
             </div>

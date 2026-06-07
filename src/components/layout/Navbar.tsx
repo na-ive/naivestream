@@ -36,6 +36,7 @@ export function Navbar() {
       items: [
         { name: 'Ongoing', href: '/ongoing' },
         { name: 'Completed', href: '/completed' },
+        { name: 'Browse Genre', href: '/genre' },
       ]
     },
     { name: 'Schedule', href: '/schedule' },
