@@ -21,7 +21,9 @@ async function fetchWithRetry(url: string, options: RequestInit = {}) {
     const res = await fetch(fullUrl, defaultOptions);
     
     if (!res.ok) {
-      console.error(`[API Error] ${res.status} on ${fullUrl}`);
+      if (res.status !== 404) {
+        console.error(`[API Error] ${res.status} on ${fullUrl}`);
+      }
       return null;
     }
     
