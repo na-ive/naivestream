@@ -7,6 +7,7 @@ import { AnimeCard } from '@/components/anime/AnimeCard';
 import { Bookmark, Clock, Trash2, Play, LayoutGrid, CheckSquare } from 'lucide-react';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
+import { toast } from 'sonner';
 
 type TabType = 'watchlist' | 'history';
 
@@ -148,6 +149,10 @@ export default function LibraryPage() {
                       if (confirm('Clear all history?')) {
                         localStorage.removeItem('anime_history');
                         window.dispatchEvent(new Event('history_updated'));
+                        toast.error('History Cleared', {
+                          description: 'All your watch history has been permanently removed.',
+                          icon: <div className="w-8 h-8 bg-red-500/10 border border-red-500 flex items-center justify-center shrink-0 mr-3 shadow-[0_0_10px_rgba(239,68,68,0.3)]"><Trash2 className="w-5 h-5 text-red-500" /></div>,
+                        });
                       }
                     }}
                     className="flex items-center space-x-2 px-6 py-2.5 bg-red-100 dark:bg-red-950/50 text-red-600 dark:text-red-500 border border-red-300 dark:border-red-900/50 hover:bg-red-200 dark:hover:bg-red-900/80 transition-all font-black text-[10px] uppercase tracking-[0.2em]"
