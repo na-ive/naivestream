@@ -9,8 +9,10 @@ import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import { Tooltip } from '@/components/ui/Tooltip';
+import { Modal } from '@/components/ui/Modal';
 
 type TabType = 'watchlist' | 'history';
+type DeleteActionType = 'all' | 'bulk' | null;
 
 export default function LibraryPage() {
   const { history, removeFromHistory, removeMultipleFromHistory } = useHistory();
@@ -20,6 +22,7 @@ export default function LibraryPage() {
   const [mounted, setMounted] = useState(false);
   const [isSelectionMode, setIsSelectionMode] = useState(false);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [deleteAction, setDeleteAction] = useState<DeleteActionType>(null);
 
   useEffect(() => {
     setMounted(true);
@@ -42,16 +45,26 @@ export default function LibraryPage() {
     );
   };
 
-  const handleBulkDelete = () => {
-    if (selectedIds.length > 0) {
-      if (activeTab === 'watchlist') {
-        removeMultipleFromWatchlist(selectedIds);
-      } else {
-        removeMultipleFromHistory(selectedIds);
+  const executeDelete = () => {
+    if (deleteAction === 'all') {
+      localStorage.removeItem('anime_history');
+      window.dispatchEvent(new Event('history_updated'));
+      toast.error('History Cleared', {
+        description: 'All your watch history has been permanently removed.',
+        icon: <div className="w-8 h-8 bg-red-500/10 border border-red-500 flex items-center justify-center shrink-0 mr-3 shadow-[0_0_10px_rgba(239,68,68,0.3)]"><Trash2 className="w-5 h-5 text-red-500" /></div>,
+      });
+    } else if (deleteAction === 'bulk') {
+      if (selectedIds.length > 0) {
+        if (activeTab === 'watchlist') {
+          removeMultipleFromWatchlist(selectedIds);
+        } else {
+          removeMultipleFromHistory(selectedIds);
+        }
+        setIsSelectionMode(false);
+        setSelectedIds([]);
       }
-      setIsSelectionMode(false);
-      setSelectedIds([]);
     }
+    setDeleteAction(null);
   };
 
   if (!mounted) return null; // Avoid hydration mismatch
@@ -118,7 +131,7 @@ export default function LibraryPage() {
             {isSelectionMode ? (
               <>
                 <button 
-                  onClick={handleBulkDelete}
+                  onClick={() => setDeleteAction('bulk')}
                   disabled={selectedIds.length === 0}
                   className={cn(
                     "flex items-center space-x-2 px-6 py-2.5 transition-all font-black text-[10px] uppercase tracking-[0.2em]",
@@ -147,19 +160,10 @@ export default function LibraryPage() {
                 {activeTab === 'history' && history.length > 0 && (
                   <Tooltip content="Irreversible Action" position="bottom" className="!border-red-500 !text-red-500 !shadow-[0_0_15px_rgba(239,68,68,0.2)]">
                     <button 
-                      onClick={() => {
-                      if (confirm('Clear all history?')) {
-                        localStorage.removeItem('anime_history');
-                        window.dispatchEvent(new Event('history_updated'));
-                        toast.error('History Cleared', {
-                          description: 'All your watch history has been permanently removed.',
-                          icon: <div className="w-8 h-8 bg-red-500/10 border border-red-500 flex items-center justify-center shrink-0 mr-3 shadow-[0_0_10px_rgba(239,68,68,0.3)]"><Trash2 className="w-5 h-5 text-red-500" /></div>,
-                        });
-                      }
-                    }}
-                    className="flex items-center space-x-2 px-6 py-2.5 bg-red-100 dark:bg-red-950/50 text-red-600 dark:text-red-500 border border-red-300 dark:border-red-900/50 hover:bg-red-200 dark:hover:bg-red-900/80 transition-all font-black text-[10px] uppercase tracking-[0.2em]"
-                    style={{ clipPath: 'polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px)' }}
-                  >
+                      onClick={() => setDeleteAction('all')}
+                      className="flex items-center space-x-2 px-6 py-2.5 bg-red-100 dark:bg-red-950/50 text-red-600 dark:text-red-500 border border-red-300 dark:border-red-900/50 hover:bg-red-200 dark:hover:bg-red-900/80 transition-all font-black text-[10px] uppercase tracking-[0.2em]"
+                      style={{ clipPath: 'polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px)' }}
+                    >
                     <Trash2 className="w-4 h-4 shrink-0" />
                     <span>Clear All</span>
                     </button>
@@ -342,6 +346,36 @@ export default function LibraryPage() {
           )
         )}
       </div>
+
+      <Modal
+        isOpen={deleteAction !== null}
+        onClose={() => setDeleteAction(null)}
+        title="Confirm Deletion"
+        footer={
+          <>
+            <button
+              onClick={() => setDeleteAction(null)}
+              className="px-4 py-2 font-black uppercase text-xs tracking-widest text-muted-text hover:text-white transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={executeDelete}
+              className="flex items-center space-x-2 px-6 py-2.5 bg-red-500 text-white font-black text-[10px] uppercase tracking-[0.2em] shadow-[0_0_15px_rgba(239,68,68,0.5)] hover:shadow-[0_0_25px_rgba(239,68,68,0.7)] transition-all"
+              style={{ clipPath: 'polygon(4px 0, 100% 0, 100% calc(100% - 4px), calc(100% - 4px) 100%, 0 100%, 0 4px)' }}
+            >
+              <Trash2 className="w-4 h-4" />
+              <span>Confirm Delete</span>
+            </button>
+          </>
+        }
+      >
+        <p className="text-muted-text">
+          {deleteAction === 'all' 
+            ? "Are you sure you want to clear your entire watch history? This action cannot be undone."
+            : `Are you sure you want to delete the selected ${selectedIds.length} item(s)?`}
+        </p>
+      </Modal>
     </div>
   );
 }
