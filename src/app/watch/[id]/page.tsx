@@ -15,6 +15,7 @@ function WatchContent({ id }: { id: string }) {
   const source = searchParams.get('source') || 'otakudesu';
   
   const [episodeData, setEpisodeData] = useState<any>(null);
+  const [animeData, setAnimeData] = useState<any>(null);
   const [currentUrl, setCurrentUrl] = useState<string>('');
   const [loading, setLoading] = useState(true);
   const [serverLoading, setServerLoading] = useState(false);
@@ -49,9 +50,22 @@ function WatchContent({ id }: { id: string }) {
     setLoading(false);
   }, [id, animeId, animeTitle, animeImg, source, saveToHistory]);
 
+  const fetchAnimeData = useCallback(async () => {
+    if (!animeId || animeId === 'undefined' || source === 'samehadaku') return;
+    try {
+      const res = await AnimeAPI.otakudesu.getDetails(animeId);
+      if (res?.data) {
+        setAnimeData(res.data);
+      }
+    } catch (e) {
+      console.error('Failed to fetch anime data for episode list', e);
+    }
+  }, [animeId, source]);
+
   useEffect(() => {
     fetchEpisode();
-  }, [fetchEpisode]);
+    fetchAnimeData();
+  }, [fetchEpisode, fetchAnimeData]);
 
   const changeServer = async (serverId: string) => {
     setServerLoading(true);
@@ -91,13 +105,18 @@ function WatchContent({ id }: { id: string }) {
 
   return (
     <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      {/* Breadcrumbs */}
-      <div className="flex items-center space-x-2 text-[10px] font-black uppercase tracking-[0.2em] text-muted-text mb-6 overflow-hidden whitespace-nowrap">
-        <Link href="/" className="hover:text-secondary transition-colors">Home</Link>
-        <ChevronRight className="w-4 h-4 shrink-0" />
-        <Link href={`/anime/${animeId}`} className="hover:text-secondary truncate max-w-[200px] transition-colors">{animeTitle}</Link>
-        <ChevronRight className="w-4 h-4 shrink-0" />
-        <span className="text-secondary truncate">{episodeData.title}</span>
+      {/* Breadcrumbs Status Bar */}
+      <div 
+        className="flex items-center gap-3 bg-card px-5 py-2.5 mb-6 relative overflow-hidden text-[10px] font-black uppercase tracking-[0.2em] text-muted-text w-max max-w-full shadow-lg"
+        style={{ clipPath: 'polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px))' }}
+      >
+        <div className="relative z-10 flex items-center space-x-2 whitespace-nowrap overflow-hidden pr-2">
+          <Link href="/" className="hover:text-foreground transition-colors shrink-0">Home</Link>
+          <ChevronRight className="w-3 h-3 shrink-0 text-secondary" />
+          <Link href={`/anime/${animeId}`} className="hover:text-foreground truncate max-w-[120px] sm:max-w-[200px] transition-colors">{animeTitle}</Link>
+          <ChevronRight className="w-3 h-3 shrink-0 text-secondary" />
+          <span className="text-secondary truncate max-w-[150px] sm:max-w-[300px]">{episodeData.title}</span>
+        </div>
       </div>
 
       <div className="flex flex-col lg:flex-row gap-8">
@@ -127,12 +146,17 @@ function WatchContent({ id }: { id: string }) {
           </div>
 
           <div className="hidden lg:block space-y-6">
-             <div className="p-8 bg-card border-l-4 border-secondary shadow-lg">
-                <h1 className="text-3xl font-serif font-black tracking-tighter uppercase leading-none">{episodeData.title}</h1>
-                <p className="text-secondary font-bold text-xs mt-3 tracking-[0.3em] uppercase opacity-60 flex items-center">
-                  <Server className="w-3 h-3 mr-2" />
-                  Streaming from {source} provider
-                </p>
+             <div 
+               className="px-6 py-4 bg-card shadow-lg relative overflow-hidden group"
+               style={{ clipPath: 'polygon(0 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%)' }}
+             >
+                <div className="relative z-10">
+                  <h1 className="text-2xl font-serif font-black tracking-tighter uppercase leading-none">{episodeData.title}</h1>
+                  <p className="text-secondary font-bold text-xs mt-2 tracking-[0.3em] uppercase opacity-60 flex items-center">
+                    <Server className="w-3 h-3 mr-2" />
+                    Streaming from {source} provider
+                  </p>
+                </div>
              </div>
           </div>
         </div>
@@ -140,28 +164,76 @@ function WatchContent({ id }: { id: string }) {
         {/* Sidebar: Controls & Info */}
         <div className="w-full lg:w-[350px] space-y-8 shrink-0">
           <div 
-            className="bg-card/50 border-l-4 border-secondary/50 p-6 space-y-4 relative overflow-hidden group"
+            className="bg-card/50 border-l-4 border-secondary/50 p-6 space-y-4 relative overflow-hidden"
             style={{ clipPath: 'polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px)' }}
           >
-             <div className="absolute inset-0 bg-gradient-to-r from-secondary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
-             <div className="flex items-center justify-between border-b border-white/10 pb-4 relative z-10">
-                <h3 className="font-serif font-black uppercase tracking-widest text-sm text-foreground">Navigation</h3>
-                <Layout className="w-4 h-4 text-secondary" />
+             <div className="flex items-center space-x-2 border-b border-white/5 pb-3 mb-4 relative z-10">
+                <div className="w-1 h-4 bg-secondary" />
+                <Layout className="w-3.5 h-3.5 text-secondary" />
+                <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-text">Navigation</h3>
              </div>
-             <div className="grid grid-cols-1 gap-3">
-                {episodeData.nextEpisode && (
+             <div className="grid grid-cols-2 gap-3 relative z-10">
+                {episodeData.prevEpisode ? (
+                  <Link 
+                    href={`/watch/${episodeData.prevEpisode.episodeId}?anime=${animeId}&title=${encodeURIComponent(animeTitle)}&img=${encodeURIComponent(animeImg)}&source=${source}`}
+                    className="btn-accent w-full py-2.5 text-[10px] tracking-[0.2em] flex items-center justify-center text-center"
+                  >
+                    Prev
+                  </Link>
+                ) : (
+                  <div className="btn-accent w-full py-2.5 text-[10px] tracking-[0.2em] flex items-center justify-center text-center opacity-30 pointer-events-none grayscale cursor-not-allowed">
+                    Prev
+                  </div>
+                )}
+
+                {episodeData.nextEpisode ? (
                   <Link 
                     href={`/watch/${episodeData.nextEpisode.episodeId}?anime=${animeId}&title=${encodeURIComponent(animeTitle)}&img=${encodeURIComponent(animeImg)}&source=${source}`}
-                    className="btn-primary w-full py-4 text-xs tracking-[0.2em]"
+                    className="btn-primary w-full py-2.5 text-[10px] tracking-[0.2em] flex items-center justify-center text-center"
                   >
-                    Next Episode
+                    Next
                   </Link>
+                ) : (
+                  <div className="btn-primary w-full py-2.5 text-[10px] tracking-[0.2em] flex items-center justify-center text-center opacity-30 pointer-events-none grayscale cursor-not-allowed">
+                    Next
+                  </div>
                 )}
+             </div>
+
+             {animeData?.episodeList && animeData.episodeList.length > 0 && (
+               <div className="mt-6 space-y-3 relative z-10">
+                 <h4 className="font-bold text-xs uppercase tracking-[0.2em] text-muted-text">All Episodes</h4>
+                 <div className="grid grid-cols-5 gap-2 max-h-[250px] overflow-y-auto pr-2 custom-scrollbar">
+                   {[...animeData.episodeList].reverse().map((ep: any, index: number) => {
+                     const epMatch = ep.title.match(/Episode\s+(\d+(\.\d+)?)/i);
+                     const epNum = epMatch ? epMatch[1] : (index + 1);
+                     const isActive = ep.episodeId === id;
+                     
+                     return (
+                       <Link
+                         key={ep.episodeId}
+                         href={`/watch/${ep.episodeId}?anime=${animeId}&title=${encodeURIComponent(animeTitle)}&img=${encodeURIComponent(animeImg)}&source=${source}`}
+                         className={`w-full aspect-square flex items-center justify-center text-xs font-bold transition-all ${
+                           isActive 
+                             ? 'bg-secondary text-background shadow-[0_0_10px_rgba(34,197,94,0.3)] pointer-events-none' 
+                             : 'bg-background hover:bg-secondary/20 border border-white/5 hover:border-secondary/50 text-foreground/70 hover:text-secondary'
+                         }`}
+                         title={ep.title}
+                       >
+                         {epNum}
+                       </Link>
+                     );
+                   })}
+                 </div>
+               </div>
+             )}
+
+             <div className="pt-2 relative z-10">
                 <Link 
                   href={`/anime/${animeId}`}
-                  className="btn-accent w-full py-4 text-xs tracking-[0.2em]"
+                  className="btn-accent w-full py-3 text-[10px] tracking-[0.2em] flex justify-center items-center opacity-80 hover:opacity-100"
                 >
-                  Episode List
+                  Back to Anime Detail
                 </Link>
              </div>
           </div>
@@ -170,10 +242,11 @@ function WatchContent({ id }: { id: string }) {
             className="bg-card/50 border-l-4 border-secondary/30 p-6 space-y-6 relative"
             style={{ clipPath: 'polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px)' }}
           >
-            <h3 className="flex items-center text-[10px] font-black uppercase tracking-[0.2em] text-muted-text border-b border-white/5 pb-3">
-              <Video className="w-4 h-4 mr-2 text-secondary" />
-              Video Servers
-            </h3>
+            <div className="flex items-center space-x-2 border-b border-white/5 pb-3 mb-4 relative z-10">
+                <div className="w-1 h-4 bg-secondary" />
+                <Video className="w-3.5 h-3.5 text-secondary" />
+                <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-text">Video Servers</h3>
+            </div>
             <div className="space-y-6 max-h-[400px] overflow-y-auto pr-2 no-scrollbar">
               {episodeData.server?.qualities?.map((quality: any) => (
                 <div key={quality.title} className="space-y-3">
