@@ -102,6 +102,7 @@ export default async function AnimeDetailPage(props: { params: Promise<{ id: str
                 animeTitle={data.title} 
                 animeImage={poster} 
                 source={source} 
+                episodes={episodes}
               />
             </div>
           </div>
