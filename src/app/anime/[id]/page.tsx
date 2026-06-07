@@ -136,7 +136,7 @@ export default async function AnimeDetailPage(props: { params: Promise<{ id: str
                 <Info className="w-5 h-5 text-secondary" />
                 <h2>Synopsis</h2>
               </div>
-              <p className="text-foreground/70 leading-relaxed text-sm md:text-base whitespace-pre-line border-l-4 border-secondary/20 pl-6 py-2 bg-secondary/[0.02]">
+              <p className="text-foreground/70 leading-relaxed text-sm md:text-base whitespace-pre-line border-l-4 border-secondary/20 pl-6 pr-6 py-4 bg-secondary/[0.02]">
                 {synopsis}
               </p>
             </div>
