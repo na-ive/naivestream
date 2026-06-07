@@ -1,5 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 
 export function Footer() {
   return (
@@ -23,11 +24,17 @@ export function Footer() {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 relative z-10">
         <div className="flex flex-col md:flex-row justify-between items-center space-y-8 md:space-y-0">
-          <div className="flex flex-col items-center md:items-start">
-            <span className="text-xl font-serif font-black tracking-tighter text-foreground">
-              NAIVE<span className="text-secondary">STREAM</span>
-            </span>
-            <span className="text-[10px] font-bold text-foreground/50 uppercase tracking-[0.2em] mt-2">
+          <div className="flex flex-col items-center md:items-start space-y-3">
+            <Link href="/" className="relative w-40 h-8 block">
+              <Image 
+                src="/naivestream_logo.png" 
+                alt="NaiveStream" 
+                fill 
+                sizes="160px"
+                className="object-contain grayscale opacity-70 hover:grayscale-0 hover:opacity-100 transition-all duration-300"
+              />
+            </Link>
+            <span className="text-[10px] font-bold text-foreground/50 uppercase tracking-[0.2em]">
               © {new Date().getFullYear()} NaiveStream
             </span>
           </div>

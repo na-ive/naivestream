@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import { Search, Moon, Sun, Menu, X, Play, ChevronDown } from 'lucide-react';
 import { useTheme } from 'next-themes';
@@ -48,14 +49,16 @@ export function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20">
           {/* Logo */}
-          <Link href="/" className="flex items-center space-x-3 group">
-            <div className="relative w-10 h-10 bg-secondary flex items-center justify-center transition-all shadow-[0_0_10px_rgba(34,197,94,0.3)]">
-               <Play className="text-background fill-current w-5 h-5 relative z-10" />
-            </div>
-            <div className="flex flex-col">
-              <span className="text-xl font-serif font-black tracking-tighter text-foreground leading-none">
-                NAIVE<span className="text-secondary">STREAM</span>
-              </span>
+          <Link href="/" className="flex items-center group py-2">
+            <div className="relative w-36 md:w-48 h-8 md:h-10 transition-transform group-hover:scale-105">
+              <Image 
+                src="/naivestream_logo.png" 
+                alt="NaiveStream" 
+                fill 
+                sizes="(max-width: 768px) 144px, 192px"
+                className="object-contain drop-shadow-[0_0_10px_rgba(34,197,94,0.3)]"
+                priority
+              />
             </div>
           </Link>
 
