@@ -14,7 +14,7 @@ export interface WatchHistory {
 export function useHistory() {
   const [history, setHistory] = useState<WatchHistory[]>([]);
 
-  useEffect(() => {
+  const loadHistory = useCallback(() => {
     const saved = localStorage.getItem('anime_history');
     if (saved) {
       try {
@@ -22,37 +22,55 @@ export function useHistory() {
       } catch (e) {
         console.error('Failed to parse history', e);
       }
+    } else {
+      setHistory([]);
     }
   }, []);
 
+  useEffect(() => {
+    loadHistory();
+    window.addEventListener('history_updated', loadHistory);
+    return () => window.removeEventListener('history_updated', loadHistory);
+  }, [loadHistory]);
+
+  const updateStorage = (newList: WatchHistory[]) => {
+    localStorage.setItem('anime_history', JSON.stringify(newList));
+    window.dispatchEvent(new Event('history_updated'));
+  };
+
+  const getLatestHistory = (): WatchHistory[] => {
+    const saved = localStorage.getItem('anime_history');
+    return saved ? JSON.parse(saved) : [];
+  };
+
   const saveToHistory = useCallback((item: Omit<WatchHistory, 'updatedAt'>) => {
-    setHistory((prevHistory) => {
-      const newHistory = [...prevHistory];
-      const index = newHistory.findIndex((h) => h.animeId === item.animeId);
-      
-      if (index !== -1) {
-        newHistory[index] = { ...item, updatedAt: Date.now() };
-      } else {
-        newHistory.unshift({ ...item, updatedAt: Date.now() });
-      }
+    const currentList = getLatestHistory();
+    const newHistory = [...currentList];
+    const index = newHistory.findIndex((h) => h.animeId === item.animeId);
+    
+    if (index !== -1) {
+      newHistory[index] = { ...item, updatedAt: Date.now() };
+    } else {
+      newHistory.unshift({ ...item, updatedAt: Date.now() });
+    }
 
-      // Keep only last 50 items
-      const limitedHistory = newHistory
-        .sort((a, b) => b.updatedAt - a.updatedAt)
-        .slice(0, 50);
+    // Keep only last 50 items
+    const limitedHistory = newHistory
+      .sort((a, b) => b.updatedAt - a.updatedAt)
+      .slice(0, 50);
 
-      localStorage.setItem('anime_history', JSON.stringify(limitedHistory));
-      return limitedHistory;
-    });
+    updateStorage(limitedHistory);
   }, []);
 
   const removeFromHistory = useCallback((animeId: string) => {
-    setHistory((prevHistory) => {
-      const newHistory = prevHistory.filter((h) => h.animeId !== animeId);
-      localStorage.setItem('anime_history', JSON.stringify(newHistory));
-      return newHistory;
-    });
+    const currentList = getLatestHistory();
+    updateStorage(currentList.filter((h) => h.animeId !== animeId));
   }, []);
 
-  return { history, saveToHistory, removeFromHistory };
+  const removeMultipleFromHistory = useCallback((animeIds: string[]) => {
+    const currentList = getLatestHistory();
+    updateStorage(currentList.filter((h) => !animeIds.includes(h.animeId)));
+  }, []);
+
+  return { history, saveToHistory, removeFromHistory, removeMultipleFromHistory };
 }

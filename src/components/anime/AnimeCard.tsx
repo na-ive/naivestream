@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { Play, Star, Terminal } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { BookmarkButton } from './BookmarkButton';
+import { cn } from '@/lib/utils';
 
 interface AnimeCardProps {
   id: string;
@@ -15,15 +16,16 @@ interface AnimeCardProps {
   episode?: string;
   type?: string;
   hideBookmark?: boolean;
+  disableHover?: boolean;
 }
 
-export function AnimeCard({ id, title, image, status, rating, episode, type, hideBookmark = false }: AnimeCardProps) {
+export function AnimeCard({ id, title, image, status, rating, episode, type, hideBookmark = false, disableHover = false }: AnimeCardProps) {
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.3 }}
-      className="group relative flex flex-col"
+      className={cn("relative flex flex-col", !disableHover && "group")}
     >
       <Link href={`/anime/${id}`} className="block relative aspect-[3/4] overflow-hidden bg-card border-2 border-secondary/20 group-hover:border-secondary transition-all">
         {/* Decorative Corner */}

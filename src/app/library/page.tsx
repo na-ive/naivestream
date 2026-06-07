@@ -4,18 +4,20 @@ import React, { useState, useEffect } from 'react';
 import { useHistory } from '@/lib/hooks/useHistory';
 import { useWatchlist } from '@/lib/hooks/useWatchlist';
 import { AnimeCard } from '@/components/anime/AnimeCard';
-import { Bookmark, Clock, Trash2, Play, LayoutGrid } from 'lucide-react';
+import { Bookmark, Clock, Trash2, Play, LayoutGrid, CheckSquare } from 'lucide-react';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
 
 type TabType = 'watchlist' | 'history';
 
 export default function LibraryPage() {
-  const { history, removeFromHistory } = useHistory();
-  const { watchlist, removeFromWatchlist } = useWatchlist();
+  const { history, removeFromHistory, removeMultipleFromHistory } = useHistory();
+  const { watchlist, removeFromWatchlist, removeMultipleFromWatchlist } = useWatchlist();
   
   const [activeTab, setActiveTab] = useState<TabType>('watchlist');
   const [mounted, setMounted] = useState(false);
+  const [isSelectionMode, setIsSelectionMode] = useState(false);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
   useEffect(() => {
     setMounted(true);
@@ -28,6 +30,26 @@ export default function LibraryPage() {
   const handleTabChange = (tab: TabType) => {
     setActiveTab(tab);
     localStorage.setItem('library_active_tab', tab);
+    setIsSelectionMode(false);
+    setSelectedIds([]);
+  };
+
+  const toggleSelection = (animeId: string) => {
+    setSelectedIds(prev => 
+      prev.includes(animeId) ? prev.filter(id => id !== animeId) : [...prev, animeId]
+    );
+  };
+
+  const handleBulkDelete = () => {
+    if (selectedIds.length > 0) {
+      if (activeTab === 'watchlist') {
+        removeMultipleFromWatchlist(selectedIds);
+      } else {
+        removeMultipleFromHistory(selectedIds);
+      }
+      setIsSelectionMode(false);
+      setSelectedIds([]);
+    }
   };
 
   if (!mounted) return null; // Avoid hydration mismatch
@@ -88,20 +110,63 @@ export default function LibraryPage() {
           </div>
         </div>
         
-        {activeTab === 'history' && history.length > 0 && (
-          <button 
-            onClick={() => {
-              if (confirm('Clear all history?')) {
-                localStorage.removeItem('anime_history');
-                window.location.reload();
-              }
-            }}
-            className="flex items-center space-x-3 px-6 py-2.5 bg-red-100 dark:bg-red-950/50 text-red-600 dark:text-red-500 border border-red-300 dark:border-red-900/50 hover:bg-red-200 dark:hover:bg-red-900/80 hover:text-red-700 dark:hover:text-red-400 transition-all font-black text-[10px] uppercase tracking-[0.2em] cursor-pointer"
-            style={{ clipPath: 'polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px)' }}
-          >
-            <Trash2 className="w-4 h-4 shrink-0" />
-            <span>Clear History</span>
-          </button>
+        {/* Bulk Action Controls */}
+        {((activeTab === 'watchlist' && watchlist.length > 0) || (activeTab === 'history' && history.length > 0)) && (
+          <div className="flex items-center space-x-3">
+            {isSelectionMode ? (
+              <>
+                <button 
+                  onClick={handleBulkDelete}
+                  disabled={selectedIds.length === 0}
+                  className={cn(
+                    "flex items-center space-x-2 px-6 py-2.5 transition-all font-black text-[10px] uppercase tracking-[0.2em]",
+                    selectedIds.length > 0
+                      ? "bg-red-500 hover:bg-red-600 text-white shadow-[0_0_15px_rgba(239,68,68,0.3)]"
+                      : "bg-card/50 text-muted-text cursor-not-allowed"
+                  )}
+                  style={{ clipPath: 'polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px)' }}
+                >
+                  <Trash2 className="w-4 h-4 shrink-0" />
+                  <span>Delete Selected ({selectedIds.length})</span>
+                </button>
+                <button 
+                  onClick={() => {
+                    setIsSelectionMode(false);
+                    setSelectedIds([]);
+                  }}
+                  className="px-6 py-2.5 bg-card/80 border border-white/10 hover:border-white/30 text-foreground transition-all font-black text-[10px] uppercase tracking-[0.2em]"
+                  style={{ clipPath: 'polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px)' }}
+                >
+                  Cancel
+                </button>
+              </>
+            ) : (
+              <>
+                {activeTab === 'history' && history.length > 0 && (
+                  <button 
+                    onClick={() => {
+                      if (confirm('Clear all history?')) {
+                        localStorage.removeItem('anime_history');
+                        window.dispatchEvent(new Event('history_updated'));
+                      }
+                    }}
+                    className="flex items-center space-x-2 px-6 py-2.5 bg-red-100 dark:bg-red-950/50 text-red-600 dark:text-red-500 border border-red-300 dark:border-red-900/50 hover:bg-red-200 dark:hover:bg-red-900/80 transition-all font-black text-[10px] uppercase tracking-[0.2em]"
+                    style={{ clipPath: 'polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px)' }}
+                  >
+                    <Trash2 className="w-4 h-4 shrink-0" />
+                    <span>Clear All</span>
+                  </button>
+                )}
+                <button 
+                  onClick={() => setIsSelectionMode(true)}
+                  className="px-6 py-2.5 bg-card/80 border border-secondary/30 hover:border-secondary text-secondary transition-all font-black text-[10px] uppercase tracking-[0.2em]"
+                  style={{ clipPath: 'polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px)' }}
+                >
+                  Select Items
+                </button>
+              </>
+            )}
+          </div>
         )}
       </div>
 
@@ -118,21 +183,56 @@ export default function LibraryPage() {
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-6">
               {watchlist.map((item) => (
-                <div key={item.animeId} className="relative group">
-                  <AnimeCard
-                    id={item.animeId}
-                    title={item.animeTitle}
-                    image={item.animeImage}
-                    hideBookmark={true}
-                  />
-                  <button
-                    onClick={() => removeFromWatchlist(item.animeId)}
-                    className="absolute top-2 right-2 z-20 w-8 h-8 bg-red-500/80 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600 border border-white/10"
-                    title="Remove from Watchlist"
-                    style={{ clipPath: 'polygon(5px 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 5px)' }}
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
+                <div 
+                  key={item.animeId} 
+                  className={cn(
+                    "relative transition-all duration-300",
+                    !isSelectionMode && "group",
+                    isSelectionMode && "group/sel cursor-pointer hover:scale-[1.02] hover:z-10",
+                    isSelectionMode && selectedIds.includes(item.animeId) ? "ring-2 ring-secondary ring-offset-4 ring-offset-background scale-[1.02]" : ""
+                  )}
+                  onClick={() => {
+                    if (isSelectionMode) toggleSelection(item.animeId);
+                  }}
+                >
+                  <div className={cn("transition-all duration-300", isSelectionMode ? "pointer-events-none opacity-50 group-hover/sel:opacity-80" : "")}>
+                    <AnimeCard
+                      id={item.animeId}
+                      title={item.animeTitle}
+                      image={item.animeImage}
+                      hideBookmark={true}
+                      disableHover={isSelectionMode}
+                    />
+                  </div>
+
+                  {/* Selection Overlay */}
+                  {isSelectionMode && (
+                    <div className="absolute inset-0 z-30 flex items-center justify-center bg-black/20">
+                      <div className={cn(
+                        "w-12 h-12 flex items-center justify-center border-2 transition-all duration-300",
+                        selectedIds.includes(item.animeId) 
+                          ? "bg-secondary border-secondary text-background shadow-[0_0_15px_rgba(34,197,94,0.5)]" 
+                          : "border-white/50 text-white/50 bg-black/50 group-hover/sel:border-secondary/50 group-hover/sel:text-secondary/50"
+                      )}
+                      style={{ clipPath: 'polygon(4px 0, 100% 0, 100% calc(100% - 4px), calc(100% - 4px) 100%, 0 100%, 0 4px)' }}>
+                        <CheckSquare className={cn("w-6 h-6", selectedIds.includes(item.animeId) ? "fill-current" : "")} />
+                      </div>
+                    </div>
+                  )}
+
+                  {!isSelectionMode && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        removeFromWatchlist(item.animeId);
+                      }}
+                      className="absolute top-2 right-2 z-20 w-8 h-8 bg-red-500/80 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600 border border-white/10"
+                      title="Remove from Watchlist"
+                      style={{ clipPath: 'polygon(5px 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 5px)' }}
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  )}
                 </div>
               ))}
             </div>
@@ -150,43 +250,77 @@ export default function LibraryPage() {
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-6">
               {history.map((item) => (
-                <div key={item.animeId} className="relative group">
-                  <AnimeCard
-                    id={item.animeId}
-                    title={item.animeTitle}
-                    image={item.animeImage}
-                    hideBookmark={true}
-                  />
-                  
-                  <div className="mt-3 p-3 bg-card border border-secondary/10 group-hover:border-secondary/30 transition-all relative">
-                    <div className="absolute inset-0 bg-gradient-to-t from-secondary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
-                    <p className="text-[9px] text-muted-text font-black uppercase tracking-[0.2em] mb-1.5">
-                      Resume Point
-                    </p>
-                    <Link 
-                      href={`/watch/${item.lastEpisodeId}?anime=${item.animeId}&title=${encodeURIComponent(item.animeTitle)}&img=${encodeURIComponent(item.animeImage)}`}
-                      className="flex items-center justify-between group/ep"
-                    >
-                      <span className="text-[11px] font-bold truncate pr-3 group-hover/ep:text-secondary transition-colors uppercase tracking-widest leading-relaxed">
-                        {item.lastEpisodeTitle}
-                      </span>
-                      <div className="w-6 h-6 bg-secondary/10 flex items-center justify-center group-hover/ep:bg-secondary/20 transition-colors shrink-0">
-                        <Play className="w-3 h-3 text-secondary fill-current" />
-                      </div>
-                    </Link>
+                <div 
+                  key={item.animeId} 
+                  className={cn(
+                    "relative transition-all duration-300",
+                    !isSelectionMode && "group",
+                    isSelectionMode && "group/sel cursor-pointer hover:scale-[1.02] hover:z-10",
+                    isSelectionMode && selectedIds.includes(item.animeId) ? "ring-2 ring-secondary ring-offset-4 ring-offset-background scale-[1.02]" : ""
+                  )}
+                  onClick={() => {
+                    if (isSelectionMode) toggleSelection(item.animeId);
+                  }}
+                >
+                  <div className={cn("transition-all duration-300", isSelectionMode ? "pointer-events-none opacity-50 group-hover/sel:opacity-80" : "")}>
+                    <AnimeCard
+                      id={item.animeId}
+                      title={item.animeTitle}
+                      image={item.animeImage}
+                      hideBookmark={true}
+                      disableHover={isSelectionMode}
+                    />
+                    
+                    <div className="mt-3 p-3 bg-card border border-secondary/10 group-hover:border-secondary/30 transition-all relative">
+                      <div className="absolute inset-0 bg-gradient-to-t from-secondary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
+                      <p className="text-[9px] text-muted-text font-black uppercase tracking-[0.2em] mb-1.5">
+                        Resume Point
+                      </p>
+                      <Link 
+                        href={`/watch/${item.lastEpisodeId}?anime=${item.animeId}&title=${encodeURIComponent(item.animeTitle)}&img=${encodeURIComponent(item.animeImage)}`}
+                        className="flex items-center justify-between group/ep"
+                        onClick={(e) => {
+                          if (isSelectionMode) e.preventDefault();
+                        }}
+                      >
+                        <span className="text-[11px] font-bold truncate pr-3 group-hover/ep:text-secondary transition-colors uppercase tracking-widest leading-relaxed">
+                          {item.lastEpisodeTitle}
+                        </span>
+                        <div className="w-6 h-6 bg-secondary/10 flex items-center justify-center group-hover/ep:bg-secondary/20 transition-colors shrink-0">
+                          <Play className="w-3 h-3 text-secondary fill-current" />
+                        </div>
+                      </Link>
+                    </div>
                   </div>
 
-                  <button
-                    onClick={(e) => {
-                      e.preventDefault();
-                      removeFromHistory(item.animeId);
-                    }}
-                    className="absolute top-2 right-2 z-20 w-8 h-8 bg-red-500/80 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600 border border-white/10"
-                    title="Remove from history"
-                    style={{ clipPath: 'polygon(5px 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 5px)' }}
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
+                  {/* Selection Overlay */}
+                  {isSelectionMode && (
+                    <div className="absolute inset-0 z-30 flex items-center justify-center bg-black/20">
+                      <div className={cn(
+                        "w-12 h-12 flex items-center justify-center border-2 transition-all duration-300",
+                        selectedIds.includes(item.animeId) 
+                          ? "bg-secondary border-secondary text-background shadow-[0_0_15px_rgba(34,197,94,0.5)]" 
+                          : "border-white/50 text-white/50 bg-black/50 group-hover/sel:border-secondary/50 group-hover/sel:text-secondary/50"
+                      )}
+                      style={{ clipPath: 'polygon(4px 0, 100% 0, 100% calc(100% - 4px), calc(100% - 4px) 100%, 0 100%, 0 4px)' }}>
+                        <CheckSquare className={cn("w-6 h-6", selectedIds.includes(item.animeId) ? "fill-current" : "")} />
+                      </div>
+                    </div>
+                  )}
+
+                  {!isSelectionMode && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        removeFromHistory(item.animeId);
+                      }}
+                      className="absolute top-2 right-2 z-20 w-8 h-8 bg-red-500/80 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600 border border-white/10"
+                      title="Remove from history"
+                      style={{ clipPath: 'polygon(5px 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 5px)' }}
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  )}
                 </div>
               ))}
             </div>
