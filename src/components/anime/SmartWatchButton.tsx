@@ -1,0 +1,83 @@
+'use client';
+
+import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { Play, Loader2 } from 'lucide-react';
+import { useHistory } from '@/lib/hooks/useHistory';
+import { AnimeAPI } from '@/lib/api';
+import { cn } from '@/lib/utils';
+
+interface SmartWatchButtonProps {
+  animeId: string;
+  animeTitle: string;
+  animeImage: string;
+  className?: string;
+  variant?: 'primary' | 'outline';
+}
+
+export function SmartWatchButton({ 
+  animeId, 
+  animeTitle, 
+  animeImage, 
+  className,
+  variant = 'primary'
+}: SmartWatchButtonProps) {
+  const router = useRouter();
+  const { history } = useHistory();
+  const [loading, setLoading] = useState(false);
+
+  const handleWatch = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    // 1. Check local history first (Fastest, no API call)
+    const savedProgress = history.find(h => h.animeId === animeId);
+    
+    if (savedProgress) {
+      // Resume from last watched
+      router.push(`/watch/${savedProgress.lastEpisodeId}?anime=${animeId}&title=${encodeURIComponent(animeTitle)}&img=${encodeURIComponent(animeImage)}`);
+      return;
+    }
+
+    // 2. No history? Fetch details to find Episode 1 (Only happens ON CLICK)
+    setLoading(true);
+    try {
+      const res = await AnimeAPI.otakudesu.getDetails(animeId);
+      const episodes = res?.data?.episodeList || res?.data?.episode_list || [];
+      
+      if (episodes.length > 0) {
+        // Episode 1 is usually the last item in the array from this API
+        const firstEpisode = episodes[episodes.length - 1];
+        const epId = firstEpisode.episodeId || firstEpisode.id;
+        
+        router.push(`/watch/${epId}?anime=${animeId}&title=${encodeURIComponent(animeTitle)}&img=${encodeURIComponent(animeImage)}`);
+      } else {
+        router.push(`/anime/${animeId}`);
+      }
+    } catch (error) {
+      console.error("Failed to find Episode 1", error);
+      router.push(`/anime/${animeId}`);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <button
+      onClick={handleWatch}
+      disabled={loading}
+      className={cn(
+        "flex items-center justify-center space-x-2 transition-all disabled:opacity-70 cursor-pointer",
+        variant === 'primary' ? "btn-primary" : "px-6 py-3 rounded-lg border border-border font-medium hover:bg-white/5",
+        className
+      )}
+    >
+      {loading ? (
+        <Loader2 className="w-5 h-5 animate-spin" />
+      ) : (
+        <Play className="w-5 h-5 fill-current" />
+      )}
+      <span>{loading ? 'Finding Episode...' : 'Watch Now'}</span>
+    </button>
+  );
+}

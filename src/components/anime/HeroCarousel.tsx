@@ -2,8 +2,9 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
-import { Play, TrendingUp, Calendar, ChevronLeft, ChevronRight } from 'lucide-react';
+import { TrendingUp, Calendar, ChevronLeft, ChevronRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { SmartWatchButton } from './SmartWatchButton';
 
 interface HeroCarouselProps {
   items: any[];
@@ -89,10 +90,11 @@ export function HeroCarousel({ items }: HeroCarouselProps) {
           </p>
 
           <div className="flex items-center space-x-4 pt-2">
-            <Link href={`/anime/${current.animeId || current.id}`} className="btn-primary flex items-center space-x-2 group/btn">
-              <Play className="w-5 h-5 fill-current group-hover/btn:scale-110 transition-transform" />
-              <span>Watch Now</span>
-            </Link>
+            <SmartWatchButton 
+              animeId={current.animeId || current.id} 
+              animeTitle={current.title} 
+              animeImage={current.poster || current.image} 
+            />
             <Link href={`/anime/${current.animeId || current.id}`} className="px-6 py-3 rounded-lg border border-border font-medium hover:bg-white/5 transition-colors">
               Details
             </Link>
