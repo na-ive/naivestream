@@ -42,7 +42,7 @@ export default async function HomePage() {
           <div className="flex items-center justify-between mb-8">
             <div className="space-y-1">
               <h2 className="text-2xl font-bold">Ongoing Anime</h2>
-              <p className="text-sm text-gray-500">Recently updated series</p>
+              <p className="text-sm text-muted-text">Recently updated series</p>
             </div>
             <Link href="/ongoing" className="flex items-center text-sm font-medium text-secondary hover:underline">
               View All <ChevronRight className="w-4 h-4 ml-1" />
@@ -67,7 +67,7 @@ export default async function HomePage() {
           <div className="flex items-center justify-between mb-8">
             <div className="space-y-1">
               <h2 className="text-2xl font-bold">Completed Series</h2>
-              <p className="text-sm text-gray-500">Watch the full story</p>
+              <p className="text-sm text-muted-text">Watch the full story</p>
             </div>
             <Link href="/completed" className="flex items-center text-sm font-medium text-secondary hover:underline">
               View All <ChevronRight className="w-4 h-4 ml-1" />

@@ -77,21 +77,21 @@ export default async function AnimeDetailPage(props: { params: Promise<{ id: str
                     <Star className="text-secondary w-5 h-5 fill-current" />
                     <span className="font-serif font-black">{rating}</span>
                   </div>
-                  <span className="text-[10px] text-gray-500 uppercase font-black tracking-widest">Score</span>
+                  <span className="text-[10px] text-muted-text uppercase font-black tracking-widest">Score</span>
                 </div>
               )}
               
               <div className="p-4 bg-card border-2 border-secondary/10 space-y-3">
                 <div className="flex justify-between text-xs font-bold uppercase tracking-wider">
-                  <span className="text-gray-500">Status</span>
+                  <span className="text-muted-text">Status</span>
                   <span className="text-secondary">{data.status}</span>
                 </div>
                 <div className="flex justify-between text-xs font-bold uppercase tracking-wider">
-                  <span className="text-gray-500">Episodes</span>
+                  <span className="text-muted-text">Episodes</span>
                   <span>{data.episodes || '??'}</span>
                 </div>
                 <div className="flex justify-between text-xs font-bold uppercase tracking-wider">
-                  <span className="text-gray-500">Provider</span>
+                  <span className="text-muted-text">Provider</span>
                   <span className="text-secondary">{source}</span>
                 </div>
               </div>
@@ -113,7 +113,7 @@ export default async function AnimeDetailPage(props: { params: Promise<{ id: str
               <h1 className="text-3xl md:text-6xl font-serif font-black leading-none tracking-tighter">{data.title || "Unknown Title"}</h1>
               <div className="flex flex-wrap gap-2">
                 {genres.map((genre: any, idx: number) => (
-                  <span key={genre.genreId || `genre-${idx}`} className="px-3 py-1 bg-secondary text-white dark:text-black text-[10px] font-black uppercase tracking-widest clip-path-polygon-small">
+                  <span key={genre.genreId || `genre-${idx}`} className="px-3 py-1 bg-secondary text-background text-[10px] font-black uppercase tracking-widest clip-path-polygon-small">
                     {genre.title || genre.name}
                   </span>
                 ))}
@@ -125,7 +125,7 @@ export default async function AnimeDetailPage(props: { params: Promise<{ id: str
                 <Info className="w-5 h-5 text-secondary" />
                 <h2>Synopsis</h2>
               </div>
-              <p className="text-gray-400 leading-relaxed text-sm md:text-base whitespace-pre-line border-l-4 border-secondary/20 pl-6 py-2 bg-secondary/[0.02]">
+              <p className="text-foreground/70 leading-relaxed text-sm md:text-base whitespace-pre-line border-l-4 border-secondary/20 pl-6 py-2 bg-secondary/[0.02]">
                 {synopsis}
               </p>
             </div>
@@ -137,7 +137,7 @@ export default async function AnimeDetailPage(props: { params: Promise<{ id: str
                   <List className="w-5 h-5 text-secondary" />
                   <h2>Episode List</h2>
                 </div>
-                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-500">{episodes.length} Total Units</span>
+                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-text">{episodes.length} Total Units</span>
               </div>
 
               <EpisodeList 

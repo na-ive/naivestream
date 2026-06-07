@@ -42,7 +42,7 @@ export function Navbar() {
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-3 group">
             <div className="relative w-10 h-10 bg-secondary flex items-center justify-center transition-all shadow-[0_0_10px_rgba(34,197,94,0.3)]">
-               <Play className="text-white dark:text-black fill-current w-5 h-5 relative z-10" />
+               <Play className="text-background fill-current w-5 h-5 relative z-10" />
             </div>
             <div className="flex flex-col">
               <span className="text-xl font-serif font-black tracking-tighter text-foreground leading-none">
@@ -112,7 +112,7 @@ export function Navbar() {
             </button>
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="p-2 bg-secondary text-white dark:text-black cursor-pointer"
+              className="p-2 bg-secondary text-background cursor-pointer"
             >
               {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>

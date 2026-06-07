@@ -14,6 +14,7 @@
   --color-card: #FFFFFF;
   --color-card-foreground: #0F172A;
   --color-border: #E2E8F0;
+  --color-muted-text: #64748B;
 
   --font-sans: 'Exo 2', ui-sans-serif, system-ui, sans-serif;
   --font-serif: 'Orbitron', ui-serif, Georgia, serif;
@@ -29,6 +30,7 @@
   --color-card: #0F172A;
   --color-card-foreground: #F8FAFC;
   --color-border: #1E293B;
+  --color-muted-text: #94A3B8;
 }
 
 @layer base {

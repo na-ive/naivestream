@@ -30,7 +30,7 @@ function SearchContent() {
           <SearchIcon className="w-8 h-8" />
           <h1 className="text-3xl md:text-4xl font-bold">Search Results</h1>
         </div>
-        <p className="text-gray-500">
+        <p className="text-muted-text">
           {query ? `Showing results for "${query}"` : 'Enter a keyword to search anime'}
         </p>
       </div>
@@ -38,12 +38,12 @@ function SearchContent() {
       {loading ? (
         <div className="flex flex-col items-center justify-center py-20 space-y-4">
           <Loader2 className="w-12 h-12 text-secondary animate-spin" />
-          <p className="text-gray-500 font-medium">Searching through the archives...</p>
+          <p className="text-muted-text font-medium">Searching through the archives...</p>
         </div>
       ) : results?.data?.length > 0 ? (
         <div className="space-y-8">
           <div className="flex items-center justify-between">
-            <span className="text-sm font-bold text-gray-500 uppercase tracking-widest">
+            <span className="text-sm font-bold text-muted-text uppercase tracking-widest">
               Found {results.data.length} Results from {results.source}
             </span>
           </div>
@@ -63,15 +63,15 @@ function SearchContent() {
       ) : query ? (
         <div className="flex flex-col items-center justify-center py-20 space-y-6 text-center">
           <div className="w-20 h-20 bg-card rounded-full flex items-center justify-center border border-border">
-            <Frown className="w-10 h-10 text-gray-400" />
+            <Frown className="w-10 h-10 text-muted-text" />
           </div>
           <div className="space-y-2">
             <h2 className="text-xl font-bold">No results found</h2>
-            <p className="text-gray-500 max-w-xs mx-auto">We couldn&apos;t find any anime matching your search. Try different keywords!</p>
+            <p className="text-muted-text max-w-xs mx-auto">We couldn&apos;t find any anime matching your search. Try different keywords!</p>
           </div>
         </div>
       ) : (
-        <div className="text-center py-20 text-gray-500">
+        <div className="text-center py-20 text-muted-text">
           Enter a keyword in the search bar above to begin.
         </div>
       )}
@@ -84,7 +84,7 @@ export default function SearchPage() {
     <Suspense fallback={
       <div className="flex flex-col items-center justify-center py-20 space-y-4">
         <Loader2 className="w-12 h-12 text-secondary animate-spin" />
-        <p className="text-gray-500 font-medium">Loading search...</p>
+        <p className="text-muted-text font-medium">Loading search...</p>
       </div>
     }>
       <SearchContent />

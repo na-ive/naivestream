@@ -52,7 +52,7 @@ export function EpisodeList({
             )}
             <div className={cn(
               "w-12 h-12 flex items-center justify-center font-bold text-sm transition-colors shrink-0",
-              isLastWatched ? "bg-secondary text-black" : "bg-background group-hover:bg-secondary group-hover:text-white"
+              isLastWatched ? "bg-secondary text-black" : "bg-background group-hover:bg-secondary group-hover:text-background"
             )}>
               {epNum}
             </div>
@@ -61,11 +61,11 @@ export function EpisodeList({
                 "text-sm font-bold truncate",
                 isLastWatched ? "text-secondary" : ""
               )}>Episode {epNum}</p>
-              <p className="text-[11px] text-gray-500 mt-0.5">{ep.date || ep.uploaded_on || 'Released'}</p>
+              <p className="text-[11px] text-muted-text mt-0.5">{ep.date || ep.uploaded_on || 'Released'}</p>
             </div>
             <Play className={cn(
               "w-4 h-4 transition-colors shrink-0",
-              isLastWatched ? "text-secondary fill-current" : "text-gray-400 group-hover:text-secondary"
+              isLastWatched ? "text-secondary fill-current" : "text-muted-text group-hover:text-secondary"
             )} />
           </Link>
         );

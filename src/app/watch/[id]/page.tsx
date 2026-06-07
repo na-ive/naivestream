@@ -92,7 +92,7 @@ function WatchContent({ id }: { id: string }) {
   return (
     <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
       {/* Breadcrumbs */}
-      <div className="flex items-center space-x-2 text-[10px] font-black uppercase tracking-[0.2em] text-gray-500 mb-6 overflow-hidden whitespace-nowrap">
+      <div className="flex items-center space-x-2 text-[10px] font-black uppercase tracking-[0.2em] text-muted-text mb-6 overflow-hidden whitespace-nowrap">
         <Link href="/" className="hover:text-secondary transition-colors">Home</Link>
         <ChevronRight className="w-4 h-4 shrink-0" />
         <Link href={`/anime/${animeId}`} className="hover:text-secondary truncate max-w-[200px] transition-colors">{animeTitle}</Link>
@@ -119,8 +119,8 @@ function WatchContent({ id }: { id: string }) {
               />
             ) : (
               <div className="flex flex-col items-center justify-center h-full text-center px-4">
-                <Video className="w-12 h-12 text-gray-800 mb-4" />
-                <p className="text-sm font-bold uppercase tracking-widest text-gray-500">Video source offline</p>
+                <Video className="w-12 h-12 text-muted-text mb-4" />
+                <p className="text-sm font-bold uppercase tracking-widest text-muted-text">Video source offline</p>
               </div>
             )}
             <div className="absolute inset-0 pointer-events-none border-x border-white/5 z-10" />
@@ -163,7 +163,7 @@ function WatchContent({ id }: { id: string }) {
           </div>
 
           <div className="bg-card border-2 border-secondary/10 p-6 space-y-6">
-            <h3 className="flex items-center text-xs font-black uppercase tracking-[0.2em] text-gray-500">
+            <h3 className="flex items-center text-xs font-black uppercase tracking-[0.2em] text-muted-text">
               <Video className="w-4 h-4 mr-2 text-secondary" />
               Video Servers
             </h3>

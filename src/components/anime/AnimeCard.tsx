@@ -23,7 +23,7 @@ export function AnimeCard({ id, title, image, status, rating, episode, type }: A
       transition={{ duration: 0.3 }}
       className="group relative flex flex-col"
     >
-      <Link href={`/anime/${id}`} className="block relative aspect-[3/4] overflow-hidden bg-slate-900 border-2 border-secondary/20 group-hover:border-secondary transition-all">
+      <Link href={`/anime/${id}`} className="block relative aspect-[3/4] overflow-hidden bg-card border-2 border-secondary/20 group-hover:border-secondary transition-all">
         {/* Decorative Corner */}
         <div className="absolute top-0 right-0 w-8 h-8 bg-secondary/20 transition-all group-hover:bg-secondary/40 clip-path-corner-tr" />
         
@@ -38,7 +38,7 @@ export function AnimeCard({ id, title, image, status, rating, episode, type }: A
         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-300" />
         
         <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-          <div className="w-16 h-16 bg-secondary text-black flex items-center justify-center shadow-[0_0_25px_rgba(34,197,94,0.6)] animate-pulse">
+          <div className="w-16 h-16 bg-secondary text-background flex items-center justify-center shadow-[0_0_25px_rgba(34,197,94,0.6)] animate-pulse">
             <Play className="fill-current w-8 h-8 ml-1" />
           </div>
         </div>
@@ -46,20 +46,20 @@ export function AnimeCard({ id, title, image, status, rating, episode, type }: A
         {/* Badges */}
         <div className="absolute top-3 left-3 flex flex-col gap-2">
           {rating && (
-            <div className="flex items-center space-x-1.5 px-2 py-1 bg-black/80 backdrop-blur-md border border-secondary/50 text-[10px] font-black text-secondary uppercase tracking-tighter">
+            <div className="flex items-center space-x-1.5 px-2 py-1 bg-background/90 backdrop-blur-md border border-secondary/50 text-[10px] font-black text-secondary uppercase tracking-tighter">
               <Star className="w-3 h-3 fill-current" />
               <span>{rating}</span>
             </div>
           )}
           {type && (
-            <div className="px-2 py-1 bg-secondary text-black text-[10px] font-black uppercase tracking-tighter">
+            <div className="px-2 py-1 bg-secondary text-background text-[10px] font-black uppercase tracking-tighter">
               {type}
             </div>
           )}
         </div>
 
         {episode && (
-          <div className="absolute bottom-3 right-3 px-3 py-1 bg-black/80 backdrop-blur-md border-r-4 border-secondary text-[10px] font-black text-white tracking-widest uppercase">
+          <div className="absolute bottom-3 right-3 px-3 py-1 bg-background/90 backdrop-blur-md border-r-4 border-secondary text-[10px] font-black text-foreground tracking-widest uppercase">
             EP {episode}
           </div>
         )}
