@@ -28,17 +28,24 @@ export default function HistoryPage() {
                 window.location.reload();
               }
             }}
-            className="flex items-center space-x-2 px-6 py-3 bg-red-500/10 text-red-500 border border-red-500/20 hover:bg-red-500 hover:text-white transition-all font-bold text-xs uppercase tracking-widest cursor-pointer"
+            className="flex items-center space-x-3 px-6 py-2.5 bg-red-100 dark:bg-red-950/50 text-red-600 dark:text-red-500 border border-red-300 dark:border-red-900/50 hover:bg-red-200 dark:hover:bg-red-900/80 hover:text-red-700 dark:hover:text-red-400 transition-all font-black text-[10px] uppercase tracking-[0.2em] cursor-pointer"
+            style={{ clipPath: 'polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px)' }}
           >
-            <Trash2 className="w-4 h-4" />
+            <Trash2 className="w-4 h-4 shrink-0" />
             <span>Clear History</span>
           </button>
         )}
       </div>
 
       {history.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-20 space-y-6 text-center border-2 border-dashed border-secondary/10">
-          <div className="w-20 h-20 bg-card flex items-center justify-center border-2 border-secondary/20 shadow-[0_0_15px_rgba(34,197,94,0.1)]">
+        <div 
+          className="flex flex-col items-center justify-center py-20 space-y-6 text-center bg-card/30 border-y border-secondary/20 relative"
+          style={{ clipPath: 'polygon(30px 0, 100% 0, 100% calc(100% - 30px), calc(100% - 30px) 100%, 0 100%, 0 30px)' }}
+        >
+          <div 
+            className="w-20 h-20 bg-card flex items-center justify-center shadow-[0_0_20px_rgba(34,197,94,0.15)] border border-secondary/30"
+            style={{ clipPath: 'polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px)' }}
+          >
             <Clock className="w-10 h-10 text-foreground/20" />
           </div>
           <div className="space-y-2">
@@ -59,22 +66,30 @@ export default function HistoryPage() {
                 image={item.animeImage}
               />
               
-              <div className="mt-4 p-4 bg-card border-2 border-secondary/10 group-hover:border-secondary transition-all">
-                <p className="text-[10px] text-secondary font-black uppercase tracking-[0.2em] mb-2">Resume Point</p>
+              <div 
+                className="mt-3 p-3 bg-card border border-secondary/10 group-hover:border-secondary/30 transition-all relative"
+              >
+                <div className="absolute inset-0 bg-gradient-to-t from-secondary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
+                <p className="text-[9px] text-muted-text font-black uppercase tracking-[0.2em] mb-1.5">
+                  Resume Point
+                </p>
                 <Link 
                   href={`/watch/${item.lastEpisodeId}?anime=${item.animeId}&title=${encodeURIComponent(item.animeTitle)}&img=${encodeURIComponent(item.animeImage)}`}
                   className="flex items-center justify-between group/ep"
                 >
-                  <span className="text-xs font-black truncate pr-4 group-hover/ep:text-secondary transition-colors uppercase tracking-widest">
+                  <span className="text-[11px] font-bold truncate pr-3 group-hover/ep:text-secondary transition-colors uppercase tracking-widest leading-relaxed">
                     {item.lastEpisodeTitle}
                   </span>
-                  <Play className="w-4 h-4 text-secondary fill-current shrink-0 shadow-[0_0_10px_rgba(34,197,94,0.3)]" />
+                  <div className="w-6 h-6 bg-secondary/10 flex items-center justify-center group-hover/ep:bg-secondary/20 transition-colors shrink-0">
+                    <Play className="w-3 h-3 text-secondary fill-current" />
+                  </div>
                 </Link>
               </div>
 
               <button
                 onClick={() => removeFromHistory(item.animeId)}
-                className="absolute top-3 right-3 w-8 h-8 bg-black/80 backdrop-blur-md border border-red-500/50 text-red-500 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all hover:bg-red-500 hover:text-white cursor-pointer z-20"
+                className="absolute top-2 right-2 w-8 h-8 bg-red-100/80 dark:bg-red-950/70 border border-red-300/80 dark:border-red-900/80 text-red-600 dark:text-red-500 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all hover:bg-red-200 dark:hover:bg-red-900 hover:text-red-700 dark:hover:text-red-400 cursor-pointer z-20"
+                style={{ clipPath: 'polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px)' }}
               >
                 <Trash2 className="w-4 h-4" />
               </button>

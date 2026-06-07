@@ -74,7 +74,7 @@ export function Navbar() {
                 <button
                   type="button"
                   onClick={() => setSearchQuery('')}
-                  className="absolute right-2 top-2 w-7 h-7 bg-red-950/50 border border-red-900/50 hover:bg-red-900/80 text-red-500 hover:text-red-400 flex items-center justify-center transition-all"
+                  className="absolute right-2 top-2 w-7 h-7 bg-red-100 dark:bg-red-950/50 border border-red-300 dark:border-red-900/50 hover:bg-red-200 dark:hover:bg-red-900/80 text-red-600 dark:text-red-500 flex items-center justify-center transition-all"
                   style={{ clipPath: 'polygon(5px 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 5px)' }}
                   aria-label="Clear search"
                 >
@@ -185,7 +185,7 @@ export function Navbar() {
                 <button
                   type="button"
                   onClick={() => setSearchQuery('')}
-                  className="absolute right-4 top-4 w-8 h-8 bg-red-950/50 border border-red-900/50 hover:bg-red-900/80 text-red-500 hover:text-red-400 flex items-center justify-center transition-all"
+                  className="absolute right-4 top-4 w-8 h-8 bg-red-100 dark:bg-red-950/50 border border-red-300 dark:border-red-900/50 hover:bg-red-200 dark:hover:bg-red-900/80 text-red-600 dark:text-red-500 flex items-center justify-center transition-all"
                   style={{ clipPath: 'polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px)' }}
                   aria-label="Clear search"
                 >
