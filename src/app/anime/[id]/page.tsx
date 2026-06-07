@@ -2,10 +2,10 @@ import { AnimeAPI } from "@/lib/api";
 import { ChevronRight, Play, Info, List, Star } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { ContinueWatching } from "@/components/anime/ContinueWatching";
+import { EpisodeList } from "@/components/anime/EpisodeList";
 
 async function getAnimeDetails(id: string) {
-  console.log(`[Detail Debug] Fetching details for ID: ${id}`);
-  
   // Try Otakudesu first
   const res = await AnimeAPI.otakudesu.getDetails(id);
   if (res && res.ok !== false && res.data) {
@@ -63,47 +63,56 @@ export default async function AnimeDetailPage(props: { params: Promise<{ id: str
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-32 relative z-10">
         <div className="flex flex-col md:flex-row gap-8">
-          {/* Poster */}
-          <div className="w-full max-w-[280px] mx-auto md:mx-0 shrink-0">
-            <div className="aspect-[3/4] rounded-2xl overflow-hidden border-4 border-background shadow-2xl">
+          {/* Poster & Action Sidebar */}
+          <div className="w-full max-w-[280px] mx-auto md:mx-0 shrink-0 space-y-6">
+            <div className="aspect-[3/4] border-4 border-background shadow-2xl relative">
               <img src={poster} alt={data.title} className="w-full h-full object-cover" />
+              <div className="absolute inset-0 border-2 border-secondary/20 pointer-events-none" />
             </div>
             
-            <div className="mt-6 space-y-4">
+            <div className="space-y-4">
               {rating && (
-                <div className="flex items-center justify-between p-4 bg-card rounded-xl border border-border">
+                <div className="flex items-center justify-between p-4 bg-card border-2 border-secondary/10">
                   <div className="flex items-center space-x-2">
-                    <Star className="text-yellow-400 w-5 h-5 fill-current" />
-                    <span className="font-bold">{rating}</span>
+                    <Star className="text-secondary w-5 h-5 fill-current" />
+                    <span className="font-serif font-black">{rating}</span>
                   </div>
-                  <span className="text-xs text-gray-500 uppercase font-bold">Score</span>
+                  <span className="text-[10px] text-gray-500 uppercase font-black tracking-widest">Score</span>
                 </div>
               )}
               
-              <div className="p-4 bg-card rounded-xl border border-border space-y-3">
-                <div className="flex justify-between text-xs">
-                  <span className="text-gray-500 uppercase font-bold tracking-wider">Status</span>
-                  <span className="text-secondary font-bold">{data.status}</span>
+              <div className="p-4 bg-card border-2 border-secondary/10 space-y-3">
+                <div className="flex justify-between text-xs font-bold uppercase tracking-wider">
+                  <span className="text-gray-500">Status</span>
+                  <span className="text-secondary">{data.status}</span>
                 </div>
-                <div className="flex justify-between text-xs">
-                  <span className="text-gray-500 uppercase font-bold tracking-wider">Episodes</span>
-                  <span className="font-bold">{data.episodes || '??'}</span>
+                <div className="flex justify-between text-xs font-bold uppercase tracking-wider">
+                  <span className="text-gray-500">Episodes</span>
+                  <span>{data.episodes || '??'}</span>
                 </div>
-                <div className="flex justify-between text-xs">
-                  <span className="text-gray-500 uppercase font-bold tracking-wider">Source</span>
-                  <span className="font-bold uppercase text-xs">{source}</span>
+                <div className="flex justify-between text-xs font-bold uppercase tracking-wider">
+                  <span className="text-gray-500">Provider</span>
+                  <span className="text-secondary">{source}</span>
                 </div>
               </div>
+
+              {/* Continue Watching Button */}
+              <ContinueWatching 
+                animeId={id} 
+                animeTitle={data.title} 
+                animeImage={poster} 
+                source={source} 
+              />
             </div>
           </div>
 
-          {/* Info */}
-          <div className="flex-grow space-y-8">
+          {/* Info & Content */}
+          <div className="flex-grow space-y-8 mt-8 md:mt-0">
             <div className="space-y-4">
-              <h1 className="text-3xl md:text-5xl font-bold leading-tight">{data.title || "Unknown Title"}</h1>
+              <h1 className="text-3xl md:text-6xl font-serif font-black leading-none tracking-tighter">{data.title || "Unknown Title"}</h1>
               <div className="flex flex-wrap gap-2">
                 {genres.map((genre: any, idx: number) => (
-                  <span key={genre.genreId || `genre-${idx}`} className="px-3 py-1 bg-secondary/10 text-secondary text-xs font-bold rounded-full border border-secondary/20">
+                  <span key={genre.genreId || `genre-${idx}`} className="px-3 py-1 bg-secondary text-white dark:text-black text-[10px] font-black uppercase tracking-widest clip-path-polygon-small">
                     {genre.title || genre.name}
                   </span>
                 ))}
@@ -111,46 +120,32 @@ export default async function AnimeDetailPage(props: { params: Promise<{ id: str
             </div>
 
             <div className="space-y-4">
-              <div className="flex items-center space-x-2 text-lg font-bold">
+              <div className="flex items-center space-x-2 text-lg font-serif font-black uppercase tracking-widest">
                 <Info className="w-5 h-5 text-secondary" />
                 <h2>Synopsis</h2>
               </div>
-              <p className="text-gray-400 leading-relaxed text-sm md:text-base whitespace-pre-line">
+              <p className="text-gray-400 leading-relaxed text-sm md:text-base whitespace-pre-line border-l-4 border-secondary/20 pl-6 py-2 bg-secondary/[0.02]">
                 {synopsis}
               </p>
             </div>
 
-            {/* Episode List */}
-            <div className="space-y-6">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-2 text-lg font-bold">
+            {/* Episode List Section */}
+            <div className="space-y-6 pt-4">
+              <div className="flex items-center justify-between border-b-2 border-secondary/20 pb-4">
+                <div className="flex items-center space-x-2 text-lg font-serif font-black uppercase tracking-widest">
                   <List className="w-5 h-5 text-secondary" />
                   <h2>Episode List</h2>
                 </div>
-                <span className="text-sm text-gray-500">{episodes.length} Episodes</span>
+                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-500">{episodes.length} Total Units</span>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                {episodes.map((ep: any, index: number) => {
-                  const epNum = ep.eps || episodes.length - index;
-                  return (
-                    <Link
-                      key={ep.episodeId || ep.id || `ep-${index}`}
-                      href={`/watch/${ep.episodeId || ep.id}?anime=${id}&title=${encodeURIComponent(data.title || '')}&img=${encodeURIComponent(poster || '')}&source=${source}`}
-                      className="flex items-center p-4 bg-card rounded-xl border border-border hover:border-secondary hover:bg-secondary/5 transition-all group"
-                    >
-                      <div className="w-12 h-12 bg-background rounded-lg flex items-center justify-center font-bold text-sm group-hover:bg-secondary group-hover:text-white transition-colors shrink-0">
-                        {epNum}
-                      </div>
-                      <div className="ml-4 flex-grow min-w-0">
-                        <p className="text-sm font-bold truncate">Episode {epNum}</p>
-                        <p className="text-[11px] text-gray-500 mt-0.5">{ep.date || ep.uploaded_on || 'Released'}</p>
-                      </div>
-                      <Play className="w-4 h-4 text-gray-400 group-hover:text-secondary transition-colors shrink-0" />
-                    </Link>
-                  );
-                })}
-              </div>
+              <EpisodeList 
+                episodes={episodes} 
+                animeId={id} 
+                animeTitle={data.title} 
+                poster={poster} 
+                source={source} 
+              />
             </div>
           </div>
         </div>

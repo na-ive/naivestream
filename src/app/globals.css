@@ -101,3 +101,7 @@
 @utility clip-path-polygon {
   clip-path: polygon(10% 0, 100% 0, 100% 70%, 90% 100%, 0 100%, 0 30%);
 }
+
+@utility clip-path-polygon-small {
+  clip-path: polygon(5% 0, 100% 0, 100% 70%, 95% 100%, 0 100%, 0 30%);
+}
