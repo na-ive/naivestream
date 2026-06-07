@@ -4,6 +4,7 @@ import React, { useEffect, useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { AnimeAPI } from '@/lib/api';
 import { AnimeCard } from '@/components/anime/AnimeCard';
+import { CustomSelect } from '@/components/ui/CustomSelect';
 import { Search as SearchIcon, Loader2, Frown } from 'lucide-react';
 
 function SearchContent() {
@@ -53,34 +54,34 @@ function SearchContent() {
             <div className="flex flex-col sm:flex-row gap-4">
               <div className="flex items-center gap-2">
                 <span className="text-xs font-bold uppercase tracking-widest text-muted-text">Status:</span>
-                <select 
-                  className="bg-background border-2 border-secondary/20 text-foreground text-sm font-bold uppercase tracking-wider p-2 outline-none focus:border-secondary transition-colors"
+                <CustomSelect
                   value={filterStatus}
-                  onChange={(e) => setFilterStatus(e.target.value)}
-                >
-                  <option value="All">All Status</option>
-                  <option value="Ongoing">Ongoing</option>
-                  <option value="Completed">Completed</option>
-                </select>
+                  onChange={setFilterStatus}
+                  options={[
+                    { value: 'All', label: 'All Status' },
+                    { value: 'Ongoing', label: 'Ongoing' },
+                    { value: 'Completed', label: 'Completed' },
+                  ]}
+                />
               </div>
 
               <div className="flex items-center gap-2">
                 <span className="text-xs font-bold uppercase tracking-widest text-muted-text">Genre:</span>
-                <select 
-                  className="bg-background border-2 border-secondary/20 text-foreground text-sm font-bold uppercase tracking-wider p-2 outline-none focus:border-secondary transition-colors"
+                <CustomSelect
                   value={filterGenre}
-                  onChange={(e) => setFilterGenre(e.target.value)}
-                >
-                  <option value="All">All Genres</option>
-                  {/* Extract unique genres from results */}
-                  {Array.from(new Set(
-                    results.data.flatMap((anime: any) => 
-                      anime.genreList?.map((g: any) => g.title) || []
-                    )
-                  )).sort().map((genre: any) => (
-                    <option key={genre} value={genre}>{genre}</option>
-                  ))}
-                </select>
+                  onChange={setFilterGenre}
+                  options={[
+                    { value: 'All', label: 'All Genres' },
+                    ...Array.from(new Set(
+                      results.data.flatMap((anime: any) => 
+                        anime.genreList?.map((g: any) => g.title) || []
+                      )
+                    )).sort().map((genre: any) => ({
+                      value: genre,
+                      label: genre
+                    }))
+                  ]}
+                />
               </div>
             </div>
           </div>
