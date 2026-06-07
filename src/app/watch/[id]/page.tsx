@@ -7,10 +7,7 @@ import { useHistory } from '@/lib/hooks/useHistory';
 import { ChevronRight, Layout, Play, Settings, Share2, Loader2, Video, Terminal } from 'lucide-react';
 import Link from 'next/link';
 
-function WatchContent({ paramsPromise }: { paramsPromise: Promise<{ id: string }> }) {
-  const params = use(paramsPromise);
-  const { id } = params;
-  
+function WatchContent({ id }: { id: string }) {
   const searchParams = useSearchParams();
   const animeId = searchParams.get('anime') || '';
   const animeTitle = searchParams.get('title') || '';
@@ -39,26 +36,9 @@ function WatchContent({ paramsPromise }: { paramsPromise: Promise<{ id: string }
     if (data) {
       setEpisodeData(data);
       
-      // Default to 720p if available
-      const qualities = data.server?.qualities || [];
-      const q720 = qualities.find((q: any) => q.title.includes('720'));
-      const defaultServer = q720?.serverList?.[0] || data.server?.qualities?.[0]?.serverList?.[0];
-      
-      if (defaultServer) {
-        // We need to fetch the actual URL from the server ID
-        setServerLoading(true);
-        try {
-          const sRes = await (source === 'samehadaku' ? AnimeAPI.samehadaku.getServer(defaultServer.serverId) : AnimeAPI.otakudesu.getServer(defaultServer.serverId));
-          const sData = sRes?.data || (sRes?.url ? sRes : null);
-          setCurrentUrl(sData?.url || data.defaultStreamingUrl || '');
-        } catch (e) {
-          setCurrentUrl(data.defaultStreamingUrl || '');
-        } finally {
-          setServerLoading(false);
-        }
-      } else {
-        setCurrentUrl(data.defaultStreamingUrl || '');
-      }
+      // RESTORE THUMBNAIL: Use defaultStreamingUrl initially 
+      // It usually points to a cleaner embed player with metadata/thumbnails.
+      setCurrentUrl(data.defaultStreamingUrl || '');
       
       // Save to history
       saveToHistory({
@@ -146,7 +126,6 @@ function WatchContent({ paramsPromise }: { paramsPromise: Promise<{ id: string }
                 <p className="text-sm font-bold uppercase tracking-widest text-gray-500">Video source offline</p>
               </div>
             )}
-            {/* Themed overlay lines */}
             <div className="absolute inset-0 pointer-events-none border-x border-white/5 z-10" />
           </div>
 
@@ -163,7 +142,6 @@ function WatchContent({ paramsPromise }: { paramsPromise: Promise<{ id: string }
 
         {/* Sidebar: Controls & Info */}
         <div className="w-full lg:w-[350px] space-y-8 shrink-0">
-          {/* Navigation Card */}
           <div className="bg-card border-2 border-secondary/10 p-6 space-y-4">
              <div className="flex items-center justify-between border-b border-secondary/10 pb-4">
                 <h3 className="font-serif font-black uppercase tracking-widest text-sm">Navigation</h3>
@@ -187,7 +165,6 @@ function WatchContent({ paramsPromise }: { paramsPromise: Promise<{ id: string }
              </div>
           </div>
 
-          {/* Servers Selection */}
           <div className="bg-card border-2 border-secondary/10 p-6 space-y-6">
             <h3 className="flex items-center text-xs font-black uppercase tracking-[0.2em] text-gray-500">
               <Video className="w-4 h-4 mr-2 text-secondary" />
@@ -216,7 +193,6 @@ function WatchContent({ paramsPromise }: { paramsPromise: Promise<{ id: string }
             </div>
           </div>
 
-          {/* Mobile-only info */}
           <div className="lg:hidden p-6 bg-card border-l-4 border-secondary">
              <h1 className="text-xl font-serif font-black tracking-tighter uppercase leading-none">{episodeData.title}</h1>
              <p className="text-secondary font-bold text-[9px] mt-2 tracking-[0.2em] uppercase opacity-60">Source: {source}</p>
@@ -228,13 +204,14 @@ function WatchContent({ paramsPromise }: { paramsPromise: Promise<{ id: string }
 }
 
 export default function WatchPage(props: { params: Promise<{ id: string }> }) {
+  const params = use(props.params);
   return (
     <Suspense fallback={
       <div className="flex items-center justify-center min-h-[60vh]">
         <Loader2 className="w-12 h-12 text-secondary animate-spin" />
       </div>
     }>
-      <WatchContent paramsPromise={props.params} />
+      <WatchContent id={params.id} />
     </Suspense>
   );
 }

@@ -15,6 +15,7 @@ export function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
 
+  // Handle mounting on client to avoid hydration mismatch
   useEffect(() => {
     setMounted(true);
   }, []);
@@ -82,17 +83,17 @@ export function Navbar() {
                 )} />
               </Link>
             ))}
+            
+            {/* Theme Toggle with mounting check */}
             <button
               onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-              className="p-2.5 rounded-none border border-secondary/30 hover:border-secondary text-secondary transition-all cursor-pointer"
+              className="p-2.5 rounded-none border border-secondary/30 hover:border-secondary text-secondary transition-all cursor-pointer min-w-[44px] min-h-[44px] flex items-center justify-center"
               aria-label="Toggle theme"
             >
-              {!mounted ? (
-                <div className="w-5 h-5" />
-              ) : theme === 'dark' ? (
-                <Sun className="w-5 h-5" />
+              {mounted ? (
+                theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />
               ) : (
-                <Moon className="w-5 h-5" />
+                <div className="w-5 h-5" /> // Empty placeholder to prevent mismatch
               )}
             </button>
           </div>
@@ -103,7 +104,11 @@ export function Navbar() {
               onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
               className="p-2 text-secondary cursor-pointer"
             >
-              {theme === 'dark' ? <Sun className="w-6 h-6" /> : <Moon className="w-6 h-6" />}
+              {mounted ? (
+                theme === 'dark' ? <Sun className="w-6 h-6" /> : <Moon className="w-6 h-6" />
+              ) : (
+                <div className="w-6 h-6" />
+              )}
             </button>
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
