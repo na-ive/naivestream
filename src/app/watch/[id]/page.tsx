@@ -4,8 +4,9 @@ import React, { useEffect, useState, Suspense, use, useCallback } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { AnimeAPI } from '@/lib/api';
 import { useHistory } from '@/lib/hooks/useHistory';
-import { ChevronRight, Layout, Play, Settings, Share2, Loader2, Video, Server, Monitor } from 'lucide-react';
+import { ChevronRight, Layout, Play, Settings, Share2, Loader2, Video, Server, Monitor, RectangleHorizontal } from 'lucide-react';
 import Link from 'next/link';
+import { Tooltip } from '@/components/ui/Tooltip';
 
 function WatchContent({ id }: { id: string }) {
   const searchParams = useSearchParams();
@@ -20,6 +21,7 @@ function WatchContent({ id }: { id: string }) {
   const [loading, setLoading] = useState(true);
   const [serverLoading, setServerLoading] = useState(false);
   const [isCinemaMode, setIsCinemaMode] = useState(false);
+  const [isTheaterMode, setIsTheaterMode] = useState(false);
   const { saveToHistory } = useHistory();
 
   // Handle Escape key and Body Scroll for Cinema Mode
@@ -149,7 +151,7 @@ function WatchContent({ id }: { id: string }) {
         </div>
       </div>
 
-      <div className="flex flex-col lg:flex-row gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-[1fr_350px] gap-x-8 gap-y-6">
         {/* Cinema Mode Overlay */}
         {isCinemaMode && (
           <div 
@@ -160,7 +162,7 @@ function WatchContent({ id }: { id: string }) {
         )}
 
         {/* Main Content: Video Player */}
-        <div className={`flex-grow lg:max-w-[calc(100%-400px)] space-y-6 transition-all duration-500 self-start ${isCinemaMode ? 'relative z-[60]' : ''}`}>
+        <div className={`transition-all duration-500 self-start ${isCinemaMode ? 'relative z-[60]' : ''} ${isTheaterMode ? 'lg:col-span-2' : 'lg:col-span-1'}`}>
           <div className={`relative aspect-video bg-black border-b-4 border-secondary/20 shadow-2xl overflow-hidden group transition-all duration-500 ${isCinemaMode ? 'shadow-[0_0_50px_rgba(34,197,94,0.15)] ring-1 ring-secondary/30' : ''}`}>
             {serverLoading && (
               <div className="absolute inset-0 z-20 bg-black/60 backdrop-blur-sm flex items-center justify-center">
@@ -184,9 +186,9 @@ function WatchContent({ id }: { id: string }) {
             <div className="absolute inset-0 pointer-events-none border-x border-white/5 z-10" />
           </div>
 
-          <div className={`hidden lg:block space-y-6 transition-all duration-500 relative ${isCinemaMode ? 'z-[60]' : ''}`}>
+          <div className={`hidden lg:flex items-center gap-4 transition-all duration-500 self-start ${isCinemaMode ? 'relative z-[60]' : ''} ${isTheaterMode ? 'lg:col-span-1 lg:col-start-1 lg:row-start-2' : 'lg:col-span-1 lg:col-start-1 lg:row-start-2'}`}>
              <div 
-               className="px-6 py-4 bg-card shadow-lg relative overflow-hidden group flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+               className="px-6 py-4 bg-card shadow-lg relative overflow-hidden group flex-grow"
                style={{ clipPath: 'polygon(0 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%)' }}
              >
                 <div className="relative z-10">
@@ -196,23 +198,33 @@ function WatchContent({ id }: { id: string }) {
                     Streaming from {source} provider
                   </p>
                 </div>
+             </div>
 
-                <div className="relative z-10 shrink-0">
-                  <button 
-                    onClick={() => setIsCinemaMode(!isCinemaMode)}
-                    className="px-4 py-2.5 bg-secondary/10 hover:bg-secondary text-secondary hover:text-black font-bold uppercase tracking-[0.2em] text-[10px] flex items-center gap-2 transition-all border border-secondary/30 hover:border-secondary shadow-[0_0_10px_rgba(34,197,94,0.1)] hover:shadow-[0_0_20px_rgba(34,197,94,0.4)]"
-                    style={{ clipPath: 'polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px)' }}
-                  >
-                    <Monitor className="w-3.5 h-3.5" />
-                    <span>{isCinemaMode ? 'Exit Focus' : 'Focus Mode'}</span>
-                  </button>
-                </div>
+             <div className="relative z-10 shrink-0 flex items-center gap-3">
+               <Tooltip content={isTheaterMode ? 'Default View' : 'Theater Mode'} position="top">
+                 <button 
+                   onClick={() => setIsTheaterMode(!isTheaterMode)}
+                   className="p-3 bg-secondary/10 hover:bg-secondary text-secondary hover:text-black transition-all border border-secondary/30 hover:border-secondary shadow-[0_0_10px_rgba(34,197,94,0.1)] hover:shadow-[0_0_20px_rgba(34,197,94,0.4)]"
+                   style={{ clipPath: 'polygon(5px 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 5px)' }}
+                 >
+                   <RectangleHorizontal className="w-4 h-4" />
+                 </button>
+               </Tooltip>
+               <Tooltip content={isCinemaMode ? 'Exit Focus' : 'Focus Mode'} position="top">
+                 <button 
+                   onClick={() => setIsCinemaMode(!isCinemaMode)}
+                   className="p-3 bg-secondary/10 hover:bg-secondary text-secondary hover:text-black transition-all border border-secondary/30 hover:border-secondary shadow-[0_0_10px_rgba(34,197,94,0.1)] hover:shadow-[0_0_20px_rgba(34,197,94,0.4)]"
+                   style={{ clipPath: 'polygon(5px 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 5px)' }}
+                 >
+                   <Monitor className="w-4 h-4" />
+                 </button>
+               </Tooltip>
              </div>
           </div>
         </div>
 
         {/* Sidebar: Controls & Info */}
-        <div className="w-full lg:w-[350px] space-y-8 shrink-0">
+        <div className={`w-full ${isTheaterMode ? 'lg:col-span-2 grid lg:grid-cols-[350px_1fr] lg:gap-8 lg:items-start space-y-8 lg:space-y-0' : 'lg:col-span-1 lg:col-start-2 lg:row-span-2 space-y-8'} shrink-0`}>
           <div 
             className="bg-card/50 border-l-4 border-secondary/50 p-6 space-y-4 relative overflow-hidden"
             style={{ clipPath: 'polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px)' }}
@@ -304,7 +316,7 @@ function WatchContent({ id }: { id: string }) {
                     <div className="w-1.5 h-1.5 bg-secondary shadow-[0_0_5px_rgba(34,197,94,1)]" />
                     <p className="text-[10px] font-black text-foreground uppercase tracking-widest">{quality.title}</p>
                   </div>
-                  <div className="grid grid-cols-2 gap-2">
+                  <div className="flex flex-wrap gap-2">
                     {quality.serverList?.map((server: any) => (
                       <button
                         key={server.serverId}
