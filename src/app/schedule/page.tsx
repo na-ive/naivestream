@@ -53,19 +53,23 @@ export default async function SchedulePage({ searchParams }: SchedulePageProps) 
       </div>
 
       {/* Day Tabs */}
-      <div className="mb-12 bg-card border-2 border-secondary/20 p-4">
-        <div className="flex flex-wrap justify-center gap-2">
+      <div 
+        className="mb-12 bg-card/50 border-y border-secondary/30 p-6 md:p-8 relative"
+        style={{ clipPath: 'polygon(20px 0, 100% 0, 100% calc(100% - 20px), calc(100% - 20px) 100%, 0 100%, 0 20px)' }}
+      >
+        <div className="flex flex-wrap justify-center gap-3 relative z-10">
           {DAY_ORDER.map((day) => {
             const isActive = day === activeDay;
             return (
               <Link
                 key={day}
                 href={`/schedule?day=${day}`}
-                className={`px-6 py-2 flex items-center justify-center font-bold text-sm transition-all border uppercase tracking-widest ${
+                className={`px-8 py-2.5 flex items-center justify-center font-bold text-sm transition-all uppercase tracking-widest ${
                   isActive
-                    ? 'bg-secondary text-background border-secondary shadow-[0_0_10px_rgba(34,197,94,0.5)] pointer-events-none'
-                    : 'bg-background text-foreground/70 border-secondary/20 hover:border-secondary hover:text-secondary'
+                    ? 'bg-secondary text-background shadow-[0_0_15px_rgba(34,197,94,0.4)] pointer-events-none'
+                    : 'bg-background/80 text-foreground/70 hover:bg-secondary/20 hover:text-secondary border border-secondary/20 hover:border-secondary/50'
                 }`}
+                style={{ clipPath: 'polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px)' }}
               >
                 {day}
               </Link>

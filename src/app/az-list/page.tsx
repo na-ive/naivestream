@@ -53,17 +53,21 @@ export default async function AZListPage(props: { searchParams: Promise<{ letter
         </p>
       </div>
 
-      <div className="mb-12 bg-card border-2 border-secondary/20 p-4">
-        <div className="flex flex-wrap gap-2 justify-center">
+      <div 
+        className="mb-12 bg-card/50 border-y border-secondary/30 p-6 relative"
+        style={{ clipPath: 'polygon(20px 0, 100% 0, 100% calc(100% - 20px), calc(100% - 20px) 100%, 0 100%, 0 20px)' }}
+      >
+        <div className="flex flex-wrap gap-2 justify-center relative z-10">
           {letters.map((letter) => (
             <Link
               key={letter}
               href={`/az-list?letter=${letter}`}
-              className={`w-10 h-10 flex items-center justify-center font-bold text-sm transition-all border ${
+              className={`w-10 h-10 flex items-center justify-center font-bold text-sm transition-all ${
                 currentLetter === letter
-                  ? "bg-secondary text-background border-secondary shadow-[0_0_10px_rgba(34,197,94,0.5)]"
-                  : "bg-background text-foreground/70 border-secondary/20 hover:border-secondary hover:text-secondary"
+                  ? "bg-secondary text-background shadow-[0_0_15px_rgba(34,197,94,0.4)]"
+                  : "bg-background/80 text-foreground/70 hover:bg-secondary/20 hover:text-secondary border border-secondary/20 hover:border-secondary/50"
               }`}
+              style={{ clipPath: 'polygon(4px 0, 100% 0, 100% calc(100% - 4px), calc(100% - 4px) 100%, 0 100%, 0 4px)' }}
             >
               {letter}
             </Link>
