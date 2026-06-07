@@ -44,16 +44,33 @@ export function HeroCarousel({ items }: HeroCarouselProps) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 1 }}
+          transition={{ duration: 0.8 }}
           className="absolute inset-0 z-0"
         >
-          <img
-            src={current.poster || current.image}
-            alt={current.title}
-            className="w-full h-full object-cover opacity-40 dark:opacity-60 transition-opacity duration-500"
-          />
-          <div className="absolute inset-0 bg-gradient-to-r from-background via-background/70 to-transparent z-10" />
-          <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent z-10" />
+          {/* Solid background — fills entire container */}
+          <div className="absolute inset-0 bg-background" />
+
+          {/*
+            Image: 40% wide on the right.
+            CSS mask-image fades the image itself from transparent (left edge)
+            to fully visible (right side) — no overlay div, no hard edge possible.
+          */}
+          <div
+            className="absolute right-0 top-0 h-full w-[40%] overflow-hidden"
+            style={{
+              maskImage: 'linear-gradient(to right, transparent 0%, rgba(0,0,0,0.05) 10%, rgba(0,0,0,0.2) 20%, rgba(0,0,0,0.6) 35%, rgba(0,0,0,0.9) 55%, black 75%)',
+              WebkitMaskImage: 'linear-gradient(to right, transparent 0%, rgba(0,0,0,0.05) 10%, rgba(0,0,0,0.2) 20%, rgba(0,0,0,0.6) 35%, rgba(0,0,0,0.9) 55%, black 75%)',
+            }}
+          >
+            <img
+              src={current.poster || current.image}
+              alt={current.title}
+              className="w-full h-full object-cover object-center"
+            />
+          </div>
+
+          {/* Bottom fade to background */}
+          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/20 to-transparent" />
         </motion.div>
       </AnimatePresence>
 
