@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
-import { TrendingUp, Calendar, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Growth, Calendar, ChevronLeft, ChevronRight } from '@carbon/icons-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { SmartWatchButton } from './SmartWatchButton';
 
@@ -86,7 +86,7 @@ export function HeroCarousel({ items }: HeroCarouselProps) {
         >
           <div className="inline-flex items-center space-x-2 px-3 py-1.5 bg-secondary/10 border border-secondary/30 text-secondary font-black uppercase tracking-[0.2em] text-[10px] mb-2 relative overflow-hidden shadow-[0_0_10px_rgba(34,197,94,0.1)]">
             <div className="absolute left-0 top-0 w-1 h-full bg-secondary" />
-            <TrendingUp className="w-3.5 h-3.5" />
+            <Growth className="w-3.5 h-3.5" />
             <span>Trending Now<span className="opacity-70">_</span></span>
           </div>
           

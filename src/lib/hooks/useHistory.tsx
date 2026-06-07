@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { toast } from 'sonner';
-import { Trash2 } from 'lucide-react';
+import { TrashCan } from '@carbon/icons-react';
 
 export interface WatchHistory {
   animeId: string;
@@ -71,7 +71,7 @@ export function useHistory() {
     if (item) {
       toast.error('Removed from History', {
         description: item.animeTitle,
-        icon: <div className="w-8 h-8 bg-red-500/10 border border-red-500 flex items-center justify-center shrink-0 mr-3 shadow-[0_0_10px_rgba(239,68,68,0.3)]"><Trash2 className="w-5 h-5 text-red-500" /></div>,
+        icon: <div className="w-8 h-8 bg-red-500/10 border border-red-500 flex items-center justify-center shrink-0 mr-3 shadow-[0_0_10px_rgba(239,68,68,0.3)]"><TrashCan className="w-5 h-5 text-red-500" /></div>,
       });
     }
   }, []);
@@ -80,7 +80,7 @@ export function useHistory() {
     const currentList = getLatestHistory();
     updateStorage(currentList.filter((h) => !animeIds.includes(h.animeId)));
     toast.error(`${animeIds.length} items removed from History`, {
-      icon: <div className="w-8 h-8 bg-red-500/10 border border-red-500 flex items-center justify-center shrink-0 mr-3 shadow-[0_0_10px_rgba(239,68,68,0.3)]"><Trash2 className="w-5 h-5 text-red-500" /></div>,
+      icon: <div className="w-8 h-8 bg-red-500/10 border border-red-500 flex items-center justify-center shrink-0 mr-3 shadow-[0_0_10px_rgba(239,68,68,0.3)]"><TrashCan className="w-5 h-5 text-red-500" /></div>,
     });
   }, []);
 

@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { Play } from 'lucide-react';
+import { CaretRight } from '@carbon/icons-react';
 import { useHistory } from '@/lib/hooks/useHistory';
 import { cn } from '@/lib/utils';
 
@@ -81,9 +81,9 @@ export function EpisodeList({
               )}
               style={{ clipPath: 'polygon(4px 0, 100% 0, 100% calc(100% - 4px), calc(100% - 4px) 100%, 0 100%, 0 4px)' }}
             >
-              <Play className={cn(
+              <CaretRight className={cn(
                 "w-3.5 h-3.5 transition-colors translate-x-[1px]",
-                isLastWatched ? "text-secondary fill-current" : "text-muted-text group-hover:text-secondary group-hover:fill-secondary/50"
+                isLastWatched ? "text-secondary" : "text-muted-text group-hover:text-secondary"
               )} />
             </div>
           </Link>

@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { Play, SkipForward } from 'lucide-react';
+import { CaretRight, SkipForwardFilled } from '@carbon/icons-react';
 import { useHistory, WatchHistory } from '@/lib/hooks/useHistory';
 
 export function ContinueWatching({ 
@@ -53,7 +53,7 @@ export function ContinueWatching({
         href={watchUrl(lastWatched.lastEpisodeId)}
         className="btn-primary w-full flex items-center justify-center space-x-2 group"
       >
-        <Play className="w-5 h-5 fill-current group-hover:scale-110 transition-transform" />
+        <CaretRight className="w-5 h-5 fill-current group-hover:scale-110 transition-transform" />
         <span>Continue Episode {epNumber}</span>
       </Link>
       
@@ -62,7 +62,7 @@ export function ContinueWatching({
           href={watchUrl(nextEp.episodeId || nextEp.id)}
           className="btn-accent w-full flex items-center justify-center space-x-2 group"
         >
-          <SkipForward className="w-4 h-4 fill-current group-hover:translate-x-1 transition-transform" />
+          <SkipForwardFilled className="w-4 h-4 fill-current group-hover:translate-x-1 transition-transform" />
           <span className="text-[11px]">Next: Episode {nextEp.eps || (episodes.length - episodes.indexOf(nextEp))}</span>
         </Link>
       )}

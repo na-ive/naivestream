@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Bookmark } from 'lucide-react';
+import { Bookmark, BookmarkFilled } from '@carbon/icons-react';
 import { useWatchlist } from '@/lib/hooks/useWatchlist';
 import { cn } from '@/lib/utils';
 import { Tooltip } from '@/components/ui/Tooltip';
@@ -47,7 +47,11 @@ export function BookmarkButton({ animeId, animeTitle, animeImage, className, var
           "absolute left-0 top-0 w-1 h-full transition-all",
           active ? "bg-secondary scale-y-100" : "bg-secondary scale-y-0 group-hover:scale-y-100"
         )} />
-        <Bookmark className={cn("w-4 h-4", active && "fill-current")} />
+        {active ? (
+          <BookmarkFilled className={cn("w-4 h-4", active && "fill-current")} />
+        ) : (
+          <Bookmark className="w-4 h-4" />
+        )}
         <span>{active ? 'In Watchlist' : 'Add to Watchlist'}</span>
       </button>
     );
@@ -69,7 +73,11 @@ export function BookmarkButton({ animeId, animeTitle, animeImage, className, var
           "absolute bottom-0 left-0 h-1 w-full transition-all",
           active ? "bg-secondary scale-x-100 group-hover:bg-red-500" : "bg-secondary scale-x-0 group-hover:scale-x-100"
         )} />
-        <Bookmark className={cn("w-4 h-4 relative z-10", active && "fill-current")} />
+        {active ? (
+          <BookmarkFilled className="w-4 h-4 relative z-10" />
+        ) : (
+          <Bookmark className="w-4 h-4 relative z-10" />
+        )}
       </button>
     </Tooltip>
   );

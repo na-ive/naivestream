@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useRef } from 'react';
-import { ChevronLeft, ChevronRight, Star } from 'lucide-react';
+import { ChevronLeft, ChevronRight, StarFilled } from '@carbon/icons-react';
 import { cn } from '@/lib/utils';
 
 interface CharacterCarouselProps {
@@ -29,7 +29,7 @@ export function CharacterCarousel({ characters }: CharacterCarouselProps) {
       <div className="flex items-center justify-between border-b-2 border-secondary/20 pb-4">
         <div className="flex items-center space-x-3 text-lg font-serif font-black uppercase tracking-widest">
           <div className="w-1.5 h-6 bg-secondary" />
-          <Star className="w-5 h-5 text-secondary" />
+          <StarFilled className="w-5 h-5 text-secondary" />
           <h2>Characters<span className="text-secondary opacity-70">_</span></h2>
         </div>
         

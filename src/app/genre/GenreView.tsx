@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { LayoutGrid, List as ListIcon, ChevronRight } from 'lucide-react';
+import { Grid, List, ChevronRight } from '@carbon/icons-react';
 import { cn } from '@/lib/utils';
 
 interface GenreViewProps {
@@ -28,7 +28,7 @@ export function GenreView({ genres }: GenreViewProps) {
                 : "text-muted-text hover:text-foreground hover:bg-secondary/10"
             )}
           >
-            <LayoutGrid className="w-4 h-4" />
+            <Grid className="w-4 h-4" />
             <span className="hidden sm:inline">Grid</span>
           </button>
           <button
@@ -40,7 +40,7 @@ export function GenreView({ genres }: GenreViewProps) {
                 : "text-muted-text hover:text-foreground hover:bg-secondary/10"
             )}
           >
-            <ListIcon className="w-4 h-4" />
+            <List className="w-4 h-4" />
             <span className="hidden sm:inline">List</span>
           </button>
         </div>

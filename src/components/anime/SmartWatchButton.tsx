@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Play, Loader2 } from 'lucide-react';
+import { CaretRight, Renew } from '@carbon/icons-react';
 import { useHistory } from '@/lib/hooks/useHistory';
 import { AnimeAPI } from '@/lib/api';
 import { cn } from '@/lib/utils';
@@ -73,9 +73,9 @@ export function SmartWatchButton({
       )}
     >
       {loading ? (
-        <Loader2 className="w-5 h-5 animate-spin" />
+        <Renew className="w-5 h-5 animate-spin" />
       ) : (
-        <Play className="w-5 h-5 fill-current" />
+        <CaretRight className="w-5 h-5 fill-current" />
       )}
       <span>{loading ? 'Finding Episode...' : 'Watch Now'}</span>
     </button>

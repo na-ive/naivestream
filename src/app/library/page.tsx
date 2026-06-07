@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useHistory } from '@/lib/hooks/useHistory';
 import { useWatchlist } from '@/lib/hooks/useWatchlist';
 import { AnimeCard } from '@/components/anime/AnimeCard';
-import { Bookmark, Clock, Trash2, Play, LayoutGrid, CheckSquare } from 'lucide-react';
+import { Bookmark, Time, TrashCan, CaretRight, Grid, CheckboxChecked } from '@carbon/icons-react';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
@@ -51,7 +51,7 @@ export default function LibraryPage() {
       window.dispatchEvent(new Event('history_updated'));
       toast.error('History Cleared', {
         description: 'All your watch history has been permanently removed.',
-        icon: <div className="w-8 h-8 bg-red-500/10 border border-red-500 flex items-center justify-center shrink-0 mr-3 shadow-[0_0_10px_rgba(239,68,68,0.3)]"><Trash2 className="w-5 h-5 text-red-500" /></div>,
+        icon: <div className="w-8 h-8 bg-red-500/10 border border-red-500 flex items-center justify-center shrink-0 mr-3 shadow-[0_0_10px_rgba(239,68,68,0.3)]"><TrashCan className="w-5 h-5 text-red-500" /></div>,
       });
     } else if (deleteAction === 'bulk') {
       if (selectedIds.length > 0) {
@@ -76,7 +76,7 @@ export default function LibraryPage() {
         <div className="space-y-6">
           <div className="flex items-center space-x-4">
             <div className="p-3 bg-secondary/10 text-secondary border border-secondary/30 relative">
-              <LayoutGrid className="w-8 h-8 relative z-10" />
+              <Grid className="w-8 h-8 relative z-10" />
               <div className="absolute top-0 left-0 w-2 h-2 border-t-2 border-l-2 border-secondary" />
               <div className="absolute bottom-0 right-0 w-2 h-2 border-b-2 border-r-2 border-secondary" />
             </div>
@@ -119,7 +119,7 @@ export default function LibraryPage() {
                 "absolute bottom-0 left-0 h-1 w-full transition-all",
                 activeTab === 'history' ? "bg-secondary scale-x-100" : "bg-secondary scale-x-0 group-hover:scale-x-100"
               )} />
-              <Clock className="w-4 h-4" />
+              <Time className="w-4 h-4" />
               <span>History</span>
             </button>
           </div>
@@ -141,7 +141,7 @@ export default function LibraryPage() {
                   )}
                   style={{ clipPath: 'polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px)' }}
                 >
-                  <Trash2 className="w-4 h-4 shrink-0" />
+                  <TrashCan className="w-4 h-4 shrink-0" />
                   <span>Delete Selected ({selectedIds.length})</span>
                 </button>
                 <button 
@@ -164,7 +164,7 @@ export default function LibraryPage() {
                       className="flex items-center space-x-2 px-6 py-2.5 bg-red-100 dark:bg-red-950/50 text-red-600 dark:text-red-500 border border-red-300 dark:border-red-900/50 hover:bg-red-200 dark:hover:bg-red-900/80 transition-all font-black text-[10px] uppercase tracking-[0.2em]"
                       style={{ clipPath: 'polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px)' }}
                     >
-                    <Trash2 className="w-4 h-4 shrink-0" />
+                    <TrashCan className="w-4 h-4 shrink-0" />
                     <span>Clear All</span>
                     </button>
                   </Tooltip>
@@ -175,7 +175,7 @@ export default function LibraryPage() {
                     className="flex items-center space-x-2 px-6 py-2.5 bg-secondary text-background hover:bg-secondary/90 transition-all font-black text-[10px] uppercase tracking-[0.2em] shadow-[0_0_15px_rgba(34,197,94,0.3)] hover:shadow-[0_0_25px_rgba(34,197,94,0.5)]"
                     style={{ clipPath: 'polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px)' }}
                   >
-                    <CheckSquare className="w-4 h-4" />
+                    <CheckboxChecked className="w-4 h-4" />
                     <span>Select Items</span>
                   </button>
                 </Tooltip>
@@ -230,23 +230,26 @@ export default function LibraryPage() {
                           : "border-white/50 text-white/50 bg-black/50 group-hover/sel:border-secondary/50 group-hover/sel:text-secondary/50"
                       )}
                       style={{ clipPath: 'polygon(4px 0, 100% 0, 100% calc(100% - 4px), calc(100% - 4px) 100%, 0 100%, 0 4px)' }}>
-                        <CheckSquare className={cn("w-6 h-6", selectedIds.includes(item.animeId) ? "fill-current" : "")} />
+                        <CheckboxChecked className={cn("w-6 h-6", selectedIds.includes(item.animeId) ? "fill-current" : "")} />
                       </div>
                     </div>
                   )}
 
                   {!isSelectionMode && (
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        removeFromWatchlist(item.animeId);
-                      }}
-                      className="absolute top-2 right-2 z-20 w-8 h-8 bg-red-500/80 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600 border border-white/10"
-                      title="Remove from Watchlist"
-                      style={{ clipPath: 'polygon(5px 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 5px)' }}
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
+                    <div className="absolute top-2 right-2 z-20 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <Tooltip content="Remove Item" position="left" className="!border-red-500 !text-red-500 !text-[9px]">
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            removeFromWatchlist(item.animeId);
+                          }}
+                          className="w-8 h-8 bg-red-500/80 text-white flex items-center justify-center hover:bg-red-600 border border-white/10"
+                          style={{ clipPath: 'polygon(5px 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 5px)' }}
+                        >
+                          <TrashCan className="w-4 h-4" />
+                        </button>
+                      </Tooltip>
+                    </div>
                   )}
                 </div>
               ))}
@@ -258,7 +261,7 @@ export default function LibraryPage() {
         {activeTab === 'history' && (
           history.length === 0 ? (
             <EmptyState 
-              icon={Clock} 
+              icon={Time} 
               title="No history detected" 
               subtitle="Start watching to track progress" 
             />
@@ -302,7 +305,7 @@ export default function LibraryPage() {
                           {item.lastEpisodeTitle}
                         </span>
                         <div className="w-6 h-6 bg-secondary/10 flex items-center justify-center group-hover/ep:bg-secondary/20 transition-colors shrink-0">
-                          <Play className="w-3 h-3 text-secondary fill-current" />
+                          <CaretRight className="w-3 h-3 text-secondary fill-current" />
                         </div>
                       </Link>
                     </div>
@@ -318,24 +321,24 @@ export default function LibraryPage() {
                           : "border-white/50 text-white/50 bg-black/50 group-hover/sel:border-secondary/50 group-hover/sel:text-secondary/50"
                       )}
                       style={{ clipPath: 'polygon(4px 0, 100% 0, 100% calc(100% - 4px), calc(100% - 4px) 100%, 0 100%, 0 4px)' }}>
-                        <CheckSquare className={cn("w-6 h-6", selectedIds.includes(item.animeId) ? "fill-current" : "")} />
+                        <CheckboxChecked className={cn("w-6 h-6", selectedIds.includes(item.animeId) ? "fill-current" : "")} />
                       </div>
                     </div>
                   )}
 
                   {/* Delete Button (Top Right) */}
                   {!isSelectionMode && (
-                    <div className="absolute top-2 right-2 md:top-3 md:right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                      <Tooltip content="Remove Item" position="left" className="!border-red-500 !text-red-500">
+                    <div className="absolute top-2 right-2 z-20 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <Tooltip content="Remove Item" position="left" className="!border-red-500 !text-red-500 !text-[9px]">
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
                             removeFromHistory(item.animeId);
                           }}
-                          className="p-1.5 md:p-2 bg-red-500/10 text-red-500 border border-red-500/50 hover:bg-red-500 hover:text-white transition-all shadow-[0_0_10px_rgba(239,68,68,0.2)] hover:shadow-[0_0_15px_rgba(239,68,68,0.5)] z-20"
-                          style={{ clipPath: 'polygon(4px 0, 100% 0, 100% calc(100% - 4px), calc(100% - 4px) 100%, 0 100%, 0 4px)' }}
+                          className="w-8 h-8 bg-red-500/80 text-white flex items-center justify-center hover:bg-red-600 border border-white/10"
+                          style={{ clipPath: 'polygon(5px 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 5px)' }}
                         >
-                          <Trash2 className="w-4 h-4 md:w-5 md:h-5" />
+                          <TrashCan className="w-4 h-4" />
                         </button>
                       </Tooltip>
                     </div>
@@ -364,7 +367,7 @@ export default function LibraryPage() {
               className="flex items-center space-x-2 px-6 py-2.5 bg-red-500 text-white font-black text-[10px] uppercase tracking-[0.2em] shadow-[0_0_15px_rgba(239,68,68,0.5)] hover:shadow-[0_0_25px_rgba(239,68,68,0.7)] transition-all"
               style={{ clipPath: 'polygon(4px 0, 100% 0, 100% calc(100% - 4px), calc(100% - 4px) 100%, 0 100%, 0 4px)' }}
             >
-              <Trash2 className="w-4 h-4" />
+              <TrashCan className="w-4 h-4" />
               <span>Confirm Delete</span>
             </button>
           </>

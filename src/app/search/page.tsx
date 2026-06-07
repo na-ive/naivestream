@@ -5,7 +5,7 @@ import { useSearchParams } from 'next/navigation';
 import { AnimeAPI } from '@/lib/api';
 import { AnimeCard } from '@/components/anime/AnimeCard';
 import { CustomSelect } from '@/components/ui/CustomSelect';
-import { Search as SearchIcon, Loader2, Frown } from 'lucide-react';
+import { Search as SearchIcon, Renew, FaceDissatisfied } from '@carbon/icons-react';
 
 function SearchContent() {
   const searchParams = useSearchParams();
@@ -53,7 +53,7 @@ function SearchContent() {
 
       {loading ? (
         <div className="flex flex-col items-center justify-center py-20 space-y-4">
-          <Loader2 className="w-12 h-12 text-secondary animate-spin" />
+          <Renew className="w-12 h-12 text-secondary animate-spin" />
           <p className="text-muted-text font-medium">Searching through the archives...</p>
         </div>
       ) : results?.data?.length > 0 ? (
@@ -130,7 +130,7 @@ function SearchContent() {
       ) : query ? (
         <div className="flex flex-col items-center justify-center py-20 space-y-6 text-center">
           <div className="w-20 h-20 bg-card rounded-full flex items-center justify-center border border-border">
-            <Frown className="w-10 h-10 text-muted-text" />
+            <FaceDissatisfied className="w-10 h-10 text-muted-text" />
           </div>
           <div className="space-y-2">
             <h2 className="text-xl font-bold">No results found</h2>
@@ -150,7 +150,7 @@ export default function SearchPage() {
   return (
     <Suspense fallback={
       <div className="flex flex-col items-center justify-center py-20 space-y-4">
-        <Loader2 className="w-12 h-12 text-secondary animate-spin" />
+        <Renew className="w-12 h-12 text-secondary animate-spin" />
         <p className="text-muted-text font-medium">Loading search...</p>
       </div>
     }>

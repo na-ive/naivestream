@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
-import { Search, Moon, Sun, Menu, X, Play, ChevronDown } from 'lucide-react';
+import { Search, Moon, Sun, Menu, Close, ChevronDown } from '@carbon/icons-react';
 import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
 import { Tooltip } from '@/components/ui/Tooltip';
@@ -116,7 +116,7 @@ export function Navbar() {
                   style={{ clipPath: 'polygon(5px 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 5px)' }}
                   aria-label="Clear search"
                 >
-                  <X className="w-4 h-4" />
+                  <Close className="w-4 h-4" />
                 </button>
               )}
             </form>
@@ -212,7 +212,7 @@ export function Navbar() {
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               className="p-2 bg-secondary text-background cursor-pointer"
             >
-              {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              {isMenuOpen ? <Close className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
           </div>
         </div>
@@ -242,7 +242,7 @@ export function Navbar() {
                   style={{ clipPath: 'polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px)' }}
                   aria-label="Clear search"
                 >
-                  <X className="w-5 h-5" />
+                  <Close className="w-5 h-5" />
                 </button>
               )}
             </form>

@@ -1,7 +1,7 @@
 import { AnimeAPI } from "@/lib/api";
 import { AnimeCard } from "@/components/anime/AnimeCard";
 import { HeroCarousel } from "@/components/anime/HeroCarousel";
-import { ChevronRight, Calendar } from "lucide-react";
+import { ChevronRight, Calendar } from "@carbon/icons-react";
 import Link from "next/link";
 
 const DAY_MAP: Record<number, string> = {

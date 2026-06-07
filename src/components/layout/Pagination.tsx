@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, MoreHorizontal } from 'lucide-react';
+import { ChevronLeft, ChevronRight, PageFirst, PageLast, OverflowMenuHorizontal } from '@carbon/icons-react';
 import { cn } from '@/lib/utils';
 
 interface PaginationProps {
@@ -51,7 +51,7 @@ export function Pagination({ currentPage, totalPages, baseUrl }: PaginationProps
           )}
           aria-label="First page"
         >
-          <ChevronsLeft className="w-5 h-5" />
+          <PageFirst className="w-5 h-5" />
         </Link>
 
         {/* Previous */}
@@ -71,7 +71,7 @@ export function Pagination({ currentPage, totalPages, baseUrl }: PaginationProps
             if (p === '...') {
               return (
                 <div key={`dot-${idx}`} className="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center text-secondary/30">
-                  <MoreHorizontal className="w-4 h-4" />
+                  <OverflowMenuHorizontal className="w-4 h-4" />
                 </div>
               );
             }
@@ -115,7 +115,7 @@ export function Pagination({ currentPage, totalPages, baseUrl }: PaginationProps
           )}
           aria-label="Last page"
         >
-          <ChevronsRight className="w-5 h-5" />
+          <PageLast className="w-5 h-5" />
         </Link>
       </div>
       

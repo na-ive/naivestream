@@ -2,7 +2,7 @@ import React from 'react';
 import { AnimeAPI } from '@/lib/api';
 import Link from 'next/link';
 import { AnimeCard } from '@/components/anime/AnimeCard';
-import { Calendar, Frown } from 'lucide-react';
+import { Calendar, FaceDissatisfied } from '@carbon/icons-react';
 
 export const metadata = {
   title: 'Anime Schedule - NaiveStream',
@@ -100,7 +100,7 @@ export default async function SchedulePage({ searchParams }: SchedulePageProps) 
         </div>
       ) : (
         <div className="flex flex-col items-center justify-center py-20 text-center space-y-4 border-2 border-dashed border-secondary/20 bg-card">
-          <Frown className="w-12 h-12 text-muted-text" />
+          <FaceDissatisfied className="w-12 h-12 text-muted-text" />
           <p className="text-muted-text font-bold uppercase tracking-widest text-xs">
             No anime scheduled for {activeDay}.
           </p>

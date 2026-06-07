@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X } from 'lucide-react';
+import { Close } from '@carbon/icons-react';
 import { cn } from '@/lib/utils';
 
 export interface ModalProps {
@@ -90,7 +90,7 @@ export function Modal({ isOpen, onClose, title, children, footer, className }: M
                     clipPath: 'polygon(4px 0, 100% 0, 100% calc(100% - 4px), calc(100% - 4px) 100%, 0 100%, 0 4px)',
                   }}
                 >
-                  <X className="w-5 h-5" />
+                  <Close className="w-5 h-5" />
                 </button>
               </div>
 

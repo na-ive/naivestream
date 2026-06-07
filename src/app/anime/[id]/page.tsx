@@ -1,6 +1,6 @@
 import { AnimeAPI } from "@/lib/api";
 import type { Metadata } from 'next';
-import { ChevronRight, Play, Info, List, Star, Video } from "lucide-react";
+import { ChevronRight, CaretRight, Information, List, StarFilled, Video } from "@carbon/icons-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ContinueWatching } from "@/components/anime/ContinueWatching";
@@ -129,7 +129,7 @@ export default async function AnimeDetailPage(props: { params: Promise<{ id: str
                 >
                   <div className="absolute inset-0 bg-gradient-to-r from-secondary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                   <div className="flex items-center space-x-2 relative z-10">
-                    <Star className="text-secondary w-5 h-5 fill-current" />
+                    <StarFilled className="text-secondary w-5 h-5" />
                     <span className="font-serif font-black text-xl">{rating}</span>
                   </div>
                   <span className="text-[10px] text-muted-text uppercase font-black tracking-widest relative z-10">Score</span>
@@ -246,7 +246,7 @@ export default async function AnimeDetailPage(props: { params: Promise<{ id: str
             <div className="space-y-4">
               <div className="flex items-center space-x-3 text-lg font-serif font-black uppercase tracking-widest">
                 <div className="w-1.5 h-6 bg-secondary" />
-                <Info className="w-5 h-5 text-secondary" />
+                <Information className="w-5 h-5 text-secondary" />
                 <h2>Synopsis<span className="text-secondary opacity-70">_</span></h2>
               </div>
               <p className="text-foreground/70 leading-relaxed text-sm md:text-base whitespace-pre-line border-l-4 border-secondary/20 pl-6 pr-6 py-4 bg-secondary/[0.02]">

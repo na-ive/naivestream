@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 import { AnimeAPI } from "@/lib/api";
 import { AnimeCard } from "@/components/anime/AnimeCard";
-import { CheckCircle2, Frown } from "lucide-react";
+import { CheckmarkOutline, FaceDissatisfied } from "@carbon/icons-react";
 import { Pagination } from "@/components/layout/Pagination";
 
 export const metadata: Metadata = {
@@ -23,7 +23,7 @@ export default async function CompletedPage(props: { searchParams: Promise<{ pag
       <div className="mb-12">
         <div className="flex items-center space-x-4 mb-6">
           <div className="p-3 bg-secondary/10 text-secondary border border-secondary/30 relative">
-            <CheckCircle2 className="w-8 h-8 relative z-10" />
+            <CheckmarkOutline className="w-8 h-8 relative z-10" />
             <div className="absolute top-0 left-0 w-2 h-2 border-t-2 border-l-2 border-secondary" />
             <div className="absolute bottom-0 right-0 w-2 h-2 border-b-2 border-r-2 border-secondary" />
           </div>
@@ -41,7 +41,7 @@ export default async function CompletedPage(props: { searchParams: Promise<{ pag
 
       {error && complete.length === 0 && (
         <div className="flex flex-col items-center justify-center py-20 text-center space-y-4 border-2 border-dashed border-secondary/20">
-          <Frown className="w-12 h-12 text-foreground/20" />
+          <FaceDissatisfied className="w-12 h-12 text-foreground/20" />
           <p className="text-foreground/40 font-bold uppercase tracking-widest text-xs">Failed to load data. Please try again later.</p>
         </div>
       )}

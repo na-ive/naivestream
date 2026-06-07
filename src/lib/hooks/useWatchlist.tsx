@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { toast } from 'sonner';
-import { CheckSquare, Trash2 } from 'lucide-react';
+import { CheckboxChecked, TrashCan } from '@carbon/icons-react';
 
 export interface WatchlistItem {
   animeId: string;
@@ -49,7 +49,7 @@ export function useWatchlist() {
     updateStorage([{ ...item, addedAt: Date.now() }, ...currentList]);
     toast.success('Added to Watchlist', {
       description: item.animeTitle,
-      icon: <div className="w-8 h-8 bg-secondary/10 border border-secondary flex items-center justify-center shrink-0 mr-3 shadow-[0_0_10px_rgba(34,197,94,0.3)]"><CheckSquare className="w-5 h-5 text-secondary" /></div>,
+      icon: <div className="w-8 h-8 bg-secondary/10 border border-secondary flex items-center justify-center shrink-0 mr-3 shadow-[0_0_10px_rgba(34,197,94,0.3)]"><CheckboxChecked className="w-5 h-5 text-secondary" /></div>,
     });
   }, []);
 
@@ -60,7 +60,7 @@ export function useWatchlist() {
     if (item) {
       toast.error('Removed from Watchlist', {
         description: item.animeTitle,
-        icon: <div className="w-8 h-8 bg-red-500/10 border border-red-500 flex items-center justify-center shrink-0 mr-3 shadow-[0_0_10px_rgba(239,68,68,0.3)]"><Trash2 className="w-5 h-5 text-red-500" /></div>,
+        icon: <div className="w-8 h-8 bg-red-500/10 border border-red-500 flex items-center justify-center shrink-0 mr-3 shadow-[0_0_10px_rgba(239,68,68,0.3)]"><TrashCan className="w-5 h-5 text-red-500" /></div>,
       });
     }
   }, []);
@@ -76,13 +76,13 @@ export function useWatchlist() {
       updateStorage(currentList.filter(w => w.animeId !== item.animeId));
       toast.error('Removed from Watchlist', {
         description: item.animeTitle,
-        icon: <div className="w-8 h-8 bg-red-500/10 border border-red-500 flex items-center justify-center shrink-0 mr-3 shadow-[0_0_10px_rgba(239,68,68,0.3)]"><Trash2 className="w-5 h-5 text-red-500" /></div>,
+        icon: <div className="w-8 h-8 bg-red-500/10 border border-red-500 flex items-center justify-center shrink-0 mr-3 shadow-[0_0_10px_rgba(239,68,68,0.3)]"><TrashCan className="w-5 h-5 text-red-500" /></div>,
       });
     } else {
       updateStorage([{ ...item, addedAt: Date.now() }, ...currentList]);
       toast.success('Added to Watchlist', {
         description: item.animeTitle,
-        icon: <div className="w-8 h-8 bg-secondary/10 border border-secondary flex items-center justify-center shrink-0 mr-3 shadow-[0_0_10px_rgba(34,197,94,0.3)]"><CheckSquare className="w-5 h-5 text-secondary" /></div>,
+        icon: <div className="w-8 h-8 bg-secondary/10 border border-secondary flex items-center justify-center shrink-0 mr-3 shadow-[0_0_10px_rgba(34,197,94,0.3)]"><CheckboxChecked className="w-5 h-5 text-secondary" /></div>,
       });
     }
   }, []);
@@ -91,7 +91,7 @@ export function useWatchlist() {
     const currentList = getLatestWatchlist();
     updateStorage(currentList.filter(w => !animeIds.includes(w.animeId)));
     toast.error(`${animeIds.length} items removed from Watchlist`, {
-      icon: <div className="w-8 h-8 bg-red-500/10 border border-red-500 flex items-center justify-center shrink-0 mr-3 shadow-[0_0_10px_rgba(239,68,68,0.3)]"><Trash2 className="w-5 h-5 text-red-500" /></div>,
+      icon: <div className="w-8 h-8 bg-red-500/10 border border-red-500 flex items-center justify-center shrink-0 mr-3 shadow-[0_0_10px_rgba(239,68,68,0.3)]"><TrashCan className="w-5 h-5 text-red-500" /></div>,
     });
   }, []);
 

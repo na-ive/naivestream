@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { Bookmark, Play, Star, Terminal } from 'lucide-react';
+import { CaretRight, StarFilled, Terminal } from '@carbon/icons-react';
 import { motion } from 'framer-motion';
 import { BookmarkButton } from './BookmarkButton';
 import { cn } from '@/lib/utils';
@@ -43,7 +43,7 @@ export function AnimeCard({ id, title, image, status, rating, episode, type, hid
         
         <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
           <div className="w-16 h-16 bg-secondary text-background flex items-center justify-center shadow-[0_0_25px_rgba(34,197,94,0.6)] animate-pulse">
-            <Play className="fill-current w-8 h-8 ml-1" />
+            <CaretRight className="fill-current w-8 h-8 ml-1" />
           </div>
         </div>
 
@@ -51,7 +51,7 @@ export function AnimeCard({ id, title, image, status, rating, episode, type, hid
         <div className="absolute top-3 left-3 flex flex-col gap-2">
           {rating && (
             <div className="flex items-center space-x-1.5 px-2 py-1 bg-background/90 backdrop-blur-md border border-secondary/50 text-[10px] font-black text-secondary uppercase tracking-tighter">
-              <Star className="w-3 h-3 fill-current" />
+              <StarFilled className="w-3 h-3 fill-current" />
               <span>{rating}</span>
             </div>
           )}

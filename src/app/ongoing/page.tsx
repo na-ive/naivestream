@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 import { AnimeAPI } from "@/lib/api";
 import { AnimeCard } from "@/components/anime/AnimeCard";
-import { Activity, Frown } from "lucide-react";
+import { Activity, FaceDissatisfied } from "@carbon/icons-react";
 import { Pagination } from "@/components/layout/Pagination";
 
 export const metadata: Metadata = {
@@ -41,7 +41,7 @@ export default async function OngoingPage(props: { searchParams: Promise<{ page?
 
       {error && ongoing.length === 0 && (
         <div className="flex flex-col items-center justify-center py-20 text-center space-y-4 border-2 border-dashed border-secondary/20">
-          <Frown className="w-12 h-12 text-foreground/20" />
+          <FaceDissatisfied className="w-12 h-12 text-foreground/20" />
           <p className="text-foreground/40 font-bold uppercase tracking-widest text-xs">Failed to load data. Please try again later.</p>
         </div>
       )}

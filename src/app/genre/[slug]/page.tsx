@@ -2,7 +2,7 @@ import React from 'react';
 import { AnimeAPI } from '@/lib/api';
 import { notFound } from 'next/navigation';
 import { GenreAnimeList } from './GenreAnimeList';
-import { Tags, Frown } from 'lucide-react';
+import { Tag, FaceDissatisfied } from '@carbon/icons-react';
 
 export const metadata = {
   title: 'Genre - NaiveStream',
@@ -40,7 +40,7 @@ export default async function GenreDetailPage(props: {
       <div className="mb-12">
         <div className="flex items-center space-x-4 mb-6">
           <div className="p-3 bg-secondary/10 text-secondary border border-secondary/30 relative">
-            <Tags className="w-8 h-8 relative z-10" />
+            <Tag className="w-8 h-8 relative z-10" />
             <div className="absolute top-0 left-0 w-2 h-2 border-t-2 border-l-2 border-secondary" />
             <div className="absolute bottom-0 right-0 w-2 h-2 border-b-2 border-r-2 border-secondary" />
           </div>
@@ -60,7 +60,7 @@ export default async function GenreDetailPage(props: {
         <GenreAnimeList initialAnime={animeList} slug={slug} />
       ) : (
         <div className="flex flex-col items-center justify-center py-20 text-center space-y-4 border-2 border-dashed border-secondary/20 bg-card">
-          <Frown className="w-12 h-12 text-muted-text" />
+          <FaceDissatisfied className="w-12 h-12 text-muted-text" />
           <p className="text-muted-text font-bold uppercase tracking-widest text-xs">
             No anime found for {genreTitle} on this page.
           </p>

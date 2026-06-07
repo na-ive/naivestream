@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { AnimeAPI } from '@/lib/api';
 import { AnimeCard } from '@/components/anime/AnimeCard';
-import { Loader2, ChevronDown } from 'lucide-react';
+import { Renew, ChevronDown } from '@carbon/icons-react';
 
 interface GenreAnimeListProps {
   initialAnime: any[];
@@ -62,7 +62,7 @@ export function GenreAnimeList({ initialAnime, slug }: GenreAnimeListProps) {
           >
             {loading ? (
               <>
-                <Loader2 className="w-5 h-5 text-secondary animate-spin" />
+                <Renew className="w-5 h-5 text-secondary animate-spin" />
                 <span className="text-secondary">Scanning Data...</span>
               </>
             ) : (

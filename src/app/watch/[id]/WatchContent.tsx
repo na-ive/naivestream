@@ -4,7 +4,7 @@ import React, { useEffect, useState, Suspense, use, useCallback } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { AnimeAPI } from '@/lib/api';
 import { useHistory } from '@/lib/hooks/useHistory';
-import { ChevronRight, Layout, Loader2, Video, Server, Monitor, RectangleHorizontal } from 'lucide-react';
+import { ChevronRight, Grid, Renew, Video, ServerDns, Screen, Theater } from '@carbon/icons-react';
 import Link from 'next/link';
 import { Tooltip } from '@/components/ui/Tooltip';
 
@@ -183,7 +183,7 @@ export default function WatchContent({ id }: { id: string }) {
           <div className={`relative aspect-video bg-black border-b-4 border-secondary/20 shadow-2xl overflow-hidden group transition-all duration-500 ${isCinemaMode ? 'shadow-[0_0_50px_rgba(34,197,94,0.15)] ring-1 ring-secondary/30' : ''}`}>
             {serverLoading && (
               <div className="absolute inset-0 z-20 bg-black/60 backdrop-blur-sm flex items-center justify-center">
-                <Loader2 className="w-10 h-10 text-secondary animate-spin" />
+                <Renew className="w-10 h-10 text-secondary animate-spin" />
               </div>
             )}
             {currentUrl && currentUrl !== 'No iframe found' ? (
@@ -211,7 +211,7 @@ export default function WatchContent({ id }: { id: string }) {
               <div className="relative z-10">
                 <h1 className="text-2xl font-serif font-black tracking-tighter uppercase leading-none">{episodeData.title}</h1>
                 <p className="text-secondary font-bold text-xs mt-2 tracking-[0.3em] uppercase opacity-60 flex items-center">
-                  <Server className="w-3 h-3 mr-2" />
+                  <ServerDns className="w-3 h-3 mr-2" />
                   Streaming from {source} provider
                 </p>
               </div>
@@ -224,7 +224,7 @@ export default function WatchContent({ id }: { id: string }) {
                   className={`p-3 transition-all border ${isTheaterMode ? 'bg-secondary text-black border-secondary shadow-[0_0_20px_rgba(34,197,94,0.4)]' : 'bg-secondary/10 text-secondary hover:bg-secondary hover:text-black border-secondary/30 hover:border-secondary shadow-[0_0_10px_rgba(34,197,94,0.1)] hover:shadow-[0_0_20px_rgba(34,197,94,0.4)]'}`}
                   style={{ clipPath: 'polygon(5px 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 5px)' }}
                 >
-                  <RectangleHorizontal className="w-4 h-4" />
+                  <Theater className="w-4 h-4" />
                 </button>
               </Tooltip>
               <Tooltip content={isCinemaMode ? 'Exit Focus (F)' : 'Focus Mode (F)'} position="top">
@@ -233,7 +233,7 @@ export default function WatchContent({ id }: { id: string }) {
                   className={`p-3 transition-all border ${isCinemaMode ? 'bg-secondary text-black border-secondary shadow-[0_0_20px_rgba(34,197,94,0.4)]' : 'bg-secondary/10 text-secondary hover:bg-secondary hover:text-black border-secondary/30 hover:border-secondary shadow-[0_0_10px_rgba(34,197,94,0.1)] hover:shadow-[0_0_20px_rgba(34,197,94,0.4)]'}`}
                   style={{ clipPath: 'polygon(5px 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 5px)' }}
                 >
-                  <Monitor className="w-4 h-4" />
+                  <Screen className="w-4 h-4" />
                 </button>
               </Tooltip>
             </div>
@@ -248,7 +248,7 @@ export default function WatchContent({ id }: { id: string }) {
           >
             <div className="flex items-center space-x-2 border-b border-white/5 pb-3 mb-4 relative z-10">
               <div className="w-1 h-4 bg-secondary" />
-              <Layout className="w-3.5 h-3.5 text-secondary" />
+              <Grid className="w-3.5 h-3.5 text-secondary" />
               <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-text">Navigation</h3>
             </div>
             <div className="grid grid-cols-2 gap-3 relative z-10">

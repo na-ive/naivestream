@@ -1,5 +1,5 @@
 import { Suspense } from 'react';
-import { Loader2 } from 'lucide-react';
+import { Renew } from '@carbon/icons-react';
 import type { Metadata } from 'next';
 import { AnimeAPI } from '@/lib/api';
 import WatchContent from './WatchContent';
@@ -42,7 +42,7 @@ export default async function WatchPage(props: { params: Promise<{ id: string }>
   return (
     <Suspense fallback={
       <div className="flex items-center justify-center min-h-[60vh]">
-        <Loader2 className="w-12 h-12 text-secondary animate-spin" />
+        <Renew className="w-12 h-12 text-secondary animate-spin" />
       </div>
     }>
       <WatchContent id={params.id} />
