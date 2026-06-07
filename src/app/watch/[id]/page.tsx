@@ -24,32 +24,31 @@ function WatchContent({ id }: { id: string }) {
   const [isTheaterMode, setIsTheaterMode] = useState(false);
   const { saveToHistory } = useHistory();
 
+  // Load Theater Mode preference
+  useEffect(() => {
+    const saved = localStorage.getItem('theaterMode');
+    if (saved === 'true') {
+      setIsTheaterMode(true);
+    }
+  }, []);
+
+  const toggleTheaterMode = () => {
+    const newValue = !isTheaterMode;
+    setIsTheaterMode(newValue);
+    localStorage.setItem('theaterMode', String(newValue));
+  };
+
   // Handle Escape key and Body Scroll for Cinema Mode
   useEffect(() => {
-    let timeoutId: NodeJS.Timeout;
-    
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && isCinemaMode) {
         setIsCinemaMode(false);
       }
     };
-    
-    if (isCinemaMode) {
-      // Ensure the player is in view with smooth scroll
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-      // Delay locking the overflow to allow the smooth scroll animation to finish
-      timeoutId = setTimeout(() => {
-        document.body.style.overflow = 'hidden';
-      }, 600);
-    } else {
-      document.body.style.overflow = '';
-    }
 
     window.addEventListener('keydown', handleKeyDown);
     return () => {
-      clearTimeout(timeoutId);
       window.removeEventListener('keydown', handleKeyDown);
-      document.body.style.overflow = '';
     };
   }, [isCinemaMode]);
 
@@ -203,7 +202,7 @@ function WatchContent({ id }: { id: string }) {
              <div className="relative z-10 shrink-0 flex items-center gap-3">
                <Tooltip content={isTheaterMode ? 'Default View' : 'Theater Mode'} position="top">
                  <button 
-                   onClick={() => setIsTheaterMode(!isTheaterMode)}
+                   onClick={toggleTheaterMode}
                    className={`p-3 transition-all border ${isTheaterMode ? 'bg-secondary text-black border-secondary shadow-[0_0_20px_rgba(34,197,94,0.4)]' : 'bg-secondary/10 text-secondary hover:bg-secondary hover:text-black border-secondary/30 hover:border-secondary shadow-[0_0_10px_rgba(34,197,94,0.1)] hover:shadow-[0_0_20px_rgba(34,197,94,0.4)]'}`}
                    style={{ clipPath: 'polygon(5px 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 5px)' }}
                  >
