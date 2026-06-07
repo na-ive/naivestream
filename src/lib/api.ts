@@ -52,6 +52,9 @@ export const AnimeAPI = {
     getAZList: () => fetchWithRetry('/unlimited', { 
       next: { revalidate: 2592000, tags: ['az-list'] } // 30 days
     }),
+    getSchedule: () => fetchWithRetry('/schedule', {
+      next: { revalidate: 3600 } // 1 hour
+    }),
   },
 
   // Fallback Source: Samehadaku

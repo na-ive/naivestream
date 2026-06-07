@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { Search, Moon, Sun, Menu, X, Play } from 'lucide-react';
+import { Search, Moon, Sun, Menu, X, Play, ChevronDown } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
 
@@ -30,8 +30,15 @@ export function Navbar() {
 
   const navLinks = [
     { name: 'Home', href: '/' },
-    { name: 'Ongoing', href: '/ongoing' },
-    { name: 'Completed', href: '/completed' },
+    { 
+      name: 'Browse', 
+      type: 'dropdown',
+      items: [
+        { name: 'Ongoing', href: '/ongoing' },
+        { name: 'Completed', href: '/completed' },
+      ]
+    },
+    { name: 'Schedule', href: '/schedule' },
     { name: 'History', href: '/history' },
   ];
 
@@ -67,22 +74,51 @@ export function Navbar() {
 
           {/* Desktop Menu */}
           <div className="hidden md:flex items-center space-x-8">
-            {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className={cn(
-                  "text-xs font-bold uppercase tracking-[0.2em] transition-all hover:text-secondary relative group py-2",
-                  pathname === link.href ? "text-secondary" : "text-foreground/70"
-                )}
-              >
-                {link.name}
-                <span className={cn(
-                  "absolute bottom-0 left-0 h-[2px] bg-secondary transition-all duration-300",
-                  pathname === link.href ? "w-full" : "w-0 group-hover:w-full"
-                )} />
-              </Link>
-            ))}
+            {navLinks.map((link) => {
+              if (link.type === 'dropdown') {
+                return (
+                  <div key={link.name} className="relative group py-2 cursor-pointer">
+                    <span className="flex items-center text-xs font-bold uppercase tracking-[0.2em] transition-all hover:text-secondary text-foreground/70 group-hover:text-secondary">
+                      {link.name}
+                      <ChevronDown className="w-4 h-4 ml-1 transition-transform group-hover:rotate-180" />
+                    </span>
+                    <div className="absolute top-full left-0 w-48 pt-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+                      <div className="bg-card border-2 border-secondary/20 shadow-xl flex flex-col">
+                        {link.items?.map((item) => (
+                          <Link
+                            key={item.href}
+                            href={item.href}
+                            className={cn(
+                              "px-4 py-3 text-xs font-bold uppercase tracking-[0.2em] transition-all hover:bg-secondary/10 hover:text-secondary border-b border-white/5 last:border-0",
+                              pathname === item.href ? "text-secondary bg-secondary/5" : "text-foreground/70"
+                            )}
+                          >
+                            {item.name}
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                );
+              }
+
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className={cn(
+                    "text-xs font-bold uppercase tracking-[0.2em] transition-all hover:text-secondary relative group py-2",
+                    pathname === link.href ? "text-secondary" : "text-foreground/70"
+                  )}
+                >
+                  {link.name}
+                  <span className={cn(
+                    "absolute bottom-0 left-0 h-[2px] bg-secondary transition-all duration-300",
+                    pathname === link.href ? "w-full" : "w-0 group-hover:w-full"
+                  )} />
+                </Link>
+              );
+            })}
             
             {/* Theme Toggle with mounting check */}
             <button
@@ -135,21 +171,50 @@ export function Navbar() {
               <Search className="absolute left-4 top-4.5 text-secondary w-5 h-5" />
             </form>
             <div className="grid grid-cols-1 gap-2">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  onClick={() => setIsMenuOpen(false)}
-                  className={cn(
-                    "flex items-center p-5 font-bold uppercase tracking-widest border-l-4 transition-all",
-                    pathname === link.href 
-                      ? "bg-secondary/10 border-secondary text-secondary" 
-                      : "border-transparent text-foreground/50"
-                  )}
-                >
-                  {link.name}
-                </Link>
-              ))}
+              {navLinks.map((link) => {
+                if (link.type === 'dropdown') {
+                  return (
+                    <div key={link.name} className="flex flex-col">
+                      <div className="p-5 font-bold uppercase tracking-widest text-foreground/70 bg-white/5">
+                        {link.name}
+                      </div>
+                      <div className="flex flex-col pl-4 border-l-4 border-transparent">
+                        {link.items?.map((item) => (
+                          <Link
+                            key={item.href}
+                            href={item.href}
+                            onClick={() => setIsMenuOpen(false)}
+                            className={cn(
+                              "flex items-center p-4 font-bold uppercase tracking-widest border-l-4 transition-all",
+                              pathname === item.href 
+                                ? "bg-secondary/10 border-secondary text-secondary" 
+                                : "border-transparent text-foreground/50 hover:text-foreground"
+                            )}
+                          >
+                            {item.name}
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                }
+
+                return (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    onClick={() => setIsMenuOpen(false)}
+                    className={cn(
+                      "flex items-center p-5 font-bold uppercase tracking-widest border-l-4 transition-all",
+                      pathname === link.href 
+                        ? "bg-secondary/10 border-secondary text-secondary" 
+                        : "border-transparent text-foreground/50 hover:text-foreground"
+                    )}
+                  >
+                    {link.name}
+                  </Link>
+                );
+              })}
             </div>
           </div>
         </div>
