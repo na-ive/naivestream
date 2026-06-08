@@ -120,6 +120,23 @@ export default async function AnimeDetailPage(props: { params: Promise<{ id: str
               <img src={poster} alt={data.title} className="w-full h-full object-cover" />
               <div className="absolute inset-0 border-2 border-secondary/20 pointer-events-none" />
             </div>
+
+            <ContinueWatching 
+              animeId={id} 
+              animeTitle={data.title} 
+              animeImage={poster} 
+              source={source} 
+              episodes={episodes}
+            />
+
+            {/* Bookmark Button */}
+            <BookmarkButton 
+              animeId={id} 
+              animeTitle={data.title} 
+              animeImage={poster} 
+              variant="full"
+              className="w-full"
+            />
             
             <div className="space-y-4">
               {rating && (
@@ -197,24 +214,6 @@ export default async function AnimeDetailPage(props: { params: Promise<{ id: str
                   <div className="absolute inset-0 pointer-events-none border-2 border-secondary/20 group-hover:border-secondary/50 transition-colors duration-300" />
                 </div>
               )}
-
-              {/* Continue Watching Button */}
-              <ContinueWatching 
-                animeId={id} 
-                animeTitle={data.title} 
-                animeImage={poster} 
-                source={source} 
-                episodes={episodes}
-              />
-
-              {/* Bookmark Button */}
-              <BookmarkButton 
-                animeId={id} 
-                animeTitle={data.title} 
-                animeImage={poster} 
-                variant="full"
-                className="w-full mt-3"
-              />
             </div>
           </div>
 

@@ -39,22 +39,41 @@ export function ContinueWatching({
     }
   }, [history, animeId, episodes]);
 
-  if (!lastWatched) return null;
+  const watchUrl = (id: string) => `/watch/${id}?anime=${animeId}&title=${encodeURIComponent(animeTitle)}&img=${encodeURIComponent(animeImage)}&source=${source}`;
+
+  if (!lastWatched) {
+    if (episodes.length === 0) return null;
+    
+    // Start watching from the first episode (usually the last in the array)
+    const firstEp = episodes[episodes.length - 1];
+    const firstEpId = firstEp.episodeId || firstEp.id;
+    const firstEpNum = firstEp.eps || 1;
+
+    return (
+      <div className="animate-in fade-in slide-in-from-top-2 duration-500">
+        <Link
+          href={watchUrl(firstEpId)}
+          className="btn-primary w-full flex items-center justify-center space-x-2 group py-4"
+        >
+          <CaretRight className="w-6 h-6 fill-current group-hover:scale-110 transition-transform" />
+          <span className="text-lg font-black uppercase tracking-tighter">Start Watching</span>
+        </Link>
+      </div>
+    );
+  }
 
   // Extract episode number precisely from the stored title
   const epNumber = lastWatched.lastEpisodeTitle.match(/Episode\s*(\d+)/i)?.[1] || 
                    lastWatched.lastEpisodeTitle.match(/(\d+)/)?.[0] || '';
 
-  const watchUrl = (id: string) => `/watch/${id}?anime=${animeId}&title=${encodeURIComponent(animeTitle)}&img=${encodeURIComponent(animeImage)}&source=${source}`;
-
   return (
     <div className="space-y-3 animate-in fade-in slide-in-from-top-2 duration-500">
       <Link
         href={watchUrl(lastWatched.lastEpisodeId)}
-        className="btn-primary w-full flex items-center justify-center space-x-2 group"
+        className="btn-primary w-full flex items-center justify-center space-x-2 group py-4"
       >
-        <CaretRight className="w-5 h-5 fill-current group-hover:scale-110 transition-transform" />
-        <span>Continue Episode {epNumber}</span>
+        <CaretRight className="w-6 h-6 fill-current group-hover:scale-110 transition-transform" />
+        <span className="text-lg font-black uppercase tracking-tighter">Continue Episode {epNumber}</span>
       </Link>
       
       {nextEp && (
