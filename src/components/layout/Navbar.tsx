@@ -9,6 +9,8 @@ import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
 import { Tooltip } from '@/components/ui/Tooltip';
 
+import { ThemeToggle } from './ThemeToggle';
+
 export function Navbar() {
   const [mounted, setMounted] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -74,7 +76,7 @@ export function Navbar() {
       className={cn(
         "fixed top-0 z-50 w-full transition-all duration-300",
         isScrolled 
-          ? "bg-background/80 backdrop-blur-xl border-b border-secondary/10 shadow-[0_4px_30px_rgba(34,197,94,0.03)]" 
+          ? "bg-background border-b border-secondary/10 shadow-[0_4px_30px_rgba(34,197,94,0.03)]" 
           : "bg-transparent border-b border-transparent shadow-none"
       )}
     >
@@ -180,34 +182,13 @@ export function Navbar() {
               );
             })}
             
-            {/* Theme Toggle with mounting check */}
-            <Tooltip content={mounted && theme === 'dark' ? "Switch to Light Mode" : "Switch to Dark Mode"} position="bottom">
-              <button
-                onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-                className="p-2.5 rounded-none border border-secondary/30 hover:border-secondary text-secondary transition-all cursor-pointer min-w-[44px] min-h-[44px] flex items-center justify-center"
-                aria-label="Toggle theme"
-              >
-                {mounted ? (
-                  theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />
-                ) : (
-                  <div className="w-5 h-5" /> // Empty placeholder to prevent mismatch
-                )}
-              </button>
-            </Tooltip>
+            {/* Theme Toggle */}
+            <ThemeToggle />
           </div>
 
           {/* Mobile Actions */}
           <div className="flex md:hidden items-center space-x-4">
-            <button
-              onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-              className="p-2 text-secondary cursor-pointer"
-            >
-              {mounted ? (
-                theme === 'dark' ? <Sun className="w-6 h-6" /> : <Moon className="w-6 h-6" />
-              ) : (
-                <div className="w-6 h-6" />
-              )}
-            </button>
+            <ThemeToggle />
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               className="p-2 bg-secondary text-background cursor-pointer"
