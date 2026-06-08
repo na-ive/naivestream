@@ -24,6 +24,21 @@ export default function WatchContent({ id }: { id: string }) {
   const [isCinemaMode, setIsCinemaMode] = useState(false);
   const [isTheaterMode, setIsTheaterMode] = useState(false);
   const { saveToHistory } = useHistory();
+  const activeEpisodeRef = React.useRef<HTMLAnchorElement>(null);
+  const scrollContainerRef = React.useRef<HTMLDivElement>(null);
+
+  // Auto-scroll to active episode
+  useEffect(() => {
+    if (activeEpisodeRef.current && scrollContainerRef.current && !loading) {
+      setTimeout(() => {
+        activeEpisodeRef.current?.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center',
+          inline: 'nearest'
+        });
+      }, 300);
+    }
+  }, [id, loading, animeData]);
 
   // Load Theater Mode preference
   useEffect(() => {
@@ -290,7 +305,10 @@ export default function WatchContent({ id }: { id: string }) {
             {animeData?.episodeList && animeData.episodeList.length > 0 && (
               <div className="mt-6 space-y-3 relative z-10">
                 <h4 className="font-bold text-xs uppercase tracking-[0.2em] text-muted-text">All Episodes</h4>
-                <div className="grid grid-cols-5 gap-2 max-h-[250px] overflow-y-auto pr-2 custom-scrollbar">
+                <div 
+                  ref={scrollContainerRef}
+                  className="grid grid-cols-5 gap-2 max-h-[250px] overflow-y-auto pr-2 custom-scrollbar"
+                >
                   {[...animeData.episodeList].reverse().map((ep: any, index: number) => {
                     const epMatch = ep.title.match(/Episode\s+(\d+(\.\d+)?)/i);
                     const epNum = epMatch ? epMatch[1] : (index + 1);
@@ -299,6 +317,7 @@ export default function WatchContent({ id }: { id: string }) {
                     return (
                       <Link
                         key={ep.episodeId}
+                        ref={isActive ? activeEpisodeRef : null}
                         href={`/watch/${ep.episodeId}?anime=${animeId}&title=${encodeURIComponent(animeTitle)}&img=${encodeURIComponent(animeImg)}&source=${source}`}
                         className={`w-full aspect-square flex items-center justify-center text-xs font-bold transition-all ${isActive
                             ? 'bg-secondary text-background shadow-[0_0_10px_rgba(34,197,94,0.3)] pointer-events-none'
