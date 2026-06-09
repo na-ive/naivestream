@@ -196,7 +196,7 @@ export default function LibraryPage() {
               subtitle="Save anime to watch later" 
             />
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+            <div className="anime-grid">
               {watchlist.map((item) => (
                 <div 
                   key={item.animeId} 
@@ -266,7 +266,7 @@ export default function LibraryPage() {
               subtitle="Start watching to track progress" 
             />
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+            <div className="anime-grid">
               {history.map((item) => (
                 <div 
                   key={item.animeId} 
