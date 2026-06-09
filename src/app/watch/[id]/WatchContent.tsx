@@ -19,6 +19,8 @@ export default function WatchContent({ id }: { id: string }) {
   const [episodeData, setEpisodeData] = useState<any>(null);
   const [animeData, setAnimeData] = useState<any>(null);
   const [currentUrl, setCurrentUrl] = useState<string>('');
+  const [currentResolution, setCurrentResolution] = useState<string>('');
+  const [currentServer, setCurrentServer] = useState<string>('');
   const [loading, setLoading] = useState(true);
   const [serverLoading, setServerLoading] = useState(false);
   const [isCinemaMode, setIsCinemaMode] = useState(false);
@@ -129,6 +131,18 @@ export default function WatchContent({ id }: { id: string }) {
 
       setEpisodeData(sanitizedData);
       setCurrentUrl(sanitizedData.defaultStreamingUrl || '');
+      
+      // Set initial resolution/server if available from default url
+      if (sanitizedData.server?.qualities) {
+        for (const quality of sanitizedData.server.qualities) {
+          const foundServer = quality.serverList?.find((s: any) => s.url === sanitizedData.defaultStreamingUrl);
+          if (foundServer) {
+            setCurrentResolution(quality.title);
+            setCurrentServer(foundServer.title);
+            break;
+          }
+        }
+      }
 
       // Save to history
       saveToHistory({
@@ -167,7 +181,7 @@ export default function WatchContent({ id }: { id: string }) {
     fetchAnimeData();
   }, [fetchEpisode, fetchAnimeData]);
 
-  const changeServer = async (serverId: string) => {
+  const changeServer = async (serverId: string, resolution: string, serverName: string) => {
     setServerLoading(true);
     try {
       let res;
@@ -180,6 +194,8 @@ export default function WatchContent({ id }: { id: string }) {
       const serverData = res?.data || (res?.url ? res : null);
       if (serverData?.url) {
         setCurrentUrl(serverData.url);
+        setCurrentResolution(resolution);
+        setCurrentServer(serverName);
       }
     } catch (e) {
       console.error("Failed to change server", e);
@@ -263,7 +279,7 @@ export default function WatchContent({ id }: { id: string }) {
                 <h1 className="text-2xl font-serif font-black tracking-tighter uppercase leading-none">{episodeData.title}</h1>
                 <p className="text-secondary font-bold text-xs mt-2 tracking-[0.3em] uppercase opacity-60 flex items-center">
                   <ServerDns className="w-3 h-3 mr-2" />
-                  Streaming from {source} provider
+                  Streaming from {currentServer || 'Primary Server'} {currentResolution && `• ${currentResolution}`}
                 </p>
               </div>
             </div>
@@ -399,7 +415,7 @@ export default function WatchContent({ id }: { id: string }) {
                     {quality.serverList?.map((server: any) => (
                       <button
                         key={server.serverId}
-                        onClick={() => changeServer(server.serverId)}
+                        onClick={() => changeServer(server.serverId, quality.title, server.title)}
                         className="px-3 py-2 bg-background/50 border-l-2 border-secondary/20 text-[10px] font-bold uppercase tracking-tighter hover:bg-secondary/10 hover:border-secondary hover:text-secondary transition-all cursor-pointer text-left"
                       >
                         {server.title}
