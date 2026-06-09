@@ -4,7 +4,7 @@ import React, { useEffect, useState, Suspense, use, useCallback } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { AnimeAPI } from '@/lib/api';
 import { useHistory } from '@/lib/hooks/useHistory';
-import { ChevronRight, Grid, Renew, Video, ServerDns, Screen, Theater } from '@carbon/icons-react';
+import { ChevronRight, Grid, Renew, Video, ServerDns, Screen, Theater, Download } from '@carbon/icons-react';
 import Link from 'next/link';
 import { Tooltip } from '@/components/ui/Tooltip';
 
@@ -220,7 +220,7 @@ export default function WatchContent({ id }: { id: string }) {
   );
 
   return (
-    <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
       {/* Breadcrumbs Status Bar */}
       <div
         className="flex items-center gap-3 bg-card px-5 py-2.5 mb-6 relative overflow-hidden text-[10px] font-black uppercase tracking-[0.2em] text-muted-text w-max max-w-full shadow-lg"
@@ -433,6 +433,47 @@ export default function WatchContent({ id }: { id: string }) {
           </div>
         </div>
       </div>
+
+      {/* Full-Width Bottom Download Links - Navigator Style with Centered Header */}
+      {episodeData?.downloadUrl?.qualities && episodeData.downloadUrl.qualities.length > 0 && (
+        <div 
+          className="bg-card/50 border-y border-secondary/30 p-10 relative overflow-hidden"
+          style={{ clipPath: 'polygon(20px 0, 100% 0, 100% calc(100% - 20px), calc(100% - 20px) 100%, 0 100%, 0 20px)' }}
+        >
+          {/* Centered Integrated Header */}
+          <div className="flex flex-col items-center mb-12 relative z-10 text-center">
+            <div className="flex items-center space-x-3">
+              <Download className="w-6 h-6 text-secondary" />
+              <h3 className="text-2xl font-serif font-black uppercase tracking-widest text-foreground">Download Links<span className="text-secondary opacity-70">_</span></h3>
+            </div>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 relative z-10">
+            {episodeData.downloadUrl.qualities.map((quality: any) => (
+              <div key={quality.title} className="space-y-4">
+                <div className="flex items-center justify-between border-b border-white/5 pb-2 mb-2">
+                  <span className="text-[10px] font-black uppercase tracking-[0.2em] text-secondary">{quality.title.replace('Mp4_', '')}</span>
+                  {quality.size && <span className="text-[9px] font-mono font-bold text-muted-text opacity-60 bg-white/5 px-1.5 py-0.5">{quality.size}</span>}
+                </div>
+                
+                <div className="flex flex-wrap gap-2">
+                  {quality.urls?.map((item: any) => (
+                    <a
+                      key={item.title}
+                      href={item.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="px-3 py-2 bg-background/50 border-l-2 border-secondary/20 text-[10px] font-bold uppercase tracking-tighter hover:bg-secondary/10 hover:border-secondary hover:text-secondary transition-all cursor-pointer text-left"
+                    >
+                      {item.title}
+                    </a>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
