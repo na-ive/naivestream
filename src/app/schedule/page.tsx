@@ -1,5 +1,5 @@
 import React from 'react';
-import { AnimeAPI } from '@/lib/api';
+import { AnimeService } from '@/lib/services/anime';
 import Link from 'next/link';
 import { AnimeCard } from '@/components/anime/AnimeCard';
 import { Calendar, FaceDissatisfied } from '@carbon/icons-react';
@@ -10,18 +10,18 @@ export const metadata = {
 };
 
 const DAY_MAP: Record<number, string> = {
-  0: 'Minggu', 1: 'Senin', 2: 'Selasa',
-  3: 'Rabu', 4: 'Kamis', 5: 'Jumat', 6: 'Sabtu'
+  0: 'Sunday', 1: 'Monday', 2: 'Tuesday',
+  3: 'Wednesday', 4: 'Thursday', 5: 'Friday', 6: 'Saturday'
 };
 
-const DAY_ORDER = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'];
+const DAY_ORDER = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
 interface SchedulePageProps {
   searchParams: Promise<{ day?: string }>;
 }
 
 export default async function SchedulePage({ searchParams }: SchedulePageProps) {
-  const scheduleRes = await AnimeAPI.otakudesu.getSchedule();
+  const scheduleData = await AnimeService.getSchedule();
   const rawParams = await searchParams;
   
   // Default to today if no day parameter is provided
@@ -34,11 +34,8 @@ export default async function SchedulePage({ searchParams }: SchedulePageProps) 
     activeDay = defaultDay;
   }
 
-  const scheduleData = scheduleRes?.data || [];
-  
   // Find the anime list for the active day
-  const activeDayData = scheduleData.find((d: any) => d.day === activeDay);
-  const animeList = activeDayData?.anime_list || [];
+  const animeList = scheduleData[activeDay] || [];
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -95,6 +92,8 @@ export default async function SchedulePage({ searchParams }: SchedulePageProps) 
               id={anime.slug}
               title={anime.title}
               image={anime.poster}
+              rating={String(anime.score)}
+              episode={String(anime.episodes_count)}
             />
           ))}
         </div>

@@ -115,16 +115,22 @@ export default function WatchContent({ id }: { id: string }) {
   }, [id, animeId, animeTitle, animeImg, source, saveToHistory]);
 
   const fetchAnimeData = useCallback(async () => {
-    if (!animeId || animeId === 'undefined' || source === 'samehadaku') return;
+    if (!animeId || animeId === 'undefined') return;
     try {
-      const res = await AnimeAPI.otakudesu.getDetails(animeId);
-      if (res?.data) {
-        setAnimeData(res.data);
+      const res = await fetch(`/api/anime/episodes?slug=${animeId}`);
+      const data = await res.json();
+      if (data?.episodes) {
+        setAnimeData({
+          episodeList: data.episodes.map((ep: any) => ({
+            episodeId: ep.slug,
+            title: ep.title
+          }))
+        });
       }
     } catch (e) {
       console.error('Failed to fetch anime data for episode list', e);
     }
-  }, [animeId, source]);
+  }, [animeId]);
 
   useEffect(() => {
     fetchEpisode();

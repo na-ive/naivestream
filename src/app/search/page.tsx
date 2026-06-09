@@ -2,7 +2,6 @@
 
 import React, { useEffect, useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { AnimeAPI } from '@/lib/api';
 import { AnimeCard } from '@/components/anime/AnimeCard';
 import { CustomSelect } from '@/components/ui/CustomSelect';
 import { Search as SearchIcon, Renew, FaceDissatisfied } from '@carbon/icons-react';
@@ -10,21 +9,51 @@ import { Search as SearchIcon, Renew, FaceDissatisfied } from '@carbon/icons-rea
 function SearchContent() {
   const searchParams = useSearchParams();
   const query = searchParams.get('q') || '';
-  const [results, setResults] = useState<any>(null);
+  const [results, setResults] = useState<any[]>([]);
+  const [genres, setGenres] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [filterStatus, setFilterStatus] = useState<string>('All');
   const [filterGenre, setFilterGenre] = useState<string>('All');
+  const [filterType, setFilterType] = useState<string>('All');
+
+  useEffect(() => {
+    async function fetchGenres() {
+      try {
+        const res = await fetch('/api/genres');
+        const data = await res.json();
+        setGenres(data || []);
+      } catch (e) {
+        console.error('Failed to fetch genres');
+      }
+    }
+    fetchGenres();
+  }, []);
 
   useEffect(() => {
     async function doSearch() {
-      if (!query) return;
+      if (!query && filterStatus === 'All' && filterGenre === 'All' && filterType === 'All') {
+        setResults([]);
+        return;
+      }
+      
       setLoading(true);
-      const res = await AnimeAPI.search(query);
-      setResults(res);
+      try {
+        const params = new URLSearchParams();
+        if (query) params.set('q', query);
+        if (filterStatus !== 'All') params.set('status', filterStatus);
+        if (filterGenre !== 'All') params.set('genre', filterGenre);
+        if (filterType !== 'All') params.set('type', filterType);
+        
+        const res = await fetch(`/api/search?${params.toString()}`);
+        const data = await res.json();
+        setResults(data.items || []);
+      } catch (e) {
+        setResults([]);
+      }
       setLoading(false);
     }
     doSearch();
-  }, [query]);
+  }, [query, filterStatus, filterGenre, filterType]);
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -45,9 +74,64 @@ function SearchContent() {
             {query ? (
               <>Showing results for <span className="text-secondary ml-1">"{query}"</span></>
             ) : (
-              'Enter a keyword to search anime'
+              'Enter a keyword or use filters to search anime'
             )}
           </p>
+        </div>
+      </div>
+
+      <div 
+        className="mb-12 bg-card/50 border-y border-secondary/30 p-6 md:p-8 relative flex flex-wrap items-center justify-between gap-6"
+        style={{ clipPath: 'polygon(20px 0, 100% 0, 100% calc(100% - 20px), calc(100% - 20px) 100%, 0 100%, 0 20px)' }}
+      >
+        <div className="relative z-10 flex items-center">
+          <span className="text-xs font-black text-foreground uppercase tracking-widest">
+            Found <span className="text-secondary">{results.length}</span> Results from database
+          </span>
+        </div>
+
+        {/* Filters */}
+        <div className="flex flex-wrap gap-4 relative z-10">
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-bold uppercase tracking-widest text-muted-text">Status:</span>
+            <CustomSelect
+              value={filterStatus}
+              onChange={setFilterStatus}
+              options={[
+                { value: 'All', label: 'All Status' },
+                { value: 'Ongoing', label: 'Ongoing' },
+                { value: 'Completed', label: 'Completed' },
+              ]}
+            />
+          </div>
+
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-bold uppercase tracking-widest text-muted-text">Genre:</span>
+            <CustomSelect
+              value={filterGenre}
+              onChange={setFilterGenre}
+              options={[
+                { value: 'All', label: 'All Genres' },
+                ...genres.map(g => ({ value: g.slug, label: g.name }))
+              ]}
+            />
+          </div>
+
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-bold uppercase tracking-widest text-muted-text">Type:</span>
+            <CustomSelect
+              value={filterType}
+              onChange={setFilterType}
+              options={[
+                { value: 'All', label: 'All Types' },
+                { value: 'TV', label: 'TV Series' },
+                { value: 'Movie', label: 'Movie' },
+                { value: 'OVA', label: 'OVA' },
+                { value: 'ONA', label: 'ONA' },
+                { value: 'Special', label: 'Special' },
+              ]}
+            />
+          </div>
         </div>
       </div>
 
@@ -56,90 +140,33 @@ function SearchContent() {
           <Renew className="w-12 h-12 text-secondary animate-spin" />
           <p className="text-muted-text font-medium">Searching through the archives...</p>
         </div>
-      ) : results?.data?.length > 0 ? (
-        <div className="space-y-8">
-          <div 
-            className="mb-8 bg-card/50 border-y border-secondary/30 p-6 md:p-8 relative flex flex-col md:flex-row md:items-center justify-between gap-6"
-            style={{ clipPath: 'polygon(20px 0, 100% 0, 100% calc(100% - 20px), calc(100% - 20px) 100%, 0 100%, 0 20px)' }}
-          >
-            <div className="relative z-10 flex items-center">
-              <span className="text-xs font-black text-foreground uppercase tracking-widest">
-                Found <span className="text-secondary">{results.data.length}</span> Results from {results.source}
-              </span>
-            </div>
-
-            {/* Filters */}
-            <div className="flex flex-col sm:flex-row gap-4">
-              <div className="flex items-center gap-2">
-                <span className="text-xs font-bold uppercase tracking-widest text-muted-text">Status:</span>
-                <CustomSelect
-                  value={filterStatus}
-                  onChange={setFilterStatus}
-                  options={[
-                    { value: 'All', label: 'All Status' },
-                    { value: 'Ongoing', label: 'Ongoing' },
-                    { value: 'Completed', label: 'Completed' },
-                  ]}
-                />
-              </div>
-
-              <div className="flex items-center gap-2">
-                <span className="text-xs font-bold uppercase tracking-widest text-muted-text">Genre:</span>
-                <CustomSelect
-                  value={filterGenre}
-                  onChange={setFilterGenre}
-                  options={[
-                    { value: 'All', label: 'All Genres' },
-                    ...Array.from(new Set(
-                      results.data.flatMap((anime: any) => 
-                        anime.genreList?.map((g: any) => g.title) || []
-                      )
-                    )).sort().map((genre: any) => ({
-                      value: genre,
-                      label: genre
-                    }))
-                  ]}
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* Filtered Grid */}
-          <div className="anime-grid">
-            {results.data
-              .filter((anime: any) => {
-                if (filterStatus !== 'All' && anime.status !== filterStatus) return false;
-                if (filterGenre !== 'All') {
-                  const animeGenres = anime.genreList?.map((g: any) => g.title) || [];
-                  if (!animeGenres.includes(filterGenre)) return false;
-                }
-                return true;
-              })
-              .map((anime: any) => (
-              <AnimeCard
-                key={anime.animeId || anime.id}
-                id={anime.animeId || anime.id}
-                title={anime.title}
-                image={anime.poster || anime.image}
-                rating={anime.score || anime.rating}
-                status={anime.status}
-              />
-            ))}
-          </div>
+      ) : results.length > 0 ? (
+        <div className="anime-grid">
+          {results.map((anime: any) => (
+            <AnimeCard
+              key={anime.slug}
+              id={anime.slug}
+              title={anime.title}
+              image={anime.poster}
+              rating={String(anime.score)}
+              status={anime.status}
+              episode={anime.status === 'Ongoing' ? `ep ${anime.latest_episode || '??'}` : `${anime.episodes_count || '??'} eps`}
+            />
+          ))}
         </div>
-      ) : query ? (
+      ) : (query || filterStatus !== 'All' || filterGenre !== 'All' || filterType !== 'All') ? (
         <div className="flex flex-col items-center justify-center py-20 space-y-6 text-center">
           <div className="w-20 h-20 bg-card rounded-full flex items-center justify-center border border-border">
             <FaceDissatisfied className="w-10 h-10 text-muted-text" />
           </div>
           <div className="space-y-2">
             <h2 className="text-xl font-bold">No results found</h2>
-            <p className="text-muted-text max-w-xs mx-auto">We couldn&apos;t find any anime matching your search. Try different keywords!</p>
+            <p className="text-muted-text max-w-xs mx-auto">We couldn&apos;t find any anime matching your search. Try different keywords or filters!</p>
           </div>
         </div>
       ) : (
-        <div className="text-center py-20 text-muted-text">
-          Enter a keyword in the search bar above to begin.
+        <div className="text-center py-20 text-muted-text uppercase tracking-widest text-xs font-bold">
+          Enter a keyword or use filters above to begin.
         </div>
       )}
     </div>

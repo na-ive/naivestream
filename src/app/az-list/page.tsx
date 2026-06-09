@@ -1,5 +1,5 @@
 import { Metadata } from 'next';
-import { AnimeAPI } from "@/lib/api";
+import { AnimeService } from "@/lib/services/anime";
 import Link from "next/link";
 import { Catalog, FaceDissatisfied, ChevronRight } from "@carbon/icons-react";
 import { Pagination } from "@/components/layout/Pagination";
@@ -15,35 +15,16 @@ export default async function AZListPage(props: { searchParams: Promise<{ letter
   const currentPage = parseInt(searchParams.page || "1", 10);
   const itemsPerPage = 30;
 
-  const res = await AnimeAPI.otakudesu.getAZList();
-  const rawList = res?.data?.list || [];
-  
-  // Process data to merge 0-9
-  let processedData: any[] = [];
-  
-  if (currentLetter === "ALL") {
-    // Flatten all anime into one list
-    rawList.forEach((group: any) => {
-      processedData = [...processedData, ...group.animeList];
-    });
-  } else if (currentLetter === "0-9") {
-    rawList.forEach((group: any) => {
-      if (["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"].includes(group.startWith)) {
-        processedData = [...processedData, ...group.animeList];
-      }
-    });
-  } else {
-    const group = rawList.find((g: any) => g.startWith.toUpperCase() === currentLetter.toUpperCase());
-    if (group) {
-      processedData = [...group.animeList];
-    }
-  }
+  const result = await AnimeService.advancedSearch({
+    letter: currentLetter,
+    page: currentPage,
+    limit: itemsPerPage,
+    order: 'title'
+  });
 
-  // Pagination logic
-  const totalItems = processedData.length;
-  const totalPages = Math.ceil(totalItems / itemsPerPage) || 1;
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const paginatedData = processedData.slice(startIndex, startIndex + itemsPerPage);
+  const paginatedData = result.items;
+  const totalItems = result.pagination.total;
+  const totalPages = result.pagination.last_page;
 
   const letters = ["ALL", "#", "0-9", ..."ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("")];
 
@@ -100,8 +81,8 @@ export default async function AZListPage(props: { searchParams: Promise<{ letter
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {paginatedData.map((anime: any, idx: number) => (
               <Link
-                key={`${anime.animeId}-${idx}`}
-                href={`/anime/${anime.animeId}`}
+                key={`${anime.slug}-${idx}`}
+                href={`/anime/${anime.slug}`}
                 className="group p-4 bg-background/30 hover:bg-secondary/10 border-b border-white/5 transition-all flex items-center justify-between relative overflow-hidden"
               >
                 <div className="absolute inset-y-0 left-0 w-1 bg-secondary scale-y-0 group-hover:scale-y-100 transition-transform origin-top" />

@@ -1,5 +1,5 @@
 import React from 'react';
-import { AnimeAPI } from '@/lib/api';
+import { AnimeService } from '@/lib/services/anime';
 import { Tag, FaceDissatisfied } from '@carbon/icons-react';
 import { GenreView } from './GenreView';
 
@@ -9,8 +9,8 @@ export const metadata = {
 };
 
 export default async function GenrePage() {
-  const res = await AnimeAPI.otakudesu.getGenreList();
-  const genres = res?.data?.genreList || [];
+  const genresData = await AnimeService.getAllGenres();
+  const genres = genresData.map(g => ({ genreId: g.slug, title: g.name }));
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">

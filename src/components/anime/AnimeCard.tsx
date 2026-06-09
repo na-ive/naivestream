@@ -70,7 +70,7 @@ export function AnimeCard({ id, title, image, status, rating, episode, type, hid
 
         {episode && (
           <div className="absolute bottom-3 right-3 px-3 py-1 bg-background/90 backdrop-blur-md border-r-4 border-secondary text-[10px] font-black text-foreground tracking-widest uppercase">
-            EP {episode}
+            {episode}
           </div>
         )}
 

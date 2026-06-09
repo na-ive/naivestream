@@ -1,5 +1,5 @@
 import React from 'react';
-import { AnimeAPI } from '@/lib/api';
+import { AnimeService } from '@/lib/services/anime';
 import { notFound } from 'next/navigation';
 import { GenreAnimeList } from './GenreAnimeList';
 import { Tag, FaceDissatisfied } from '@carbon/icons-react';
@@ -20,20 +20,9 @@ export default async function GenreDetailPage(props: {
     notFound();
   }
 
-  const res = await AnimeAPI.otakudesu.getGenreAnime(slug, 1);
-  const animeList = res?.data?.animeList || [];
-
-  // Try to find the actual genre title from the first item, otherwise format the slug
-  let genreTitle = slug.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-  if (animeList.length > 0 && animeList[0].genreList) {
-    const matchedGenre = animeList[0].genreList.find((g: any) => g.genreId === slug);
-    if (matchedGenre && matchedGenre.title) {
-      genreTitle = matchedGenre.title;
-    }
-  }
-
-  // Next page logic (assuming 15 items per page is full)
-  const isLastPage = animeList.length < 15;
+  const result = await AnimeService.getAnimeByGenre(slug, 1, 20);
+  const animeList = result.items;
+  const genreTitle = result.genreName || slug.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -57,12 +46,12 @@ export default async function GenreDetailPage(props: {
       </div>
 
       {animeList.length > 0 ? (
-        <GenreAnimeList initialAnime={animeList} slug={slug} />
+        <GenreAnimeList initialAnime={animeList} slug={slug} initialHasMore={result.pagination.current_page < result.pagination.last_page} />
       ) : (
         <div className="flex flex-col items-center justify-center py-20 text-center space-y-4 border-2 border-dashed border-secondary/20 bg-card">
           <FaceDissatisfied className="w-12 h-12 text-muted-text" />
           <p className="text-muted-text font-bold uppercase tracking-widest text-xs">
-            No anime found for {genreTitle} on this page.
+            No anime found for {genreTitle}.
           </p>
         </div>
       )}

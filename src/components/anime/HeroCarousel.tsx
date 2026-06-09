@@ -95,8 +95,8 @@ export function HeroCarousel({ items }: HeroCarouselProps) {
           </h1>
 
           <div className="flex flex-wrap items-center gap-4">
-            <div className="px-3 py-1 bg-secondary text-background font-black text-xs uppercase skew-x-[-15deg]">
-              <span className="inline-block skew-x-[15deg]">{current.episodes ? `${current.episodes} Episodes` : 'Ongoing'}</span>
+            <div className="px-3 py-1 bg-secondary text-background font-black text-xs skew-x-[-15deg]">
+              <span className="inline-block skew-x-[15deg]">{current.episodes || 'Ongoing'}</span>
             </div>
             <div className="flex items-center space-x-2 px-3 py-1 border border-secondary/30 bg-card font-bold text-xs text-secondary tracking-widest skew-x-[-15deg]">
               <Calendar className="w-4 h-4 mr-1 inline-block skew-x-[15deg]" />

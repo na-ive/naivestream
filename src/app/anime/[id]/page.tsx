@@ -1,6 +1,6 @@
-import { AnimeAPI } from "@/lib/api";
+import { AnimeService } from "@/lib/services/anime";
 import type { Metadata } from 'next';
-import { ChevronRight, CaretRight, Information, List, StarFilled, Video } from "@carbon/icons-react";
+import { Information, StarFilled } from "@carbon/icons-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ContinueWatching } from "@/components/anime/ContinueWatching";
@@ -8,30 +8,24 @@ import { EpisodeList } from "@/components/anime/EpisodeList";
 import { BookmarkButton } from "@/components/anime/BookmarkButton";
 import { CharacterCarousel } from "@/components/anime/CharacterCarousel";
 
-async function getAnimeDetails(id: string) {
-  // Try Otakudesu first
-  const res = await AnimeAPI.otakudesu.getDetails(id);
-  if (res && res.ok !== false && res.data) {
-    if (!res.data.title) {
-      res.data.title = res.data.english || res.data.japanese || res.data.synonyms?.split(',')[0] || id.replace(/-/g, ' ');
+async function getAnimeDetails(slug: string) {
+  const anime = await AnimeService.getAnimeBySlug(slug);
+  if (!anime) return null;
+  
+  const episodes = await AnimeService.getEpisodes(anime.id);
+  
+  return {
+    source: 'database',
+    data: {
+      ...anime,
+      episodeList: episodes.map(ep => ({
+        episodeId: ep.slug,
+        eps: ep.eps_number,
+        title: ep.title,
+        date: ep.uploaded_at
+      }))
     }
-    return { source: 'otakudesu', data: res.data };
-  }
-
-  // Fallback to Samehadaku
-  const fallbackRes = await AnimeAPI.samehadaku.getDetails(id);
-  if (fallbackRes && fallbackRes.ok !== false && fallbackRes.data) {
-    if (!fallbackRes.data.title) {
-      fallbackRes.data.title = fallbackRes.data.english || fallbackRes.data.japanese || fallbackRes.data.synonyms?.split(',')[0] || id.replace(/-/g, ' ');
-    }
-    return { source: 'samehadaku', data: fallbackRes.data };
-  }
-
-  if (res && !res.data && res.title) {
-    return { source: 'otakudesu', data: res };
-  }
-
-  return null;
+  };
 }
 
 export async function generateMetadata(props: { params: Promise<{ id: string }> }): Promise<Metadata> {
@@ -42,15 +36,15 @@ export async function generateMetadata(props: { params: Promise<{ id: string }> 
     return { title: 'Not Found' };
   }
 
-  const result = await getAnimeDetails(id);
+  const anime = await AnimeService.getAnimeBySlug(id);
   
-  if (!result || !result.data) {
+  if (!anime) {
     return { title: 'Not Found' };
   }
 
   return {
-    title: result.data.title || 'Anime Details',
-    description: `Watch ${result.data.title} on NaiveStream`,
+    title: anime.title || 'Anime Details',
+    description: `Watch ${anime.title} on NaiveStream`,
   };
 }
 
@@ -68,35 +62,44 @@ export default async function AnimeDetailPage(props: { params: Promise<{ id: str
     notFound();
   }
 
-  const { data, source } = result;
-  
-  // Fetch extra Jikan info seamlessly
-  const jikanData = await AnimeAPI.jikan.searchAnime(data.title);
-  
-  let charactersData = null;
-  if (jikanData?.mal_id) {
-    charactersData = await AnimeAPI.jikan.getCharacters(jikanData.mal_id);
-  }
+  const { data } = result;
+  const source = 'otakudesu'; // Default source for watching, but data is from DB
 
-  const poster = jikanData?.images?.webp?.large_image_url || data.poster || data.image;
-  const episodes = data.episodeList || data.episode_list || [];
-  const genres = data.genreList || data.genres || jikanData?.genres || [];
-  const synopsis = jikanData?.synopsis || data.synopsis?.paragraphs?.join('\n\n') || 
-                    (typeof data.synopsis === 'string' ? data.synopsis : "No synopsis available.");
-  const rating = jikanData?.score || (typeof data.score === 'object' ? data.score.value : data.score);
-  const status = jikanData?.status || data.status;
-  const numEpisodes = jikanData?.episodes || data.episodes || '??';
-  const studios = jikanData?.studios?.map((s: any) => s.name).join(', ') || 'Unknown';
-  const aired = jikanData?.aired?.string || 'Unknown';
-  const animeType = jikanData?.type || 'Unknown';
-  const animeSource = jikanData?.source || 'Unknown';
-  const ageRating = jikanData?.rating || 'Unknown';
-  const duration = jikanData?.duration || 'Unknown';
-  const season = jikanData?.season ? `${jikanData.season} ${jikanData.year}` : 'Unknown';
-  let trailerUrl = jikanData?.trailer?.embed_url;
-  if (trailerUrl) {
-    trailerUrl = trailerUrl.replace('autoplay=1', 'autoplay=0');
-  }
+  const poster = data.poster;
+  const episodes = data.episodeList || [];
+  const genres = data.genres || [];
+  const synopsis = data.synopsis || "No synopsis available.";
+  const rating = data.score;
+  const status = data.status;
+  const numEpisodes = status === 'Ongoing' ? `ep ${data.latest_episode || '??'}` : `${data.episodes_count || '??'} eps`;
+  const studios = data.studios || 'Unknown';
+  const aired = data.aired || 'Unknown';
+  const animeType = data.type || 'Unknown';
+  const animeSource = data.source || 'Unknown';
+  const ageRating = data.rating || 'Unknown';
+  const duration = data.duration_minutes ? `${data.duration_minutes} min` : 'Unknown';
+  const season = data.season && data.year ? `${data.season} ${data.year}` : 'Unknown';
+  
+  const trailerUrl = data.youtube_trailer_id
+    ? `https://www.youtube.com/embed/${data.youtube_trailer_id}?autoplay=0`
+    : null;
+
+  // Map DB characters to CharacterCarousel expected shape
+  const charactersData = (data.characters || []).map((c: any, i: number) => ({
+    character: {
+      mal_id: i,
+      name: c.name,
+      images: { webp: { image_url: c.image } }
+    },
+    role: c.role,
+    voice_actors: c.va_name ? [{
+      language: 'Japanese',
+      person: {
+        name: c.va_name,
+        images: { jpg: { image_url: c.va_image } }
+      }
+    }] : []
+  }));
 
   return (
     <div className="pb-20 -mt-20">
@@ -165,42 +168,34 @@ export default async function AnimeDetailPage(props: { params: Promise<{ id: str
                   <span className="text-muted-text">Episodes</span>
                   <span className="text-foreground">{numEpisodes}</span>
                 </div>
-                <div className="flex justify-between text-xs font-bold uppercase tracking-wider">
-                  <span className="text-muted-text">Provider</span>
-                  <span className="text-secondary">{source}</span>
+                <div className="flex justify-between text-xs font-bold uppercase tracking-wider border-t border-white/5 pt-2">
+                  <span className="text-muted-text">Type</span>
+                  <span className="text-foreground text-right">{animeType}</span>
                 </div>
-                {jikanData && (
-                  <>
-                    <div className="flex justify-between text-xs font-bold uppercase tracking-wider pt-2 border-t border-white/5">
-                      <span className="text-muted-text">Type</span>
-                      <span className="text-foreground text-right">{animeType}</span>
-                    </div>
-                    <div className="flex justify-between text-xs font-bold uppercase tracking-wider">
-                      <span className="text-muted-text">Source</span>
-                      <span className="text-foreground text-right">{animeSource}</span>
-                    </div>
-                    <div className="flex justify-between text-xs font-bold uppercase tracking-wider">
-                      <span className="text-muted-text">Season</span>
-                      <span className="text-foreground text-right capitalize">{season}</span>
-                    </div>
-                    <div className="flex justify-between items-start text-xs font-bold uppercase tracking-wider gap-4">
-                      <span className="text-muted-text shrink-0">Studio</span>
-                      <span className="text-foreground text-right leading-relaxed">{studios}</span>
-                    </div>
-                    <div className="flex justify-between items-start text-xs font-bold uppercase tracking-wider gap-4">
-                      <span className="text-muted-text shrink-0">Aired</span>
-                      <span className="text-foreground text-right leading-relaxed">{aired}</span>
-                    </div>
-                    <div className="flex justify-between items-start text-xs font-bold uppercase tracking-wider gap-4">
-                      <span className="text-muted-text shrink-0">Duration</span>
-                      <span className="text-foreground text-right leading-relaxed">{duration}</span>
-                    </div>
-                    <div className="flex justify-between items-start text-xs font-bold uppercase tracking-wider gap-4">
-                      <span className="text-muted-text shrink-0">Rating</span>
-                      <span className="text-foreground text-right leading-relaxed">{ageRating}</span>
-                    </div>
-                  </>
-                )}
+                <div className="flex justify-between text-xs font-bold uppercase tracking-wider">
+                  <span className="text-muted-text">Source</span>
+                  <span className="text-foreground text-right">{animeSource}</span>
+                </div>
+                <div className="flex justify-between text-xs font-bold uppercase tracking-wider">
+                  <span className="text-muted-text">Season</span>
+                  <span className="text-foreground text-right capitalize">{season}</span>
+                </div>
+                <div className="flex justify-between items-start text-xs font-bold uppercase tracking-wider gap-4">
+                  <span className="text-muted-text shrink-0">Studio</span>
+                  <span className="text-foreground text-right leading-relaxed">{studios}</span>
+                </div>
+                <div className="flex justify-between items-start text-xs font-bold uppercase tracking-wider gap-4">
+                  <span className="text-muted-text shrink-0">Aired</span>
+                  <span className="text-foreground text-right leading-relaxed">{aired}</span>
+                </div>
+                <div className="flex justify-between items-start text-xs font-bold uppercase tracking-wider gap-4">
+                  <span className="text-muted-text shrink-0">Duration</span>
+                  <span className="text-foreground text-right leading-relaxed">{duration}</span>
+                </div>
+                <div className="flex justify-between items-start text-xs font-bold uppercase tracking-wider gap-4">
+                  <span className="text-muted-text shrink-0">Rating</span>
+                  <span className="text-foreground text-right leading-relaxed">{ageRating}</span>
+                </div>
               </div>
 
               {/* Sidebar Trailer */}
@@ -223,19 +218,13 @@ export default async function AnimeDetailPage(props: { params: Promise<{ id: str
               <h1 className="text-3xl md:text-6xl font-serif font-black leading-none tracking-tighter">{data.title || "Unknown Title"}</h1>
               <div className="flex flex-wrap gap-2">
                 {genres.map((genre: any, idx: number) => {
-                  const isJikan = !!genre.mal_id;
-                  const name = genre.name || genre.title;
-                  const href = isJikan ? `https://myanimelist.net/anime/genre/${genre.mal_id}` : `/genre/${genre.genreId}`;
-                  
                   return (
                     <Link 
-                      key={genre.mal_id || genre.genreId || `genre-${idx}`} 
-                      href={href}
-                      target={isJikan ? "_blank" : "_self"}
-                      rel={isJikan ? "noopener noreferrer" : ""}
+                      key={genre.slug || `genre-${idx}`} 
+                      href={`/genre/${genre.slug}`}
                       className="px-3 py-1 bg-secondary text-background text-[10px] font-black uppercase tracking-widest clip-path-polygon-small hover:bg-secondary/80 transition-colors"
                     >
-                      {name}
+                      {genre.name}
                     </Link>
                   );
                 })}

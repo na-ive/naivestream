@@ -1,46 +1,22 @@
-import { AnimeAPI } from "@/lib/api";
+import { AnimeService } from "@/lib/services/anime";
 import { AnimeCard } from "@/components/anime/AnimeCard";
 import { HeroCarousel } from "@/components/anime/HeroCarousel";
 import { ChevronRight, Calendar } from "@carbon/icons-react";
 import Link from "next/link";
 
 const DAY_MAP: Record<number, string> = {
-  0: 'Minggu', 1: 'Senin', 2: 'Selasa',
-  3: 'Rabu', 4: 'Kamis', 5: 'Jumat', 6: 'Sabtu'
+  0: 'Sunday', 1: 'Monday', 2: 'Tuesday',
+  3: 'Wednesday', 4: 'Thursday', 5: 'Friday', 6: 'Saturday'
 };
 
-async function getOngoing() {
-  const res = await AnimeAPI.otakudesu.getHome();
-  if (res?.data?.ongoing?.animeList) return res.data.ongoing.animeList;
-  
-  const directRes = await AnimeAPI.otakudesu.getOngoing(1);
-  if (directRes?.data?.animeList) return directRes.data.animeList;
-  
-  return [];
-}
-
-async function getComplete() {
-  const res = await AnimeAPI.otakudesu.getHome();
-  if (res?.data?.completed?.animeList) return res.data.completed.animeList;
-
-  const directRes = await AnimeAPI.otakudesu.getComplete(1);
-  if (directRes?.data?.animeList) return directRes.data.animeList;
-
-  return [];
-}
-
 export default async function HomePage() {
-  const ongoing = await getOngoing();
-  const complete = await getComplete();
+  const { ongoing, completed, popular } = await AnimeService.getHomeData();
   
   // Fetch Schedule for today
-  const scheduleRes = await AnimeAPI.otakudesu.getSchedule();
+  const scheduleData = await AnimeService.getSchedule();
   const currentJsDay = new Date().getDay();
   const todayString = DAY_MAP[currentJsDay];
-  
-  const scheduleData = scheduleRes?.data || [];
-  const todayData = scheduleData.find((d: any) => d.day === todayString);
-  const todayAnimeList = todayData?.anime_list || [];
+  const todayAnimeList = scheduleData[todayString] || [];
 
   // Format today's date for display
   const todayFormatted = new Intl.DateTimeFormat('id-ID', {
@@ -50,8 +26,15 @@ export default async function HomePage() {
     year: 'numeric',
   }).format(new Date());
 
-  // Trending could be the first 5 ongoing items
-  const trendingItems = ongoing?.slice(0, 5) || [];
+  // Trending items for HeroCarousel
+  const trendingItems = popular.slice(0, 5).map(anime => ({
+    ...anime,
+    id: anime.slug,
+    image: anime.poster,
+    rating: String(anime.score),
+    episodes: anime.status === 'Ongoing' ? `ep ${anime.latest_episode || '??'}` : `${anime.episodes_count || '??'} eps`,
+    releaseDay: anime.release_day
+  }));
 
   return (
     <div className="pb-20 -mt-20">
@@ -90,15 +73,15 @@ export default async function HomePage() {
             </Link>
           </div>
           <div className="anime-grid">
-            {ongoing?.slice(0, 10).map((anime: any) => (
+            {ongoing.slice(0, 10).map((anime: any) => (
               <AnimeCard
-                key={anime.animeId || anime.id}
-                id={anime.animeId || anime.id}
+                key={anime.slug}
+                id={anime.slug}
                 title={anime.title}
-                image={anime.poster || anime.image}
-                rating={anime.score || anime.rating}
-                episode={anime.episodes || anime.episode}
-                status={anime.releaseDay || anime.day}
+                image={anime.poster}
+                rating={String(anime.score)}
+                episode={`ep ${anime.latest_episode || '??'}`}
+                status={anime.release_day}
               />
             ))}
           </div>
@@ -135,14 +118,14 @@ export default async function HomePage() {
             </Link>
           </div>
           <div className="anime-grid">
-            {complete?.slice(0, 10).map((anime: any) => (
+            {completed.slice(0, 10).map((anime: any) => (
               <AnimeCard
-                key={anime.animeId || anime.id}
-                id={anime.animeId || anime.id}
+                key={anime.slug}
+                id={anime.slug}
                 title={anime.title}
-                image={anime.poster || anime.image}
-                rating={anime.score || anime.rating}
-                episode={anime.episodes || anime.episode}
+                image={anime.poster}
+                rating={String(anime.score)}
+                episode={`${anime.episodes_count || '??'} eps`}
               />
             ))}
           </div>

@@ -4,7 +4,6 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { CaretRight, Renew } from '@carbon/icons-react';
 import { useHistory } from '@/lib/hooks/useHistory';
-import { AnimeAPI } from '@/lib/api';
 import { cn } from '@/lib/utils';
 
 interface SmartWatchButtonProps {
@@ -42,13 +41,14 @@ export function SmartWatchButton({
     // 2. No history? Fetch details to find Episode 1 (Only happens ON CLICK)
     setLoading(true);
     try {
-      const res = await AnimeAPI.otakudesu.getDetails(animeId);
-      const episodes = res?.data?.episodeList || res?.data?.episode_list || [];
+      const res = await fetch(`/api/anime/episodes?slug=${animeId}`);
+      const data = await res.json();
+      const episodes = data.episodes || [];
       
       if (episodes.length > 0) {
-        // Episode 1 is usually the last item in the array from this API
+        // Episode 1 is usually the last item in the array (asc order by number, desc in DB order)
         const firstEpisode = episodes[episodes.length - 1];
-        const epId = firstEpisode.episodeId || firstEpisode.id;
+        const epId = firstEpisode.slug;
         
         router.push(`/watch/${epId}?anime=${animeId}&title=${encodeURIComponent(animeTitle)}&img=${encodeURIComponent(animeImage)}`);
       } else {

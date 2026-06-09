@@ -1,36 +1,40 @@
 'use client';
 
 import React, { useState } from 'react';
-import { AnimeAPI } from '@/lib/api';
 import { AnimeCard } from '@/components/anime/AnimeCard';
 import { Renew, ChevronDown } from '@carbon/icons-react';
 
 interface GenreAnimeListProps {
   initialAnime: any[];
   slug: string;
+  initialHasMore: boolean;
 }
 
-export function GenreAnimeList({ initialAnime, slug }: GenreAnimeListProps) {
+export function GenreAnimeList({ initialAnime, slug, initialHasMore }: GenreAnimeListProps) {
   const [animeList, setAnimeList] = useState<any[]>(initialAnime);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
-  const [hasMore, setHasMore] = useState(initialAnime.length === 15);
+  const [hasMore, setHasMore] = useState(initialHasMore);
 
   const loadMore = async () => {
     if (loading || !hasMore) return;
     setLoading(true);
     
-    const nextPage = page + 1;
-    const res = await AnimeAPI.otakudesu.getGenreAnime(slug, nextPage);
-    const newAnime = res?.data?.animeList || [];
-    
-    if (newAnime.length > 0) {
-      setAnimeList((prev) => [...prev, ...newAnime]);
-      setPage(nextPage);
-      if (newAnime.length < 15) {
+    try {
+      const nextPage = page + 1;
+      const res = await fetch(`/api/anime/by-genre?slug=${slug}&page=${nextPage}&limit=20`);
+      const data = await res.json();
+      const newAnime = data.items || [];
+      
+      if (newAnime.length > 0) {
+        setAnimeList((prev) => [...prev, ...newAnime]);
+        setPage(nextPage);
+        setHasMore(data.pagination.current_page < data.pagination.last_page);
+      } else {
         setHasMore(false);
       }
-    } else {
+    } catch (error) {
+      console.error('Error loading more anime:', error);
       setHasMore(false);
     }
     
@@ -42,12 +46,13 @@ export function GenreAnimeList({ initialAnime, slug }: GenreAnimeListProps) {
       <div className="anime-grid">
         {animeList.map((anime: any, index: number) => (
           <AnimeCard
-            key={`${anime.animeId || anime.id}-${index}`}
-            id={anime.animeId || anime.id}
+            key={`${anime.slug}-${index}`}
+            id={anime.slug}
             title={anime.title}
-            image={anime.poster || anime.image}
-            rating={anime.score || anime.rating}
-            status={anime.status || anime.season}
+            image={anime.poster}
+            rating={String(anime.score)}
+            status={anime.status}
+            episode={anime.status === 'Ongoing' ? `ep ${anime.latest_episode || '??'}` : `${anime.episodes_count || '??'} eps`}
           />
         ))}
       </div>

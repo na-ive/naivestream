@@ -78,9 +78,8 @@ export default function AboutPage() {
 
               <div className="bg-card/40 border border-secondary/20 border-l-4 border-l-secondary p-5 backdrop-blur-sm">
                 <span className="block text-[10px] font-bold text-foreground/50 uppercase tracking-widest mb-1">Metadata Source</span>
-                <span className="text-lg font-black tracking-tighter text-foreground uppercase">Jikan API</span>
+                <span className="text-lg font-black tracking-tighter text-foreground uppercase">Local Database</span>
               </div>
-
             </div>
           </section>
 

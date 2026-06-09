@@ -10,6 +10,7 @@ import { cn } from '@/lib/utils';
 import { Tooltip } from '@/components/ui/Tooltip';
 
 import { ThemeToggle } from './ThemeToggle';
+import { LiveSearch } from '@/components/search/LiveSearch';
 
 export function Navbar() {
   const [mounted, setMounted] = useState(false);
@@ -98,30 +99,7 @@ export function Navbar() {
 
           {/* Desktop Search */}
           <div className="hidden lg:flex flex-1 max-w-lg mx-12">
-            <form onSubmit={handleSearch} className="relative w-full group">
-              <input
-                type="text"
-                placeholder="Search..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full bg-card/40 border border-secondary/20 hover:border-secondary/40 focus:border-secondary focus:bg-card rounded-none py-2.5 pl-14 pr-10 focus:outline-none transition-all font-mono font-bold text-sm tracking-widest text-foreground placeholder:text-muted-foreground"
-                style={{ clipPath: 'polygon(12px 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%, 0 12px)' }}
-              />
-              <div className="absolute left-1.5 top-1.5 bottom-1.5 w-10 bg-secondary/20 flex items-center justify-center pointer-events-none transition-colors group-focus-within:bg-secondary/30" style={{ clipPath: 'polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px)' }}>
-                <Search className="text-secondary w-3.5 h-3.5" />
-              </div>
-              {searchQuery && (
-                <button
-                  type="button"
-                  onClick={() => setSearchQuery('')}
-                  className="absolute right-2 top-2 w-7 h-7 bg-red-100 dark:bg-red-950/50 border border-red-300 dark:border-red-900/50 hover:bg-red-200 dark:hover:bg-red-900/80 text-red-600 dark:text-red-500 flex items-center justify-center transition-all"
-                  style={{ clipPath: 'polygon(5px 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 5px)' }}
-                  aria-label="Clear search"
-                >
-                  <Close className="w-4 h-4" />
-                </button>
-              )}
-            </form>
+            <LiveSearch />
           </div>
 
           {/* Desktop Menu */}
@@ -203,30 +181,7 @@ export function Navbar() {
       {isMenuOpen && (
         <div className="md:hidden bg-background border-b-2 border-secondary/30 animate-in slide-in-from-top duration-300">
           <div className="px-4 py-8 space-y-6">
-            <form onSubmit={handleSearch} className="relative w-full">
-              <input
-                type="text"
-                placeholder="Search..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full bg-card/40 border border-secondary/20 focus:border-secondary focus:bg-card rounded-none py-4 pl-14 pr-12 focus:outline-none transition-all text-foreground font-mono font-bold text-sm tracking-widest"
-                style={{ clipPath: 'polygon(12px 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%, 0 12px)' }}
-              />
-              <div className="absolute left-2 top-2 bottom-2 w-10 bg-secondary/20 flex items-center justify-center pointer-events-none" style={{ clipPath: 'polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px)' }}>
-                <Search className="text-secondary w-4 h-4" />
-              </div>
-              {searchQuery && (
-                <button
-                  type="button"
-                  onClick={() => setSearchQuery('')}
-                  className="absolute right-4 top-4 w-8 h-8 bg-red-100 dark:bg-red-950/50 border border-red-300 dark:border-red-900/50 hover:bg-red-200 dark:hover:bg-red-900/80 text-red-600 dark:text-red-500 flex items-center justify-center transition-all"
-                  style={{ clipPath: 'polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px)' }}
-                  aria-label="Clear search"
-                >
-                  <Close className="w-5 h-5" />
-                </button>
-              )}
-            </form>
+            <LiveSearch />
             <div className="grid grid-cols-1 gap-2">
               {navLinks.map((link) => {
                 if (link.type === 'dropdown') {
