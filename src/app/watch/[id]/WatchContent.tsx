@@ -27,6 +27,25 @@ export default function WatchContent({ id }: { id: string }) {
   const activeEpisodeRef = React.useRef<HTMLAnchorElement>(null);
   const scrollContainerRef = React.useRef<HTMLDivElement>(null);
 
+  // Derived next/prev episodes from database list for better reliability
+  const { prevEp, nextEp } = React.useMemo(() => {
+    if (!animeData?.episodeList || animeData.episodeList.length === 0) return { prevEp: null, nextEp: null };
+    
+    const list = animeData.episodeList;
+    const currentIndex = list.findIndex((ep: any) => ep.episodeId === id);
+    
+    if (currentIndex === -1) return { prevEp: null, nextEp: null };
+    
+    // In our DB (and EpisodeList component), episodes are typically ORDER BY eps_number DESC
+    // So index 0 is the NEWEST episode.
+    // Next episode (higher number) is index - 1
+    // Prev episode (lower number) is index + 1
+    const next = currentIndex > 0 ? list[currentIndex - 1] : null;
+    const prev = currentIndex < list.length - 1 ? list[currentIndex + 1] : null;
+    
+    return { prevEp: prev, nextEp: next };
+  }, [animeData, id]);
+
   // Auto-scroll to active episode
   useEffect(() => {
     if (activeEpisodeRef.current && scrollContainerRef.current && !loading) {
@@ -71,11 +90,11 @@ export default function WatchContent({ id }: { id: string }) {
       if (e.key.toLowerCase() === 'f' && !e.ctrlKey && !e.metaKey) {
         setIsCinemaMode(prev => !prev);
       }
-      if (e.key.toLowerCase() === 'n' && e.shiftKey && episodeData?.nextEpisode) {
-        router.push(`/watch/${episodeData.nextEpisode.episodeId}?anime=${animeId}&title=${encodeURIComponent(animeTitle)}&img=${encodeURIComponent(animeImg)}&source=${source}`);
+      if (e.key.toLowerCase() === 'n' && e.shiftKey && nextEp) {
+        router.push(`/watch/${nextEp.episodeId}?anime=${animeId}&title=${encodeURIComponent(animeTitle)}&img=${encodeURIComponent(animeImg)}&source=${source}`);
       }
-      if (e.key.toLowerCase() === 'p' && e.shiftKey && episodeData?.prevEpisode) {
-        router.push(`/watch/${episodeData.prevEpisode.episodeId}?anime=${animeId}&title=${encodeURIComponent(animeTitle)}&img=${encodeURIComponent(animeImg)}&source=${source}`);
+      if (e.key.toLowerCase() === 'p' && e.shiftKey && prevEp) {
+        router.push(`/watch/${prevEp.episodeId}?anime=${animeId}&title=${encodeURIComponent(animeTitle)}&img=${encodeURIComponent(animeImg)}&source=${source}`);
       }
     };
 
@@ -83,7 +102,7 @@ export default function WatchContent({ id }: { id: string }) {
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [isCinemaMode, toggleTheaterMode, episodeData, router, animeId, animeTitle, animeImg, source]);
+  }, [isCinemaMode, toggleTheaterMode, prevEp, nextEp, router, animeId, animeTitle, animeImg, source]);
 
   const fetchEpisode = useCallback(async () => {
     if (!id || id === 'undefined') return;
@@ -129,12 +148,14 @@ export default function WatchContent({ id }: { id: string }) {
       const res = await fetch(`/api/anime/episodes?slug=${animeId}`);
       const data = await res.json();
       if (data?.episodes) {
-        setAnimeData({
-          episodeList: data.episodes.map((ep: any) => ({
-            episodeId: ep.slug,
-            title: ep.title
-          }))
-        });
+        // Episodes from DB are already filtered for anomalies in the API route
+        const episodes = data.episodes.map((ep: any) => ({
+          episodeId: ep.slug,
+          title: ep.title,
+          eps: ep.eps_number
+        }));
+        
+        setAnimeData({ episodeList: episodes });
       }
     } catch (e) {
       console.error('Failed to fetch anime data for episode list', e);
@@ -282,10 +303,10 @@ export default function WatchContent({ id }: { id: string }) {
               <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-text">Navigation</h3>
             </div>
             <div className="grid grid-cols-2 gap-3 relative z-10">
-              {episodeData.prevEpisode ? (
+              {prevEp ? (
                 <Tooltip content="Shift + P" position="top" wrapperClassName="w-full">
                   <Link
-                    href={`/watch/${episodeData.prevEpisode.episodeId}?anime=${animeId}&title=${encodeURIComponent(animeTitle)}&img=${encodeURIComponent(animeImg)}&source=${source}`}
+                    href={`/watch/${prevEp.episodeId}?anime=${animeId}&title=${encodeURIComponent(animeTitle)}&img=${encodeURIComponent(animeImg)}&source=${source}`}
                     className="btn-accent w-full py-2.5 text-[10px] tracking-[0.2em] flex items-center justify-center text-center"
                   >
                     Prev
@@ -299,10 +320,10 @@ export default function WatchContent({ id }: { id: string }) {
                 </Tooltip>
               )}
 
-              {episodeData.nextEpisode ? (
+              {nextEp ? (
                 <Tooltip content="Shift + N" position="top" wrapperClassName="w-full">
                   <Link
-                    href={`/watch/${episodeData.nextEpisode.episodeId}?anime=${animeId}&title=${encodeURIComponent(animeTitle)}&img=${encodeURIComponent(animeImg)}&source=${source}`}
+                    href={`/watch/${nextEp.episodeId}?anime=${animeId}&title=${encodeURIComponent(animeTitle)}&img=${encodeURIComponent(animeImg)}&source=${source}`}
                     className="btn-primary w-full py-2.5 text-[10px] tracking-[0.2em] flex items-center justify-center text-center"
                   >
                     Next
