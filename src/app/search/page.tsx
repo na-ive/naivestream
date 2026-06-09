@@ -89,7 +89,7 @@ function SearchContent() {
   const years = Array.from({ length: 2026 - 1990 + 1 }, (_, i) => (2026 - i).toString());
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div className="max-w-[1800px] mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <div className="mb-12">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
           <div className="flex items-center space-x-4">

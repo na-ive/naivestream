@@ -213,7 +213,7 @@ export default function WatchContent({ id }: { id: string }) {
   }
 
   if (!episodeData) return (
-    <div className="max-w-7xl mx-auto px-4 py-20 text-center">
+    <div className="max-w-[1800px] mx-auto px-4 py-20 text-center">
       <h2 className="text-xl font-bold">Episode not found</h2>
       <Link href="/" className="btn-primary mt-6 inline-block">Back to Home</Link>
     </div>

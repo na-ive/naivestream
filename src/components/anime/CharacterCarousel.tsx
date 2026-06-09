@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight, StarFilled } from '@carbon/icons-react';
 import { cn } from '@/lib/utils';
 
@@ -10,11 +10,24 @@ interface CharacterCarouselProps {
 
 export function CharacterCarousel({ characters }: CharacterCarouselProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
+  const [canScroll, setCanScroll] = useState(false);
+
+  useEffect(() => {
+    const checkScroll = () => {
+      if (scrollRef.current) {
+        setCanScroll(scrollRef.current.scrollWidth > scrollRef.current.clientWidth);
+      }
+    };
+
+    checkScroll();
+    window.addEventListener('resize', checkScroll);
+    return () => window.removeEventListener('resize', checkScroll);
+  }, [characters]);
 
   const scroll = (direction: 'left' | 'right') => {
     if (scrollRef.current) {
       // 120px card + 16px gap = 136px per card scroll
-      const scrollAmount = 136; 
+      const scrollAmount = 136 * 3; // Scroll 3 cards at a time for better UX
       scrollRef.current.scrollBy({
         left: direction === 'left' ? -scrollAmount : scrollAmount,
         behavior: 'smooth'
@@ -33,23 +46,25 @@ export function CharacterCarousel({ characters }: CharacterCarouselProps) {
           <h2>Characters<span className="text-secondary opacity-70">_</span></h2>
         </div>
         
-        {/* Navigation Arrows */}
-        <div className="flex items-center space-x-2">
-          <button 
-            onClick={() => scroll('left')}
-            className="w-8 h-8 flex items-center justify-center bg-card border border-white/10 hover:border-secondary hover:text-secondary transition-colors"
-            aria-label="Scroll left"
-          >
-            <ChevronLeft className="w-4 h-4" />
-          </button>
-          <button 
-            onClick={() => scroll('right')}
-            className="w-8 h-8 flex items-center justify-center bg-card border border-white/10 hover:border-secondary hover:text-secondary transition-colors"
-            aria-label="Scroll right"
-          >
-            <ChevronRight className="w-4 h-4" />
-          </button>
-        </div>
+        {/* Navigation Arrows - Only show if can scroll */}
+        {canScroll && (
+          <div className="flex items-center space-x-2">
+            <button 
+              onClick={() => scroll('left')}
+              className="w-8 h-8 flex items-center justify-center bg-card border border-white/10 hover:border-secondary hover:text-secondary transition-colors"
+              aria-label="Scroll left"
+            >
+              <ChevronLeft className="w-4 h-4" />
+            </button>
+            <button 
+              onClick={() => scroll('right')}
+              className="w-8 h-8 flex items-center justify-center bg-card border border-white/10 hover:border-secondary hover:text-secondary transition-colors"
+              aria-label="Scroll right"
+            >
+              <ChevronRight className="w-4 h-4" />
+            </button>
+          </div>
+        )}
       </div>
 
       <div 

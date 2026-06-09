@@ -19,7 +19,7 @@ export default async function CompletedPage(props: { searchParams: Promise<{ pag
   const error = complete.length === 0 && currentPage === 1;
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div className="max-w-[1800px] mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <div className="mb-12">
         <div className="flex items-center space-x-4 mb-6">
           <div className="p-3 bg-secondary/10 text-secondary border border-secondary/30 relative">
@@ -48,7 +48,7 @@ export default async function CompletedPage(props: { searchParams: Promise<{ pag
 
       {complete.length > 0 && (
         <>
-          <div className="anime-grid">
+          <div className="symmetrical-grid-4-rows">
             {complete.map((anime: any) => (
               <AnimeCard
                 key={anime.slug}

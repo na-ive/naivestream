@@ -121,7 +121,7 @@ export default async function AnimeDetailPage(props: { params: Promise<{ id: str
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-32 relative z-10">
+      <div className="max-w-[1800px] mx-auto px-4 sm:px-6 lg:px-8 -mt-32 relative z-10">
         <div className="flex flex-col md:flex-row gap-8">
           {/* Poster & Action Sidebar */}
           <div className="w-full max-w-[280px] mx-auto md:mx-0 shrink-0 space-y-6">

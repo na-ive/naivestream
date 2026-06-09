@@ -41,7 +41,7 @@ export default async function HomePage() {
       {/* Hero Carousel Section */}
       <HeroCarousel items={trendingItems} />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12 space-y-16">
+      <div className="max-w-[1800px] mx-auto px-4 sm:px-6 lg:px-8 mt-12 space-y-16">
         {/* Ongoing Section */}
         <section>
           <div className="flex items-end justify-between mb-8 border-b border-white/5 pb-4">
@@ -72,8 +72,8 @@ export default async function HomePage() {
               <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
             </Link>
           </div>
-          <div className="anime-grid">
-            {ongoing.slice(0, 10).map((anime: any) => (
+          <div className="symmetrical-grid-2-rows">
+            {ongoing.slice(0, 16).map((anime: any) => (
               <AnimeCard
                 key={anime.slug}
                 id={anime.slug}
@@ -117,8 +117,8 @@ export default async function HomePage() {
               <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
             </Link>
           </div>
-          <div className="anime-grid">
-            {completed.slice(0, 10).map((anime: any) => (
+          <div className="symmetrical-grid-2-rows">
+            {completed.slice(0, 16).map((anime: any) => (
               <AnimeCard
                 key={anime.slug}
                 id={anime.slug}

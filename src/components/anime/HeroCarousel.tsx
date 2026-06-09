@@ -76,7 +76,7 @@ export function HeroCarousel({ items }: HeroCarouselProps) {
         </motion.div>
       </AnimatePresence>
 
-      <div className="relative z-20 h-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col justify-center">
+      <div className="relative z-20 h-full max-w-[1800px] mx-auto px-4 sm:px-6 lg:px-8 flex flex-col justify-center">
         <motion.div 
           key={`content-${current.animeId || current.id}`}
           initial={{ y: 20, opacity: 0 }}

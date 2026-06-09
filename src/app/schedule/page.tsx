@@ -38,7 +38,7 @@ export default async function SchedulePage({ searchParams }: SchedulePageProps) 
   const animeList = scheduleData[activeDay] || [];
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div className="max-w-[1800px] mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <div className="mb-12">
         <div className="flex items-center space-x-4 mb-6">
           <div className="p-3 bg-secondary/10 text-secondary border border-secondary/30 relative">
