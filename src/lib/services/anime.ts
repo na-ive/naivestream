@@ -48,6 +48,19 @@ export interface Episode {
 }
 
 /**
+ * Cleans synopsis text by removing source credits and extra whitespace
+ */
+function cleanSynopsis(synopsis: string): string {
+  if (!synopsis) return '';
+  return synopsis
+    .replace(/\(Source:.*?\)/gi, '')
+    .replace(/\[Written by.*?\]/gi, '')
+    .replace(/Written by.*?$/gi, '')
+    .replace(/Source:.*?$/gi, '')
+    .trim();
+}
+
+/**
  * Normalizes raw status from DB to standard 'Ongoing' or 'Completed'
  */
 function normalizeStatusValue(status: string): string {
@@ -102,7 +115,8 @@ export const AnimeService = {
     // Normalize items
     const normalizedItems = items.map(item => ({
       ...item,
-      status: normalizeStatusValue(item.status)
+      status: normalizeStatusValue(item.status),
+      synopsis: cleanSynopsis(item.synopsis)
     }));
 
     // Count total for pagination
@@ -160,6 +174,7 @@ export const AnimeService = {
     return {
       ...anime,
       status: normalizeStatusValue(anime.status),
+      synopsis: cleanSynopsis(anime.synopsis),
       genres,
       characters
     };
@@ -181,7 +196,8 @@ export const AnimeService = {
     const items = db.prepare(sql).all(searchPattern, searchPattern, searchPattern, limit) as any[];
     return items.map(item => ({
       ...item,
-      status: normalizeStatusValue(item.status)
+      status: normalizeStatusValue(item.status),
+      synopsis: cleanSynopsis(item.synopsis)
     }));
   },
 
@@ -222,7 +238,8 @@ export const AnimeService = {
     
     const normalizeItems = (list: any[]) => list.map(item => ({
       ...item,
-      status: normalizeStatusValue(item.status)
+      status: normalizeStatusValue(item.status),
+      synopsis: cleanSynopsis(item.synopsis)
     }));
 
     return { 
@@ -261,7 +278,11 @@ export const AnimeService = {
     `).get(genre.id) as any).total;
 
     return {
-      items: items.map(item => ({ ...item, status: normalizeStatusValue(item.status) })),
+      items: items.map(item => ({ 
+        ...item, 
+        status: normalizeStatusValue(item.status),
+        synopsis: cleanSynopsis(item.synopsis) 
+      })),
       pagination: {
         current_page: page,
         last_page: Math.ceil(total / limit),
@@ -282,7 +303,11 @@ export const AnimeService = {
     
     for (const day of days) {
       const items = db.prepare(`SELECT * FROM anime WHERE status IN (${variantPlaceholder}) AND release_day = ? ORDER BY score DESC`).all(...ongoingVariants, day) as AnimeMetadata[];
-      schedule[day] = items.map(item => ({ ...item, status: normalizeStatusValue(item.status) }));
+      schedule[day] = items.map(item => ({ 
+        ...item, 
+        status: normalizeStatusValue(item.status),
+        synopsis: cleanSynopsis(item.synopsis) 
+      }));
     }
     
     return schedule;
@@ -364,7 +389,11 @@ export const AnimeService = {
     const total = totalResult ? totalResult.total : 0;
 
     return {
-      items: items.map(item => ({ ...item, status: normalizeStatusValue(item.status) })),
+      items: items.map(item => ({ 
+        ...item, 
+        status: normalizeStatusValue(item.status),
+        synopsis: cleanSynopsis(item.synopsis) 
+      })),
       pagination: {
         current_page: page,
         last_page: Math.ceil(total / limit),
@@ -393,6 +422,10 @@ export const AnimeService = {
   async getAnimeById(id: number) {
     const item = db.prepare('SELECT * FROM anime WHERE id = ?').get(id) as any | undefined;
     if (!item) return undefined;
-    return { ...item, status: normalizeStatusValue(item.status) };
+    return { 
+      ...item, 
+      status: normalizeStatusValue(item.status),
+      synopsis: cleanSynopsis(item.synopsis) 
+    };
   }
 };
