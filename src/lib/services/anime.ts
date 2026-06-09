@@ -36,6 +36,7 @@ export interface AnimeMetadata {
   youtube_trailer_id: string;
   is_fully_scraped: number;
   last_updated: string;
+  latest_episode?: number;
 }
 
 export interface Episode {
@@ -72,13 +73,29 @@ function normalizeStatusValue(status: string): string {
 }
 
 /**
- * Returns the DB status variants for a given normalized status
+ * Smart status logic: if episodes reach the total count, it's Completed.
+ * Treating 0 as unknown/ongoing.
  */
-function getStatusVariants(status: string): string[] {
-  if (status === 'Ongoing') return ['Ongoing', 'Currently Airing'];
-  if (status === 'Completed') return ['Completed', 'Finished Airing'];
-  return [status];
+function getSmartStatus(item: any): string {
+  const normalized = normalizeStatusValue(item.status);
+  const latest = item.latest_episode || 0;
+  const total = item.episodes_count || 0;
+  
+  // Only complete if total > 0. If total is 0, we don't know the end yet.
+  if (normalized === 'Ongoing' && total > 0 && latest >= total) {
+    return 'Completed';
+  }
+  return normalized;
 }
+
+/**
+ * SQL snippet for smart status filtering.
+ * We treat episodes_count <= 0 as "Unknown/Ongoing".
+ */
+const SMART_STATUS_CLAUSES = {
+  Ongoing: `(status IN ('Ongoing', 'Currently Airing')) AND (episodes_count <= 0 OR (SELECT MAX(eps_number) FROM episodes WHERE anime_id = a.id) < episodes_count)`,
+  Completed: `(status IN ('Completed', 'Finished Airing')) OR (episodes_count > 0 AND (SELECT MAX(eps_number) FROM episodes WHERE anime_id = a.id) >= episodes_count)`
+};
 
 export const AnimeService = {
   /**
@@ -95,42 +112,45 @@ export const AnimeService = {
       SELECT a.*, 
       (SELECT MAX(eps_number) FROM episodes WHERE anime_id = a.id) as latest_episode 
       FROM anime a`;
-    const params: any[] = [];
-
-    if (status) {
-      const variants = getStatusVariants(status);
-      query += ` WHERE a.status IN (${variants.map(() => '?').join(',')})`;
-      params.push(...variants);
+    
+    if (status === 'Ongoing') {
+      query += ` WHERE ${SMART_STATUS_CLAUSES.Ongoing}`;
+    } else if (status === 'Completed') {
+      query += ` WHERE ${SMART_STATUS_CLAUSES.Completed}`;
+    } else if (status) {
+      query += ` WHERE a.status = ?`;
     }
 
-    // Safety: only allow certain order by columns
     const allowedOrderBy = ['last_updated', 'popularity', 'score', 'year', 'title'];
     const safeOrderBy = allowedOrderBy.includes(orderBy) ? `a.${orderBy}` : 'a.last_updated';
 
     query += ` ORDER BY ${safeOrderBy} ${safeOrderBy === 'a.popularity' || safeOrderBy === 'a.title' ? 'ASC' : 'DESC'} LIMIT ? OFFSET ?`;
+    
+    const params: any[] = [];
+    if (status && status !== 'Ongoing' && status !== 'Completed') params.push(status);
     params.push(limit, offset);
 
     const items = db.prepare(query).all(...params) as any[];
     
-    // Normalize items
-    const normalizedItems = items.map(item => ({
-      ...item,
-      status: normalizeStatusValue(item.status),
-      synopsis: cleanSynopsis(item.synopsis)
-    }));
-
-    // Count total for pagination
-    let countQuery = 'SELECT COUNT(*) as total FROM anime';
+    // Count total
+    let countQuery = 'SELECT COUNT(*) as total FROM anime a';
     const countParams: any[] = [];
-    if (status) {
-      const variants = getStatusVariants(status);
-      countQuery += ` WHERE status IN (${variants.map(() => '?').join(',')})`;
-      countParams.push(...variants);
+    if (status === 'Ongoing') {
+      countQuery += ` WHERE ${SMART_STATUS_CLAUSES.Ongoing}`;
+    } else if (status === 'Completed') {
+      countQuery += ` WHERE ${SMART_STATUS_CLAUSES.Completed}`;
+    } else if (status) {
+      countQuery += ` WHERE status = ?`;
+      countParams.push(status);
     }
     const total = (db.prepare(countQuery).get(...countParams) as any).total;
 
     return {
-      items: normalizedItems,
+      items: items.map(item => ({
+        ...item,
+        status: getSmartStatus(item),
+        synopsis: cleanSynopsis(item.synopsis)
+      })),
       pagination: {
         current_page: page,
         last_page: Math.ceil(total / limit),
@@ -173,7 +193,7 @@ export const AnimeService = {
 
     return {
       ...anime,
-      status: normalizeStatusValue(anime.status),
+      status: getSmartStatus(anime),
       synopsis: cleanSynopsis(anime.synopsis),
       genres,
       characters
@@ -185,7 +205,7 @@ export const AnimeService = {
    */
   async searchAnime(query: string, limit = 5) {
     const sql = `
-      SELECT id, slug, title, title_english, poster, status, type, year, score,
+      SELECT id, slug, title, title_english, poster, status, type, year, score, episodes_count,
       (SELECT MAX(eps_number) FROM episodes WHERE anime_id = id) as latest_episode
       FROM anime 
       WHERE title LIKE ? OR title_english LIKE ? OR title_japanese LIKE ?
@@ -196,7 +216,7 @@ export const AnimeService = {
     const items = db.prepare(sql).all(searchPattern, searchPattern, searchPattern, limit) as any[];
     return items.map(item => ({
       ...item,
-      status: normalizeStatusValue(item.status),
+      status: getSmartStatus(item),
       synopsis: cleanSynopsis(item.synopsis)
     }));
   },
@@ -205,40 +225,32 @@ export const AnimeService = {
    * Get home page data: Popular, Ongoing, and Completed
    */
   async getHomeData() {
-    const ongoingVariants = getStatusVariants('Ongoing');
-    const completedVariants = getStatusVariants('Completed');
-    const variantPlaceholder = (v: string[]) => v.map(() => '?').join(',');
+    const commonSelect = `a.*, (SELECT MAX(eps_number) FROM episodes WHERE anime_id = a.id) as latest_episode`;
 
     const popularSql = `
-      SELECT a.*, (SELECT MAX(eps_number) FROM episodes WHERE anime_id = a.id) as latest_episode 
-      FROM anime a 
-      WHERE a.status IN (${variantPlaceholder(ongoingVariants)})
-      ORDER BY a.popularity ASC, a.last_updated DESC 
-      LIMIT 10
+      SELECT ${commonSelect} FROM anime a 
+      WHERE ${SMART_STATUS_CLAUSES.Ongoing}
+      ORDER BY a.popularity ASC, a.last_updated DESC LIMIT 10
     `;
-    const popular = db.prepare(popularSql).all(...ongoingVariants) as any[];
+    const popular = db.prepare(popularSql).all() as any[];
 
     const ongoingSql = `
-      SELECT a.*, (SELECT MAX(eps_number) FROM episodes WHERE anime_id = a.id) as latest_episode 
-      FROM anime a 
-      WHERE a.status IN (${variantPlaceholder(ongoingVariants)}) 
-      ORDER BY a.last_updated DESC 
-      LIMIT 15
+      SELECT ${commonSelect} FROM anime a 
+      WHERE ${SMART_STATUS_CLAUSES.Ongoing} 
+      ORDER BY a.last_updated DESC LIMIT 15
     `;
-    const ongoing = db.prepare(ongoingSql).all(...ongoingVariants) as any[];
+    const ongoing = db.prepare(ongoingSql).all() as any[];
 
     const completedSql = `
-      SELECT a.*, (SELECT MAX(eps_number) FROM episodes WHERE anime_id = a.id) as latest_episode 
-      FROM anime a 
-      WHERE a.status IN (${variantPlaceholder(completedVariants)}) 
-      ORDER BY a.last_updated DESC 
-      LIMIT 15
+      SELECT ${commonSelect} FROM anime a 
+      WHERE ${SMART_STATUS_CLAUSES.Completed} 
+      ORDER BY a.last_updated DESC LIMIT 15
     `;
-    const completed = db.prepare(completedSql).all(...completedVariants) as any[];
+    const completed = db.prepare(completedSql).all() as any[];
     
     const normalizeItems = (list: any[]) => list.map(item => ({
       ...item,
-      status: normalizeStatusValue(item.status),
+      status: getSmartStatus(item),
       synopsis: cleanSynopsis(item.synopsis)
     }));
 
@@ -266,12 +278,13 @@ export const AnimeService = {
     if (!genre) return { items: [], pagination: { current_page: page, last_page: 0, total: 0 }, genreName: '' };
 
     const items = db.prepare(`
-      SELECT a.* FROM anime a
+      SELECT a.*, (SELECT MAX(eps_number) FROM episodes WHERE anime_id = a.id) as latest_episode 
+      FROM anime a
       JOIN anime_genres ag ON a.id = ag.anime_id
       WHERE ag.genre_id = ?
       ORDER BY a.last_updated DESC
       LIMIT ? OFFSET ?
-    `).all(genre.id, limit, offset) as AnimeMetadata[];
+    `).all(genre.id, limit, offset) as any[];
 
     const total = (db.prepare(`
       SELECT COUNT(*) as total FROM anime_genres WHERE genre_id = ?
@@ -280,7 +293,7 @@ export const AnimeService = {
     return {
       items: items.map(item => ({ 
         ...item, 
-        status: normalizeStatusValue(item.status),
+        status: getSmartStatus(item),
         synopsis: cleanSynopsis(item.synopsis) 
       })),
       pagination: {
@@ -298,14 +311,17 @@ export const AnimeService = {
   async getSchedule() {
     const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
     const schedule: Record<string, AnimeMetadata[]> = {};
-    const ongoingVariants = getStatusVariants('Ongoing');
-    const variantPlaceholder = ongoingVariants.map(() => '?').join(',');
     
     for (const day of days) {
-      const items = db.prepare(`SELECT * FROM anime WHERE status IN (${variantPlaceholder}) AND release_day = ? ORDER BY score DESC`).all(...ongoingVariants, day) as AnimeMetadata[];
+      const items = db.prepare(`
+        SELECT a.*, (SELECT MAX(eps_number) FROM episodes WHERE anime_id = a.id) as latest_episode
+        FROM anime a 
+        WHERE ${SMART_STATUS_CLAUSES.Ongoing} AND release_day = ? 
+        ORDER BY score DESC
+      `).all(day) as any[];
       schedule[day] = items.map(item => ({ 
         ...item, 
-        status: normalizeStatusValue(item.status),
+        status: getSmartStatus(item),
         synopsis: cleanSynopsis(item.synopsis) 
       }));
     }
@@ -327,7 +343,7 @@ export const AnimeService = {
     limit = 20 
   }) {
     const offset = (page - 1) * limit;
-    let sql = 'SELECT DISTINCT a.* FROM anime a';
+    let sql = 'SELECT DISTINCT a.*, (SELECT MAX(eps_number) FROM episodes WHERE anime_id = a.id) as latest_episode FROM anime a';
     let countSql = 'SELECT COUNT(DISTINCT a.id) as total FROM anime a';
     const params: any[] = [];
     const whereClauses: string[] = [];
@@ -345,10 +361,13 @@ export const AnimeService = {
       params.push(p, p, p);
     }
 
-    if (status) {
-      const variants = getStatusVariants(status);
-      whereClauses.push(`a.status IN (${variants.map(() => '?').join(',')})`);
-      params.push(...variants);
+    if (status === 'Ongoing') {
+      whereClauses.push(SMART_STATUS_CLAUSES.Ongoing);
+    } else if (status === 'Completed') {
+      whereClauses.push(SMART_STATUS_CLAUSES.Completed);
+    } else if (status) {
+      whereClauses.push(`a.status = ?`);
+      params.push(status);
     }
 
     if (type) {
@@ -384,14 +403,14 @@ export const AnimeService = {
     const countParams = [...params];
     params.push(limit, offset);
 
-    const items = db.prepare(sql).all(...params) as AnimeMetadata[];
+    const items = db.prepare(sql).all(...params) as any[];
     const totalResult = db.prepare(countSql).get(...countParams) as { total: number };
     const total = totalResult ? totalResult.total : 0;
 
     return {
       items: items.map(item => ({ 
         ...item, 
-        status: normalizeStatusValue(item.status),
+        status: getSmartStatus(item),
         synopsis: cleanSynopsis(item.synopsis) 
       })),
       pagination: {
@@ -420,11 +439,14 @@ export const AnimeService = {
    * Get basic anime info by ID
    */
   async getAnimeById(id: number) {
-    const item = db.prepare('SELECT * FROM anime WHERE id = ?').get(id) as any | undefined;
+    const item = db.prepare(`
+      SELECT a.*, (SELECT MAX(eps_number) FROM episodes WHERE anime_id = a.id) as latest_episode 
+      FROM anime a WHERE id = ?
+    `).get(id) as any | undefined;
     if (!item) return undefined;
     return { 
       ...item, 
-      status: normalizeStatusValue(item.status),
+      status: getSmartStatus(item),
       synopsis: cleanSynopsis(item.synopsis) 
     };
   }

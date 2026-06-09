@@ -74,8 +74,8 @@ export default async function AnimeDetailPage(props: { params: Promise<{ id: str
   const rating = data.score;
   const status = data.status;
   
-  // Always use episodes_count from data, defaulting to '??' if null
-  const totalEpisodes = data.episodes_count || '??';
+  // Always use episodes_count from data, defaulting to '??' if null or 0
+  const totalEpisodes = data.episodes_count > 0 ? data.episodes_count : '??';
   const numEpisodes = `${totalEpisodes} eps`;
   
   const studios = data.studios || 'Unknown';
