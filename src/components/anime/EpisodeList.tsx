@@ -152,13 +152,15 @@ export function EpisodeList({
                     "text-sm font-bold truncate uppercase tracking-widest transition-colors",
                     isLastWatched ? "text-secondary" : "group-hover:text-secondary"
                   )}>Episode {epNum}</p>
+                </div>
+                <div className="flex items-center gap-2 mt-0.5">
+                  <p className="text-[10px] text-muted-text font-mono uppercase tracking-wider">{ep.date || ep.uploaded_on || 'Released'}</p>
                   {isLastWatched && (
                     <span className="px-1.5 py-0.5 bg-secondary text-background text-[8px] font-black uppercase tracking-[0.2em] skew-x-[-15deg]">
                       RESUME
                     </span>
                   )}
                 </div>
-                <p className="text-[10px] text-muted-text font-mono mt-0.5 uppercase tracking-wider">{ep.date || ep.uploaded_on || 'Released'}</p>
               </div>
 
               {/* Play Icon */}

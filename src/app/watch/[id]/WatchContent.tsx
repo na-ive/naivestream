@@ -99,8 +99,17 @@ export default function WatchContent({ id }: { id: string }) {
     const data = res?.data || (res?.title ? res : null);
 
     if (data) {
-      setEpisodeData(data);
-      setCurrentUrl(data.defaultStreamingUrl || '');
+      // Filter next/prev episodes to ensure they aren't anomalies (missing eps_number)
+      const sanitizedData = { ...data };
+      if (sanitizedData.nextEpisode && (sanitizedData.nextEpisode.eps === null || sanitizedData.nextEpisode.eps === undefined)) {
+        sanitizedData.nextEpisode = null;
+      }
+      if (sanitizedData.prevEpisode && (sanitizedData.prevEpisode.eps === null || sanitizedData.prevEpisode.eps === undefined)) {
+        sanitizedData.prevEpisode = null;
+      }
+
+      setEpisodeData(sanitizedData);
+      setCurrentUrl(sanitizedData.defaultStreamingUrl || '');
 
       // Save to history
       saveToHistory({
@@ -108,7 +117,7 @@ export default function WatchContent({ id }: { id: string }) {
         animeTitle,
         animeImage: animeImg,
         lastEpisodeId: id,
-        lastEpisodeTitle: data.title || `Episode ${id}`,
+        lastEpisodeTitle: sanitizedData.title || `Episode ${id}`,
       });
     }
     setLoading(false);

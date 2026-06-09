@@ -1,6 +1,6 @@
 import { AnimeService } from "@/lib/services/anime";
 import type { Metadata } from 'next';
-import { Information, StarFilled } from "@carbon/icons-react";
+import { Information, StarFilled, Grid } from "@carbon/icons-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ContinueWatching } from "@/components/anime/ContinueWatching";
@@ -18,12 +18,14 @@ async function getAnimeDetails(slug: string) {
     source: 'database',
     data: {
       ...anime,
-      episodeList: episodes.map(ep => ({
-        episodeId: ep.slug,
-        eps: ep.eps_number,
-        title: ep.title,
-        date: ep.uploaded_at
-      }))
+      episodeList: episodes
+        .filter(ep => ep.eps_number !== null && ep.eps_number !== undefined)
+        .map(ep => ({
+          episodeId: ep.slug,
+          eps: ep.eps_number,
+          title: ep.title,
+          date: ep.uploaded_at
+        }))
     }
   };
 }
@@ -71,7 +73,11 @@ export default async function AnimeDetailPage(props: { params: Promise<{ id: str
   const synopsis = data.synopsis || "No synopsis available.";
   const rating = data.score;
   const status = data.status;
-  const numEpisodes = status === 'Ongoing' ? `ep ${data.latest_episode || '??'}` : `${data.episodes_count || '??'} eps`;
+  
+  // Always use episodes_count from data, defaulting to '??' if null
+  const totalEpisodes = data.episodes_count || '??';
+  const numEpisodes = `${totalEpisodes} eps`;
+  
   const studios = data.studios || 'Unknown';
   const aired = data.aired || 'Unknown';
   const animeType = data.type || 'Unknown';

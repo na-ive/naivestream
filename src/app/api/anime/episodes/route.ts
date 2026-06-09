@@ -16,7 +16,9 @@ export async function GET(req: NextRequest) {
     }
     
     const episodes = await AnimeService.getEpisodes(anime.id);
-    return NextResponse.json({ animeId: slug, episodes });
+    const filteredEpisodes = episodes.filter(ep => ep.eps_number !== null && ep.eps_number !== undefined);
+    
+    return NextResponse.json({ animeId: slug, episodes: filteredEpisodes });
   } catch (error) {
     console.error('Episodes API Error:', error);
     return NextResponse.json({ error: 'Failed to fetch episodes' }, { status: 500 });
