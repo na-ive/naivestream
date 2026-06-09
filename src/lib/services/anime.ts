@@ -338,6 +338,9 @@ export const AnimeService = {
     status = '', 
     type = '',
     letter = '',
+    year = '',
+    season = '',
+    rating = '',
     order = 'popularity',
     page = 1, 
     limit = 20 
@@ -373,6 +376,21 @@ export const AnimeService = {
     if (type) {
       whereClauses.push('a.type = ?');
       params.push(type);
+    }
+
+    if (year) {
+      whereClauses.push('a.year = ?');
+      params.push(parseInt(year));
+    }
+
+    if (season) {
+      whereClauses.push('a.season = ?');
+      params.push(season);
+    }
+
+    if (rating) {
+      whereClauses.push('a.rating = ?');
+      params.push(rating);
     }
 
     if (letter) {

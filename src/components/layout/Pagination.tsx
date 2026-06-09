@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 import { ChevronLeft, ChevronRight, PageFirst, PageLast, OverflowMenuHorizontal } from '@carbon/icons-react';
 import { cn } from '@/lib/utils';
 
@@ -11,6 +12,7 @@ interface PaginationProps {
 }
 
 export function Pagination({ currentPage, totalPages, baseUrl }: PaginationProps) {
+  const searchParams = useSearchParams();
   if (totalPages <= 1) return null;
 
   // Logic to show page numbers
@@ -37,7 +39,11 @@ export function Pagination({ currentPage, totalPages, baseUrl }: PaginationProps
     l = i;
   }
 
-  const getHref = (page: number) => `${baseUrl}?page=${page}`;
+  const getHref = (page: number) => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set('page', page.toString());
+    return `${baseUrl}?${params.toString()}`;
+  };
 
   return (
     <div className="flex flex-col items-center space-y-6 py-16">

@@ -69,10 +69,12 @@ export function LiveSearch() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (query.trim()) {
-      router.push(`/search?q=${encodeURIComponent(query)}`);
-      setIsOpen(false);
-    }
+    const targetUrl = query.trim() 
+      ? `/search?q=${encodeURIComponent(query)}` 
+      : `/search`;
+    
+    router.push(targetUrl);
+    setIsOpen(false);
   };
 
   return (

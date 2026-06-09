@@ -8,13 +8,16 @@ export async function GET(req: NextRequest) {
   const status = searchParams.get('status') || '';
   const type = searchParams.get('type') || '';
   const letter = searchParams.get('letter') || '';
+  const year = searchParams.get('year') || '';
+  const season = searchParams.get('season') || '';
+  const rating = searchParams.get('rating') || '';
   const order = searchParams.get('order') || 'popularity';
   const page = parseInt(searchParams.get('page') || '1');
   const limit = parseInt(searchParams.get('limit') || '20');
 
   try {
     const results = await AnimeService.advancedSearch({
-      query, genre, status, type, letter, order, page, limit
+      query, genre, status, type, letter, year, season, rating, order, page, limit
     });
     return NextResponse.json(results);
   } catch (error) {
