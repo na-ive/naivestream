@@ -116,6 +116,7 @@ export default async function AnimeDetailPage(props: { params: Promise<{ id: str
           <img
             src={poster}
             alt={data.title}
+            loading="eager"
             className="w-full h-full object-cover blur-sm opacity-50 dark:opacity-100 brightness-110 dark:brightness-[0.3]"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-background to-transparent" />
@@ -127,7 +128,7 @@ export default async function AnimeDetailPage(props: { params: Promise<{ id: str
           {/* Poster & Action Sidebar */}
           <div className="w-full max-w-[280px] mx-auto md:mx-0 shrink-0 space-y-6">
             <div className="aspect-[3/4] border-4 border-background shadow-2xl relative">
-              <img src={poster} alt={data.title} className="w-full h-full object-cover" />
+              <img src={poster} alt={data.title} loading="eager" className="w-full h-full object-cover" />
               <div className="absolute inset-0 border-2 border-secondary/20 pointer-events-none" />
             </div>
 

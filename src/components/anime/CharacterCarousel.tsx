@@ -84,7 +84,8 @@ export function CharacterCarousel({ characters }: CharacterCarouselProps) {
                 {/* Image */}
                 <img 
                   src={character.images?.webp?.image_url} 
-                  alt={character.name} 
+                  alt={character.name}
+                  loading="lazy"
                   className="w-full h-full object-cover transition-all duration-500 group-hover:scale-110 group-hover:opacity-80"
                 />
                 
@@ -101,6 +102,7 @@ export function CharacterCarousel({ characters }: CharacterCarouselProps) {
                     <img 
                       src={va.images?.jpg?.image_url} 
                       alt={va.name}
+                      loading="lazy"
                       className="w-full h-full object-cover grayscale opacity-80 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-300"
                       title={`VA: ${va.name}`}
                     />

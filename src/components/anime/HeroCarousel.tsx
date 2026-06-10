@@ -53,6 +53,7 @@ export function HeroCarousel({ items }: HeroCarouselProps) {
             <img
               src={current.poster || current.image}
               alt={current.title}
+              loading="eager"
               className="w-full h-full object-cover opacity-30 object-[center_25%] scale-105"
             />
             {/* Cyberpunk Overlays */}
@@ -87,6 +88,7 @@ export function HeroCarousel({ items }: HeroCarouselProps) {
               <img
                 src={current.poster || current.image}
                 alt={current.title}
+                loading="lazy"
                 className="w-full h-full object-cover transition-transform duration-700 group-hover/poster:scale-110"
               />
               {/* Internal border like in /anime */}
