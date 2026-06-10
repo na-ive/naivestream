@@ -1,6 +1,7 @@
 import { AnimeService } from "@/lib/services/anime";
 import { AnimeCard } from "@/components/anime/AnimeCard";
 import { HeroCarousel } from "@/components/anime/HeroCarousel";
+import { ContinueWatchingHome } from "@/components/anime/ContinueWatchingHome";
 import { ChevronRight, Calendar } from "@carbon/icons-react";
 import Link from "next/link";
 
@@ -43,6 +44,9 @@ export default async function HomePage() {
       <HeroCarousel items={trendingItems} />
 
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 mt-12 space-y-16">
+        {/* Continue Watching Section */}
+        <ContinueWatchingHome />
+
         {/* Ongoing Section */}
         <section>
           <div className="flex items-end justify-between mb-8 border-b border-white/5 pb-4">
@@ -73,7 +77,7 @@ export default async function HomePage() {
               <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
             </Link>
           </div>
-          <div className="symmetrical-grid-2-rows">
+          <div className="mobile-snap-scroll gap-4 md:gap-6">
             {ongoing.slice(0, 12).map((anime: any) => (
               <AnimeCard
                 key={anime.slug}
@@ -119,7 +123,7 @@ export default async function HomePage() {
               <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
             </Link>
           </div>
-          <div className="symmetrical-grid-2-rows">
+          <div className="mobile-snap-scroll gap-4 md:gap-6">
             {completed.slice(0, 12).map((anime: any) => (
               <AnimeCard
                 key={anime.slug}
@@ -192,3 +196,4 @@ export default async function HomePage() {
     </div>
   );
 }
+

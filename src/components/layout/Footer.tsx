@@ -8,12 +8,12 @@ export function Footer() {
       {/* A-Z Navigation Bar */}
       <div className="border-b border-secondary/10 bg-card/50 py-4">
         <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-wrap justify-center gap-1.5 md:gap-2">
+          <div className="flex flex-wrap justify-center gap-1.5 md:gap-1.5 lg:gap-2">
             {["ALL", "#", "0-9", ..."ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("")].map((letter) => (
               <Link
                 key={letter}
                 href={`/az-list?letter=${encodeURIComponent(letter)}`}
-                className="text-xs md:text-sm font-black hover:text-secondary transition-colors text-muted-text w-7 h-7 md:w-10 md:h-10 flex items-center justify-center border border-transparent hover:border-secondary/30"
+                className="text-[10px] md:text-xs font-black hover:text-secondary transition-colors text-muted-text w-7 h-7 md:w-8 md:h-8 flex items-center justify-center border border-transparent hover:border-secondary/30"
               >
                 {letter}
               </Link>

@@ -101,44 +101,6 @@
   }
 }
 
-/* Symmetrical Grid Utilities (Homepage Only) */
-.symmetrical-grid-2-rows {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 1rem;
-}
-
-/* 2 Columns (Mobile) */
-.symmetrical-grid-2-rows > *:nth-child(n+5) { display: none; }
-
-@media (min-width: 640px) {
-  /* 3 Columns */
-  .symmetrical-grid-2-rows { grid-template-columns: repeat(3, 1fr); gap: 1.25rem; }
-  .symmetrical-grid-2-rows > *:nth-child(n+5) { display: block; }
-  .symmetrical-grid-2-rows > *:nth-child(n+7) { display: none; }
-}
-
-@media (min-width: 1024px) {
-  /* 4 Columns */
-  .symmetrical-grid-2-rows { grid-template-columns: repeat(4, 1fr); gap: 1.5rem; }
-  .symmetrical-grid-2-rows > *:nth-child(n+7) { display: block; }
-  .symmetrical-grid-2-rows > *:nth-child(n+9) { display: none; }
-}
-
-@media (min-width: 1280px) {
-  /* 5 Columns */
-  .symmetrical-grid-2-rows { grid-template-columns: repeat(5, 1fr); }
-  .symmetrical-grid-2-rows > *:nth-child(n+9) { display: block; }
-  .symmetrical-grid-2-rows > *:nth-child(n+11) { display: none; }
-}
-
-@media (min-width: 1536px) {
-  /* 6 Columns */
-  .symmetrical-grid-2-rows { grid-template-columns: repeat(6, 1fr); }
-  .symmetrical-grid-2-rows > *:nth-child(n+11) { display: block; }
-  .symmetrical-grid-2-rows > *:nth-child(n+13) { display: none; }
-}
-
 /* Standard Anime Grid (For Listing Pages) */
 .anime-grid {
   display: grid;
@@ -160,6 +122,48 @@
 
 @media (min-width: 1536px) {
   .anime-grid { grid-template-columns: repeat(6, 1fr); gap: 1.5rem; }
+}
+
+/* Homepage Horizontal Scroll Layout (Mobile) */
+.mobile-snap-scroll {
+  @apply flex overflow-x-auto snap-x snap-mandatory scroll-smooth pb-4;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.mobile-snap-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.mobile-snap-scroll > * {
+  @apply min-w-[200px] max-w-[200px] shrink-0 snap-start;
+}
+
+@media (min-width: 768px) {
+  .mobile-snap-scroll {
+    @apply grid grid-cols-3 overflow-x-visible snap-none p-0;
+  }
+  .mobile-snap-scroll > * {
+    @apply min-w-0 max-w-none;
+  }
+}
+
+@media (min-width: 1024px) {
+  .mobile-snap-scroll {
+    @apply grid-cols-4;
+  }
+}
+
+@media (min-width: 1280px) {
+  .mobile-snap-scroll {
+    @apply grid-cols-5;
+  }
+}
+
+@media (min-width: 1536px) {
+  .mobile-snap-scroll {
+    @apply grid-cols-6;
+  }
 }
 
 /* Custom Cyberpunk Utilities */
