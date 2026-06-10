@@ -15,9 +15,10 @@ interface CustomSelectProps {
   options: Option[];
   placeholder?: string;
   className?: string;
+  formatDisplay?: (selected: Option) => string;
 }
 
-export function CustomSelect({ value, onChange, options, placeholder = "Select...", className }: CustomSelectProps) {
+export function CustomSelect({ value, onChange, options, placeholder = "Select...", className, formatDisplay }: CustomSelectProps) {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -47,7 +48,7 @@ export function CustomSelect({ value, onChange, options, placeholder = "Select..
             : "border-secondary/20 text-foreground hover:border-secondary/50"
         )}
       >
-        <span className="truncate mr-4">{selectedOption ? selectedOption.label : placeholder}</span>
+        <span className="truncate mr-4">{selectedOption ? (formatDisplay ? formatDisplay(selectedOption) : selectedOption.label) : placeholder}</span>
         <ChevronDown className={cn("w-4 h-4 transition-transform duration-200 shrink-0", isOpen && "rotate-180")} />
       </button>
 

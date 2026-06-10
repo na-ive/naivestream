@@ -32,10 +32,14 @@ const FILTER_OPTIONS = {
     { value: 'winter', label: 'Winter' },
   ],
   order: [
-    { value: 'popularity', label: 'Popularity' },
+    { value: 'popularity', label: 'Most Popular' },
+    { value: 'popularity_desc', label: 'Least Popular' },
     { value: 'score', label: 'Score' },
-    { value: 'title', label: 'Title' },
+    { value: 'score_asc', label: 'Score (Lowest)' },
+    { value: 'title', label: 'Title A-Z' },
+    { value: 'title_desc', label: 'Title Z-A' },
     { value: 'latest', label: 'Latest' },
+    { value: 'oldest', label: 'Oldest' },
   ],
   source: [
     { value: 'All', label: 'All Sources' },
@@ -266,6 +270,7 @@ function SearchContent() {
                 onChange={(v) => updateFilters({ order: v })}
                 options={FILTER_OPTIONS.order}
                 placeholder="Order"
+                formatDisplay={(o) => `Sort by: ${o.label}`}
               />
               <MultiSelect
                 values={selectedStudios}

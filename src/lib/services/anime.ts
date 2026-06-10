@@ -386,9 +386,13 @@ export const AnimeService = {
 
     const orderByMap: Record<string, string> = {
       'popularity': 'a.popularity ASC',
+      'popularity_desc': 'a.popularity DESC',
       'latest': 'a.last_updated DESC',
+      'oldest': 'a.last_updated ASC',
       'score': 'a.score DESC',
-      'title': 'a.title ASC'
+      'title': 'a.title ASC',
+      'title_desc': 'a.title DESC',
+      'score_asc': 'a.score ASC'
     };
 
     const primaryOrder = orderByMap[order] || 'a.popularity ASC';
