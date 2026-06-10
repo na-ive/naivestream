@@ -86,7 +86,11 @@ export function SearchableSelect({ value, onChange, options, placeholder = "Sele
                     <button
                       type="button"
                       onClick={() => {
-                        onChange(option.value);
+                        if (option.value === value) {
+                          onChange('');
+                        } else {
+                          onChange(option.value);
+                        }
                         setIsOpen(false);
                         setSearch('');
                       }}
