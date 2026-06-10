@@ -83,12 +83,7 @@ export default async function SchedulePage({ searchParams }: SchedulePageProps) 
                     : 'bg-background/80 text-foreground/70 hover:bg-secondary/20 hover:text-secondary border border-secondary/20 hover:border-secondary/50'
                 }`}
               >
-                {day}
-                <span className={`text-[10px] font-mono px-1.5 py-0.5 ${
-                  isActive ? 'bg-background/20 text-background' : 'bg-card/50 text-muted-text'
-                }`}>
-                  {dayCounts[day]}
-                </span>
+                {day} // {dayCounts[day]}
               </Link>
             );
           })}
