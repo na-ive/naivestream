@@ -112,16 +112,12 @@
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 1rem;
-  overflow: hidden;
-  max-height: calc((450px * 2) + 1rem);
 }
 
 .symmetrical-grid-4-rows {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 1rem;
-  overflow: hidden;
-  max-height: calc((450px * 4) + 3rem);
 }
 
 /* 2 Columns (Mobile) */
@@ -130,55 +126,55 @@
 
 @media (min-width: 640px) {
   /* 3 Columns */
-  .symmetrical-grid-2-rows { grid-template-columns: repeat(3, 1fr); gap: 1.25rem; max-height: calc((480px * 2) + 1.25rem); }
+  .symmetrical-grid-2-rows { grid-template-columns: repeat(3, 1fr); gap: 1.25rem; }
   .symmetrical-grid-2-rows > *:nth-child(n+5) { display: block; }
   .symmetrical-grid-2-rows > *:nth-child(n+7) { display: none; }
   
-  .symmetrical-grid-4-rows { grid-template-columns: repeat(3, 1fr); gap: 1.25rem; max-height: calc((480px * 4) + (1.25rem * 3)); }
+  .symmetrical-grid-4-rows { grid-template-columns: repeat(3, 1fr); gap: 1.25rem; }
   .symmetrical-grid-4-rows > *:nth-child(n+9) { display: block; }
   .symmetrical-grid-4-rows > *:nth-child(n+13) { display: none; }
 }
 
 @media (min-width: 1024px) {
   /* 4 Columns */
-  .symmetrical-grid-2-rows { grid-template-columns: repeat(4, 1fr); gap: 1.5rem; max-height: calc((500px * 2) + 1.5rem); }
+  .symmetrical-grid-2-rows { grid-template-columns: repeat(4, 1fr); gap: 1.5rem; }
   .symmetrical-grid-2-rows > *:nth-child(n+7) { display: block; }
   .symmetrical-grid-2-rows > *:nth-child(n+9) { display: none; }
 
-  .symmetrical-grid-4-rows { grid-template-columns: repeat(4, 1fr); gap: 1.5rem; max-height: calc((500px * 4) + (1.5rem * 3)); }
+  .symmetrical-grid-4-rows { grid-template-columns: repeat(4, 1fr); gap: 1.5rem; }
   .symmetrical-grid-4-rows > *:nth-child(n+13) { display: block; }
   .symmetrical-grid-4-rows > *:nth-child(n+17) { display: none; }
 }
 
 @media (min-width: 1280px) {
   /* 5 Columns */
-  .symmetrical-grid-2-rows { grid-template-columns: repeat(5, 1fr); max-height: calc((520px * 2) + 1.5rem); }
+  .symmetrical-grid-2-rows { grid-template-columns: repeat(5, 1fr); }
   .symmetrical-grid-2-rows > *:nth-child(n+9) { display: block; }
   .symmetrical-grid-2-rows > *:nth-child(n+11) { display: none; }
 
-  .symmetrical-grid-4-rows { grid-template-columns: repeat(5, 1fr); max-height: calc((520px * 4) + (1.5rem * 3)); }
+  .symmetrical-grid-4-rows { grid-template-columns: repeat(5, 1fr); }
   .symmetrical-grid-4-rows > *:nth-child(n+17) { display: block; }
   .symmetrical-grid-4-rows > *:nth-child(n+21) { display: none; }
 }
 
 @media (min-width: 1536px) {
   /* 6 Columns */
-  .symmetrical-grid-2-rows { grid-template-columns: repeat(6, 1fr); max-height: calc((540px * 2) + 1.5rem); }
+  .symmetrical-grid-2-rows { grid-template-columns: repeat(6, 1fr); }
   .symmetrical-grid-2-rows > *:nth-child(n+11) { display: block; }
   .symmetrical-grid-2-rows > *:nth-child(n+13) { display: none; }
 
-  .symmetrical-grid-4-rows { grid-template-columns: repeat(6, 1fr); max-height: calc((540px * 4) + (1.5rem * 3)); }
+  .symmetrical-grid-4-rows { grid-template-columns: repeat(6, 1fr); }
   .symmetrical-grid-4-rows > *:nth-child(n+21) { display: block; }
   .symmetrical-grid-4-rows > *:nth-child(n+25) { display: none; }
 }
 
 @media (min-width: 1800px) {
   /* 7 Columns */
-  .symmetrical-grid-2-rows { grid-template-columns: repeat(7, 1fr); max-height: calc((560px * 2) + 1.5rem); }
+  .symmetrical-grid-2-rows { grid-template-columns: repeat(7, 1fr); }
   .symmetrical-grid-2-rows > *:nth-child(n+13) { display: block; }
   .symmetrical-grid-2-rows > *:nth-child(n+15) { display: none; }
 
-  .symmetrical-grid-4-rows { grid-template-columns: repeat(7, 1fr); max-height: calc((560px * 4) + (1.5rem * 3)); }
+  .symmetrical-grid-4-rows { grid-template-columns: repeat(7, 1fr); }
   .symmetrical-grid-4-rows > *:nth-child(n+25) { display: block; }
   .symmetrical-grid-4-rows > *:nth-child(n+29) { display: none; }
 }

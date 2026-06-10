@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
 
@@ -45,7 +45,7 @@ export function Tooltip({ content, children, position = 'top', className, wrappe
 
     window.addEventListener('blur', handleHide);
     document.addEventListener('visibilitychange', handleHide);
-    window.addEventListener('scroll', handleHide, true); // Use capture phase to catch all scrolling
+    window.addEventListener('scroll', handleHide, true);
 
     return () => {
       window.removeEventListener('blur', handleHide);
@@ -85,7 +85,7 @@ export function Tooltip({ content, children, position = 'top', className, wrappe
             exit={variants[position].exit}
             transition={{ duration: 0.15, ease: 'easeOut' }}
             className={cn(
-              "absolute z-50 whitespace-nowrap px-3 py-1.5 bg-card border border-secondary text-secondary text-[10px] font-mono font-bold uppercase tracking-widest pointer-events-none shadow-[0_0_15px_rgba(34,197,94,0.15)]",
+              "absolute z-[100] whitespace-nowrap px-3 py-1.5 bg-card border border-secondary text-secondary text-[10px] font-mono font-bold uppercase tracking-widest pointer-events-none shadow-[0_0_15px_rgba(34,197,94,0.15)]",
               positionClasses[position],
               className
             )}
