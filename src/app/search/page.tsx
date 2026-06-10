@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState, Suspense, useCallback } from 'react';
+import React, { useEffect, useState, Suspense, useCallback, useRef } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { AnimeCard } from '@/components/anime/AnimeCard';
 import { Pagination } from '@/components/layout/Pagination';
@@ -202,28 +202,10 @@ function SearchContent() {
 
       <div className="flex items-center gap-3 mb-6">
         <div className="relative flex-1">
-          <input
-            type="text"
-            placeholder="Search by title..."
-            defaultValue={query}
-            key={query}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') {
-                updateFilters({ q: (e.target as HTMLInputElement).value });
-              }
-            }}
-            className="w-full bg-card/50 border border-secondary/20 focus:border-secondary/50 focus:ring-0 text-foreground py-4 px-6 font-mono text-sm tracking-wider outline-none transition-all"
+          <DebouncedSearchInput
+            initialValue={query}
+            onSearch={(q) => updateFilters({ q })}
           />
-          <button
-            onClick={(e) => {
-              const input = e.currentTarget.previousElementSibling as HTMLInputElement;
-              updateFilters({ q: input.value });
-            }}
-            className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center space-x-2 group"
-          >
-            <span className="text-[10px] font-bold text-muted-text uppercase group-hover:text-secondary transition-colors">Search</span>
-            <SearchIcon className="w-4 h-4 text-secondary" />
-          </button>
         </div>
         <button
           onClick={() => setShowFilters(!showFilters)}
@@ -415,6 +397,61 @@ function SearchContent() {
           </div>
         )}
       </div>
+    </div>
+  );
+}
+
+function DebouncedSearchInput({ initialValue, onSearch }: { initialValue: string; onSearch: (q: string) => void }) {
+  const [value, setValue] = useState(initialValue);
+  const debounceRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    setValue(initialValue);
+  }, [initialValue]);
+
+  const handleChange = (newVal: string) => {
+    setValue(newVal);
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => {
+      onSearch(newVal);
+    }, 300);
+  };
+
+  const handleClear = () => {
+    setValue('');
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    onSearch('');
+  };
+
+  return (
+    <div className="relative w-full group">
+      <div
+        className="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-7 bg-secondary/20 flex items-center justify-center pointer-events-none transition-colors group-focus-within:bg-secondary/30"
+        style={{ clipPath: 'polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px)' }}
+      >
+        <SearchIcon className="text-secondary w-3.5 h-3.5" />
+      </div>
+      <input
+        type="text"
+        placeholder="Search by title..."
+        value={value}
+        onChange={(e) => handleChange(e.target.value)}
+        className="w-full bg-card/50 border-2 border-secondary/20 focus:border-secondary/50 focus:ring-0 text-foreground py-4 pl-16 pr-12 font-mono text-sm tracking-wider outline-none transition-all"
+      />
+      {value && (
+        <button
+          type="button"
+          onClick={handleClear}
+          className="absolute right-3 top-1/2 -translate-y-1/2 w-7 h-7 bg-red-100 dark:bg-red-950/50 border border-red-300 dark:border-red-900/50 hover:bg-red-200 dark:hover:bg-red-900/80 text-red-600 dark:text-red-500 flex items-center justify-center transition-all"
+          style={{ clipPath: 'polygon(5px 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 5px)' }}
+          aria-label="Clear search"
+        >
+          <div className="relative w-4 h-4">
+            <div className="absolute top-1/2 left-0 w-full h-0.5 bg-current rotate-45" />
+            <div className="absolute top-1/2 left-0 w-full h-0.5 bg-current -rotate-45" />
+          </div>
+        </button>
+      )}
     </div>
   );
 }
