@@ -27,6 +27,7 @@ export default function WatchContent({ id }: { id: string }) {
   const [serverLoading, setServerLoading] = useState(false);
   const [isCinemaMode, setIsCinemaMode] = useState(false);
   const [isTheaterMode, setIsTheaterMode] = useState(false);
+  const [showExitHint, setShowExitHint] = useState(false);
   const { saveToHistory } = useHistory();
   const { markAsWatched } = useWatchedEpisodes();
   const activeEpisodeRef = React.useRef<HTMLAnchorElement>(null);
@@ -249,8 +250,17 @@ export default function WatchContent({ id }: { id: string }) {
           <div
             className="fixed inset-0 bg-black/95 backdrop-blur-sm z-[60] transition-all duration-500 cursor-pointer"
             onClick={() => setIsCinemaMode(false)}
-            title="Click to exit focus mode"
+            onMouseEnter={() => setShowExitHint(true)}
+            onMouseLeave={() => setShowExitHint(false)}
           />
+        )}
+
+        {isCinemaMode && (
+          <div className={`fixed bottom-8 left-1/2 -translate-x-1/2 px-4 py-2 bg-card/80 border border-secondary/30 text-secondary text-[10px] font-mono font-black uppercase tracking-widest shadow-[0_0_15px_rgba(34,197,94,0.15)] z-[70] transition-opacity duration-300 ${showExitHint ? 'opacity-100' : 'opacity-0'}`}
+            style={{ clipPath: 'polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px)' }}
+          >
+            Click to Exit Focus Mode
+          </div>
         )}
 
         {/* Main Content: Video Player */}
@@ -367,7 +377,7 @@ export default function WatchContent({ id }: { id: string }) {
                 <h4 className="font-bold text-xs uppercase tracking-[0.2em] text-muted-text">All Episodes</h4>
                 <div 
                   ref={scrollContainerRef}
-                  className="grid grid-cols-5 gap-2 max-h-[250px] overflow-y-auto pr-2 custom-scrollbar"
+                  className="grid grid-cols-5 gap-2 max-h-[130px] overflow-y-auto pr-2 custom-scrollbar"
                 >
                   {[...animeData.episodeList].reverse().map((ep: any, index: number) => {
                     const epMatch = ep.title.match(/Episode\s+(\d+(\.\d+)?)/i);
