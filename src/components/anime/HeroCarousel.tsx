@@ -92,10 +92,15 @@ export function HeroCarousel({ items }: HeroCarouselProps) {
               {/* Internal border like in /anime */}
               <div className="absolute inset-0 border-2 border-secondary/20 pointer-events-none" />
               
-              {/* Japan Flag Indicator */}
-              <div className="absolute bottom-4 right-4 w-6 h-4 bg-white/90 backdrop-blur-sm rounded-[1px] flex items-center justify-center overflow-hidden border border-black/10 z-20">
-                <div className="w-2 h-2 rounded-full bg-[#BC002D]" />
-              </div>
+              {/* Rating Badge */}
+              {current.score && (
+                <div className="absolute bottom-4 right-4 flex items-center space-x-1.5 px-2.5 py-1.5 bg-background/90 backdrop-blur-md border border-secondary/50 text-secondary text-[12px] font-black uppercase tracking-tighter z-20">
+                  <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                  </svg>
+                  <span>{current.score}</span>
+                </div>
+              )}
             </motion.div>
             
             {/* Author Name with Mono Styling */}
