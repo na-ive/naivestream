@@ -25,10 +25,26 @@ export function LiveSearch() {
   const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [activeIndex, setActiveIndex] = useState(-1);
+  const [isFocused, setIsFocused] = useState(false);
   const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const debounceRef = useRef<NodeJS.Timeout | null>(null);
+
+  const isMac = typeof navigator !== 'undefined' && /Mac|iPod|iPhone|iPad/.test(navigator.platform);
+  const shortcutLabel = isMac ? '\u2318K' : 'Ctrl+K';
+
+  // Global keyboard shortcut: Ctrl+K / Cmd+K
+  useEffect(() => {
+    const handleGlobalKey = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        inputRef.current?.focus();
+      }
+    };
+    document.addEventListener('keydown', handleGlobalKey);
+    return () => document.removeEventListener('keydown', handleGlobalKey);
+  }, []);
 
   // Close dropdown on outside click
   useEffect(() => {
@@ -93,9 +109,14 @@ export function LiveSearch() {
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Escape') {
+      setIsOpen(false);
+      inputRef.current?.blur();
+      return;
+    }
+
     if (!isOpen) return;
 
-    // We have results.length + 1 items (results + 'See all' button)
     const totalItems = results.length + 1;
 
     if (e.key === 'ArrowDown') {
@@ -105,19 +126,14 @@ export function LiveSearch() {
       e.preventDefault();
       setActiveIndex(prev => (prev > -1 ? prev - 1 : prev));
     } else if (e.key === 'Enter') {
-      // If index is valid and it's not the 'See all' button
       if (activeIndex >= 0 && activeIndex < results.length) {
         e.preventDefault();
         handleSubmit();
       } else if (activeIndex === results.length) {
-        // 'See all' button is selected
         e.preventDefault();
-        // Reset index to -1 so handleSubmit performs normal search
         setActiveIndex(-1);
         setTimeout(() => handleSubmit(), 0);
       }
-    } else if (e.key === 'Escape') {
-      setIsOpen(false);
     }
   };
 
@@ -130,9 +146,10 @@ export function LiveSearch() {
           placeholder="Search anime..."
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          onFocus={() => { if (results.length > 0) setIsOpen(true); }}
+          onFocus={() => { setIsFocused(true); if (results.length > 0) setIsOpen(true); }}
+          onBlur={() => setIsFocused(false)}
           onKeyDown={handleKeyDown}
-          className="w-full bg-card/40 border border-secondary/20 hover:border-secondary/40 focus:border-secondary focus:bg-card rounded-none py-2.5 pl-14 pr-10 focus:outline-none transition-all font-mono font-bold text-sm tracking-widest text-foreground placeholder:text-muted-foreground"
+          className="w-full bg-card/40 border border-secondary/20 hover:border-secondary/40 focus:border-secondary focus:bg-card rounded-none py-2.5 pl-14 pr-[72px] focus:outline-none transition-all font-mono font-bold text-sm tracking-widest text-foreground placeholder:text-muted-foreground"
           style={{ clipPath: 'polygon(12px 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%, 0 12px)' }}
         />
         <div 
@@ -141,6 +158,16 @@ export function LiveSearch() {
         >
           <Search className="text-secondary w-3.5 h-3.5" />
         </div>
+        {!query && !isFocused && (
+          <div className="absolute right-2 top-2 w-max h-7 pointer-events-none flex items-center z-20">
+            <div
+              className="px-1.5 h-full flex items-center bg-warning/10 border border-warning/40 text-warning"
+              style={{ clipPath: 'polygon(4px 0, 100% 0, 100% calc(100% - 4px), calc(100% - 4px) 100%, 0 100%, 0 4px)' }}
+            >
+              <span className="text-[9px] font-black uppercase tracking-wider">{isMac ? '\u2318 + K' : 'Ctrl + K'}</span>
+            </div>
+          </div>
+        )}
         {query && (
           <button
             type="button"
