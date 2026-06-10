@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { CaretRight, SkipForwardFilled } from '@carbon/icons-react';
 import { useHistory, WatchHistory } from '@/lib/hooks/useHistory';
+import { Skeleton } from '@/components/ui/Skeleton';
 
 export function ContinueWatching({ 
   animeId, 
@@ -89,6 +90,18 @@ export function ContinueWatching({
       <p className="text-[9px] text-center font-bold text-secondary uppercase tracking-[0.2em] opacity-40">
         Saved to your device
       </p>
+    </div>
+  );
+}
+
+export function ContinueWatchingSkeleton() {
+  return (
+    <div className="space-y-3">
+      <Skeleton className="w-full h-[60px] rounded-none" style={{ clipPath: 'polygon(10% 0, 100% 0, 100% 70%, 90% 100%, 0 100%, 0 30%)' }} />
+      <Skeleton className="w-full h-12 rounded-none" style={{ clipPath: 'polygon(10% 0, 100% 0, 100% 70%, 90% 100%, 0 100%, 0 30%)' }} />
+      <div className="flex justify-center">
+        <Skeleton className="h-3 w-40 rounded-none" />
+      </div>
     </div>
   );
 }

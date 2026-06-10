@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Search } from '@carbon/icons-react';
 import { cn } from '@/lib/utils';
+import { Skeleton } from '@/components/ui/Skeleton';
 
 interface SearchResult {
   id: number;
@@ -167,46 +168,13 @@ export function LiveSearch() {
         >
           <div className="bg-card border-2 border-secondary/20 shadow-xl flex flex-col max-h-[400px] overflow-y-auto custom-scrollbar">
             {results.map((anime, index) => (
-              <Link
+              <SearchResultItem
                 key={anime.slug}
-                href={`/anime/${anime.slug}`}
-                onClick={() => { setIsOpen(false); setQuery(''); }}
-                onMouseEnter={() => setActiveIndex(index)}
-                className={cn(
-                  "flex items-center gap-4 p-3 border-b border-white/5 last:border-0 transition-all group/item",
-                  activeIndex === index ? "bg-secondary/20" : "hover:bg-secondary/10"
-                )}
-              >
-                <div className={cn(
-                  "relative w-12 h-16 flex-shrink-0 bg-card border-2 transition-colors overflow-hidden",
-                  activeIndex === index ? "border-secondary" : "border-secondary/20 group-hover/item:border-secondary"
-                )}>
-                  <img
-                    src={anime.poster}
-                    alt={anime.title}
-                    className={cn(
-                      "w-full h-full object-cover transition-transform duration-500",
-                      activeIndex === index ? "scale-110" : "group-hover/item:scale-110"
-                    )}
-                  />
-                  <div className="absolute inset-0 pointer-events-none bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.1)_50%)] bg-[length:100%_4px]" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className={cn(
-                    "text-sm font-black truncate uppercase tracking-tighter transition-colors",
-                    activeIndex === index ? "text-secondary" : "group-hover/item:text-secondary"
-                  )}>{anime.title}</p>
-                  <div className="flex items-center gap-2 mt-1">
-                    <span className="text-[10px] font-black text-secondary bg-secondary/10 px-1.5 py-0.5 border border-secondary/30 uppercase tracking-tighter">{anime.score || '??'}</span>
-                    <p className="text-[10px] text-muted-text font-bold uppercase tracking-widest truncate">
-                      {anime.type} • {anime.year || '????'}
-                    </p>
-                  </div>
-                </div>
-                <div className="flex flex-col items-end gap-1">
-                  <span className="text-[9px] uppercase tracking-[0.2em] text-secondary font-black whitespace-nowrap">{anime.status}</span>
-                </div>
-              </Link>
+                anime={anime}
+                isActive={activeIndex === index}
+                onSelect={() => { setIsOpen(false); setQuery(''); }}
+                onHover={() => setActiveIndex(index)}
+              />
             ))}
             <button
               onClick={handleSubmit}
@@ -223,6 +191,90 @@ export function LiveSearch() {
           </div>
         </div>
       )}
+    </div>
+  );
+}
+
+function SearchResultItem({ anime, isActive, onSelect, onHover }: { anime: SearchResult; isActive: boolean; onSelect: () => void; onHover: () => void }) {
+  const [imgLoaded, setImgLoaded] = useState(false);
+
+  return (
+    <Link
+      href={`/anime/${anime.slug}`}
+      onClick={onSelect}
+      onMouseEnter={onHover}
+      className={cn(
+        "flex items-center gap-4 p-3 border-b border-white/5 last:border-0 transition-all group/item",
+        isActive ? "bg-secondary/20" : "hover:bg-secondary/10"
+      )}
+    >
+      <div className={cn(
+        "relative w-12 h-16 flex-shrink-0 bg-card border-2 transition-colors overflow-hidden",
+        isActive ? "border-secondary" : "border-secondary/20 group-hover/item:border-secondary"
+      )}>
+        {!imgLoaded && (
+          <Skeleton className="absolute inset-0 rounded-none" />
+        )}
+        <img
+          src={anime.poster}
+          alt={anime.title}
+          onLoad={() => setImgLoaded(true)}
+          onError={() => setImgLoaded(true)}
+          className={cn(
+            "w-full h-full object-cover transition-all duration-500",
+            isActive ? "scale-110" : "group-hover/item:scale-110",
+            imgLoaded ? "opacity-100" : "opacity-0"
+          )}
+        />
+        <div className="absolute inset-0 pointer-events-none bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.1)_50%)] bg-[length:100%_4px]" />
+      </div>
+      <div className="flex-1 min-w-0">
+        <p className={cn(
+          "text-sm font-black truncate uppercase tracking-tighter transition-colors",
+          isActive ? "text-secondary" : "group-hover/item:text-secondary"
+        )}>{anime.title}</p>
+        <div className="flex items-center gap-2 mt-1">
+          <span className="text-[10px] font-black text-secondary bg-secondary/10 px-1.5 py-0.5 border border-secondary/30 uppercase tracking-tighter">{anime.score || '??'}</span>
+          <p className="text-[10px] text-muted-text font-bold uppercase tracking-widest truncate">
+            {anime.type} • {anime.year || '????'}
+          </p>
+        </div>
+      </div>
+      <div className="flex flex-col items-end gap-1">
+        <span className="text-[9px] uppercase tracking-[0.2em] text-secondary font-black whitespace-nowrap">{anime.status}</span>
+      </div>
+    </Link>
+  );
+}
+
+export function LiveSearchSkeleton() {
+  return (
+    <div className="relative w-full group">
+      <div className="relative w-full">
+        <Skeleton className="w-full h-[46px] rounded-none" style={{ clipPath: 'polygon(12px 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%, 0 12px)' }} />
+        <Skeleton
+          className="absolute left-1.5 top-1.5 bottom-1.5 w-10 rounded-none"
+          style={{ clipPath: 'polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px)' }}
+        />
+      </div>
+      <div className="absolute top-full left-0 right-0 mt-2 z-50">
+        <div className="bg-card border-2 border-secondary/20 shadow-xl flex flex-col">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <div key={i} className="flex items-center gap-4 p-3 border-b border-white/5">
+              <Skeleton className="w-12 h-16 shrink-0 rounded-none" />
+              <div className="flex-1 min-w-0 space-y-2">
+                <Skeleton className="h-4 w-3/4 rounded-none" />
+                <div className="flex items-center gap-2">
+                  <Skeleton className="h-[18px] w-10 rounded-none" />
+                  <Skeleton className="h-3 w-24 rounded-none" />
+                </div>
+              </div>
+              <Skeleton className="h-4 w-16 rounded-none" />
+            </div>
+          ))}
+          <Skeleton className="w-full h-[42px] rounded-none" />
+        </div>
+      </div>
     </div>
   );
 }

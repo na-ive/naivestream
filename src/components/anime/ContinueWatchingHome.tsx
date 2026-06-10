@@ -2,8 +2,9 @@
 
 import React from 'react';
 import { useHistory } from '@/lib/hooks/useHistory';
-import { AnimeCard } from './AnimeCard';
+import { AnimeCard, AnimeCardSkeleton } from './AnimeCard';
 import { ChevronRight } from '@carbon/icons-react';
+import { Skeleton } from '@/components/ui/Skeleton';
 import Link from 'next/link';
 
 export function ContinueWatchingHome() {
@@ -64,6 +65,31 @@ export function ContinueWatchingHome() {
             />
           );
         })}
+      </div>
+    </section>
+  );
+}
+
+export function ContinueWatchingHomeSkeleton() {
+  return (
+    <section>
+      <div className="flex items-end justify-between mb-8 border-b border-white/5 pb-4">
+        <div className="space-y-2">
+          <div className="flex items-baseline space-x-3">
+            <Skeleton className="h-7 w-7 rounded-none" />
+            <Skeleton className="h-8 w-64 rounded-none" />
+          </div>
+          <Skeleton className="h-4 w-48 ml-8 rounded-none" />
+        </div>
+        <Skeleton className="h-10 w-32 rounded-none hidden sm:flex" />
+      </div>
+      <div className="sm:hidden mb-6 flex justify-end">
+        <Skeleton className="h-4 w-24 rounded-none" />
+      </div>
+      <div className="mobile-snap-scroll gap-4 md:gap-6">
+        {Array.from({ length: 4 }).map((_, i) => (
+          <AnimeCardSkeleton key={i} />
+        ))}
       </div>
     </section>
   );

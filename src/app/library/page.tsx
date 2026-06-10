@@ -5,7 +5,7 @@ import { useSearchParams, useRouter } from 'next/navigation';
 import { useHistory } from '@/lib/hooks/useHistory';
 import { useWatchlist } from '@/lib/hooks/useWatchlist';
 import { useWatchedEpisodes } from '@/lib/hooks/useWatchedEpisodes';
-import { AnimeCard } from '@/components/anime/AnimeCard';
+import { AnimeCard, AnimeCardSkeleton } from '@/components/anime/AnimeCard';
 import { Bookmark, Time, TrashCan, CaretRight, Grid, CheckboxChecked, Checkmark } from '@carbon/icons-react';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
@@ -19,8 +19,12 @@ type DeleteActionType = 'all' | 'bulk' | null;
 export default function LibraryPage() {
   return (
     <Suspense fallback={
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="w-12 h-12 border-4 border-secondary border-t-transparent rounded-full animate-spin" />
+      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="anime-grid">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <AnimeCardSkeleton key={i} />
+          ))}
+        </div>
       </div>
     }>
       <LibraryContent />

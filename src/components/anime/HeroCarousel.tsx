@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { ChevronLeft, ChevronRight } from '@carbon/icons-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
+import { Skeleton } from '@/components/ui/Skeleton';
 import { SmartWatchButton } from './SmartWatchButton';
 
 interface HeroCarouselProps {
@@ -14,13 +15,16 @@ interface HeroCarouselProps {
 export function HeroCarousel({ items }: HeroCarouselProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
+  const [imgLoaded, setImgLoaded] = useState(false);
 
   const nextSlide = useCallback(() => {
     setCurrentIndex((prev) => (prev + 1) % items.length);
+    setImgLoaded(false);
   }, [items.length]);
 
   const prevSlide = useCallback(() => {
     setCurrentIndex((prev) => (prev - 1 + items.length) % items.length);
+    setImgLoaded(false);
   }, [items.length]);
 
   useEffect(() => {
@@ -28,6 +32,12 @@ export function HeroCarousel({ items }: HeroCarouselProps) {
     const interval = setInterval(nextSlide, 8000);
     return () => clearInterval(interval);
   }, [isAutoPlaying, nextSlide]);
+
+  useEffect(() => {
+    const img = new Image();
+    img.src = items[currentIndex]?.poster || items[currentIndex]?.image;
+    if (img.complete) setImgLoaded(true);
+  }, [currentIndex, items]);
 
   if (!items.length) return null;
 
@@ -39,6 +49,11 @@ export function HeroCarousel({ items }: HeroCarouselProps) {
       onMouseEnter={() => setIsAutoPlaying(false)}
       onMouseLeave={() => setIsAutoPlaying(true)}
     >
+      {!imgLoaded && (
+        <div className="absolute inset-0 z-50">
+          <HeroCarouselSkeleton />
+        </div>
+      )}
       <AnimatePresence mode="wait">
         <motion.div
           key={current.id}
@@ -54,6 +69,8 @@ export function HeroCarousel({ items }: HeroCarouselProps) {
               src={current.poster || current.image}
               alt={current.title}
               loading="eager"
+              onLoad={() => setImgLoaded(true)}
+              onError={() => setImgLoaded(true)}
               className="w-full h-full object-cover opacity-30 object-[center_25%] scale-105"
             />
             {/* Cyberpunk Overlays */}
@@ -89,6 +106,8 @@ export function HeroCarousel({ items }: HeroCarouselProps) {
                 src={current.poster || current.image}
                 alt={current.title}
                 loading="lazy"
+                onLoad={() => setImgLoaded(true)}
+                onError={() => setImgLoaded(true)}
                 className="w-full h-full object-cover transition-transform duration-700 group-hover/poster:scale-110"
               />
               {/* Internal border like in /anime */}
@@ -195,6 +214,66 @@ export function HeroCarousel({ items }: HeroCarouselProps) {
             >
               <ChevronRight className="w-6 h-6 transition-transform group-hover:translate-x-1" />
             </button>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+export function HeroCarouselSkeleton() {
+  return (
+    <section className="relative w-full h-[75vh] min-h-[650px] overflow-hidden bg-background">
+      <div className="absolute inset-0">
+        <Skeleton className="absolute inset-0 rounded-none" />
+        <div className="absolute inset-0 bg-gradient-to-r from-background via-background/80 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent" />
+      </div>
+
+      <div className="relative z-10 h-full max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-12 flex flex-col justify-center pt-20">
+        <div className="absolute top-36 left-4 sm:left-6 lg:left-12 flex items-center gap-3">
+          <Skeleton className="w-1.5 h-6 rounded-none" />
+          <Skeleton className="h-4 w-64 rounded-none" />
+        </div>
+
+        <div className="flex flex-col md:flex-row items-center md:items-start gap-10 md:gap-16 mt-16">
+          <div className="flex flex-col gap-6 items-center md:items-start">
+            <Skeleton className="w-[200px] md:w-[280px] aspect-[2/3] border-4 border-background shadow-2xl rounded-none" />
+            <Skeleton className="h-3 w-32 rounded-none" />
+          </div>
+
+          <div className="flex-1 text-center md:text-left pt-2 space-y-4">
+            <Skeleton className="h-12 w-full max-w-lg rounded-none" />
+            <Skeleton className="h-12 w-3/4 max-w-md rounded-none" />
+            <div className="flex items-center gap-3 mb-6">
+              <Skeleton className="w-8 h-[1px] rounded-none" />
+              <Skeleton className="h-4 w-24 rounded-none" />
+            </div>
+            <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 mb-8">
+              <Skeleton className="h-7 w-20 rounded-none" />
+              <Skeleton className="h-7 w-24 rounded-none" />
+              <Skeleton className="h-7 w-16 rounded-none" />
+            </div>
+            <div className="space-y-3 mb-10">
+              <Skeleton className="h-4 w-full max-w-xl rounded-none" />
+              <Skeleton className="h-4 w-full max-w-lg rounded-none" />
+              <Skeleton className="h-4 w-2/3 max-w-md rounded-none" />
+            </div>
+            <div className="flex flex-wrap items-center justify-center md:justify-start gap-6">
+              <Skeleton className="h-12 w-44 rounded-none" />
+              <Skeleton className="h-12 w-32 rounded-none" />
+            </div>
+          </div>
+        </div>
+
+        <div className="absolute bottom-16 right-4 sm:right-6 lg:right-12 flex items-center gap-10">
+          <div className="flex flex-col items-end gap-1">
+            <Skeleton className="h-3 w-16 rounded-none" />
+            <Skeleton className="h-6 w-12 rounded-none" />
+          </div>
+          <div className="flex items-center gap-4">
+            <Skeleton className="w-12 h-12 rounded-none" />
+            <Skeleton className="w-12 h-12 rounded-none" />
           </div>
         </div>
       </div>

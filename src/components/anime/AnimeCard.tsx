@@ -1,10 +1,11 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import { CaretRight, StarFilled, Terminal, Warning } from '@carbon/icons-react';
 import { motion } from 'framer-motion';
 import { BookmarkButton } from './BookmarkButton';
+import { Skeleton } from '@/components/ui/Skeleton';
 import { cn } from '@/lib/utils';
 
 interface AnimeCardProps {
@@ -22,6 +23,7 @@ interface AnimeCardProps {
 
 export function AnimeCard({ id, title, image, status, rating, episode, type, hideBookmark = false, disableHover = false, totalEpisodes }: AnimeCardProps) {
   const isEmpty = totalEpisodes === 0;
+  const [imgLoaded, setImgLoaded] = useState(false);
 
   return (
     <motion.div
@@ -34,11 +36,21 @@ export function AnimeCard({ id, title, image, status, rating, episode, type, hid
         "block relative aspect-[3/4] overflow-hidden bg-card border-2 transition-all",
         isEmpty ? "border-[#EAB308]" : "border-secondary/20 group-hover:border-secondary"
       )}>
+        {!imgLoaded && (
+          <div className="absolute inset-0 z-10">
+            <Skeleton className="w-full h-full rounded-none" />
+          </div>
+        )}
         <img
           src={image}
           alt={title}
-          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+          className={cn(
+            "w-full h-full object-cover transition-all duration-500",
+            imgLoaded ? "opacity-100 group-hover:scale-110" : "opacity-0"
+          )}
           loading="lazy"
+          onLoad={() => setImgLoaded(true)}
+          onError={() => setImgLoaded(true)}
         />
 
         {/* Warning Layer for Empty Episodes - SOLID VIBRANT STYLE */}
@@ -112,5 +124,24 @@ export function AnimeCard({ id, title, image, status, rating, episode, type, hid
         </h3>
       </div>
     </motion.div>
+  );
+}
+
+export function AnimeCardSkeleton() {
+  return (
+    <div className="relative flex flex-col h-full">
+      <div className="block relative aspect-[3/4] overflow-hidden bg-card border-2 border-secondary/10">
+        <Skeleton className="absolute inset-0" />
+        <div className="absolute top-3 left-3 flex flex-col gap-2 z-20">
+          <Skeleton className="w-14 h-[22px]" />
+          <Skeleton className="w-[76px] h-[22px]" />
+        </div>
+        <Skeleton className="absolute bottom-3 right-3 w-[68px] h-[22px]" />
+        <div className="absolute inset-0 pointer-events-none bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.1)_50%)] bg-[length:100%_4px] z-30" />
+      </div>
+      <div className="mt-4 space-y-2">
+        <Skeleton className="h-8 w-full" />
+      </div>
+    </div>
   );
 }

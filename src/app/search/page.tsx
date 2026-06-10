@@ -7,8 +7,9 @@ import { Pagination } from '@/components/layout/Pagination';
 import { CustomSelect } from '@/components/ui/CustomSelect';
 import { MultiSelect } from '@/components/ui/MultiSelect';
 import { cn } from '@/lib/utils';
-import { Search as SearchIcon, Renew, FaceDissatisfied, Filter } from '@carbon/icons-react';
+import { Search as SearchIcon, FaceDissatisfied, Filter } from '@carbon/icons-react';
 import { AnimatePresence, motion } from 'framer-motion';
+import { AnimeCardSkeleton } from '@/components/anime/AnimeCard';
 
 const FILTER_OPTIONS = {
   status: [
@@ -397,9 +398,10 @@ function SearchContent() {
         </div>
 
         {loading ? (
-          <div className="flex flex-col items-center justify-center py-40 space-y-4">
-            <Renew className="w-12 h-12 text-secondary animate-spin" />
-            <p className="text-xs font-black uppercase tracking-[0.3em] text-muted-text">Synchronizing Archives...</p>
+          <div className="anime-grid">
+            {Array.from({ length: 24 }).map((_, i) => (
+              <AnimeCardSkeleton key={i} />
+            ))}
           </div>
         ) : results.length > 0 ? (
           <>
@@ -503,9 +505,12 @@ function DebouncedSearchInput({ initialValue, onSearch }: { initialValue: string
 export default function SearchPage() {
   return (
     <Suspense fallback={
-      <div className="flex flex-col items-center justify-center py-20 space-y-4">
-        <Renew className="w-12 h-12 text-secondary animate-spin" />
-        <p className="text-muted-text font-medium">Loading search...</p>
+      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="anime-grid">
+          {Array.from({ length: 24 }).map((_, i) => (
+            <AnimeCardSkeleton key={i} />
+          ))}
+        </div>
       </div>
     }>
       <SearchContent />
