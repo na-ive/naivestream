@@ -7,6 +7,7 @@ import { useHistory } from '@/lib/hooks/useHistory';
 import { ChevronRight, Grid, Renew, Video, ServerDns, Screen, Theater, Download } from '@carbon/icons-react';
 import Link from 'next/link';
 import { Tooltip } from '@/components/ui/Tooltip';
+import { cn } from '@/lib/utils';
 
 export default function WatchContent({ id }: { id: string }) {
   const searchParams = useSearchParams();
@@ -220,7 +221,7 @@ export default function WatchContent({ id }: { id: string }) {
   );
 
   return (
-    <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+    <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
       {/* Breadcrumbs Status Bar */}
       <div
         className="flex items-center gap-3 bg-card px-5 py-2.5 mb-6 relative overflow-hidden text-[10px] font-black uppercase tracking-[0.2em] text-muted-text w-max max-w-full shadow-lg"
@@ -308,7 +309,7 @@ export default function WatchContent({ id }: { id: string }) {
         </div>
 
         {/* Sidebar: Controls & Info */}
-        <div className={`w-full ${isTheaterMode ? 'lg:col-span-2 grid lg:grid-cols-[350px_1fr] lg:gap-8 lg:items-start space-y-8 lg:space-y-0' : 'lg:col-span-1 lg:col-start-2 lg:row-span-2 space-y-8'} shrink-0`}>
+        <div className={`w-full ${isTheaterMode ? 'lg:col-span-2 grid lg:grid-cols-[350px_1fr] lg:gap-8 lg:items-stretch space-y-8 lg:space-y-0' : 'lg:col-span-1 lg:col-start-2 lg:row-span-2 space-y-8'} shrink-0`}>
           <div
             className="bg-card/50 border-l-4 border-secondary/50 p-6 space-y-4 relative overflow-hidden"
             style={{ clipPath: 'polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px)' }}
@@ -437,7 +438,10 @@ export default function WatchContent({ id }: { id: string }) {
       {/* Full-Width Bottom Download Links - Navigator Style with Centered Header */}
       {episodeData?.downloadUrl?.qualities && episodeData.downloadUrl.qualities.length > 0 && (
         <div 
-          className="bg-card/50 border-y border-secondary/30 p-10 relative overflow-hidden"
+          className={cn(
+            "bg-card/50 border-y border-secondary/30 p-10 relative overflow-hidden mb-12",
+            isTheaterMode ? "mt-6" : "mt-0"
+          )}
           style={{ clipPath: 'polygon(20px 0, 100% 0, 100% calc(100% - 20px), calc(100% - 20px) 100%, 0 100%, 0 20px)' }}
         >
           {/* Centered Integrated Header */}
