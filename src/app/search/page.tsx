@@ -92,7 +92,7 @@ function SearchContent() {
   const [results, setResults] = useState<any[]>([]);
   const [genres, setGenres] = useState<any[]>([]);
   const [studioOptions, setStudioOptions] = useState<{ value: string; label: string }[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [pagination, setPagination] = useState({ current_page: 1, last_page: 1, total: 0 });
   const [showFilters, setShowFilters] = useState(true);
 
