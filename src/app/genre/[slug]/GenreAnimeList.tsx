@@ -53,6 +53,7 @@ export function GenreAnimeList({ initialAnime, slug, initialHasMore }: GenreAnim
             rating={String(anime.score)}
             status={anime.status}
             episode={anime.status === 'Ongoing' ? `ep ${anime.latest_episode || '??'}` : `${anime.episodes_count || '??'} eps`}
+            totalEpisodes={anime.actual_episodes_count}
           />
         ))}
       </div>

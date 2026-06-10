@@ -57,6 +57,7 @@ export default async function CompletedPage(props: { searchParams: Promise<{ pag
                 image={anime.poster}
                 rating={String(anime.score)}
                 episode={`${anime.episodes_count || '??'} eps`}
+                totalEpisodes={anime.actual_episodes_count}
               />
             ))}
           </div>

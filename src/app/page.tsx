@@ -82,6 +82,7 @@ export default async function HomePage() {
                 rating={String(anime.score)}
                 episode={`ep ${anime.latest_episode || '??'}`}
                 status={anime.release_day}
+                totalEpisodes={anime.actual_episodes_count}
               />
             ))}
           </div>
@@ -126,6 +127,7 @@ export default async function HomePage() {
                 image={anime.poster}
                 rating={String(anime.score)}
                 episode={`${anime.episodes_count || '??'} eps`}
+                totalEpisodes={anime.actual_episodes_count}
               />
             ))}
           </div>

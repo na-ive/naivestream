@@ -58,6 +58,7 @@ export default async function OngoingPage(props: { searchParams: Promise<{ page?
                 rating={String(anime.score)}
                 episode={`ep ${anime.latest_episode || '??'}`}
                 status={anime.release_day}
+                totalEpisodes={anime.actual_episodes_count}
               />
             ))}
           </div>

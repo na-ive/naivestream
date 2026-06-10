@@ -31,6 +31,7 @@
   --color-card-foreground: #ECFDF5;
   --color-border: #113224;
   --color-muted-text: #A1BBAF;
+  --color-warning: #FACC15;
 }
 
 @layer base {
