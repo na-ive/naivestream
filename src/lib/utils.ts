@@ -12,3 +12,36 @@ export function formatDate(date: string | Date) {
     year: 'numeric',
   });
 }
+
+/**
+ * Parses a string field that might be a JSON array or comma-separated values
+ * common in the scraped database.
+ */
+export function parseArrayField(data: any): string[] {
+  if (!data) return [];
+  if (Array.isArray(data)) return data;
+  
+  const strData = String(data).trim();
+  if (!strData) return [];
+
+  try {
+    // Check if it looks like a JSON array ["Item", "Item"]
+    if (strData.startsWith('[') && strData.endsWith(']')) {
+      const parsed = JSON.parse(strData);
+      return Array.isArray(parsed) ? parsed : [strData];
+    }
+    
+    // Check if it's comma separated
+    if (strData.includes(',')) {
+      return strData.split(',').map(s => s.trim()).filter(Boolean);
+    }
+    
+    return [strData];
+  } catch (e) {
+    // If JSON parse fails, return as single item array or split by comma if exists
+    if (strData.includes(',')) {
+      return strData.split(',').map(s => s.trim()).filter(Boolean);
+    }
+    return [strData];
+  }
+}

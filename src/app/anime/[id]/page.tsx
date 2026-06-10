@@ -78,7 +78,8 @@ export default async function AnimeDetailPage(props: { params: Promise<{ id: str
   const totalEpisodes = data.episodes_count > 0 ? data.episodes_count : '??';
   const numEpisodes = `${totalEpisodes} eps`;
   
-  const studios = data.studios || 'Unknown';
+  const studios = Array.isArray(data.studios) ? data.studios.join(', ') : (data.studios || 'Unknown');
+  const producers = Array.isArray(data.producers) ? data.producers.join(', ') : (data.producers || 'Unknown');
   const aired = data.aired || 'Unknown';
   const animeType = data.type || 'Unknown';
   const animeSource = data.source || 'Unknown';
@@ -267,3 +268,4 @@ export default async function AnimeDetailPage(props: { params: Promise<{ id: str
     </div>
   );
 }
+

@@ -1,4 +1,5 @@
 import globalDb from '../db';
+import { parseArrayField } from '../utils';
 
 if (!globalDb) {
   throw new Error('Database connection not initialized');
@@ -191,7 +192,10 @@ export const AnimeService = {
       status: getSmartStatus(anime),
       synopsis: cleanSynopsis(anime.synopsis),
       genres,
-      characters
+      characters,
+      studios: parseArrayField(anime.studios),
+      producers: parseArrayField(anime.producers),
+      title_synonyms: parseArrayField(anime.title_synonyms)
     };
   },
 

@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState, useMemo } from 'react';
 import Link from 'next/link';
-import { CaretRight, ChevronLeft, ChevronRight, Search, List } from '@carbon/icons-react';
+import { CaretRight, ChevronLeft, ChevronRight, Search, List, FaceDissatisfied } from '@carbon/icons-react';
 import { useHistory } from '@/lib/hooks/useHistory';
 import { cn } from '@/lib/utils';
 
@@ -43,9 +43,6 @@ export function EpisodeList({
     if (isNaN(epNum)) return;
 
     // Find the index of the episode with this number
-    // We assume episodes are numbered or in a certain order
-    // In many APIs, index 0 is the latest episode.
-    // If epNum 1 is at the end of the array (descending order):
     const index = episodes.findIndex((ep, i) => {
       const currentEpNum = ep.eps || (typeof ep.title === 'number' ? ep.title : null) || episodes.length - i;
       return currentEpNum === epNum;
@@ -57,6 +54,30 @@ export function EpisodeList({
       setJumpValue('');
     }
   };
+
+  if (episodes.length === 0) {
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center space-x-3 text-lg font-serif font-black uppercase tracking-widest border-b-2 border-secondary/20 pb-4">
+          <div className="w-1.5 h-6 bg-secondary" />
+          <List className="w-5 h-5 text-secondary" />
+          <h2>Episode List<span className="text-secondary opacity-70">_</span></h2>
+        </div>
+        
+        <div className="flex flex-col items-center justify-center py-20 text-center space-y-4 border-2 border-dashed border-secondary/20 bg-card/50">
+          <FaceDissatisfied className="w-12 h-12 text-muted-text" />
+          <div className="space-y-1">
+            <p className="text-muted-text font-black uppercase tracking-widest text-sm">
+              No Episodes Found
+            </p>
+            <p className="text-[10px] text-muted-text/60 font-mono uppercase tracking-[0.2em]">
+              Transmission Interrupted - Data Unavailable
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
