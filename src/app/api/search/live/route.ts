@@ -10,7 +10,7 @@ export async function GET(req: NextRequest) {
   }
   
   try {
-    const results = await AnimeService.searchAnime(query, 5);
+    const results = await AnimeService.searchAnime(query, 4);
     return NextResponse.json({ data: results });
   } catch (error) {
     console.error('Live Search API Error:', error);

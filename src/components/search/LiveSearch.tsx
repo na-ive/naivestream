@@ -59,10 +59,10 @@ export function LiveSearch() {
         const res = await fetch(`/api/search/live?q=${encodeURIComponent(query)}`);
         const data = await res.json();
         // Limit to 4 results
-        const limitedResults = (data.data || []).slice(0, 4);
-        setResults(limitedResults);
-        setIsOpen(limitedResults.length > 0);
-        setActiveIndex(-1); // Reset index on new results
+        const fetched = data.data || [];
+        setResults(fetched);
+        setIsOpen(fetched.length > 0);
+        setActiveIndex(-1);
       } catch (e) {
         setResults([]);
       }
@@ -259,7 +259,7 @@ export function LiveSearchSkeleton() {
       </div>
       <div className="absolute top-full left-0 right-0 mt-2 z-50">
         <div className="bg-card border-2 border-secondary/20 shadow-xl flex flex-col">
-          {Array.from({ length: 3 }).map((_, i) => (
+          {Array.from({ length: 4 }).map((_, i) => (
             <div key={i} className="flex items-center gap-4 p-3 border-b border-white/5">
               <Skeleton className="w-12 h-16 shrink-0 rounded-none" />
               <div className="flex-1 min-w-0 space-y-2">
