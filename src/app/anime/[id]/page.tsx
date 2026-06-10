@@ -7,6 +7,7 @@ import { ContinueWatching } from "@/components/anime/ContinueWatching";
 import { EpisodeList } from "@/components/anime/EpisodeList";
 import { BookmarkButton } from "@/components/anime/BookmarkButton";
 import { CharacterCarousel } from "@/components/anime/CharacterCarousel";
+import { AnimeCard } from "@/components/anime/AnimeCard";
 
 async function getAnimeDetails(slug: string) {
   const anime = await AnimeService.getAnimeBySlug(slug);
@@ -65,7 +66,8 @@ export default async function AnimeDetailPage(props: { params: Promise<{ id: str
   }
 
   const { data } = result;
-  const source = 'otakudesu'; // Default source for watching, but data is from DB
+  const source = 'otakudesu';
+  const similarAnime = await AnimeService.getSimilarAnime(data.id, 6);
 
   const poster = data.poster;
   const episodes = data.episodeList || [];
@@ -263,6 +265,30 @@ export default async function AnimeDetailPage(props: { params: Promise<{ id: str
 
             {/* Characters Section */}
             <CharacterCarousel characters={charactersData} />
+
+            {/* Similar Anime Section */}
+            {similarAnime.length > 0 && (
+              <div className="space-y-6">
+                <div className="flex items-center space-x-3 text-lg font-serif font-black uppercase tracking-widest">
+                  <div className="w-1.5 h-6 bg-secondary" />
+                  <Grid className="w-5 h-5 text-secondary" />
+                  <h2>Similar Anime<span className="text-secondary opacity-70">_</span></h2>
+                </div>
+                <div className="anime-grid">
+                  {similarAnime.map((anime: any) => (
+                    <AnimeCard
+                      key={anime.slug}
+                      id={anime.slug}
+                      title={anime.title}
+                      image={anime.poster}
+                      rating={String(anime.score)}
+                      episode={anime.status === 'Ongoing' ? `ep ${anime.latest_episode || '??'}` : `${anime.episodes_count || '??'} eps`}
+                      totalEpisodes={anime.actual_episodes_count}
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>

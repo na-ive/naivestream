@@ -408,6 +408,29 @@ export const AnimeService = {
     };
   },
 
+  async getSimilarAnime(animeId: number, limit = 5) {
+    const items = getPreparedStatement(`
+      SELECT ${SQL_BASE_SELECT},
+        (SELECT COUNT(*) FROM anime_genres ag2 WHERE ag2.anime_id = a.id AND ag2.genre_id IN (
+          SELECT genre_id FROM anime_genres WHERE anime_id = ?
+        )) as genre_overlap
+      FROM anime a
+      WHERE a.id != ?
+        AND EXISTS (
+          SELECT 1 FROM anime_genres ag3 WHERE ag3.anime_id = a.id
+          AND ag3.genre_id IN (SELECT genre_id FROM anime_genres WHERE anime_id = ?)
+        )
+      ORDER BY genre_overlap DESC, a.score DESC, a.popularity ASC
+      LIMIT ?
+    `).all(animeId, animeId, animeId, limit) as any[];
+
+    return items.map(item => ({
+      ...item,
+      status: getSmartStatus(item),
+      synopsis: cleanSynopsis(item.synopsis)
+    }));
+  },
+
   async getEpisodes(animeId: number) {
     return getPreparedStatement('SELECT * FROM episodes WHERE anime_id = ? ORDER BY eps_number DESC').all(animeId) as Episode[];
   },
