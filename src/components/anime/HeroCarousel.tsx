@@ -124,24 +124,29 @@ export function HeroCarousel({ items }: HeroCarouselProps) {
             transition={{ duration: 0.6, delay: 0.3 }}
             className="flex-1 text-center md:text-left pt-2"
           >
-            <h1 className="text-3xl md:text-4xl lg:text-5xl font-serif font-black leading-tight tracking-tighter text-foreground mb-6 uppercase line-clamp-2">
+            <h1 className="text-3xl md:text-4xl lg:text-5xl font-serif font-black leading-tight tracking-tighter text-foreground mb-2 uppercase line-clamp-2">
               {current.title}
             </h1>
 
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-8 h-[1px] bg-secondary/50" />
+              <span className="text-secondary/80 text-[11px] font-mono font-black uppercase tracking-[0.35em]">
+                {current.status === 'Ongoing'
+                  ? `Episode ${current.latest_episode || '?'}`
+                  : `${current.episodes_count || '?'} Episodes`}
+              </span>
+            </div>
+
             <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 mb-8">
-              {current.genres?.slice(0, 5).map((genre: string, idx: number) => (
+              {current.genres?.slice(0, 3).map((genre: string, idx: number) => (
                 <Link 
                   key={idx}
                   href={`/genre/${genre.toLowerCase().replace(/\s+/g, '-')}`}
-                  className="px-3 py-1 bg-secondary text-background text-[10px] font-black uppercase tracking-widest skew-x-[-15deg] hover:bg-secondary/80 transition-all"
+                  className="px-3 py-1 border border-secondary/30 text-secondary text-[10px] font-black uppercase tracking-widest skew-x-[-15deg] hover:bg-secondary/10 transition-all"
                 >
                   <span className="inline-block skew-x-[15deg]">{genre}</span>
                 </Link>
               ))}
-              
-              <div className="flex items-center gap-2 px-3 py-1 bg-card border border-secondary/30 font-bold text-[10px] text-secondary tracking-widest skew-x-[-15deg]">
-                <span className="inline-block skew-x-[15deg] uppercase">{current.episodes || 'Ongoing'}</span>
-              </div>
             </div>
 
             <p className="text-muted-text text-[14px] md:text-[15px] leading-relaxed w-full mb-10 font-medium tracking-wide line-clamp-3">
@@ -158,7 +163,7 @@ export function HeroCarousel({ items }: HeroCarouselProps) {
               />
               <Link 
                 href={`/anime/${current.id}`} 
-                className="h-12 px-8 flex items-center justify-center border-2 border-secondary/30 text-secondary hover:bg-secondary hover:text-background font-black uppercase tracking-[0.2em] text-sm transition-all"
+                className="h-12 px-8 flex items-center justify-center border-2 border-secondary/30 text-secondary hover:border-secondary hover:shadow-[0_0_15px_rgba(34,197,94,0.15)] font-black uppercase tracking-[0.2em] text-sm transition-all duration-300"
                 style={{ clipPath: 'polygon(10% 0, 100% 0, 100% 70%, 90% 100%, 0 100%, 0 30%)' }}
               >
                 Details
