@@ -7,6 +7,7 @@ import { useHistory } from '@/lib/hooks/useHistory';
 import { useWatchedEpisodes } from '@/lib/hooks/useWatchedEpisodes';
 import { ChevronRight, Grid, Renew, Video, ServerDns, Screen, Theater, Download } from '@carbon/icons-react';
 import Link from 'next/link';
+import { motion } from 'framer-motion';
 import { Tooltip } from '@/components/ui/Tooltip';
 import { cn } from '@/lib/utils';
 
@@ -264,7 +265,7 @@ export default function WatchContent({ id }: { id: string }) {
         )}
 
         {/* Main Content: Video Player */}
-        <div className={`transition-all duration-500 self-start ${isCinemaMode ? 'relative z-[60]' : ''} ${isTheaterMode ? 'lg:col-span-2' : 'lg:col-span-1'}`}>
+        <motion.div layout transition={{ duration: 0.1, ease: 'easeInOut' }} className={`self-start ${isCinemaMode ? 'relative z-[60]' : ''} ${isTheaterMode ? 'lg:col-span-2' : 'lg:col-span-1'}`}>
           <div className={`relative aspect-video bg-black border-b-4 border-secondary/20 shadow-2xl overflow-hidden group transition-all duration-500 ${isCinemaMode ? 'shadow-[0_0_50px_rgba(34,197,94,0.15)] ring-1 ring-secondary/30' : ''}`}>
             {serverLoading && (
               <div className="absolute inset-0 z-20 bg-black/60 backdrop-blur-sm flex items-center justify-center">
@@ -323,7 +324,7 @@ export default function WatchContent({ id }: { id: string }) {
               </Tooltip>
             </div>
           </div>
-        </div>
+        </motion.div>
 
         {/* Sidebar: Controls & Info */}
         <div className={`w-full ${isTheaterMode ? 'lg:col-span-2 grid lg:grid-cols-[350px_1fr] lg:gap-8 lg:items-stretch space-y-8 lg:space-y-0' : 'lg:col-span-1 lg:col-start-2 lg:row-span-2 space-y-8'} shrink-0`}>
