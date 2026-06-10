@@ -33,12 +33,6 @@ export function HeroCarousel({ items }: HeroCarouselProps) {
     return () => clearInterval(interval);
   }, [isAutoPlaying, nextSlide]);
 
-  useEffect(() => {
-    const img = new Image();
-    img.src = items[currentIndex]?.poster || items[currentIndex]?.image;
-    if (img.complete) setImgLoaded(true);
-  }, [currentIndex, items]);
-
   if (!items.length) return null;
 
   const current = items[currentIndex];
@@ -49,11 +43,6 @@ export function HeroCarousel({ items }: HeroCarouselProps) {
       onMouseEnter={() => setIsAutoPlaying(false)}
       onMouseLeave={() => setIsAutoPlaying(true)}
     >
-      {!imgLoaded && (
-        <div className="absolute inset-0 z-50">
-          <HeroCarouselSkeleton />
-        </div>
-      )}
       <AnimatePresence mode="wait">
         <motion.div
           key={current.id}
@@ -71,7 +60,7 @@ export function HeroCarousel({ items }: HeroCarouselProps) {
               loading="eager"
               onLoad={() => setImgLoaded(true)}
               onError={() => setImgLoaded(true)}
-              className="w-full h-full object-cover opacity-30 object-[center_25%] scale-105"
+              className={cn("w-full h-full object-cover object-[center_25%] scale-105 transition-opacity duration-700", imgLoaded ? "opacity-30" : "opacity-0")}
             />
             {/* Cyberpunk Overlays */}
             <div className="absolute inset-0 bg-gradient-to-r from-background via-background/80 to-transparent" />
