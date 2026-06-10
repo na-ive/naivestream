@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { useHistory } from '@/lib/hooks/useHistory';
 import { useWatchlist } from '@/lib/hooks/useWatchlist';
 import { AnimeCard } from '@/components/anime/AnimeCard';
@@ -15,8 +16,22 @@ type TabType = 'watchlist' | 'history';
 type DeleteActionType = 'all' | 'bulk' | null;
 
 export default function LibraryPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <div className="w-12 h-12 border-4 border-secondary border-t-transparent rounded-full animate-spin" />
+      </div>
+    }>
+      <LibraryContent />
+    </Suspense>
+  );
+}
+
+function LibraryContent() {
   const { history, removeFromHistory, removeMultipleFromHistory } = useHistory();
   const { watchlist, removeFromWatchlist, removeMultipleFromWatchlist } = useWatchlist();
+  const searchParams = useSearchParams();
+  const router = useRouter();
   
   const [activeTab, setActiveTab] = useState<TabType>('watchlist');
   const [mounted, setMounted] = useState(false);
@@ -26,15 +41,31 @@ export default function LibraryPage() {
 
   useEffect(() => {
     setMounted(true);
+    
+    // 1. Check URL param first (priority)
+    const tabParam = searchParams.get('tab') as TabType;
+    if (tabParam === 'history' || tabParam === 'watchlist') {
+      setActiveTab(tabParam);
+      localStorage.setItem('library_active_tab', tabParam);
+      return;
+    }
+
+    // 2. Check localStorage if no URL param
     const savedTab = localStorage.getItem('library_active_tab') as TabType;
     if (savedTab === 'history' || savedTab === 'watchlist') {
       setActiveTab(savedTab);
     }
-  }, []);
+  }, [searchParams]);
 
   const handleTabChange = (tab: TabType) => {
     setActiveTab(tab);
     localStorage.setItem('library_active_tab', tab);
+    
+    // Update URL without full refresh to stay in sync
+    const params = new URLSearchParams(searchParams.toString());
+    params.set('tab', tab);
+    router.replace(`/library?${params.toString()}`, { scroll: false });
+    
     setIsSelectionMode(false);
     setSelectedIds([]);
   };

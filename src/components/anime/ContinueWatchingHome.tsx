@@ -28,7 +28,7 @@ export function ContinueWatchingHome() {
           </p>
         </div>
         <Link 
-          href="/library" 
+          href="/library?tab=history" 
           className="group hidden sm:flex items-center space-x-2 px-4 py-2 bg-card/30 hover:bg-secondary/10 border border-white/5 hover:border-secondary/30 transition-colors text-[10px] uppercase font-black tracking-widest text-muted-text hover:text-foreground"
         >
           <span>View History</span> 
@@ -39,7 +39,7 @@ export function ContinueWatchingHome() {
       {/* Mobile View All */}
       <div className="sm:hidden mb-6 flex justify-end">
         <Link 
-          href="/library" 
+          href="/library?tab=history" 
           className="group flex items-center space-x-2 text-[10px] uppercase font-black tracking-widest text-secondary"
         >
           <span>View History</span> 
