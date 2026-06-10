@@ -197,7 +197,7 @@ function SearchContent() {
           </div>
         ) : results.length > 0 ? (
           <>
-            <div className="symmetrical-grid-4-rows">
+            <div className="anime-grid">
               {results.map((anime: any) => (
                 <AnimeCard
                   key={anime.slug}

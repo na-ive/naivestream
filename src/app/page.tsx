@@ -73,7 +73,7 @@ export default async function HomePage() {
             </Link>
           </div>
           <div className="symmetrical-grid-2-rows">
-            {ongoing.slice(0, 16).map((anime: any) => (
+            {ongoing.slice(0, 12).map((anime: any) => (
               <AnimeCard
                 key={anime.slug}
                 id={anime.slug}
@@ -118,7 +118,7 @@ export default async function HomePage() {
             </Link>
           </div>
           <div className="symmetrical-grid-2-rows">
-            {completed.slice(0, 16).map((anime: any) => (
+            {completed.slice(0, 12).map((anime: any) => (
               <AnimeCard
                 key={anime.slug}
                 id={anime.slug}

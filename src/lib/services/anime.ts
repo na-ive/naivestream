@@ -103,7 +103,7 @@ export const AnimeService = {
    */
   async getAnimeList({ 
     page = 1, 
-    limit = 40, 
+    limit = 36, 
     status = null as string | null,
     orderBy = 'last_updated' as string
   }) {
@@ -230,21 +230,21 @@ export const AnimeService = {
     const popularSql = `
       SELECT ${commonSelect} FROM anime a 
       WHERE ${SMART_STATUS_CLAUSES.Ongoing}
-      ORDER BY a.popularity ASC, a.last_updated DESC LIMIT 20
+      ORDER BY a.popularity ASC, a.last_updated DESC LIMIT 12
     `;
     const popular = db.prepare(popularSql).all() as any[];
 
     const ongoingSql = `
       SELECT ${commonSelect} FROM anime a 
       WHERE ${SMART_STATUS_CLAUSES.Ongoing} 
-      ORDER BY a.last_updated DESC LIMIT 30
+      ORDER BY a.last_updated DESC LIMIT 12
     `;
     const ongoing = db.prepare(ongoingSql).all() as any[];
 
     const completedSql = `
       SELECT ${commonSelect} FROM anime a 
       WHERE ${SMART_STATUS_CLAUSES.Completed} 
-      ORDER BY a.last_updated DESC LIMIT 30
+      ORDER BY a.last_updated DESC LIMIT 12
     `;
     const completed = db.prepare(completedSql).all() as any[];
     
@@ -343,7 +343,7 @@ export const AnimeService = {
     rating = '',
     order = 'popularity',
     page = 1, 
-    limit = 20 
+    limit = 24 
   }) {
     const offset = (page - 1) * limit;
     let sql = 'SELECT DISTINCT a.*, (SELECT MAX(eps_number) FROM episodes WHERE anime_id = a.id) as latest_episode FROM anime a';

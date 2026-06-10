@@ -22,7 +22,7 @@ export function GenreAnimeList({ initialAnime, slug, initialHasMore }: GenreAnim
     
     try {
       const nextPage = page + 1;
-      const res = await fetch(`/api/anime/by-genre?slug=${slug}&page=${nextPage}&limit=20`);
+      const res = await fetch(`/api/anime/by-genre?slug=${slug}&page=${nextPage}&limit=24`);
       const data = await res.json();
       const newAnime = data.items || [];
       

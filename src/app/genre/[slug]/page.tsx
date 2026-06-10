@@ -20,7 +20,7 @@ export default async function GenreDetailPage(props: {
     notFound();
   }
 
-  const result = await AnimeService.getAnimeByGenre(slug, 1, 20);
+  const result = await AnimeService.getAnimeByGenre(slug, 1, 24);
   const animeList = result.items;
   const genreTitle = result.genreName || slug.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
 

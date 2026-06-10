@@ -100,21 +100,8 @@
   }
 }
 
-@media (min-width: 1800px) {
-  .anime-grid {
-    grid-template-columns: repeat(7, 1fr);
-    gap: 1.5rem;
-  }
-}
-
-/* Symmetrical Grid Utilities */
+/* Symmetrical Grid Utilities (Homepage Only) */
 .symmetrical-grid-2-rows {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 1rem;
-}
-
-.symmetrical-grid-4-rows {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 1rem;
@@ -122,17 +109,12 @@
 
 /* 2 Columns (Mobile) */
 .symmetrical-grid-2-rows > *:nth-child(n+5) { display: none; }
-.symmetrical-grid-4-rows > *:nth-child(n+9) { display: none; }
 
 @media (min-width: 640px) {
   /* 3 Columns */
   .symmetrical-grid-2-rows { grid-template-columns: repeat(3, 1fr); gap: 1.25rem; }
   .symmetrical-grid-2-rows > *:nth-child(n+5) { display: block; }
   .symmetrical-grid-2-rows > *:nth-child(n+7) { display: none; }
-  
-  .symmetrical-grid-4-rows { grid-template-columns: repeat(3, 1fr); gap: 1.25rem; }
-  .symmetrical-grid-4-rows > *:nth-child(n+9) { display: block; }
-  .symmetrical-grid-4-rows > *:nth-child(n+13) { display: none; }
 }
 
 @media (min-width: 1024px) {
@@ -140,10 +122,6 @@
   .symmetrical-grid-2-rows { grid-template-columns: repeat(4, 1fr); gap: 1.5rem; }
   .symmetrical-grid-2-rows > *:nth-child(n+7) { display: block; }
   .symmetrical-grid-2-rows > *:nth-child(n+9) { display: none; }
-
-  .symmetrical-grid-4-rows { grid-template-columns: repeat(4, 1fr); gap: 1.5rem; }
-  .symmetrical-grid-4-rows > *:nth-child(n+13) { display: block; }
-  .symmetrical-grid-4-rows > *:nth-child(n+17) { display: none; }
 }
 
 @media (min-width: 1280px) {
@@ -151,10 +129,6 @@
   .symmetrical-grid-2-rows { grid-template-columns: repeat(5, 1fr); }
   .symmetrical-grid-2-rows > *:nth-child(n+9) { display: block; }
   .symmetrical-grid-2-rows > *:nth-child(n+11) { display: none; }
-
-  .symmetrical-grid-4-rows { grid-template-columns: repeat(5, 1fr); }
-  .symmetrical-grid-4-rows > *:nth-child(n+17) { display: block; }
-  .symmetrical-grid-4-rows > *:nth-child(n+21) { display: none; }
 }
 
 @media (min-width: 1536px) {
@@ -162,21 +136,29 @@
   .symmetrical-grid-2-rows { grid-template-columns: repeat(6, 1fr); }
   .symmetrical-grid-2-rows > *:nth-child(n+11) { display: block; }
   .symmetrical-grid-2-rows > *:nth-child(n+13) { display: none; }
-
-  .symmetrical-grid-4-rows { grid-template-columns: repeat(6, 1fr); }
-  .symmetrical-grid-4-rows > *:nth-child(n+21) { display: block; }
-  .symmetrical-grid-4-rows > *:nth-child(n+25) { display: none; }
 }
 
-@media (min-width: 1800px) {
-  /* 7 Columns */
-  .symmetrical-grid-2-rows { grid-template-columns: repeat(7, 1fr); }
-  .symmetrical-grid-2-rows > *:nth-child(n+13) { display: block; }
-  .symmetrical-grid-2-rows > *:nth-child(n+15) { display: none; }
+/* Standard Anime Grid (For Listing Pages) */
+.anime-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
 
-  .symmetrical-grid-4-rows { grid-template-columns: repeat(7, 1fr); }
-  .symmetrical-grid-4-rows > *:nth-child(n+25) { display: block; }
-  .symmetrical-grid-4-rows > *:nth-child(n+29) { display: none; }
+@media (min-width: 640px) {
+  .anime-grid { grid-template-columns: repeat(3, 1fr); gap: 1.25rem; }
+}
+
+@media (min-width: 1024px) {
+  .anime-grid { grid-template-columns: repeat(4, 1fr); gap: 1.5rem; }
+}
+
+@media (min-width: 1280px) {
+  .anime-grid { grid-template-columns: repeat(5, 1fr); gap: 1.5rem; }
+}
+
+@media (min-width: 1536px) {
+  .anime-grid { grid-template-columns: repeat(6, 1fr); gap: 1.5rem; }
 }
 
 /* Custom Cyberpunk Utilities */
