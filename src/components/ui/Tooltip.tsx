@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
 
@@ -15,21 +15,20 @@ export interface TooltipProps {
 
 export function Tooltip({ content, children, position = 'top', className, wrapperClassName, delay = 0 }: TooltipProps) {
   const [isVisible, setIsVisible] = useState(false);
-  const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const handleMouseEnter = () => {
     if (delay > 0) {
-      const id = setTimeout(() => setIsVisible(true), delay);
-      setTimeoutId(id);
+      timeoutRef.current = setTimeout(() => setIsVisible(true), delay);
     } else {
       setIsVisible(true);
     }
   };
 
   const handleMouseLeave = () => {
-    if (timeoutId) {
-      clearTimeout(timeoutId);
-      setTimeoutId(null);
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+      timeoutRef.current = null;
     }
     setIsVisible(false);
   };
@@ -37,9 +36,9 @@ export function Tooltip({ content, children, position = 'top', className, wrappe
   useEffect(() => {
     const handleHide = () => {
       setIsVisible(false);
-      if (timeoutId) {
-        clearTimeout(timeoutId);
-        setTimeoutId(null);
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+        timeoutRef.current = null;
       }
     };
 
@@ -52,7 +51,7 @@ export function Tooltip({ content, children, position = 'top', className, wrappe
       document.removeEventListener('visibilitychange', handleHide);
       window.removeEventListener('scroll', handleHide, true);
     };
-  }, [timeoutId]);
+  }, []);
 
   const positionClasses = {
     top: 'bottom-full left-1/2 -translate-x-1/2 mb-2',

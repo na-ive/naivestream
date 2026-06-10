@@ -51,8 +51,9 @@ export default function WatchContent({ id }: { id: string }) {
 
   // Auto-scroll to active episode
   useEffect(() => {
+    let timeoutId: NodeJS.Timeout;
     if (activeEpisodeRef.current && scrollContainerRef.current && !loading) {
-      setTimeout(() => {
+      timeoutId = setTimeout(() => {
         activeEpisodeRef.current?.scrollIntoView({
           behavior: 'smooth',
           block: 'center',
@@ -60,6 +61,9 @@ export default function WatchContent({ id }: { id: string }) {
         });
       }, 300);
     }
+    return () => {
+      if (timeoutId) clearTimeout(timeoutId);
+    };
   }, [id, loading, animeData]);
 
   // Load Theater Mode preference

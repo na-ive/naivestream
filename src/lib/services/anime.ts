@@ -7,6 +7,20 @@ if (!globalDb) {
 
 const db = globalDb;
 
+const MAX_CACHED_STMTS = 100;
+const statementCache = new Map<string, any>();
+
+function getPreparedStatement(sql: string) {
+  if (!statementCache.has(sql)) {
+    if (statementCache.size >= MAX_CACHED_STMTS) {
+      const firstKey = statementCache.keys().next().value;
+      if (firstKey !== undefined) statementCache.delete(firstKey);
+    }
+    statementCache.set(sql, db.prepare(sql));
+  }
+  return statementCache.get(sql);
+}
+
 export interface AnimeMetadata {
   id: number;
   slug: string;
@@ -134,7 +148,7 @@ export const AnimeService = {
     if (status && status !== 'Ongoing' && status !== 'Completed') params.push(status);
     params.push(limit, offset);
 
-    const items = db.prepare(query).all(...params) as any[];
+    const items = getPreparedStatement(query).all(...params) as any[];
     
     // Count total
     let countQuery = 'SELECT COUNT(*) as total FROM anime a';
@@ -147,7 +161,7 @@ export const AnimeService = {
       countQuery += ` WHERE status = ?`;
       countParams.push(status);
     }
-    const total = (db.prepare(countQuery).get(...countParams) as any).total;
+    const total = (getPreparedStatement(countQuery).get(...countParams) as any).total;
 
     return {
       items: items.map(item => ({
@@ -167,17 +181,17 @@ export const AnimeService = {
    * Get full details of an anime by its slug
    */
   async getAnimeBySlug(slug: string) {
-    const anime = db.prepare(`SELECT ${SQL_BASE_SELECT} FROM anime a WHERE a.slug = ?`).get(slug) as any | undefined;
+    const anime = getPreparedStatement(`SELECT ${SQL_BASE_SELECT} FROM anime a WHERE a.slug = ?`).get(slug) as any | undefined;
     if (!anime) return null;
 
-    const genres = db.prepare(`
+    const genres = getPreparedStatement(`
       SELECT g.name, g.slug 
       FROM genres g 
       JOIN anime_genres ag ON g.id = ag.genre_id 
       WHERE ag.anime_id = ?
     `).all(anime.id) as { name: string; slug: string }[];
 
-    const characters = db.prepare(`
+    const characters = getPreparedStatement(`
       SELECT c.name, c.image, ac.role, va.name as va_name, va.image as va_image
       FROM characters c
       JOIN anime_characters ac ON c.id = ac.character_id
@@ -213,7 +227,7 @@ export const AnimeService = {
       LIMIT ?
     `;
     const searchPattern = `%${query}%`;
-    const items = db.prepare(sql).all(searchPattern, searchPattern, searchPattern, limit) as any[];
+    const items = getPreparedStatement(sql).all(searchPattern, searchPattern, searchPattern, limit) as any[];
     return items.map(item => ({
       ...item,
       status: getSmartStatus(item),
@@ -226,13 +240,13 @@ export const AnimeService = {
    */
   async getHomeData() {
     const popularSql = `SELECT ${SQL_BASE_SELECT} FROM anime a WHERE ${SMART_STATUS_CLAUSES.Ongoing} ORDER BY CASE WHEN ${SQL_ACTUAL_COUNT} > 0 THEN 0 ELSE 1 END ASC, a.popularity ASC LIMIT 12`;
-    const popular = db.prepare(popularSql).all() as any[];
+    const popular = getPreparedStatement(popularSql).all() as any[];
 
     const ongoingSql = `SELECT ${SQL_BASE_SELECT} FROM anime a WHERE ${SMART_STATUS_CLAUSES.Ongoing} ORDER BY CASE WHEN ${SQL_ACTUAL_COUNT} > 0 THEN 0 ELSE 1 END ASC, a.last_updated DESC LIMIT 12`;
-    const ongoing = db.prepare(ongoingSql).all() as any[];
+    const ongoing = getPreparedStatement(ongoingSql).all() as any[];
 
     const completedSql = `SELECT ${SQL_BASE_SELECT} FROM anime a WHERE ${SMART_STATUS_CLAUSES.Completed} ORDER BY CASE WHEN ${SQL_ACTUAL_COUNT} > 0 THEN 0 ELSE 1 END ASC, a.last_updated DESC LIMIT 12`;
-    const completed = db.prepare(completedSql).all() as any[];
+    const completed = getPreparedStatement(completedSql).all() as any[];
     
     const normalizeItems = (list: any[]) => list.map(item => ({
       ...item,
@@ -248,15 +262,15 @@ export const AnimeService = {
   },
 
   async getAllGenres() {
-    return db.prepare('SELECT * FROM genres ORDER BY name ASC').all() as { id: number; name: string; slug: string }[];
+    return getPreparedStatement('SELECT * FROM genres ORDER BY name ASC').all() as { id: number; name: string; slug: string }[];
   },
 
   async getAnimeByGenre(genreSlug: string, page = 1, limit = 24) {
     const offset = (page - 1) * limit;
-    const genre = db.prepare('SELECT id, name FROM genres WHERE slug = ?').get(genreSlug) as { id: number, name: string } | undefined;
+    const genre = getPreparedStatement('SELECT id, name FROM genres WHERE slug = ?').get(genreSlug) as { id: number, name: string } | undefined;
     if (!genre) return { items: [], pagination: { current_page: page, last_page: 0, total: 0 }, genreName: '' };
 
-    const items = db.prepare(`
+    const items = getPreparedStatement(`
       SELECT ${SQL_BASE_SELECT} 
       FROM anime a
       JOIN anime_genres ag ON a.id = ag.anime_id
@@ -265,7 +279,7 @@ export const AnimeService = {
       LIMIT ? OFFSET ?
     `).all(genre.id, limit, offset) as any[];
 
-    const total = (db.prepare(`SELECT COUNT(*) as total FROM anime_genres WHERE genre_id = ?`).get(genre.id) as any).total;
+    const total = (getPreparedStatement(`SELECT COUNT(*) as total FROM anime_genres WHERE genre_id = ?`).get(genre.id) as any).total;
 
     return {
       items: items.map(item => ({ 
@@ -282,7 +296,7 @@ export const AnimeService = {
     const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
     const schedule: Record<string, AnimeMetadata[]> = {};
     for (const day of days) {
-      const items = db.prepare(`SELECT ${SQL_BASE_SELECT} FROM anime a WHERE ${SMART_STATUS_CLAUSES.Ongoing} AND release_day = ? ORDER BY score DESC`).all(day) as any[];
+      const items = getPreparedStatement(`SELECT ${SQL_BASE_SELECT} FROM anime a WHERE ${SMART_STATUS_CLAUSES.Ongoing} AND release_day = ? ORDER BY score DESC`).all(day) as any[];
       schedule[day] = items.map(item => ({ ...item, status: getSmartStatus(item), synopsis: cleanSynopsis(item.synopsis) }));
     }
     return schedule;
@@ -344,8 +358,8 @@ export const AnimeService = {
     const countParams = [...params];
     params.push(limit, offset);
 
-    const items = db.prepare(sql).all(...params) as any[];
-    const totalResult = db.prepare(countSql).get(...countParams) as { total: number };
+    const items = getPreparedStatement(sql).all(...params) as any[];
+    const totalResult = getPreparedStatement(countSql).get(...countParams) as { total: number };
     const total = totalResult ? totalResult.total : 0;
 
     return {
@@ -355,15 +369,15 @@ export const AnimeService = {
   },
 
   async getEpisodes(animeId: number) {
-    return db.prepare('SELECT * FROM episodes WHERE anime_id = ? ORDER BY eps_number DESC').all(animeId) as Episode[];
+    return getPreparedStatement('SELECT * FROM episodes WHERE anime_id = ? ORDER BY eps_number DESC').all(animeId) as Episode[];
   },
 
   async getEpisodeBySlug(slug: string) {
-    return db.prepare('SELECT * FROM episodes WHERE slug = ?').get(slug) as Episode | undefined;
+    return getPreparedStatement('SELECT * FROM episodes WHERE slug = ?').get(slug) as Episode | undefined;
   },
 
   async getAnimeById(id: number) {
-    const item = db.prepare(`SELECT ${SQL_BASE_SELECT} FROM anime a WHERE id = ?`).get(id) as any | undefined;
+    const item = getPreparedStatement(`SELECT ${SQL_BASE_SELECT} FROM anime a WHERE id = ?`).get(id) as any | undefined;
     if (!item) return undefined;
     return { ...item, status: getSmartStatus(item), synopsis: cleanSynopsis(item.synopsis) };
   }

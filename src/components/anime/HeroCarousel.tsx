@@ -130,7 +130,7 @@ export function HeroCarousel({ items }: HeroCarouselProps) {
               {current.genres?.slice(0, 5).map((genre: string, idx: number) => (
                 <Link 
                   key={idx}
-                  href={`/genre/${genre.slug || genre.toLowerCase().replace(/\s+/g, '-')}`}
+                  href={`/genre/${genre.toLowerCase().replace(/\s+/g, '-')}`}
                   className="px-3 py-1 bg-secondary text-background text-[10px] font-black uppercase tracking-widest skew-x-[-15deg] hover:bg-secondary/80 transition-all"
                 >
                   <span className="inline-block skew-x-[15deg]">{genre}</span>
