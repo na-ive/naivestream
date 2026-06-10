@@ -214,14 +214,17 @@ function SearchContent() {
         <button
           onClick={() => setShowFilters(!showFilters)}
           className={cn(
-            "flex items-center gap-2 px-5 py-4 border-2 text-sm font-black uppercase tracking-wider transition-all shrink-0",
+            "flex items-center justify-center gap-2 px-5 py-4 border-2 text-sm font-black uppercase tracking-wider transition-all shrink-0",
             showFilters
               ? "bg-secondary text-background border-secondary"
               : "bg-card/50 text-muted-text border-secondary/20 hover:border-secondary/50"
           )}
         >
-          <Filter className="w-4 h-4" />
-          {showFilters ? 'Hide Filters' : 'Show Filters'}
+          <Filter className="w-4 h-4 shrink-0" />
+          <span className="relative grid">
+            <span className="invisible col-start-1 row-start-1">Show Filters</span>
+            <span className="col-start-1 row-start-1">{showFilters ? 'Hide Filters' : 'Show Filters'}</span>
+          </span>
         </button>
       </div>
 
@@ -229,62 +232,85 @@ function SearchContent() {
         {showFilters && (
           <div className="space-y-4 p-4 bg-card/20 border border-secondary/10">
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-              <CustomSelect
-                value={status}
-                onChange={(v) => updateFilters({ status: v })}
-                options={FILTER_OPTIONS.status}
-                placeholder="Status"
-              />
-              <CustomSelect
-                value={type}
-                onChange={(v) => updateFilters({ type: v })}
-                options={FILTER_OPTIONS.type}
-                placeholder="Type"
-              />
-              <CustomSelect
-                value={season}
-                onChange={(v) => updateFilters({ season: v })}
-                options={FILTER_OPTIONS.season}
-                placeholder="Season"
-              />
-              <CustomSelect
-                value={year}
-                onChange={(v) => updateFilters({ year: v })}
-                options={yearOptions}
-                placeholder="Year"
-              />
-              <CustomSelect
-                value={source}
-                onChange={(v) => updateFilters({ source: v })}
-                options={FILTER_OPTIONS.source}
-                placeholder="Source"
-              />
-              <CustomSelect
-                value={rating}
-                onChange={(v) => updateFilters({ rating: v })}
-                options={FILTER_OPTIONS.rating}
-                placeholder="Rating"
-              />
-              <CustomSelect
-                value={order}
-                onChange={(v) => updateFilters({ order: v })}
-                options={FILTER_OPTIONS.order}
-                placeholder="Order"
-                formatDisplay={(o) => `Sort by: ${o.label}`}
-              />
-              <MultiSelect
-                values={selectedStudios}
-                onChange={(v) => {
-                  const params = new URLSearchParams(searchParams.toString());
-                  if (v.length > 0) params.set('studios', v.join(','));
-                  else params.delete('studios');
-                  params.set('page', '1');
-                  router.push(`/search?${params.toString()}`);
-                }}
-                options={studioOptions}
-                placeholder="Studio"
-                formatDisplay={(selected) => selected.length === 1 ? selected[0].label : `Studio (${selected.length})`}
-              />
+              <div className="flex flex-col gap-1">
+                <span className="text-xs font-bold uppercase tracking-wider text-foreground">Status</span>
+                <CustomSelect
+                  value={status}
+                  onChange={(v) => updateFilters({ status: v })}
+                  options={FILTER_OPTIONS.status}
+                  placeholder="Status"
+                />
+              </div>
+              <div className="flex flex-col gap-1">
+                <span className="text-xs font-bold uppercase tracking-wider text-foreground">Type</span>
+                <CustomSelect
+                  value={type}
+                  onChange={(v) => updateFilters({ type: v })}
+                  options={FILTER_OPTIONS.type}
+                  placeholder="Type"
+                />
+              </div>
+              <div className="flex flex-col gap-1">
+                <span className="text-xs font-bold uppercase tracking-wider text-foreground">Season</span>
+                <CustomSelect
+                  value={season}
+                  onChange={(v) => updateFilters({ season: v })}
+                  options={FILTER_OPTIONS.season}
+                  placeholder="Season"
+                />
+              </div>
+              <div className="flex flex-col gap-1">
+                <span className="text-xs font-bold uppercase tracking-wider text-foreground">Year</span>
+                <CustomSelect
+                  value={year}
+                  onChange={(v) => updateFilters({ year: v })}
+                  options={yearOptions}
+                  placeholder="Year"
+                />
+              </div>
+              <div className="flex flex-col gap-1">
+                <span className="text-xs font-bold uppercase tracking-wider text-foreground">Source</span>
+                <CustomSelect
+                  value={source}
+                  onChange={(v) => updateFilters({ source: v })}
+                  options={FILTER_OPTIONS.source}
+                  placeholder="Source"
+                />
+              </div>
+              <div className="flex flex-col gap-1">
+                <span className="text-xs font-bold uppercase tracking-wider text-foreground">Rating</span>
+                <CustomSelect
+                  value={rating}
+                  onChange={(v) => updateFilters({ rating: v })}
+                  options={FILTER_OPTIONS.rating}
+                  placeholder="Rating"
+                />
+              </div>
+              <div className="flex flex-col gap-1">
+                <span className="text-xs font-bold uppercase tracking-wider text-foreground">Sort</span>
+                <CustomSelect
+                  value={order}
+                  onChange={(v) => updateFilters({ order: v })}
+                  options={FILTER_OPTIONS.order}
+                  placeholder="Order"
+                />
+              </div>
+              <div className="flex flex-col gap-1">
+                <span className="text-xs font-bold uppercase tracking-wider text-foreground">Studio</span>
+                <MultiSelect
+                  values={selectedStudios}
+                  onChange={(v) => {
+                    const params = new URLSearchParams(searchParams.toString());
+                    if (v.length > 0) params.set('studios', v.join(','));
+                    else params.delete('studios');
+                    params.set('page', '1');
+                    router.push(`/search?${params.toString()}`);
+                  }}
+                  options={studioOptions}
+                  placeholder="All Studio"
+                  formatDisplay={(selected) => selected.length === 1 ? selected[0].label : `${selected.length} Studios selected`}
+                />
+              </div>
             </div>
 
             {/* Genre Toggle Buttons */}
