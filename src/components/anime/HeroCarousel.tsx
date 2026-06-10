@@ -7,6 +7,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { SmartWatchButton } from './SmartWatchButton';
+import { useTitleLang } from '@/lib/providers/TitleLangProvider';
 
 interface HeroCarouselProps {
   items: any[];
@@ -33,9 +34,12 @@ export function HeroCarousel({ items }: HeroCarouselProps) {
     return () => clearInterval(interval);
   }, [isAutoPlaying, nextSlide]);
 
+  const { titleLang } = useTitleLang();
+
   if (!items.length) return null;
 
   const current = items[currentIndex];
+  const displayTitle = titleLang === 'en' && current.title_english ? current.title_english : current.title;
 
   return (
     <section 
@@ -133,7 +137,7 @@ export function HeroCarousel({ items }: HeroCarouselProps) {
             className="flex-1 text-center md:text-left pt-2"
           >
             <h1 className="text-3xl md:text-4xl lg:text-5xl font-serif font-black leading-tight tracking-tighter text-foreground mb-2 uppercase line-clamp-2">
-              {current.title}
+              {displayTitle}
             </h1>
 
             <div className="flex items-center gap-3 mb-6">

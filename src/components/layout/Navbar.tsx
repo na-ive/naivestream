@@ -9,7 +9,7 @@ import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
 import { Tooltip } from '@/components/ui/Tooltip';
 
-import { ThemeToggle } from './ThemeToggle';
+import { PreferenceMenu } from './PreferenceMenu';
 import { LiveSearch } from '@/components/search/LiveSearch';
 
 export function Navbar() {
@@ -193,8 +193,8 @@ export function Navbar() {
                 </button>
               </Tooltip>
               
-              {/* Theme Toggle */}
-              <ThemeToggle />
+              {/* Preference Menu */}
+              <PreferenceMenu />
             </div>
           </div>
 
@@ -208,7 +208,7 @@ export function Navbar() {
             >
               <Shuffle className={cn("w-5 h-5", isRandomLoading && "animate-spin")} />
             </button>
-            <ThemeToggle />
+            <PreferenceMenu />
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               className="p-2 bg-secondary text-background cursor-pointer min-w-[44px] min-h-[44px] flex items-center justify-center"

@@ -8,6 +8,7 @@ import { EpisodeList } from "@/components/anime/EpisodeList";
 import { BookmarkButton } from "@/components/anime/BookmarkButton";
 import { CharacterCarousel } from "@/components/anime/CharacterCarousel";
 import { AnimeCard } from "@/components/anime/AnimeCard";
+import { AnimeTitleDisplay } from "@/components/anime/AnimeTitleDisplay";
 
 async function getAnimeDetails(slug: string) {
   const anime = await AnimeService.getAnimeBySlug(slug);
@@ -137,6 +138,7 @@ export default async function AnimeDetailPage(props: { params: Promise<{ id: str
             <ContinueWatching 
               animeId={id} 
               animeTitle={data.title} 
+              animeTitleEnglish={data.title_english}
               animeImage={poster} 
               source={source} 
               episodes={episodes}
@@ -146,6 +148,7 @@ export default async function AnimeDetailPage(props: { params: Promise<{ id: str
             <BookmarkButton 
               animeId={id} 
               animeTitle={data.title} 
+              animeTitleEnglish={data.title_english}
               animeImage={poster} 
               variant="full"
               className="w-full"
@@ -225,7 +228,9 @@ export default async function AnimeDetailPage(props: { params: Promise<{ id: str
           {/* Info & Content */}
           <div className="flex-grow min-w-0 space-y-8 mt-8 md:mt-0">
             <div className="space-y-4">
-              <h1 className="text-3xl md:text-6xl font-serif font-black leading-none tracking-tighter">{data.title || "Unknown Title"}</h1>
+              <h1 className="text-3xl md:text-6xl font-serif font-black leading-none tracking-tighter">
+                <AnimeTitleDisplay title={data.title} titleEnglish={data.title_english} />
+              </h1>
               <div className="flex flex-wrap gap-2">
                 {genres.map((genre: any, idx: number) => {
                   return (
@@ -258,6 +263,7 @@ export default async function AnimeDetailPage(props: { params: Promise<{ id: str
                 episodes={episodes} 
                 animeId={id} 
                 animeTitle={data.title} 
+                animeTitleEnglish={data.title_english}
                 poster={poster} 
                 source={source} 
               />
@@ -280,6 +286,7 @@ export default async function AnimeDetailPage(props: { params: Promise<{ id: str
                       key={anime.slug}
                       id={anime.slug}
                       title={anime.title}
+                      titleEnglish={anime.title_english}
                       image={anime.poster}
                       rating={String(anime.score)}
                       episode={anime.status === 'Ongoing' ? `ep ${anime.latest_episode || '??'}` : `${anime.episodes_count || '??'} eps`}

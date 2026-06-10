@@ -98,6 +98,7 @@ export default async function SchedulePage({ searchParams }: SchedulePageProps) 
               key={anime.slug}
               id={anime.slug}
               title={anime.title}
+              titleEnglish={anime.title_english}
               image={anime.poster}
               rating={String(anime.score)}
               episode={String(anime.episodes_count)}

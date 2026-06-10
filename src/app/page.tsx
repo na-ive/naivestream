@@ -2,6 +2,7 @@ import { AnimeService } from "@/lib/services/anime";
 import { AnimeCard } from "@/components/anime/AnimeCard";
 import { HeroCarousel } from "@/components/anime/HeroCarousel";
 import { ContinueWatchingHome } from "@/components/anime/ContinueWatchingHome";
+import { AnimeTitleDisplay } from '@/components/anime/AnimeTitleDisplay';
 import { ChevronRight, Calendar } from "@carbon/icons-react";
 import Link from "next/link";
 
@@ -84,6 +85,7 @@ export default async function HomePage() {
                 key={anime.slug}
                 id={anime.slug}
                 title={anime.title}
+                titleEnglish={anime.title_english}
                 image={anime.poster}
                 rating={String(anime.score)}
                 episode={`ep ${anime.latest_episode || '??'}`}
@@ -130,6 +132,7 @@ export default async function HomePage() {
                 key={anime.slug}
                 id={anime.slug}
                 title={anime.title}
+                titleEnglish={anime.title_english}
                 image={anime.poster}
                 rating={String(anime.score)}
                 episode={`${anime.episodes_count || '??'} eps`}
@@ -172,7 +175,7 @@ export default async function HomePage() {
                   <div className="flex items-center gap-4 pl-2">
                     <span className="text-[10px] font-mono text-muted-text/50">{(index + 1).toString().padStart(2, '0')}</span>
                     <span className="font-bold text-sm group-hover:text-secondary line-clamp-1 uppercase tracking-wider transition-colors">
-                      {anime.title}
+                      <AnimeTitleDisplay title={anime.title} titleEnglish={anime.title_english} />
                     </span>
                   </div>
                   <ChevronRight className="w-4 h-4 text-muted-text group-hover:text-secondary shrink-0 transition-transform group-hover:translate-x-1" />

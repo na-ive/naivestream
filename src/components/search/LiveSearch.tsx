@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { Search } from '@carbon/icons-react';
 import { cn } from '@/lib/utils';
 import { Skeleton } from '@/components/ui/Skeleton';
+import { useTitleLang } from '@/lib/providers/TitleLangProvider';
 
 interface SearchResult {
   id: number;
@@ -224,6 +225,8 @@ export function LiveSearch() {
 
 function SearchResultItem({ anime, isActive, onSelect, onHover }: { anime: SearchResult; isActive: boolean; onSelect: () => void; onHover: () => void }) {
   const [imgLoaded, setImgLoaded] = useState(false);
+  const { titleLang } = useTitleLang();
+  const displayTitle = titleLang === 'en' && anime.title_english ? anime.title_english : anime.title;
 
   return (
     <Link
@@ -259,7 +262,7 @@ function SearchResultItem({ anime, isActive, onSelect, onHover }: { anime: Searc
         <p className={cn(
           "text-sm font-black truncate uppercase tracking-tighter transition-colors",
           isActive ? "text-secondary" : "group-hover/item:text-secondary"
-        )}>{anime.title}</p>
+        )}>{displayTitle}</p>
         <div className="flex items-center gap-2 mt-1">
           <span className="text-[10px] font-black text-secondary bg-secondary/10 px-1.5 py-0.5 border border-secondary/30 uppercase tracking-tighter">{anime.score || '??'}</span>
           <p className="text-[10px] text-muted-text font-bold uppercase tracking-widest truncate">

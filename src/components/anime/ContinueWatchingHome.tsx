@@ -59,6 +59,7 @@ export function ContinueWatchingHome() {
               key={item.animeId}
               id={item.animeId}
               title={item.animeTitle}
+              titleEnglish={item.animeTitleEnglish}
               image={item.animeImage}
               episode={displayEp}
               hideBookmark

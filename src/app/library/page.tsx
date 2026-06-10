@@ -254,6 +254,7 @@ function LibraryContent() {
                     <AnimeCard
                       id={item.animeId}
                       title={item.animeTitle}
+                      titleEnglish={item.animeTitleEnglish}
                       image={item.animeImage}
                       hideBookmark={true}
                       disableHover={isSelectionMode}
@@ -324,6 +325,7 @@ function LibraryContent() {
                     <AnimeCard
                       id={item.animeId}
                       title={item.animeTitle}
+                      titleEnglish={item.animeTitleEnglish}
                       image={item.animeImage}
                       hideBookmark={true}
                       disableHover={isSelectionMode}

@@ -5,6 +5,7 @@ import { useSearchParams, useRouter } from 'next/navigation';
 import { AnimeAPI } from '@/lib/api';
 import { useHistory } from '@/lib/hooks/useHistory';
 import { useWatchedEpisodes } from '@/lib/hooks/useWatchedEpisodes';
+import { useTitleLang } from '@/lib/providers/TitleLangProvider';
 import { ChevronRight, Grid, Renew, Video, ServerDns, Screen, Theater, Download } from '@carbon/icons-react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
@@ -19,9 +20,19 @@ export default function WatchContent({ id }: { id: string }) {
   const animeTitle = searchParams.get('title') || '';
   const animeImg = searchParams.get('img') || '';
   const source = searchParams.get('source') || 'otakudesu';
+  const { titleLang } = useTitleLang();
 
   const [episodeData, setEpisodeData] = useState<any>(null);
   const [animeData, setAnimeData] = useState<any>(null);
+  const [rawTitle, setRawTitle] = useState('');
+  const [rawTitleEnglish, setRawTitleEnglish] = useState('');
+
+  const displayTitle = titleLang === 'en' && rawTitleEnglish ? rawTitleEnglish : (rawTitle || animeTitle);
+  const episodeDisplay = React.useMemo(() => {
+    if (!episodeData?.title) return '';
+    const match = episodeData.title.match(/Episode\s*(\d+(\.\d+)?)/i);
+    return match ? `Episode ${match[1]}` : episodeData.title;
+  }, [episodeData]);
   const [currentUrl, setCurrentUrl] = useState<string>('');
   const [currentResolution, setCurrentResolution] = useState<string>('');
   const [currentServer, setCurrentServer] = useState<string>('');
@@ -103,10 +114,10 @@ export default function WatchContent({ id }: { id: string }) {
         setIsCinemaMode(prev => !prev);
       }
       if (e.key.toLowerCase() === 'n' && e.shiftKey && nextEp) {
-        router.push(`/watch/${nextEp.episodeId}?anime=${animeId}&title=${encodeURIComponent(animeTitle)}&img=${encodeURIComponent(animeImg)}&source=${source}`);
+        router.push(`/watch/${nextEp.episodeId}?anime=${animeId}&title=${encodeURIComponent(displayTitle)}&img=${encodeURIComponent(animeImg)}&source=${source}`);
       }
       if (e.key.toLowerCase() === 'p' && e.shiftKey && prevEp) {
-        router.push(`/watch/${prevEp.episodeId}?anime=${animeId}&title=${encodeURIComponent(animeTitle)}&img=${encodeURIComponent(animeImg)}&source=${source}`);
+        router.push(`/watch/${prevEp.episodeId}?anime=${animeId}&title=${encodeURIComponent(displayTitle)}&img=${encodeURIComponent(animeImg)}&source=${source}`);
       }
     };
 
@@ -114,7 +125,23 @@ export default function WatchContent({ id }: { id: string }) {
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [isCinemaMode, toggleTheaterMode, prevEp, nextEp, router, animeId, animeTitle, animeImg, source]);
+  }, [isCinemaMode, toggleTheaterMode, prevEp, nextEp, router, animeId, displayTitle, animeImg, source]);
+
+  const [historySaved, setHistorySaved] = useState(false);
+
+  useEffect(() => {
+    if (!episodeData || !rawTitle || historySaved) return;
+    saveToHistory({
+      animeId,
+      animeTitle: rawTitle || animeTitle,
+      animeTitleEnglish: rawTitleEnglish || undefined,
+      animeImage: animeImg,
+      lastEpisodeId: id,
+      lastEpisodeTitle: episodeData.title || `Episode ${id}`,
+    });
+    markAsWatched(animeId, id);
+    setHistorySaved(true);
+  }, [episodeData, rawTitle, rawTitleEnglish, animeId, displayTitle, animeImg, id, saveToHistory, markAsWatched, historySaved]);
 
   const fetchEpisode = useCallback(async () => {
     if (!id || id === 'undefined') return;
@@ -154,18 +181,10 @@ export default function WatchContent({ id }: { id: string }) {
         }
       }
 
-      // Save to history
-      saveToHistory({
-        animeId,
-        animeTitle,
-        animeImage: animeImg,
-        lastEpisodeId: id,
-        lastEpisodeTitle: sanitizedData.title || `Episode ${id}`,
-      });
-      markAsWatched(animeId, id);
+      // Save to history (done in separate useEffect after all data loads)
     }
     setLoading(false);
-  }, [id, animeId, animeTitle, animeImg, source, saveToHistory, markAsWatched]);
+  }, [id, animeId, animeTitle, animeImg, source]);
 
   const fetchAnimeData = useCallback(async () => {
     if (!animeId || animeId === 'undefined') return;
@@ -173,7 +192,6 @@ export default function WatchContent({ id }: { id: string }) {
       const res = await fetch(`/api/anime/episodes?slug=${animeId}`);
       const data = await res.json();
       if (data?.episodes) {
-        // Episodes from DB are already filtered for anomalies in the API route
         const episodes = data.episodes.map((ep: any) => ({
           episodeId: ep.slug,
           title: ep.title,
@@ -181,6 +199,10 @@ export default function WatchContent({ id }: { id: string }) {
         }));
         
         setAnimeData({ episodeList: episodes });
+        if (data.title) {
+          setRawTitle(data.title);
+          setRawTitleEnglish(data.titleEnglish || '');
+        }
       }
     } catch (e) {
       console.error('Failed to fetch anime data for episode list', e);
@@ -295,9 +317,9 @@ export default function WatchContent({ id }: { id: string }) {
         <div className="relative z-10 flex items-center space-x-2 whitespace-nowrap overflow-hidden pr-2">
           <Link href="/" className="hover:text-foreground transition-colors shrink-0">Home</Link>
           <ChevronRight className="w-3 h-3 shrink-0 text-secondary" />
-          <Link href={`/anime/${animeId}`} className="hover:text-foreground truncate max-w-[120px] sm:max-w-[200px] transition-colors">{animeTitle}</Link>
+          <Link href={`/anime/${animeId}`} className="hover:text-foreground truncate max-w-[120px] sm:max-w-[200px] transition-colors">{displayTitle}</Link>
           <ChevronRight className="w-3 h-3 shrink-0 text-secondary" />
-          <span className="text-secondary truncate max-w-[150px] sm:max-w-[300px]">{episodeData.title}</span>
+          <span className="text-secondary truncate max-w-[150px] sm:max-w-[300px]">{displayTitle}</span>
         </div>
       </div>
 
@@ -351,7 +373,7 @@ export default function WatchContent({ id }: { id: string }) {
               style={{ clipPath: 'polygon(0 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%)' }}
             >
               <div className="relative z-10">
-                <h1 className="text-2xl font-serif font-black tracking-tighter uppercase leading-none">{episodeData.title}</h1>
+                <h1 className="text-2xl font-serif font-black tracking-tighter uppercase leading-none">{displayTitle}{episodeDisplay ? ` ${episodeDisplay}` : ''}</h1>
                 <p className="text-secondary font-bold text-xs mt-2 tracking-[0.3em] uppercase opacity-60 flex items-center">
                   <ServerDns className="w-3 h-3 mr-2" />
                   Streaming from {currentServer || 'Primary Server'} {currentResolution && `• ${currentResolution}`}
@@ -397,7 +419,7 @@ export default function WatchContent({ id }: { id: string }) {
               {prevEp ? (
                 <Tooltip content="Shift + P" position="top" wrapperClassName="w-full">
                   <Link
-                    href={`/watch/${prevEp.episodeId}?anime=${animeId}&title=${encodeURIComponent(animeTitle)}&img=${encodeURIComponent(animeImg)}&source=${source}`}
+                    href={`/watch/${prevEp.episodeId}?anime=${animeId}&title=${encodeURIComponent(displayTitle)}&img=${encodeURIComponent(animeImg)}&source=${source}`}
                     className="btn-accent w-full py-2.5 text-[10px] tracking-[0.2em] flex items-center justify-center text-center"
                   >
                     Prev
@@ -414,7 +436,7 @@ export default function WatchContent({ id }: { id: string }) {
               {nextEp ? (
                 <Tooltip content="Shift + N" position="top" wrapperClassName="w-full">
                   <Link
-                    href={`/watch/${nextEp.episodeId}?anime=${animeId}&title=${encodeURIComponent(animeTitle)}&img=${encodeURIComponent(animeImg)}&source=${source}`}
+                    href={`/watch/${nextEp.episodeId}?anime=${animeId}&title=${encodeURIComponent(displayTitle)}&img=${encodeURIComponent(animeImg)}&source=${source}`}
                     className="btn-primary w-full py-2.5 text-[10px] tracking-[0.2em] flex items-center justify-center text-center"
                   >
                     Next
@@ -445,7 +467,7 @@ export default function WatchContent({ id }: { id: string }) {
                       <Link
                         key={ep.episodeId}
                         ref={isActive ? activeEpisodeRef : null}
-                        href={`/watch/${ep.episodeId}?anime=${animeId}&title=${encodeURIComponent(animeTitle)}&img=${encodeURIComponent(animeImg)}&source=${source}`}
+                        href={`/watch/${ep.episodeId}?anime=${animeId}&title=${encodeURIComponent(displayTitle)}&img=${encodeURIComponent(animeImg)}&source=${source}`}
                         className={`w-full aspect-square flex items-center justify-center text-xs font-bold transition-all ${isActive
                             ? 'bg-secondary text-background shadow-[0_0_10px_rgba(34,197,94,0.3)] pointer-events-none'
                             : 'bg-background hover:bg-secondary/20 border border-white/5 hover:border-secondary/50 text-foreground/70 hover:text-secondary'
@@ -503,8 +525,8 @@ export default function WatchContent({ id }: { id: string }) {
           </div>
 
           <div className="lg:hidden p-6 bg-card border-l-4 border-secondary">
-            <h1 className="text-xl font-serif font-black tracking-tighter uppercase leading-none">{episodeData.title}</h1>
-            <p className="text-secondary font-bold text-[9px] mt-2 tracking-[0.2em] uppercase opacity-60">Source: {source}</p>
+            <h1 className="text-xl font-serif font-black tracking-tighter uppercase leading-none">{displayTitle}{episodeDisplay ? ` ${episodeDisplay}` : ''}</h1>
+            <p className="text-secondary font-bold text-[10px] mt-1 tracking-[0.2em] uppercase opacity-60">Source: {source}</p>
           </div>
         </div>
       </div>

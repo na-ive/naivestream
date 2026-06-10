@@ -5,20 +5,25 @@ import Link from 'next/link';
 import { CaretRight, SkipForwardFilled } from '@carbon/icons-react';
 import { useHistory, WatchHistory } from '@/lib/hooks/useHistory';
 import { Skeleton } from '@/components/ui/Skeleton';
+import { useTitleLang } from '@/lib/providers/TitleLangProvider';
 
 export function ContinueWatching({ 
   animeId, 
   animeTitle, 
+  animeTitleEnglish,
   animeImage,
   source,
   episodes = []
 }: { 
   animeId: string; 
   animeTitle: string; 
+  animeTitleEnglish?: string;
   animeImage: string;
   source: string;
   episodes?: any[];
 }) {
+  const { titleLang } = useTitleLang();
+  const displayTitle = titleLang === 'en' && animeTitleEnglish ? animeTitleEnglish : animeTitle;
   const { history } = useHistory();
   const [lastWatched, setLastWatched] = useState<WatchHistory | null>(null);
   const [nextEp, setNextEp] = useState<any>(null);
@@ -40,7 +45,7 @@ export function ContinueWatching({
     }
   }, [history, animeId, episodes]);
 
-  const watchUrl = (id: string) => `/watch/${id}?anime=${animeId}&title=${encodeURIComponent(animeTitle)}&img=${encodeURIComponent(animeImage)}&source=${source}`;
+  const watchUrl = (id: string) => `/watch/${id}?anime=${animeId}&title=${encodeURIComponent(displayTitle)}&img=${encodeURIComponent(animeImage)}&source=${source}`;
 
   if (!lastWatched) {
     if (episodes.length === 0) return null;

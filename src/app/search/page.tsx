@@ -411,6 +411,7 @@ function SearchContent() {
                   key={anime.slug}
                   id={anime.slug}
                   title={anime.title}
+                  titleEnglish={anime.title_english}
                   image={anime.poster}
                   rating={String(anime.score)}
                   status={anime.status}

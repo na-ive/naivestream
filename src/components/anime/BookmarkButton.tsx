@@ -9,12 +9,13 @@ import { Tooltip } from '@/components/ui/Tooltip';
 interface BookmarkButtonProps {
   animeId: string;
   animeTitle: string;
+  animeTitleEnglish?: string;
   animeImage: string;
   className?: string;
   variant?: 'icon' | 'full';
 }
 
-export function BookmarkButton({ animeId, animeTitle, animeImage, className, variant = 'icon' }: BookmarkButtonProps) {
+export function BookmarkButton({ animeId, animeTitle, animeTitleEnglish, animeImage, className, variant = 'icon' }: BookmarkButtonProps) {
   const { isInWatchlist, toggleWatchlist } = useWatchlist();
   
   // To avoid hydration mismatch, we don't render the active state until mounted
@@ -28,7 +29,7 @@ export function BookmarkButton({ animeId, animeTitle, animeImage, className, var
   const handleClick = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    toggleWatchlist({ animeId, animeTitle, animeImage });
+    toggleWatchlist({ animeId, animeTitle, animeTitleEnglish, animeImage });
   };
 
   if (variant === 'full') {

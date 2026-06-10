@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Exo_2, Orbitron } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
+import { TitleLangProvider } from "@/lib/providers/TitleLangProvider";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { Toaster } from "sonner";
@@ -41,10 +42,12 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <div className="flex flex-col min-h-screen relative">
-            <Navbar />
-            <main className="grow pt-20">
-              {children}
-            </main>
+            <TitleLangProvider>
+              <Navbar />
+              <main className="grow pt-20">
+                {children}
+              </main>
+            </TitleLangProvider>
             <Footer />
           </div>
           <Toaster 

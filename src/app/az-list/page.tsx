@@ -1,6 +1,7 @@
 import { Metadata } from 'next';
 import { AnimeService } from "@/lib/services/anime";
 import Link from "next/link";
+import { AnimeTitleDisplay } from '@/components/anime/AnimeTitleDisplay';
 import { Catalog, FaceDissatisfied, ChevronRight } from "@carbon/icons-react";
 import { Pagination } from "@/components/layout/Pagination";
 
@@ -87,7 +88,7 @@ export default async function AZListPage(props: { searchParams: Promise<{ letter
               >
                 <div className="absolute inset-y-0 left-0 w-1 bg-secondary scale-y-0 group-hover:scale-y-100 transition-transform origin-top" />
                 <span className="font-bold text-sm group-hover:text-secondary line-clamp-1 mr-4 uppercase tracking-wider transition-colors pl-2">
-                  {anime.title}
+                  <AnimeTitleDisplay title={anime.title} titleEnglish={anime.title_english} />
                 </span>
                 <ChevronRight className="w-4 h-4 text-muted-text group-hover:text-secondary shrink-0 transition-transform group-hover:translate-x-1" />
               </Link>

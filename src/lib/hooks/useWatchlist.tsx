@@ -7,6 +7,7 @@ import { CheckboxChecked, TrashCan } from '@carbon/icons-react';
 export interface WatchlistItem {
   animeId: string;
   animeTitle: string;
+  animeTitleEnglish?: string;
   animeImage: string;
   addedAt: number;
 }

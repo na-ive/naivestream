@@ -7,20 +7,25 @@ import { useHistory } from '@/lib/hooks/useHistory';
 import { useWatchedEpisodes } from '@/lib/hooks/useWatchedEpisodes';
 import { cn } from '@/lib/utils';
 import { Skeleton } from '@/components/ui/Skeleton';
+import { useTitleLang } from '@/lib/providers/TitleLangProvider';
 
 export function EpisodeList({ 
   episodes, 
   animeId, 
   animeTitle, 
+  animeTitleEnglish,
   poster, 
   source 
 }: { 
   episodes: any[]; 
   animeId: string; 
   animeTitle: string; 
-  poster: string;
+  animeTitleEnglish?: string;
+  poster: string; 
   source: string;
 }) {
+  const { titleLang } = useTitleLang();
+  const displayTitle = titleLang === 'en' && animeTitleEnglish ? animeTitleEnglish : animeTitle;
   const { history } = useHistory();
   const { isWatched, getWatchedCount } = useWatchedEpisodes();
   const [lastEpId, setLastEpId] = useState<string | null>(null);
@@ -170,7 +175,7 @@ export function EpisodeList({
           return (
             <Link
               key={`${currentEpId}-${globalIndex}`}
-              href={`/watch/${currentEpId}?anime=${animeId}&title=${encodeURIComponent(animeTitle)}&img=${encodeURIComponent(poster)}&source=${source}`}
+              href={`/watch/${currentEpId}?anime=${animeId}&title=${encodeURIComponent(displayTitle)}&img=${encodeURIComponent(poster)}&source=${source}`}
               className={cn(
                 "flex items-center p-3 transition-all group relative overflow-hidden h-20",
                 isLastWatched 

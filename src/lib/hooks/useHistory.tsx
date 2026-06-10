@@ -7,6 +7,7 @@ import { TrashCan } from '@carbon/icons-react';
 export interface WatchHistory {
   animeId: string;
   animeTitle: string;
+  animeTitleEnglish?: string;
   animeImage: string;
   lastEpisodeId: string;
   lastEpisodeTitle: string;

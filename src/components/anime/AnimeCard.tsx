@@ -7,10 +7,12 @@ import { motion } from 'framer-motion';
 import { BookmarkButton } from './BookmarkButton';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { cn } from '@/lib/utils';
+import { useTitleLang } from '@/lib/providers/TitleLangProvider';
 
 interface AnimeCardProps {
   id: string;
   title: string;
+  titleEnglish?: string;
   image: string;
   status?: string;
   rating?: string;
@@ -21,9 +23,11 @@ interface AnimeCardProps {
   totalEpisodes?: number;
 }
 
-export function AnimeCard({ id, title, image, status, rating, episode, type, hideBookmark = false, disableHover = false, totalEpisodes }: AnimeCardProps) {
+export function AnimeCard({ id, title, titleEnglish, image, status, rating, episode, type, hideBookmark = false, disableHover = false, totalEpisodes }: AnimeCardProps) {
   const isEmpty = totalEpisodes === 0;
   const [imgLoaded, setImgLoaded] = useState(false);
+  const { titleLang } = useTitleLang();
+  const displayTitle = titleLang === 'en' && titleEnglish ? titleEnglish : title;
 
   return (
     <motion.div
@@ -111,7 +115,7 @@ export function AnimeCard({ id, title, image, status, rating, episode, type, hid
       {/* Bookmark Button (Outside Link) */}
       {!hideBookmark && (
         <div className="absolute top-2 right-2 z-40 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
-          <BookmarkButton animeId={id} animeTitle={title} animeImage={image} />
+          <BookmarkButton animeId={id} animeTitle={title} animeTitleEnglish={titleEnglish} animeImage={image} />
         </div>
       )}
 
@@ -120,7 +124,7 @@ export function AnimeCard({ id, title, image, status, rating, episode, type, hid
           "text-xs font-serif font-black uppercase tracking-widest line-clamp-2 transition-colors h-8",
           isEmpty ? "text-[#EAB308]/70 group-hover:text-[#EAB308]" : "group-hover:text-secondary"
         )}>
-          {title}
+          {displayTitle}
         </h3>
       </div>
     </motion.div>
