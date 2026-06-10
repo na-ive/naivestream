@@ -34,6 +34,13 @@ export default async function SchedulePage({ searchParams }: SchedulePageProps) 
     activeDay = defaultDay;
   }
 
+  // Compute counts per day
+  const dayCounts = DAY_ORDER.reduce<Record<string, number>>((acc, day) => {
+    acc[day] = (scheduleData[day] || []).length;
+    return acc;
+  }, {});
+  const totalScheduled = DAY_ORDER.reduce((sum, day) => sum + dayCounts[day], 0);
+
   // Find the anime list for the active day
   const animeList = scheduleData[activeDay] || [];
 
@@ -70,13 +77,18 @@ export default async function SchedulePage({ searchParams }: SchedulePageProps) 
               <Link
                 key={day}
                 href={`/schedule?day=${day}`}
-                className={`px-8 py-2.5 flex items-center justify-center font-bold text-sm transition-all uppercase tracking-widest ${
+                className={`px-6 py-2.5 flex items-center gap-2 font-bold text-sm transition-all uppercase tracking-widest ${
                   isActive
-                    ? 'bg-secondary text-background shadow-[0_0_15px_rgba(34,197,94,0.4)] pointer-events-none'
+                    ? 'bg-secondary text-background shadow-[0_0_15px_rgba(34,197,94,0.4)] pointer-events-none border border-transparent'
                     : 'bg-background/80 text-foreground/70 hover:bg-secondary/20 hover:text-secondary border border-secondary/20 hover:border-secondary/50'
                 }`}
               >
                 {day}
+                <span className={`text-[10px] font-mono px-1.5 py-0.5 ${
+                  isActive ? 'bg-background/20 text-background' : 'bg-card/50 text-muted-text'
+                }`}>
+                  {dayCounts[day]}
+                </span>
               </Link>
             );
           })}
@@ -98,11 +110,18 @@ export default async function SchedulePage({ searchParams }: SchedulePageProps) 
           ))}
         </div>
       ) : (
-        <div className="flex flex-col items-center justify-center py-20 text-center space-y-4 border-2 border-dashed border-secondary/20 bg-card">
+        <div className="flex flex-col items-center justify-center py-20 text-center space-y-6 border-2 border-dashed border-secondary/20 bg-card">
           <FaceDissatisfied className="w-12 h-12 text-muted-text" />
-          <p className="text-muted-text font-bold uppercase tracking-widest text-xs">
-            No anime scheduled for {activeDay}.
-          </p>
+          <div className="space-y-2">
+            <p className="text-muted-text font-bold uppercase tracking-widest text-xs">
+              No anime scheduled for {activeDay}
+            </p>
+            <p className="text-[10px] font-mono text-muted-text/50">
+              {totalScheduled > 0
+                ? `Try another day — ${totalScheduled} anime scheduled this week`
+                : 'Schedule data has not been loaded yet'}
+            </p>
+          </div>
         </div>
       )}
     </div>
