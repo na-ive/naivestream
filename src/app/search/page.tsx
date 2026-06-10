@@ -241,63 +241,56 @@ function SearchContent() {
       <div className="space-y-6">
         {showFilters && (
           <div className="space-y-4 p-4 bg-card/20 border border-secondary/10">
-            <div className="flex flex-wrap items-center gap-3">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
               <CustomSelect
                 value={status}
                 onChange={(v) => updateFilters({ status: v })}
                 options={FILTER_OPTIONS.status}
                 placeholder="Status"
               />
-
               <CustomSelect
                 value={type}
                 onChange={(v) => updateFilters({ type: v })}
                 options={FILTER_OPTIONS.type}
                 placeholder="Type"
               />
-
               <CustomSelect
                 value={season}
                 onChange={(v) => updateFilters({ season: v })}
                 options={FILTER_OPTIONS.season}
                 placeholder="Season"
               />
-
               <CustomSelect
                 value={year}
                 onChange={(v) => updateFilters({ year: v })}
                 options={yearOptions}
                 placeholder="Year"
               />
-
               <CustomSelect
                 value={source}
                 onChange={(v) => updateFilters({ source: v })}
                 options={FILTER_OPTIONS.source}
                 placeholder="Source"
               />
-
               <CustomSelect
                 value={rating}
                 onChange={(v) => updateFilters({ rating: v })}
                 options={FILTER_OPTIONS.rating}
                 placeholder="Rating"
               />
-
               <CustomSelect
                 value={order}
                 onChange={(v) => updateFilters({ order: v })}
                 options={FILTER_OPTIONS.order}
                 placeholder="Order"
               />
+              <SearchableSelect
+                value={studio}
+                onChange={(v) => updateFilters({ studio: v })}
+                options={studioOptions}
+                placeholder="Studio"
+              />
             </div>
-
-            <SearchableSelect
-              value={studio}
-              onChange={(v) => updateFilters({ studio: v })}
-              options={studioOptions}
-              placeholder="Studio"
-            />
 
             {/* Genre Toggle Buttons */}
             <div>
