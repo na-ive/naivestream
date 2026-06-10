@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
-import { Search, Moon, Sun, Menu, Close, ChevronDown } from '@carbon/icons-react';
+import { Search, Moon, Sun, Menu, Close, ChevronDown, Shuffle } from '@carbon/icons-react';
 import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
 import { Tooltip } from '@/components/ui/Tooltip';
@@ -22,6 +22,7 @@ export function Navbar() {
   const { theme, setTheme } = useTheme();
   const pathname = usePathname();
   const router = useRouter();
+  const [isRandomLoading, setIsRandomLoading] = useState(false);
 
   // Handle mounting on client to avoid hydration mismatch
   useEffect(() => {
@@ -43,6 +44,23 @@ export function Navbar() {
     if (searchQuery.trim()) {
       router.push(`/search?q=${encodeURIComponent(searchQuery)}`);
       setIsMenuOpen(false);
+    }
+  };
+
+  const handleRandomAnime = async () => {
+    if (isRandomLoading) return;
+    setIsRandomLoading(true);
+    try {
+      const res = await fetch('/api/anime/random');
+      const data = await res.json();
+      if (data.slug) {
+        router.push(`/anime/${data.slug}`);
+        setIsMenuOpen(false);
+      }
+    } catch (error) {
+      console.error('Failed to fetch random anime', error);
+    } finally {
+      setIsRandomLoading(false);
     }
   };
 
@@ -160,16 +178,40 @@ export function Navbar() {
               );
             })}
             
-            {/* Theme Toggle */}
-            <ThemeToggle />
+            <div className="flex items-center space-x-2 ml-2">
+              {/* Random Anime Button */}
+              <Tooltip content="Random Anime" position="bottom">
+                <button
+                  onClick={handleRandomAnime}
+                  disabled={isRandomLoading}
+                  className="relative p-2.5 border border-secondary/30 hover:border-secondary text-secondary transition-all cursor-pointer min-w-[44px] min-h-[44px] flex items-center justify-center group disabled:opacity-50"
+                  aria-label="Random Anime"
+                >
+                  <div className={cn("transition-transform duration-300 group-hover:scale-110", isRandomLoading && "animate-spin")}>
+                    <Shuffle className="w-5 h-5" />
+                  </div>
+                </button>
+              </Tooltip>
+              
+              {/* Theme Toggle */}
+              <ThemeToggle />
+            </div>
           </div>
 
           {/* Mobile Actions */}
-          <div className="flex md:hidden items-center space-x-4">
+          <div className="flex md:hidden items-center space-x-2">
+            <button
+              onClick={handleRandomAnime}
+              disabled={isRandomLoading}
+              className="p-2.5 border border-secondary/30 text-secondary flex items-center justify-center min-w-[44px] min-h-[44px] disabled:opacity-50"
+              aria-label="Random Anime"
+            >
+              <Shuffle className={cn("w-5 h-5", isRandomLoading && "animate-spin")} />
+            </button>
             <ThemeToggle />
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="p-2 bg-secondary text-background cursor-pointer"
+              className="p-2 bg-secondary text-background cursor-pointer min-w-[44px] min-h-[44px] flex items-center justify-center"
             >
               {isMenuOpen ? <Close className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
@@ -237,3 +279,4 @@ export function Navbar() {
     </nav>
   );
 }
+
