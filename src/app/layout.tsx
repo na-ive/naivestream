@@ -37,6 +37,7 @@ export default function RootLayout({
           attribute="class"
           defaultTheme="dark"
           enableSystem
+          enableColorScheme={false}
           disableTransitionOnChange
         >
           <div className="flex flex-col min-h-screen relative">

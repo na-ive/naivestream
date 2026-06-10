@@ -73,11 +73,11 @@ export function SmartWatchButton({
       )}
     >
       {loading ? (
-        <Renew className="w-5 h-5 animate-spin" />
+        <Renew className="w-6 h-6 animate-spin" />
       ) : (
-        <CaretRight className="w-5 h-5 fill-current" />
+        <CaretRight className="w-6 h-6 fill-current" />
       )}
-      <span>{loading ? 'Finding Episode...' : 'Watch Now'}</span>
+      <span className="text-xs">{loading ? 'Finding Episode...' : 'Watch Now'}</span>
     </button>
   );
 }

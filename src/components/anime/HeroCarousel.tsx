@@ -4,6 +4,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { ChevronLeft, ChevronRight } from '@carbon/icons-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { cn } from '@/lib/utils';
 import { SmartWatchButton } from './SmartWatchButton';
 
 interface HeroCarouselProps {
@@ -34,7 +35,7 @@ export function HeroCarousel({ items }: HeroCarouselProps) {
 
   return (
     <section 
-      className="relative w-full h-[75vh] min-h-[600px] overflow-hidden group bg-[#040D09]"
+      className="relative w-full h-[75vh] min-h-[650px] overflow-hidden group bg-background"
       onMouseEnter={() => setIsAutoPlaying(false)}
       onMouseLeave={() => setIsAutoPlaying(true)}
     >
@@ -47,58 +48,64 @@ export function HeroCarousel({ items }: HeroCarouselProps) {
           transition={{ duration: 1 }}
           className="absolute inset-0 z-0"
         >
-          {/* Background Image (Clear and Darkened) */}
+          {/* Background Image with Theme Tint */}
           <div className="absolute inset-0">
             <img
               src={current.poster || current.image}
               alt={current.title}
-              className="w-full h-full object-cover opacity-40 object-[center_25%] scale-105"
+              className="w-full h-full object-cover opacity-30 object-[center_25%] scale-105"
             />
-            {/* Dark Overlays for smooth transition */}
-            <div className="absolute inset-0 bg-black/20" />
-            <div className="absolute inset-0 bg-gradient-to-r from-[#040D09] via-[#040D09]/60 to-transparent" />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#040D09] via-transparent to-transparent" />
+            {/* Cyberpunk Overlays */}
+            <div className="absolute inset-0 bg-gradient-to-r from-background via-background/80 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent" />
+            
+            {/* Subtle Scanning Line Effect */}
+            <div className="absolute inset-0 bg-[linear-gradient(rgba(34,197,94,0.05)_1px,transparent_1px)] bg-[size:100%_4px] pointer-events-none opacity-20" />
           </div>
         </motion.div>
       </AnimatePresence>
 
-      <div className="relative z-10 h-full max-w-[1800px] mx-auto px-4 sm:px-6 lg:px-12 flex flex-col justify-center">
-        {/* Top Label - Lowered to avoid navbar overlap */}
-        <div className="absolute top-24 left-4 sm:left-6 lg:left-12">
-          <h2 className="text-white text-2xl md:text-3xl font-sans font-bold tracking-tight opacity-90">
-            Popular New Titles
+      <div className="relative z-10 h-full max-w-[1800px] mx-auto px-4 sm:px-6 lg:px-12 flex flex-col justify-center pt-20">
+        {/* Top Label with Theme Accent */}
+        <div className="absolute top-28 left-4 sm:left-6 lg:left-12 flex items-center gap-3">
+          <div className="w-1.5 h-6 bg-secondary shadow-[0_0_10px_var(--color-secondary)]" />
+          <h2 className="text-secondary text-xs font-mono font-black uppercase tracking-[0.4em]">
+            Trending <span className="text-foreground/50">//</span> Popular New Titles
           </h2>
         </div>
 
-        <div className="flex flex-col md:flex-row items-end md:items-start gap-8 md:gap-12 mt-32">
-          {/* Poster on Left */}
-          <div className="flex flex-col gap-4">
+        <div className="flex flex-col md:flex-row items-center md:items-start gap-10 md:gap-16 mt-16">
+          {/* Cyberpunk Poster on Left */}
+          <div className="flex flex-col gap-6 items-center md:items-start">
             <motion.div
               key={`poster-${current.id}`}
-              initial={{ x: -20, opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
+              initial={{ x: -30, opacity: 0, scale: 0.95 }}
+              animate={{ x: 0, opacity: 1, scale: 1 }}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="relative shrink-0 w-[190px] md:w-[260px] aspect-[2/3] shadow-[0_20px_50px_rgba(0,0,0,0.5)] overflow-hidden rounded-sm"
+              className="relative shrink-0 w-[200px] md:w-[280px] aspect-[2/3] border-4 border-background shadow-2xl overflow-hidden"
             >
               <img
                 src={current.poster || current.image}
                 alt={current.title}
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover transition-transform duration-700 group-hover/poster:scale-110"
               />
+              {/* Internal border like in /anime */}
+              <div className="absolute inset-0 border-2 border-secondary/20 pointer-events-none" />
+              
               {/* Japan Flag Indicator */}
-              <div className="absolute bottom-2.5 right-2.5 w-6 h-4 bg-white rounded-[1px] flex items-center justify-center overflow-hidden border border-black/10">
+              <div className="absolute bottom-4 right-4 w-6 h-4 bg-white/90 backdrop-blur-sm rounded-[1px] flex items-center justify-center overflow-hidden border border-black/10 z-20">
                 <div className="w-2 h-2 rounded-full bg-[#BC002D]" />
               </div>
             </motion.div>
             
-            {/* Author Name / Studio */}
+            {/* Author Name with Mono Styling */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.5 }}
-              className="text-white font-sans italic font-medium text-base md:text-lg opacity-90 pl-1"
+              className="text-muted-text font-mono font-bold text-xs uppercase tracking-widest flex items-center gap-2"
             >
-              {current.studios || 'Artist Unknown'}
+              <span className="text-secondary">#</span> {current.studios || 'PROD_UNKNOWN'}
             </motion.div>
           </div>
 
@@ -108,40 +115,43 @@ export function HeroCarousel({ items }: HeroCarouselProps) {
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.3 }}
-            className="flex-1 pt-4"
+            className="flex-1 text-center md:text-left pt-2"
           >
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-sans font-bold leading-[1.1] tracking-tight text-white mb-5">
+            <h1 className="text-3xl md:text-4xl lg:text-5xl font-serif font-black leading-tight tracking-tighter text-foreground mb-6 uppercase line-clamp-2">
               {current.title}
             </h1>
 
-            <div className="flex flex-wrap items-center gap-3 mb-8">
+            <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 mb-8">
               {current.genres?.slice(0, 5).map((genre: string, idx: number) => (
-                <span 
+                <Link 
                   key={idx}
-                  className={`px-2 py-0.5 text-[10px] font-black uppercase tracking-[0.15em] rounded-sm ${
-                    idx === 0 ? 'bg-[#F29100] text-white' : 'bg-white/10 text-white/90'
-                  }`}
+                  href={`/genre/${genre.slug || genre.toLowerCase().replace(/\s+/g, '-')}`}
+                  className="px-3 py-1 bg-secondary text-background text-[10px] font-black uppercase tracking-widest skew-x-[-15deg] hover:bg-secondary/80 transition-all"
                 >
-                  {genre}
-                </span>
+                  <span className="inline-block skew-x-[15deg]">{genre}</span>
+                </Link>
               ))}
+              
+              <div className="flex items-center gap-2 px-3 py-1 bg-card border border-secondary/30 font-bold text-[10px] text-secondary tracking-widest skew-x-[-15deg]">
+                <span className="inline-block skew-x-[15deg] uppercase">{current.episodes || 'Ongoing'}</span>
+              </div>
             </div>
 
-            <p className="text-white/95 text-[15px] md:text-[17px] leading-relaxed w-full max-w-none mb-10 font-normal font-sans tracking-wide">
+            <p className="text-muted-text text-[14px] md:text-[15px] leading-relaxed w-full mb-10 font-medium tracking-wide line-clamp-3">
               {current.synopsis}
             </p>
 
-            {/* Restored CTA Buttons */}
-            <div className="flex items-center space-x-4">
+            {/* Cyberpunk CTA Buttons */}
+            <div className="flex flex-wrap items-center justify-center md:justify-start gap-6">
               <SmartWatchButton 
                 animeId={current.id} 
                 animeTitle={current.title} 
                 animeImage={current.poster || current.image} 
-                className="px-8 py-3 text-xs tracking-widest shadow-lg shadow-secondary/20"
+                className="h-12 px-8 text-sm uppercase tracking-[0.2em] font-black shadow-[0_0_20px_rgba(34,197,94,0.3)] hover:neon-glow"
               />
               <Link 
                 href={`/anime/${current.id}`} 
-                className="px-8 py-3 border border-white/20 text-white font-black uppercase tracking-widest text-xs hover:bg-white/10 transition-all"
+                className="h-12 px-8 flex items-center justify-center border-2 border-secondary/30 text-secondary hover:bg-secondary hover:text-background font-black uppercase tracking-[0.2em] text-sm transition-all"
                 style={{ clipPath: 'polygon(10% 0, 100% 0, 100% 70%, 90% 100%, 0 100%, 0 30%)' }}
               >
                 Details
@@ -150,25 +160,28 @@ export function HeroCarousel({ items }: HeroCarouselProps) {
           </motion.div>
         </div>
 
-        {/* Navigation Controls (Bottom Right) */}
-        <div className="absolute bottom-12 right-4 sm:right-6 lg:right-12 flex items-center gap-8">
-          <div className="text-white font-sans font-bold text-sm tracking-[0.2em] flex items-baseline gap-2">
-            <span className="text-white/50 text-xs">NO.</span>
-            <span className="text-xl leading-none">{currentIndex + 1}</span>
+        {/* Navigation Controls with Theme Accents */}
+        <div className="absolute bottom-16 right-4 sm:right-6 lg:right-12 flex items-center gap-10">
+          <div className="flex flex-col items-end gap-1">
+            <span className="text-secondary/50 font-mono text-[10px] font-black uppercase tracking-[0.4em]">Index_</span>
+            <div className="text-foreground font-serif font-black text-2xl tracking-tighter flex items-baseline gap-2">
+              <span className="text-secondary text-sm">#</span>
+              <span>{(currentIndex + 1).toString().padStart(2, '0')}</span>
+            </div>
           </div>
           
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-4">
             <button 
               onClick={prevSlide}
-              className="text-white/40 hover:text-white transition-all cursor-pointer p-1"
+              className="w-12 h-12 flex items-center justify-center bg-card border border-secondary/20 text-secondary hover:bg-secondary hover:text-background transition-all cursor-pointer shadow-lg group"
             >
-              <ChevronLeft className="w-8 h-8" />
+              <ChevronLeft className="w-6 h-6 transition-transform group-hover:-translate-x-1" />
             </button>
             <button 
               onClick={nextSlide}
-              className="text-white/40 hover:text-white transition-all cursor-pointer p-1"
+              className="w-12 h-12 flex items-center justify-center bg-card border border-secondary/20 text-secondary hover:bg-secondary hover:text-background transition-all cursor-pointer shadow-lg group"
             >
-              <ChevronRight className="w-8 h-8" />
+              <ChevronRight className="w-6 h-6 transition-transform group-hover:translate-x-1" />
             </button>
           </div>
         </div>
