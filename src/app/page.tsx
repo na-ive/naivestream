@@ -27,8 +27,9 @@ export default async function HomePage() {
     year: 'numeric',
   }).format(new Date());
 
-  // Trending items for HeroCarousel
-  const trendingItems = popular.slice(0, 5).map(anime => ({
+  // Trending items for HeroCarousel — only ongoing with active episodes
+  const trendingAnime = popular.filter((a: any) => (a.actual_episodes_count || 0) >= 2);
+  const trendingItems = trendingAnime.slice(0, 5).map(anime => ({
     ...anime,
     id: anime.slug,
     image: anime.poster,
