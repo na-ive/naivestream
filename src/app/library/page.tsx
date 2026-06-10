@@ -403,7 +403,14 @@ function LibraryContent() {
       <Modal
         isOpen={deleteAction !== null}
         onClose={() => setDeleteAction(null)}
-        title="Confirm Deletion"
+        title={
+          <div className="flex items-center gap-3">
+            <div className="w-1.5 h-6 bg-red-500 shadow-[0_0_10px_rgba(239,68,68,0.5)]" />
+            <h2 className="text-red-500 text-xs font-mono font-black uppercase tracking-[0.4em]">
+              Delete <span className="text-foreground/50">//</span> Confirm Action
+            </h2>
+          </div>
+        }
         footer={
           <>
             <button

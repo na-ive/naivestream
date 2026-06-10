@@ -9,7 +9,7 @@ import { cn } from '@/lib/utils';
 export interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
-  title?: string;
+  title?: React.ReactNode;
   children: React.ReactNode;
   footer?: React.ReactNode;
   className?: string;
@@ -67,7 +67,7 @@ export function Modal({ isOpen, onClose, title, children, footer, className }: M
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               transition={{ type: 'spring', damping: 25, stiffness: 300 }}
               className={cn(
-                "relative w-full max-w-lg max-h-[90vh] bg-card border border-secondary/50 pointer-events-auto flex flex-col shadow-[0_0_30px_rgba(34,197,94,0.15)]",
+                "relative w-full max-w-lg max-h-[90vh] bg-card/90 backdrop-blur-sm border border-secondary/50 pointer-events-auto flex flex-col shadow-[0_0_30px_rgba(34,197,94,0.15)]",
                 className
               )}
               style={{
@@ -75,11 +75,15 @@ export function Modal({ isOpen, onClose, title, children, footer, className }: M
               }}
             >
               {/* Header */}
-              <div className="flex items-center justify-between p-4">
+              <div className="flex items-center justify-between p-6 pb-10">
                 {title ? (
-                  <h2 className="text-lg font-black tracking-widest text-secondary uppercase font-mono">
-                    {title}
-                  </h2>
+                  typeof title === 'string' ? (
+                    <h2 className="text-lg font-black tracking-widest text-secondary uppercase font-mono">
+                      {title}
+                    </h2>
+                  ) : (
+                    title
+                  )
                 ) : (
                   <div />
                 )}
@@ -97,8 +101,8 @@ export function Modal({ isOpen, onClose, title, children, footer, className }: M
               {/* Body */}
               <div className="relative flex-1 min-h-0 flex flex-col">
                 {/* Decorative L-Shapes (HUD Reticle Style) */}
-                <div className="absolute top-0 left-4 w-4 h-4 border-t-2 border-l-2 border-secondary pointer-events-none z-10" />
-                <div className="absolute bottom-0 right-4 w-4 h-4 border-b-2 border-r-2 border-secondary pointer-events-none z-10" />
+                <div className="absolute top-0 left-4 w-4 h-4 border-t-2 border-l-2 border-secondary/50 pointer-events-none z-10" />
+                <div className="absolute bottom-0 right-4 w-4 h-4 border-b-2 border-r-2 border-secondary/50 pointer-events-none z-10" />
                 
                 {/* Scrollable Content */}
                 <div className="p-6 overflow-y-auto custom-scrollbar">
@@ -108,7 +112,7 @@ export function Modal({ isOpen, onClose, title, children, footer, className }: M
 
               {/* Footer */}
               {footer && (
-                <div className="p-4 pt-6 flex justify-end gap-3">
+                <div className="p-6 pt-10 flex justify-end gap-3">
                   {footer}
                 </div>
               )}
