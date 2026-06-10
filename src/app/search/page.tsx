@@ -8,6 +8,7 @@ import { CustomSelect } from '@/components/ui/CustomSelect';
 import { MultiSelect } from '@/components/ui/MultiSelect';
 import { cn } from '@/lib/utils';
 import { Search as SearchIcon, Renew, FaceDissatisfied, Filter } from '@carbon/icons-react';
+import { AnimatePresence, motion } from 'framer-motion';
 
 const FILTER_OPTIONS = {
   status: [
@@ -229,7 +230,16 @@ function SearchContent() {
       </div>
 
       <div className="space-y-6">
-        {showFilters && (
+        <AnimatePresence>
+          {showFilters && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.3, ease: 'easeInOut' }}
+            className="overflow-hidden"
+            key="filters"
+          >
           <div className="space-y-4 p-4 bg-card/20 border border-secondary/10">
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
               <div className="flex flex-col gap-1">
@@ -369,7 +379,10 @@ function SearchContent() {
               </div>
             </div>
           </div>
-        )}
+          </motion.div>
+          )}
+        </AnimatePresence>
+
 
         <div className="flex items-center justify-between px-2">
           <div className="flex items-center gap-3">
