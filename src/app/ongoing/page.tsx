@@ -13,7 +13,7 @@ export default async function OngoingPage(props: { searchParams: Promise<{ page?
   const searchParams = await props.searchParams;
   const currentPage = parseInt(searchParams.page || '1');
   
-  const res = await AnimeService.getAnimeList({ status: 'Ongoing', page: currentPage });
+  const res = await AnimeService.getAnimeList({ status: 'Ongoing', page: currentPage, limit: 24 });
   const ongoing = res.items;
   const totalPages = res.pagination.last_page;
   const error = ongoing.length === 0 && currentPage === 1;
@@ -48,7 +48,7 @@ export default async function OngoingPage(props: { searchParams: Promise<{ page?
 
       {ongoing.length > 0 && (
         <>
-          <div className="symmetrical-grid-4-rows">
+          <div className="anime-grid">
             {ongoing.map((anime: any) => (
               <AnimeCard
                 key={anime.slug}

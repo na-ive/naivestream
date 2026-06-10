@@ -13,7 +13,7 @@ export default async function CompletedPage(props: { searchParams: Promise<{ pag
   const searchParams = await props.searchParams;
   const currentPage = parseInt(searchParams.page || '1');
 
-  const res = await AnimeService.getAnimeList({ status: 'Completed', page: currentPage });
+  const res = await AnimeService.getAnimeList({ status: 'Completed', page: currentPage, limit: 24 });
   const complete = res.items;
   const totalPages = res.pagination.last_page;
   const error = complete.length === 0 && currentPage === 1;
@@ -48,7 +48,7 @@ export default async function CompletedPage(props: { searchParams: Promise<{ pag
 
       {complete.length > 0 && (
         <>
-          <div className="symmetrical-grid-4-rows">
+          <div className="anime-grid">
             {complete.map((anime: any) => (
               <AnimeCard
                 key={anime.slug}
