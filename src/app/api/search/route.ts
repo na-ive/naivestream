@@ -5,19 +5,23 @@ export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const query = searchParams.get('q') || '';
   const genre = searchParams.get('genre') || '';
+  const genres = searchParams.get('genres') || '';
+  const genreMode = searchParams.get('genreMode') || 'any';
   const status = searchParams.get('status') || '';
   const type = searchParams.get('type') || '';
   const letter = searchParams.get('letter') || '';
   const year = searchParams.get('year') || '';
   const season = searchParams.get('season') || '';
   const rating = searchParams.get('rating') || '';
+  const source = searchParams.get('source') || '';
+  const studio = searchParams.get('studio') || '';
   const order = searchParams.get('order') || 'popularity';
   const page = parseInt(searchParams.get('page') || '1');
   const limit = parseInt(searchParams.get('limit') || '24');
 
   try {
     const results = await AnimeService.advancedSearch({
-      query, genre, status, type, letter, year, season, rating, order, page, limit
+      query, genre, genres, genreMode, status, type, letter, year, season, rating, source, studio, order, page, limit
     });
     return NextResponse.json(results);
   } catch (error) {

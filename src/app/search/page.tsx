@@ -1,32 +1,96 @@
 'use client';
 
-import React, { useEffect, useState, Suspense } from 'react';
+import React, { useEffect, useState, Suspense, useCallback, useRef } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { AnimeCard } from '@/components/anime/AnimeCard';
 import { Pagination } from '@/components/layout/Pagination';
+import { CustomSelect } from '@/components/ui/CustomSelect';
 import { cn } from '@/lib/utils';
-import { Search as SearchIcon, Renew, FaceDissatisfied } from '@carbon/icons-react';
+import { Search as SearchIcon, Renew, FaceDissatisfied, Close, Filter } from '@carbon/icons-react';
+
+const FILTER_OPTIONS = {
+  status: [
+    { value: 'All', label: 'All Status' },
+    { value: 'Ongoing', label: 'Ongoing' },
+    { value: 'Completed', label: 'Completed' },
+  ],
+  type: [
+    { value: 'All', label: 'All Types' },
+    { value: 'TV', label: 'TV' },
+    { value: 'Movie', label: 'Movie' },
+    { value: 'OVA', label: 'OVA' },
+    { value: 'Special', label: 'Special' },
+    { value: 'ONA', label: 'ONA' },
+    { value: 'Music', label: 'Music' },
+  ],
+  season: [
+    { value: 'All', label: 'All Seasons' },
+    { value: 'spring', label: 'Spring' },
+    { value: 'summer', label: 'Summer' },
+    { value: 'fall', label: 'Fall' },
+    { value: 'winter', label: 'Winter' },
+  ],
+  order: [
+    { value: 'popularity', label: 'Popularity' },
+    { value: 'score', label: 'Score' },
+    { value: 'title', label: 'Title' },
+    { value: 'latest', label: 'Latest' },
+  ],
+  source: [
+    { value: 'All', label: 'All Sources' },
+    { value: 'Manga', label: 'Manga' },
+    { value: 'Light novel', label: 'Light Novel' },
+    { value: 'Original', label: 'Original' },
+    { value: 'Web manga', label: 'Web Manga' },
+    { value: 'Game', label: 'Game' },
+    { value: '4-koma manga', label: '4-Koma Manga' },
+    { value: 'Visual novel', label: 'Visual Novel' },
+    { value: 'Novel', label: 'Novel' },
+    { value: 'Mixed media', label: 'Mixed Media' },
+    { value: 'Other', label: 'Other' },
+    { value: 'Music', label: 'Music' },
+    { value: 'Web novel', label: 'Web Novel' },
+    { value: 'Book', label: 'Book' },
+    { value: 'Card game', label: 'Card Game' },
+  ],
+  rating: [
+    { value: 'All', label: 'All Ratings' },
+    { value: 'PG-13 - Teens 13 or older', label: 'PG-13' },
+    { value: 'R - 17+ (violence & profanity)', label: 'R - 17+' },
+    { value: 'R+ - Mild Nudity', label: 'R+ - Mild Nudity' },
+    { value: 'G - All Ages', label: 'G - All Ages' },
+    { value: 'PG - Children', label: 'PG - Children' },
+  ],
+};
 
 function SearchContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  
-  // URL params
+
   const query = searchParams.get('q') || '';
-  const genre = searchParams.get('genre') || 'All';
+  const genresParam = searchParams.get('genres') || '';
+  const genreMode = searchParams.get('genreMode') || 'any';
   const status = searchParams.get('status') || 'All';
   const type = searchParams.get('type') || 'All';
   const order = searchParams.get('order') || 'popularity';
-  const letter = searchParams.get('letter') || 'ALL';
   const year = searchParams.get('year') || 'All';
   const season = searchParams.get('season') || 'All';
+  const source = searchParams.get('source') || 'All';
+  const rating = searchParams.get('rating') || 'All';
+  const studio = searchParams.get('studio') || '';
   const page = parseInt(searchParams.get('page') || '1');
+
+  const selectedGenres = genresParam ? genresParam.split(',').filter(Boolean) : [];
 
   const [results, setResults] = useState<any[]>([]);
   const [genres, setGenres] = useState<any[]>([]);
+  const [studios, setStudios] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const [pagination, setPagination] = useState({ current_page: 1, last_page: 1, total: 0 });
-  const [showAdvanced, setShowAdvanced] = useState(false);
+  const [showFilters, setShowFilters] = useState(true);
+  const [studioQuery, setStudioQuery] = useState('');
+  const [showStudioDropdown, setShowStudioDropdown] = useState(false);
+  const studioRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     async function fetchGenres() {
@@ -38,7 +102,31 @@ function SearchContent() {
         console.error('Failed to fetch genres');
       }
     }
+    async function fetchStudios() {
+      try {
+        const res = await fetch('/api/studios');
+        const data = await res.json();
+        setStudios(data || []);
+      } catch (e) {
+        console.error('Failed to fetch studios');
+      }
+    }
     fetchGenres();
+    fetchStudios();
+  }, []);
+
+  useEffect(() => {
+    setStudioQuery(studio);
+  }, [studio]);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (studioRef.current && !studioRef.current.contains(event.target as Node)) {
+        setShowStudioDropdown(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
   useEffect(() => {
@@ -47,15 +135,18 @@ function SearchContent() {
       try {
         const params = new URLSearchParams();
         if (query) params.set('q', query);
-        if (genre !== 'All') params.set('genre', genre);
+        if (selectedGenres.length > 0) params.set('genres', selectedGenres.join(','));
+        if (genreMode !== 'any') params.set('genreMode', genreMode);
         if (status !== 'All') params.set('status', status);
         if (type !== 'All') params.set('type', type);
         if (order !== 'popularity') params.set('order', order);
-        if (letter !== 'ALL') params.set('letter', letter);
         if (year !== 'All') params.set('year', year);
         if (season !== 'All') params.set('season', season);
+        if (source !== 'All') params.set('source', source);
+        if (rating !== 'All') params.set('rating', rating);
+        if (studio) params.set('studio', studio);
         params.set('page', page.toString());
-        
+
         const res = await fetch(`/api/search?${params.toString()}`);
         const data = await res.json();
         setResults(data.items || []);
@@ -66,9 +157,9 @@ function SearchContent() {
       setLoading(false);
     }
     doSearch();
-  }, [query, genre, status, type, order, letter, year, season, page]);
+  }, [query, genresParam, genreMode, status, type, order, year, season, source, rating, studio, page]);
 
-  const updateFilters = (updates: Record<string, string | number>) => {
+  const updateFilters = useCallback((updates: Record<string, string | number>) => {
     const params = new URLSearchParams(searchParams.toString());
     Object.entries(updates).forEach(([key, value]) => {
       if (value === 'All' || value === 'ALL' || value === '') {
@@ -77,105 +168,268 @@ function SearchContent() {
         params.set(key, value.toString());
       }
     });
-    // Reset to page 1 on filter change
     if (!updates.page) {
       params.set('page', '1');
     }
     router.push(`/search?${params.toString()}`);
+  }, [searchParams, router]);
+
+  const handleGenreChange = (newGenres: string[]) => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (newGenres.length > 0) {
+      params.set('genres', newGenres.join(','));
+    } else {
+      params.delete('genres');
+    }
+    params.delete('genre');
+    params.set('page', '1');
+    router.push(`/search?${params.toString()}`);
   };
 
-  const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+  const handleStudioSelect = (value: string) => {
+    setStudioQuery(value);
+    setShowStudioDropdown(false);
+    updateFilters({ studio: value });
+  };
+
+  const clearStudio = () => {
+    setStudioQuery('');
+    updateFilters({ studio: '' });
+  };
+
+  const filteredStudios = studios.filter(s =>
+    s.toLowerCase().includes(studioQuery.toLowerCase())
+  ).slice(0, 20);
+
   const years = Array.from({ length: 2026 - 1990 + 1 }, (_, i) => (2026 - i).toString());
+
+  const genreOptions = genres.map((g: any) => ({ value: g.slug, label: g.name }));
+  const yearOptions = [
+    { value: 'All', label: 'All Years' },
+    ...years.map(y => ({ value: y, label: y })),
+  ];
 
   return (
     <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <div className="mb-12">
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
-          <div className="flex items-center space-x-4">
-            <div className="p-3 bg-secondary/10 text-secondary border border-secondary/30 relative">
-              <SearchIcon className="w-8 h-8 relative z-10" />
-              <div className="absolute top-0 left-0 w-2 h-2 border-t-2 border-l-2 border-secondary" />
-              <div className="absolute bottom-0 right-0 w-2 h-2 border-b-2 border-r-2 border-secondary" />
-            </div>
-            <div>
-              <h1 className="text-4xl md:text-5xl font-serif font-black uppercase tracking-tighter leading-none">Advanced<span className="text-secondary">_</span></h1>
-              <p className="text-[10px] font-black uppercase tracking-[0.4em] text-muted-text mt-2">Discovery Protocol v2.0</p>
-            </div>
+        <div className="flex items-center space-x-4 mb-6">
+          <div className="p-3 bg-secondary/10 text-secondary border border-secondary/30 relative">
+            <SearchIcon className="w-8 h-8 relative z-10" />
+            <div className="absolute top-0 left-0 w-2 h-2 border-t-2 border-l-2 border-secondary" />
+            <div className="absolute bottom-0 right-0 w-2 h-2 border-b-2 border-r-2 border-secondary" />
           </div>
-
-          <div className="relative w-full md:max-w-md">
-            <input
-              type="text"
-              placeholder="Search by title..."
-              defaultValue={query}
-              key={query}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') {
-                  updateFilters({ q: (e.target as HTMLInputElement).value });
-                }
-              }}
-              className="w-full bg-card/50 border border-secondary/20 focus:border-secondary/50 focus:ring-0 text-foreground py-4 px-6 font-mono text-sm tracking-wider outline-none transition-all"
-            />
-            <button 
-              onClick={(e) => {
-                const input = e.currentTarget.previousSibling as HTMLInputElement;
-                updateFilters({ q: input.value });
-              }}
-              className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center space-x-2 group"
-            >
-              <span className="text-[10px] font-bold text-muted-text uppercase group-hover:text-secondary transition-colors">Search</span>
-              <SearchIcon className="w-4 h-4 text-secondary" />
-            </button>
-          </div>
+          <h1 className="text-4xl md:text-5xl font-serif font-black uppercase tracking-tighter">Advanced Search<span className="text-secondary">_</span></h1>
         </div>
         
         <div className="inline-block px-6 py-3 bg-card/80 border-l-4 border-secondary/50 shadow-lg relative overflow-hidden"
              style={{ clipPath: 'polygon(0 0, 100% 0, calc(100% - 15px) 100%, 0 100%)' }}>
           <div className="absolute inset-0 bg-gradient-to-r from-secondary/10 to-transparent pointer-events-none" />
           <p className="text-xs font-bold uppercase tracking-[0.2em] text-foreground/80 relative z-10">
-            {query ? (
-              <>Results for <span className="text-secondary ml-1">"{query}"</span></>
-            ) : (
-              'Refine your search parameters below'
-            )}
+            {query ? <>Results for <span className="text-secondary ml-1">"{query}"</span></> : 'Refine your search parameters below'}
           </p>
         </div>
       </div>
 
-      <div className="space-y-8">
-        {/* Alphabet Selector */}
-        <div className="flex flex-wrap items-center justify-center gap-1 p-2 bg-card/20 border border-secondary/10 overflow-hidden">
+      <div className="flex items-center gap-3 mb-6">
+        <div className="relative flex-1">
+          <input
+            type="text"
+            placeholder="Search by title..."
+            defaultValue={query}
+            key={query}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                updateFilters({ q: (e.target as HTMLInputElement).value });
+              }
+            }}
+            className="w-full bg-card/50 border border-secondary/20 focus:border-secondary/50 focus:ring-0 text-foreground py-4 px-6 font-mono text-sm tracking-wider outline-none transition-all"
+          />
           <button
-            onClick={() => updateFilters({ letter: 'ALL' })}
-            className={cn(
-              "px-2 py-1 text-[10px] font-black transition-all",
-              letter === 'ALL' ? "bg-secondary text-background" : "text-muted-text hover:text-secondary"
-            )}
+            onClick={(e) => {
+              const input = e.currentTarget.previousElementSibling as HTMLInputElement;
+              updateFilters({ q: input.value });
+            }}
+            className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center space-x-2 group"
           >
-            ALL
+            <span className="text-[10px] font-bold text-muted-text uppercase group-hover:text-secondary transition-colors">Search</span>
+            <SearchIcon className="w-4 h-4 text-secondary" />
           </button>
-          <button
-            onClick={() => updateFilters({ letter: '0-9' })}
-            className={cn(
-              "px-2 py-1 text-[10px] font-black transition-all",
-              letter === '0-9' ? "bg-secondary text-background" : "text-muted-text hover:text-secondary"
-            )}
-          >
-            0-9
-          </button>
-          {alphabet.map((l) => (
-            <button
-              key={l}
-              onClick={() => updateFilters({ letter: l })}
-              className={cn(
-                "w-7 h-7 flex items-center justify-center text-[10px] font-black transition-all",
-                letter === l ? "bg-secondary text-background" : "text-muted-text hover:text-secondary hover:bg-secondary/10"
-              )}
-            >
-              {l}
-            </button>
-          ))}
         </div>
+        <button
+          onClick={() => setShowFilters(!showFilters)}
+          className={cn(
+            "flex items-center gap-2 px-5 py-4 border-2 text-sm font-black uppercase tracking-wider transition-all shrink-0",
+            showFilters
+              ? "bg-secondary text-background border-secondary"
+              : "bg-card/50 text-muted-text border-secondary/20 hover:border-secondary/50"
+          )}
+        >
+          <Filter className="w-4 h-4" />
+          {showFilters ? 'Hide Filters' : 'Show Filters'}
+        </button>
+      </div>
+
+      <div className="space-y-6">
+        {showFilters && (
+          <div className="space-y-4 p-4 bg-card/20 border border-secondary/10">
+            <div className="flex flex-wrap items-center gap-3">
+              <CustomSelect
+                value={status}
+                onChange={(v) => updateFilters({ status: v })}
+                options={FILTER_OPTIONS.status}
+                placeholder="Status"
+              />
+
+              <CustomSelect
+                value={type}
+                onChange={(v) => updateFilters({ type: v })}
+                options={FILTER_OPTIONS.type}
+                placeholder="Type"
+              />
+
+              <CustomSelect
+                value={season}
+                onChange={(v) => updateFilters({ season: v })}
+                options={FILTER_OPTIONS.season}
+                placeholder="Season"
+              />
+
+              <CustomSelect
+                value={year}
+                onChange={(v) => updateFilters({ year: v })}
+                options={yearOptions}
+                placeholder="Year"
+              />
+
+              <CustomSelect
+                value={source}
+                onChange={(v) => updateFilters({ source: v })}
+                options={FILTER_OPTIONS.source}
+                placeholder="Source"
+              />
+
+              <CustomSelect
+                value={rating}
+                onChange={(v) => updateFilters({ rating: v })}
+                options={FILTER_OPTIONS.rating}
+                placeholder="Rating"
+              />
+
+              <CustomSelect
+                value={order}
+                onChange={(v) => updateFilters({ order: v })}
+                options={FILTER_OPTIONS.order}
+                placeholder="Order"
+              />
+            </div>
+
+            <div className="relative" ref={studioRef}>
+              <div className="flex items-center gap-2">
+                <span className="text-sm font-bold uppercase tracking-wider text-foreground shrink-0">Studio:</span>
+                <div className="relative flex-1 max-w-xs">
+                  <input
+                    type="text"
+                    placeholder="Type to search studio..."
+                    value={studioQuery}
+                    onChange={(e) => {
+                      setStudioQuery(e.target.value);
+                      setShowStudioDropdown(true);
+                    }}
+                    onFocus={() => setShowStudioDropdown(true)}
+                    className="w-full bg-background border-2 border-secondary/20 text-foreground px-4 py-2 text-sm font-bold tracking-wider outline-none transition-all hover:border-secondary/50 focus:border-secondary"
+                  />
+                  {studio && (
+                    <button
+                      onClick={clearStudio}
+                      className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-text hover:text-foreground transition-colors"
+                    >
+                      <Close className="w-4 h-4" />
+                    </button>
+                  )}
+                  {showStudioDropdown && studioQuery.length > 0 && filteredStudios.length > 0 && (
+                    <div className="absolute z-50 w-full mt-1 bg-card border-2 border-secondary/20 shadow-xl max-h-48 overflow-y-auto custom-scrollbar">
+                      {filteredStudios.map(s => (
+                        <button
+                          key={s}
+                          onClick={() => handleStudioSelect(s)}
+                          className={cn(
+                            "w-full text-left px-4 py-2 text-sm font-bold uppercase tracking-wider transition-all",
+                            studio === s
+                              ? "bg-secondary/10 text-secondary border-l-2 border-secondary"
+                              : "text-muted-text hover:bg-secondary/5 hover:text-foreground border-l-2 border-transparent"
+                          )}
+                        >
+                          {s}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                  {showStudioDropdown && studioQuery.length > 0 && filteredStudios.length === 0 && (
+                    <div className="absolute z-50 w-full mt-1 bg-card border-2 border-secondary/20 shadow-xl">
+                      <div className="px-4 py-2 text-xs text-muted-text">No studios match</div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Genre Toggle Buttons */}
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm font-bold uppercase tracking-wider text-foreground">Genres</span>
+                <div className="inline-flex bg-card/50 border border-secondary/30 p-0.5">
+                  <button
+                    onClick={() => updateFilters({ genreMode: 'any' })}
+                    className={cn(
+                      "px-3 py-1.5 text-[10px] font-black uppercase tracking-widest transition-all",
+                      genreMode === 'any'
+                        ? "bg-secondary text-background"
+                        : "text-muted-text hover:text-foreground hover:bg-secondary/10"
+                    )}
+                  >
+                    OR
+                  </button>
+                  <button
+                    onClick={() => updateFilters({ genreMode: 'all' })}
+                    className={cn(
+                      "px-3 py-1.5 text-[10px] font-black uppercase tracking-widest transition-all",
+                      genreMode === 'all'
+                        ? "bg-secondary text-background"
+                        : "text-muted-text hover:text-foreground hover:bg-secondary/10"
+                    )}
+                  >
+                    AND
+                  </button>
+                </div>
+              </div>
+              <div className="flex flex-wrap gap-1.5">
+                {genreOptions.map((g) => {
+                  const isActive = selectedGenres.includes(g.value);
+                  return (
+                    <button
+                      key={g.value}
+                      onClick={() => {
+                        if (isActive) {
+                          handleGenreChange(selectedGenres.filter(v => v !== g.value));
+                        } else {
+                          handleGenreChange([...selectedGenres, g.value]);
+                        }
+                      }}
+                      className={cn(
+                        "px-2.5 py-1 text-[10px] font-black uppercase tracking-widest border transition-all",
+                        isActive
+                          ? "bg-secondary text-background border-secondary"
+                          : "bg-transparent text-muted-text border-secondary/20 hover:border-secondary/50 hover:text-foreground"
+                      )}
+                    >
+                      {g.label}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        )}
 
         <div className="flex items-center justify-between px-2">
           <div className="flex items-center gap-3">
@@ -184,7 +438,6 @@ function SearchContent() {
               Found <span className="text-secondary">{pagination.total}</span> Results
             </span>
           </div>
-          
           <div className="text-[10px] font-bold text-muted-text uppercase tracking-widest">
             Page {pagination.current_page} of {pagination.last_page}
           </div>
@@ -211,7 +464,6 @@ function SearchContent() {
                 />
               ))}
             </div>
-            
             <Pagination
               currentPage={pagination.current_page}
               totalPages={pagination.last_page}
@@ -226,7 +478,7 @@ function SearchContent() {
             <div className="space-y-2">
               <h2 className="text-lg font-black uppercase tracking-tighter">Negative Identification</h2>
               <p className="text-[10px] font-bold uppercase tracking-widest text-muted-text max-w-xs mx-auto">No anime signatures match your current parameters. Reset protocols and try again.</p>
-              <button 
+              <button
                 onClick={() => router.push('/search')}
                 className="mt-4 px-6 py-2 bg-secondary text-background text-[10px] font-black uppercase tracking-widest hover:shadow-[0_0_15px_rgba(34,197,94,0.5)] transition-all"
               >

@@ -41,7 +41,7 @@ export function CustomSelect({ value, onChange, options, placeholder = "Select..
         type="button"
         onClick={() => setIsOpen(!isOpen)}
         className={cn(
-          "flex items-center justify-between w-full min-w-[160px] px-4 py-2 bg-background border-2 transition-all font-bold uppercase tracking-wider text-sm",
+          "flex items-center justify-between w-full min-w-[200px] px-4 py-2 bg-background border-2 transition-all font-bold uppercase tracking-wider text-sm",
           isOpen 
             ? "border-secondary text-secondary shadow-[0_0_10px_rgba(34,197,94,0.2)]" 
             : "border-secondary/20 text-foreground hover:border-secondary/50"

@@ -262,7 +262,7 @@ export const AnimeService = {
   },
 
   async getAllGenres() {
-    return getPreparedStatement('SELECT * FROM genres ORDER BY name ASC').all() as { id: number; name: string; slug: string }[];
+    return getPreparedStatement('SELECT g.* FROM genres g WHERE EXISTS (SELECT 1 FROM anime_genres ag WHERE ag.genre_id = g.id) ORDER BY g.name ASC').all() as { id: number; name: string; slug: string }[];
   },
 
   async getAnimeByGenre(genreSlug: string, page = 1, limit = 24) {
@@ -303,19 +303,34 @@ export const AnimeService = {
   },
 
   async advancedSearch({ 
-    query = '', genre = '', status = '', type = '', letter = '', year = '', season = '', rating = '', order = 'popularity', page = 1, limit = 24 
+    query = '', genre = '', genres = '', genreMode = 'any', status = '', type = '', letter = '', year = '', season = '', rating = '', source = '', studio = '', order = 'popularity', page = 1, limit = 24 
   }) {
     const offset = (page - 1) * limit;
-    let sql = `SELECT DISTINCT ${SQL_BASE_SELECT} FROM anime a`;
-    let countSql = 'SELECT COUNT(DISTINCT a.id) as total FROM anime a';
+
+    const genreList: string[] = [];
+    if (genres) {
+      genres.split(',').map(s => s.trim()).filter(Boolean).forEach(g => {
+        if (!genreList.includes(g)) genreList.push(g);
+      });
+    }
+    if (genre && !genreList.includes(genre)) {
+      genreList.push(genre);
+    }
+
     const params: any[] = [];
     const whereClauses: string[] = [];
+    let fromClause = ' FROM anime a';
+    let groupByClause = '';
+    let havingClause = '';
 
-    if (genre) {
-      sql += ' JOIN anime_genres ag ON a.id = ag.anime_id JOIN genres g ON ag.genre_id = g.id';
-      countSql += ' JOIN anime_genres ag ON a.id = ag.anime_id JOIN genres g ON ag.genre_id = g.id';
-      whereClauses.push('g.slug = ?');
-      params.push(genre);
+    if (genreList.length > 0) {
+      fromClause += ' JOIN anime_genres ag ON a.id = ag.anime_id JOIN genres g ON ag.genre_id = g.id';
+      whereClauses.push(`g.slug IN (${genreList.map(() => '?').join(',')})`);
+      params.push(...genreList);
+      if (genreMode === 'all' && genreList.length > 1) {
+        groupByClause = ' GROUP BY a.id';
+        havingClause = ` HAVING COUNT(DISTINCT g.id) = ${genreList.length}`;
+      }
     }
     if (query) {
       whereClauses.push('(a.title LIKE ? OR a.title_english LIKE ? OR a.title_japanese LIKE ?)');
@@ -334,16 +349,24 @@ export const AnimeService = {
     if (year) { whereClauses.push('a.year = ?'); params.push(parseInt(year)); }
     if (season) { whereClauses.push('a.season = ?'); params.push(season); }
     if (rating) { whereClauses.push('a.rating = ?'); params.push(rating); }
+    if (source) { whereClauses.push('a.source = ?'); params.push(source); }
+    if (studio) { whereClauses.push('a.studios LIKE ?'); params.push(`%${studio}%`); }
     if (letter) {
       if (letter === '0-9') whereClauses.push("a.title GLOB '[0-9]*'");
       else if (letter === '#') whereClauses.push("a.title NOT GLOB '[a-zA-Z0-9]*'");
       else if (letter !== 'ALL') { whereClauses.push('a.title LIKE ?'); params.push(`${letter}%`); }
     }
 
-    if (whereClauses.length > 0) {
-      const whereStr = ' WHERE ' + whereClauses.join(' AND ');
-      sql += whereStr;
-      countSql += whereStr;
+    const whereStr = whereClauses.length > 0 ? ' WHERE ' + whereClauses.join(' AND ') : '';
+
+    const selectExpr = groupByClause ? SQL_BASE_SELECT : `DISTINCT ${SQL_BASE_SELECT}`;
+    const sql = `SELECT ${selectExpr}${fromClause}${whereStr}${groupByClause}${havingClause}`;
+
+    let countSql: string;
+    if (groupByClause) {
+      countSql = `SELECT COUNT(*) as total FROM (SELECT a.id${fromClause}${whereStr}${groupByClause}${havingClause})`;
+    } else {
+      countSql = `SELECT COUNT(DISTINCT a.id) as total${fromClause}${whereStr}`;
     }
 
     const orderByMap: Record<string, string> = {
@@ -354,12 +377,10 @@ export const AnimeService = {
     };
 
     const primaryOrder = orderByMap[order] || 'a.popularity ASC';
-    sql += ` ORDER BY CASE WHEN ${SQL_ACTUAL_COUNT} > 0 THEN 0 ELSE 1 END ASC, ${primaryOrder} LIMIT ? OFFSET ?`;
-    const countParams = [...params];
-    params.push(limit, offset);
+    const orderSql = ` ORDER BY CASE WHEN ${SQL_ACTUAL_COUNT} > 0 THEN 0 ELSE 1 END ASC, ${primaryOrder} LIMIT ? OFFSET ?`;
 
-    const items = getPreparedStatement(sql).all(...params) as any[];
-    const totalResult = getPreparedStatement(countSql).get(...countParams) as { total: number };
+    const items = getPreparedStatement(sql + orderSql).all(...params, limit, offset) as any[];
+    const totalResult = getPreparedStatement(countSql).get(...params) as { total: number };
     const total = totalResult ? totalResult.total : 0;
 
     return {
