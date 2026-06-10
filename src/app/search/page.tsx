@@ -1,12 +1,13 @@
 'use client';
 
-import React, { useEffect, useState, Suspense, useCallback, useRef } from 'react';
+import React, { useEffect, useState, Suspense, useCallback } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { AnimeCard } from '@/components/anime/AnimeCard';
 import { Pagination } from '@/components/layout/Pagination';
 import { CustomSelect } from '@/components/ui/CustomSelect';
+import { SearchableSelect } from '@/components/ui/SearchableSelect';
 import { cn } from '@/lib/utils';
-import { Search as SearchIcon, Renew, FaceDissatisfied, Close, Filter } from '@carbon/icons-react';
+import { Search as SearchIcon, Renew, FaceDissatisfied, Filter } from '@carbon/icons-react';
 
 const FILTER_OPTIONS = {
   status: [
@@ -84,13 +85,10 @@ function SearchContent() {
 
   const [results, setResults] = useState<any[]>([]);
   const [genres, setGenres] = useState<any[]>([]);
-  const [studios, setStudios] = useState<string[]>([]);
+  const [studioOptions, setStudioOptions] = useState<{ value: string; label: string }[]>([]);
   const [loading, setLoading] = useState(false);
   const [pagination, setPagination] = useState({ current_page: 1, last_page: 1, total: 0 });
   const [showFilters, setShowFilters] = useState(true);
-  const [studioQuery, setStudioQuery] = useState('');
-  const [showStudioDropdown, setShowStudioDropdown] = useState(false);
-  const studioRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     async function fetchGenres() {
@@ -106,27 +104,13 @@ function SearchContent() {
       try {
         const res = await fetch('/api/studios');
         const data = await res.json();
-        setStudios(data || []);
+        setStudioOptions((data || []).map((s: string) => ({ value: s, label: s })));
       } catch (e) {
         console.error('Failed to fetch studios');
       }
     }
     fetchGenres();
     fetchStudios();
-  }, []);
-
-  useEffect(() => {
-    setStudioQuery(studio);
-  }, [studio]);
-
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (studioRef.current && !studioRef.current.contains(event.target as Node)) {
-        setShowStudioDropdown(false);
-      }
-    }
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
   useEffect(() => {
@@ -185,21 +169,6 @@ function SearchContent() {
     params.set('page', '1');
     router.push(`/search?${params.toString()}`);
   };
-
-  const handleStudioSelect = (value: string) => {
-    setStudioQuery(value);
-    setShowStudioDropdown(false);
-    updateFilters({ studio: value });
-  };
-
-  const clearStudio = () => {
-    setStudioQuery('');
-    updateFilters({ studio: '' });
-  };
-
-  const filteredStudios = studios.filter(s =>
-    s.toLowerCase().includes(studioQuery.toLowerCase())
-  ).slice(0, 20);
 
   const years = Array.from({ length: 2026 - 1990 + 1 }, (_, i) => (2026 - i).toString());
 
@@ -323,55 +292,12 @@ function SearchContent() {
               />
             </div>
 
-            <div className="relative" ref={studioRef}>
-              <div className="flex items-center gap-2">
-                <span className="text-sm font-bold uppercase tracking-wider text-foreground shrink-0">Studio:</span>
-                <div className="relative flex-1 max-w-xs">
-                  <input
-                    type="text"
-                    placeholder="Type to search studio..."
-                    value={studioQuery}
-                    onChange={(e) => {
-                      setStudioQuery(e.target.value);
-                      setShowStudioDropdown(true);
-                    }}
-                    onFocus={() => setShowStudioDropdown(true)}
-                    className="w-full bg-background border-2 border-secondary/20 text-foreground px-4 py-2 text-sm font-bold tracking-wider outline-none transition-all hover:border-secondary/50 focus:border-secondary"
-                  />
-                  {studio && (
-                    <button
-                      onClick={clearStudio}
-                      className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-text hover:text-foreground transition-colors"
-                    >
-                      <Close className="w-4 h-4" />
-                    </button>
-                  )}
-                  {showStudioDropdown && studioQuery.length > 0 && filteredStudios.length > 0 && (
-                    <div className="absolute z-50 w-full mt-1 bg-card border-2 border-secondary/20 shadow-xl max-h-48 overflow-y-auto custom-scrollbar">
-                      {filteredStudios.map(s => (
-                        <button
-                          key={s}
-                          onClick={() => handleStudioSelect(s)}
-                          className={cn(
-                            "w-full text-left px-4 py-2 text-sm font-bold uppercase tracking-wider transition-all",
-                            studio === s
-                              ? "bg-secondary/10 text-secondary border-l-2 border-secondary"
-                              : "text-muted-text hover:bg-secondary/5 hover:text-foreground border-l-2 border-transparent"
-                          )}
-                        >
-                          {s}
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                  {showStudioDropdown && studioQuery.length > 0 && filteredStudios.length === 0 && (
-                    <div className="absolute z-50 w-full mt-1 bg-card border-2 border-secondary/20 shadow-xl">
-                      <div className="px-4 py-2 text-xs text-muted-text">No studios match</div>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
+            <SearchableSelect
+              value={studio}
+              onChange={(v) => updateFilters({ studio: v })}
+              options={studioOptions}
+              placeholder="Studio"
+            />
 
             {/* Genre Toggle Buttons */}
             <div>
