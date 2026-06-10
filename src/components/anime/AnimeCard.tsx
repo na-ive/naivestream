@@ -34,9 +34,6 @@ export function AnimeCard({ id, title, image, status, rating, episode, type, hid
         "block relative aspect-[3/4] overflow-hidden bg-card border-2 transition-all",
         isEmpty ? "border-[#EAB308]" : "border-secondary/20 group-hover:border-secondary"
       )}>
-        {/* Decorative Corner */}
-        <div className="absolute top-0 right-0 w-8 h-8 bg-secondary/20 transition-all group-hover:bg-secondary/40 clip-path-corner-tr z-30" />
-        
         <img
           src={image}
           alt={title}
