@@ -42,7 +42,7 @@ export default async function HomePage() {
       {/* Hero Carousel Section */}
       <HeroCarousel items={trendingItems} />
 
-      <div className="max-w-[1800px] mx-auto px-4 sm:px-6 lg:px-8 mt-12 space-y-16">
+      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 mt-12 space-y-16">
         {/* Ongoing Section */}
         <section>
           <div className="flex items-end justify-between mb-8 border-b border-white/5 pb-4">

@@ -65,7 +65,7 @@ export function HeroCarousel({ items }: HeroCarouselProps) {
         </motion.div>
       </AnimatePresence>
 
-      <div className="relative z-10 h-full max-w-[1800px] mx-auto px-4 sm:px-6 lg:px-12 flex flex-col justify-center pt-20">
+      <div className="relative z-10 h-full max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-12 flex flex-col justify-center pt-20">
         {/* Top Label with Theme Accent */}
         <div className="absolute top-28 left-4 sm:left-6 lg:left-12 flex items-center gap-3">
           <div className="w-1.5 h-6 bg-secondary shadow-[0_0_10px_var(--color-secondary)]" />

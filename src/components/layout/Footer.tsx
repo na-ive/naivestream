@@ -7,7 +7,7 @@ export function Footer() {
     <footer className="w-full border-t border-secondary/10 bg-background/80 backdrop-blur-xl shadow-[0_-4px_30px_rgba(34,197,94,0.03)] relative overflow-hidden mt-auto">
       {/* A-Z Navigation Bar */}
       <div className="border-b border-secondary/10 bg-card/50 py-4">
-        <div className="max-w-[1800px] mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-wrap justify-center gap-1.5 md:gap-2">
             {["ALL", "#", "0-9", ..."ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("")].map((letter) => (
               <Link
@@ -22,7 +22,7 @@ export function Footer() {
         </div>
       </div>
 
-      <div className="max-w-[1800px] mx-auto px-4 sm:px-6 lg:px-8 py-12 relative z-10">
+      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-12 relative z-10">
         <div className="flex flex-col items-center justify-center space-y-8">
           <Link href="/" className="relative w-60 h-12 block">
             <Image

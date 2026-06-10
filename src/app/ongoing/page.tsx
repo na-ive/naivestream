@@ -19,7 +19,7 @@ export default async function OngoingPage(props: { searchParams: Promise<{ page?
   const error = ongoing.length === 0 && currentPage === 1;
 
   return (
-    <div className="max-w-[1800px] mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <div className="mb-12">
         <div className="flex items-center space-x-4 mb-6">
           <div className="p-3 bg-secondary/10 text-secondary border border-secondary/30 relative">
