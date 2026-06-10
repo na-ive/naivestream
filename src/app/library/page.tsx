@@ -4,8 +4,9 @@ import React, { useState, useEffect, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useHistory } from '@/lib/hooks/useHistory';
 import { useWatchlist } from '@/lib/hooks/useWatchlist';
+import { useWatchedEpisodes } from '@/lib/hooks/useWatchedEpisodes';
 import { AnimeCard } from '@/components/anime/AnimeCard';
-import { Bookmark, Time, TrashCan, CaretRight, Grid, CheckboxChecked } from '@carbon/icons-react';
+import { Bookmark, Time, TrashCan, CaretRight, Grid, CheckboxChecked, Checkmark } from '@carbon/icons-react';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
@@ -30,6 +31,7 @@ export default function LibraryPage() {
 function LibraryContent() {
   const { history, removeFromHistory, removeMultipleFromHistory } = useHistory();
   const { watchlist, removeFromWatchlist, removeMultipleFromWatchlist } = useWatchlist();
+  const { getWatchedCount, resetAnime } = useWatchedEpisodes();
   const searchParams = useSearchParams();
   const router = useRouter();
   
@@ -79,7 +81,9 @@ function LibraryContent() {
   const executeDelete = () => {
     if (deleteAction === 'all') {
       localStorage.removeItem('anime_history');
+      localStorage.removeItem('anime_watched_episodes');
       window.dispatchEvent(new Event('history_updated'));
+      window.dispatchEvent(new Event('watched_updated'));
       toast.error('History Cleared', {
         description: 'All your watch history has been permanently removed.',
         icon: <div className="w-8 h-8 bg-red-500/10 border border-red-500 flex items-center justify-center shrink-0 mr-3 shadow-[0_0_10px_rgba(239,68,68,0.3)]"><TrashCan className="w-5 h-5 text-red-500" /></div>,
@@ -89,6 +93,7 @@ function LibraryContent() {
         if (activeTab === 'watchlist') {
           removeMultipleFromWatchlist(selectedIds);
         } else {
+          selectedIds.forEach(id => resetAnime(id));
           removeMultipleFromHistory(selectedIds);
         }
         setIsSelectionMode(false);
@@ -320,26 +325,35 @@ function LibraryContent() {
                       disableHover={isSelectionMode}
                     />
                     
-                    <div className="mt-3 p-3 bg-card border border-secondary/10 group-hover:border-secondary/30 transition-all relative">
-                      <div className="absolute inset-0 bg-gradient-to-t from-secondary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
-                      <p className="text-[9px] text-muted-text font-black uppercase tracking-[0.2em] mb-1.5">
-                        Resume Point
-                      </p>
-                      <Link 
-                        href={`/watch/${item.lastEpisodeId}?anime=${item.animeId}&title=${encodeURIComponent(item.animeTitle)}&img=${encodeURIComponent(item.animeImage)}`}
-                        className="flex items-center justify-between group/ep"
-                        onClick={(e) => {
-                          if (isSelectionMode) e.preventDefault();
-                        }}
-                      >
-                        <span className="text-[11px] font-bold truncate pr-3 group-hover/ep:text-secondary transition-colors uppercase tracking-widest leading-relaxed">
+                    <Link 
+                      href={`/watch/${item.lastEpisodeId}?anime=${item.animeId}&title=${encodeURIComponent(item.animeTitle)}&img=${encodeURIComponent(item.animeImage)}`}
+                      onClick={(e) => { if (isSelectionMode) e.preventDefault(); }}
+                      className="mt-3 p-3 bg-card border border-secondary/10 hover:border-secondary/50 transition-all relative block group/card"
+                    >
+                      <div className="absolute inset-0 bg-gradient-to-t from-secondary/5 to-transparent opacity-0 group-hover/card:opacity-100 transition-opacity pointer-events-none" />
+                      <div className="flex items-center justify-between mb-1.5 relative z-10">
+                        <p className="text-[9px] text-muted-text font-black uppercase tracking-[0.2em]">
+                          Resume Point
+                        </p>
+                        {(() => {
+                          const wc = getWatchedCount(item.animeId);
+                          return wc > 0 ? (
+                            <span className="flex items-center gap-1 text-[9px] font-mono font-bold text-secondary">
+                              <Checkmark className="w-2.5 h-2.5 fill-current" />
+                              {wc} watched
+                            </span>
+                          ) : null;
+                        })()}
+                      </div>
+                      <div className="flex items-center justify-between relative z-10">
+                        <span className="text-[11px] font-bold truncate pr-3 group-hover/card:text-secondary transition-colors uppercase tracking-widest leading-relaxed">
                           Episode {item.lastEpisodeTitle.match(/Episode\s*(\d+)/i)?.[1] || item.lastEpisodeTitle.match(/(\d+)/)?.[0] || '??'}
                         </span>
-                        <div className="w-6 h-6 bg-secondary/10 flex items-center justify-center group-hover/ep:bg-secondary/20 transition-colors shrink-0">
+                        <div className="w-6 h-6 bg-secondary/10 flex items-center justify-center group-hover/card:bg-secondary/20 transition-colors shrink-0">
                           <CaretRight className="w-3 h-3 text-secondary fill-current" />
                         </div>
-                      </Link>
-                    </div>
+                      </div>
+                    </Link>
                   </div>
 
                   {/* Selection Overlay */}
@@ -364,6 +378,7 @@ function LibraryContent() {
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
+                            resetAnime(item.animeId);
                             removeFromHistory(item.animeId);
                           }}
                           className="w-8 h-8 bg-red-500/80 text-white flex items-center justify-center hover:bg-red-600 border border-white/10"

@@ -4,6 +4,7 @@ import React, { useEffect, useState, Suspense, use, useCallback } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { AnimeAPI } from '@/lib/api';
 import { useHistory } from '@/lib/hooks/useHistory';
+import { useWatchedEpisodes } from '@/lib/hooks/useWatchedEpisodes';
 import { ChevronRight, Grid, Renew, Video, ServerDns, Screen, Theater, Download } from '@carbon/icons-react';
 import Link from 'next/link';
 import { Tooltip } from '@/components/ui/Tooltip';
@@ -27,6 +28,7 @@ export default function WatchContent({ id }: { id: string }) {
   const [isCinemaMode, setIsCinemaMode] = useState(false);
   const [isTheaterMode, setIsTheaterMode] = useState(false);
   const { saveToHistory } = useHistory();
+  const { markAsWatched } = useWatchedEpisodes();
   const activeEpisodeRef = React.useRef<HTMLAnchorElement>(null);
   const scrollContainerRef = React.useRef<HTMLDivElement>(null);
 
@@ -157,9 +159,10 @@ export default function WatchContent({ id }: { id: string }) {
         lastEpisodeId: id,
         lastEpisodeTitle: sanitizedData.title || `Episode ${id}`,
       });
+      markAsWatched(animeId, id);
     }
     setLoading(false);
-  }, [id, animeId, animeTitle, animeImg, source, saveToHistory]);
+  }, [id, animeId, animeTitle, animeImg, source, saveToHistory, markAsWatched]);
 
   const fetchAnimeData = useCallback(async () => {
     if (!animeId || animeId === 'undefined') return;

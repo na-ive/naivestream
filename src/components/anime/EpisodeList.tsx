@@ -2,8 +2,9 @@
 
 import React, { useEffect, useState, useMemo } from 'react';
 import Link from 'next/link';
-import { CaretRight, ChevronLeft, ChevronRight, Search, List, FaceDissatisfied } from '@carbon/icons-react';
+import { CaretRight, ChevronLeft, ChevronRight, Search, List, Checkmark, FaceDissatisfied } from '@carbon/icons-react';
 import { useHistory } from '@/lib/hooks/useHistory';
+import { useWatchedEpisodes } from '@/lib/hooks/useWatchedEpisodes';
 import { cn } from '@/lib/utils';
 
 export function EpisodeList({ 
@@ -20,6 +21,7 @@ export function EpisodeList({
   source: string;
 }) {
   const { history } = useHistory();
+  const { isWatched, getWatchedCount } = useWatchedEpisodes();
   const [lastEpId, setLastEpId] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [jumpValue, setJumpValue] = useState('');
@@ -29,6 +31,9 @@ export function EpisodeList({
     const saved = history.find(h => h.animeId === animeId);
     if (saved) setLastEpId(saved.lastEpisodeId);
   }, [history, animeId]);
+
+  const watchedCount = getWatchedCount(animeId);
+  const totalCount = episodes.length;
 
   const totalPages = Math.ceil(episodes.length / itemsPerPage);
   
@@ -136,6 +141,21 @@ export function EpisodeList({
         </div>
       </div>
 
+      {/* Progress Bar */}
+      {watchedCount > 0 && (
+        <div className="flex items-center gap-3 px-4 py-3 bg-card/50 border border-secondary/10">
+          <div className="flex-1 h-1.5 bg-background/80 overflow-hidden">
+            <div
+              className="h-full bg-secondary transition-all duration-500"
+              style={{ width: `${Math.min(100, (watchedCount / totalCount) * 100)}%` }}
+            />
+          </div>
+          <span className="text-[10px] font-mono font-black uppercase tracking-widest text-secondary shrink-0">
+            {watchedCount}/{totalCount}
+          </span>
+        </div>
+      )}
+
       {/* Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
         {currentEpisodes.map((ep: any, index: number) => {
@@ -144,6 +164,7 @@ export function EpisodeList({
           const epNum = ep.eps || (typeof ep.title === 'number' ? ep.title : null) || episodes.length - globalIndex;
           const currentEpId = ep.episodeId || ep.id;
           const isLastWatched = lastEpId === currentEpId;
+          const isWatchedEp = isWatched(animeId, currentEpId);
 
           return (
             <Link
@@ -153,17 +174,25 @@ export function EpisodeList({
                 "flex items-center p-3 transition-all group relative overflow-hidden h-20",
                 isLastWatched 
                   ? "bg-secondary/10 border-l-4 border-secondary" 
-                  : "bg-card/50 hover:bg-secondary/5 border-l-4 border-transparent hover:border-secondary"
+                  : isWatchedEp
+                    ? "bg-secondary/[0.04] border-l-4 border-secondary/30"
+                    : "bg-card/50 hover:bg-secondary/5 border-l-4 border-transparent hover:border-secondary"
               )}
               style={{ clipPath: 'polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px)' }}
             >
               {/* Episode Number Block */}
               <div className={cn(
                 "relative w-12 h-12 flex items-center justify-center font-black text-lg transition-all shrink-0 z-10",
-                isLastWatched ? "text-secondary" : "text-muted-text group-hover:text-foreground"
+                isLastWatched ? "text-secondary" : isWatchedEp ? "text-secondary/60" : "text-muted-text group-hover:text-foreground"
               )}>
-                <span className="absolute text-[8px] top-0 left-0 text-secondary/50 font-mono tracking-tighter">EP</span>
-                {epNum}
+                {isWatchedEp ? (
+                  <Checkmark className="w-5 h-5 fill-current" />
+                ) : (
+                  <>
+                    <span className="absolute text-[8px] top-0 left-0 text-secondary/50 font-mono tracking-tighter">EP</span>
+                    {epNum}
+                  </>
+                )}
               </div>
 
               {/* Episode Info */}
