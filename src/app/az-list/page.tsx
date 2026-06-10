@@ -13,7 +13,7 @@ export default async function AZListPage(props: { searchParams: Promise<{ letter
   const searchParams = await props.searchParams;
   const currentLetter = searchParams.letter || "ALL";
   const currentPage = parseInt(searchParams.page || "1", 10);
-  const itemsPerPage = 30;
+  const itemsPerPage = 24;
 
   const result = await AnimeService.advancedSearch({
     letter: currentLetter,
@@ -57,7 +57,7 @@ export default async function AZListPage(props: { searchParams: Promise<{ letter
           {letters.map((letter) => (
             <Link
               key={letter}
-              href={`/az-list?letter=${letter}`}
+              href={`/az-list?letter=${encodeURIComponent(letter)}`}
               className={`w-10 h-10 flex items-center justify-center font-bold text-sm transition-all ${
                 currentLetter === letter
                   ? "bg-secondary text-background shadow-[0_0_15px_rgba(34,197,94,0.4)]"
@@ -96,7 +96,7 @@ export default async function AZListPage(props: { searchParams: Promise<{ letter
           <Pagination
             currentPage={currentPage}
             totalPages={totalPages}
-            baseUrl={`/az-list?letter=${currentLetter}`}
+            baseUrl="/az-list"
           />
         </>
       ) : (

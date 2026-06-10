@@ -12,7 +12,7 @@ export function Footer() {
             {["ALL", "#", "0-9", ..."ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("")].map((letter) => (
               <Link
                 key={letter}
-                href={`/az-list?letter=${letter}`}
+                href={`/az-list?letter=${encodeURIComponent(letter)}`}
                 className="text-xs md:text-sm font-black hover:text-secondary transition-colors text-muted-text w-7 h-7 md:w-10 md:h-10 flex items-center justify-center border border-transparent hover:border-secondary/30"
               >
                 {letter}
