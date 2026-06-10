@@ -15,13 +15,14 @@ export async function GET(req: NextRequest) {
   const rating = searchParams.get('rating') || '';
   const source = searchParams.get('source') || '';
   const studio = searchParams.get('studio') || '';
+  const studios = searchParams.get('studios') || '';
   const order = searchParams.get('order') || 'popularity';
   const page = parseInt(searchParams.get('page') || '1');
   const limit = parseInt(searchParams.get('limit') || '24');
 
   try {
     const results = await AnimeService.advancedSearch({
-      query, genre, genres, genreMode, status, type, letter, year, season, rating, source, studio, order, page, limit
+      query, genre, genres, genreMode, status, type, letter, year, season, rating, source, studio, studios, order, page, limit
     });
     return NextResponse.json(results);
   } catch (error) {

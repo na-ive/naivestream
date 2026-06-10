@@ -15,9 +15,10 @@ interface MultiSelectProps {
   options: Option[];
   placeholder?: string;
   className?: string;
+  formatDisplay?: (selected: Option[]) => string;
 }
 
-export function MultiSelect({ values, onChange, options, placeholder = "Select...", className }: MultiSelectProps) {
+export function MultiSelect({ values, onChange, options, placeholder = "Select...", className, formatDisplay }: MultiSelectProps) {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -39,21 +40,26 @@ export function MultiSelect({ values, onChange, options, placeholder = "Select..
     }
   };
 
+  const selectedOptions = options.filter(o => values.includes(o.value));
+  const displayText = selectedOptions.length > 0 && formatDisplay
+    ? formatDisplay(selectedOptions)
+    : selectedOptions.length > 0
+      ? `${values.length} selected`
+      : placeholder;
+
   return (
     <div className={cn("relative", className)} ref={dropdownRef}>
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
         className={cn(
-          "flex items-center justify-between w-full min-w-[180px] px-4 py-2 bg-background border-2 transition-all font-bold uppercase tracking-wider text-sm",
+          "flex items-center justify-between w-full px-4 py-2 bg-background border-2 transition-all font-bold uppercase tracking-wider text-sm",
           isOpen
             ? "border-secondary text-secondary shadow-[0_0_10px_rgba(34,197,94,0.2)]"
             : "border-secondary/20 text-foreground hover:border-secondary/50"
         )}
       >
-        <span className="truncate mr-4">
-          {values.length > 0 ? `${values.length} selected` : placeholder}
-        </span>
+        <span className="truncate mr-4">{displayText}</span>
         <ChevronDown className={cn("w-4 h-4 transition-transform duration-200 shrink-0", isOpen && "rotate-180")} />
       </button>
 

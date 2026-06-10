@@ -303,7 +303,7 @@ export const AnimeService = {
   },
 
   async advancedSearch({ 
-    query = '', genre = '', genres = '', genreMode = 'any', status = '', type = '', letter = '', year = '', season = '', rating = '', source = '', studio = '', order = 'popularity', page = 1, limit = 24 
+    query = '', genre = '', genres = '', genreMode = 'any', status = '', type = '', letter = '', year = '', season = '', rating = '', source = '', studio = '', studios = '', order = 'popularity', page = 1, limit = 24 
   }) {
     const offset = (page - 1) * limit;
 
@@ -350,7 +350,22 @@ export const AnimeService = {
     if (season) { whereClauses.push('a.season = ?'); params.push(season); }
     if (rating) { whereClauses.push('a.rating = ?'); params.push(rating); }
     if (source) { whereClauses.push('a.source = ?'); params.push(source); }
-    if (studio) { whereClauses.push('a.studios LIKE ?'); params.push(`%${studio}%`); }
+
+    const studioList: string[] = [];
+    if (studios) {
+      studios.split(',').map(s => s.trim()).filter(Boolean).forEach(s => {
+        if (!studioList.includes(s)) studioList.push(s);
+      });
+    }
+    if (studio && !studioList.includes(studio)) {
+      studioList.push(studio);
+    }
+    if (studioList.length > 0) {
+      const conds = studioList.map(() => 'a.studios LIKE ?');
+      whereClauses.push(`(${conds.join(' OR ')})`);
+      studioList.forEach(s => params.push(`%${s}%`));
+    }
+
     if (letter) {
       if (letter === '0-9') whereClauses.push("a.title GLOB '[0-9]*'");
       else if (letter === '#') whereClauses.push("a.title NOT GLOB '[a-zA-Z0-9]*'");

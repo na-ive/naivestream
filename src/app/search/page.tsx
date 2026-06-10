@@ -5,7 +5,7 @@ import { useSearchParams, useRouter } from 'next/navigation';
 import { AnimeCard } from '@/components/anime/AnimeCard';
 import { Pagination } from '@/components/layout/Pagination';
 import { CustomSelect } from '@/components/ui/CustomSelect';
-import { SearchableSelect } from '@/components/ui/SearchableSelect';
+import { MultiSelect } from '@/components/ui/MultiSelect';
 import { cn } from '@/lib/utils';
 import { Search as SearchIcon, Renew, FaceDissatisfied, Filter } from '@carbon/icons-react';
 
@@ -78,10 +78,11 @@ function SearchContent() {
   const season = searchParams.get('season') || 'All';
   const source = searchParams.get('source') || 'All';
   const rating = searchParams.get('rating') || 'All';
-  const studio = searchParams.get('studio') || '';
+  const studiosParam = searchParams.get('studios') || '';
   const page = parseInt(searchParams.get('page') || '1');
 
   const selectedGenres = genresParam ? genresParam.split(',').filter(Boolean) : [];
+  const selectedStudios = studiosParam ? studiosParam.split(',').filter(Boolean) : [];
 
   const [results, setResults] = useState<any[]>([]);
   const [genres, setGenres] = useState<any[]>([]);
@@ -128,7 +129,7 @@ function SearchContent() {
         if (season !== 'All') params.set('season', season);
         if (source !== 'All') params.set('source', source);
         if (rating !== 'All') params.set('rating', rating);
-        if (studio) params.set('studio', studio);
+        if (selectedStudios.length > 0) params.set('studios', selectedStudios.join(','));
         params.set('page', page.toString());
 
         const res = await fetch(`/api/search?${params.toString()}`);
@@ -141,7 +142,7 @@ function SearchContent() {
       setLoading(false);
     }
     doSearch();
-  }, [query, genresParam, genreMode, status, type, order, year, season, source, rating, studio, page]);
+  }, [query, genresParam, genreMode, status, type, order, year, season, source, rating, studiosParam, page]);
 
   const updateFilters = useCallback((updates: Record<string, string | number>) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -284,11 +285,18 @@ function SearchContent() {
                 options={FILTER_OPTIONS.order}
                 placeholder="Order"
               />
-              <SearchableSelect
-                value={studio}
-                onChange={(v) => updateFilters({ studio: v })}
+              <MultiSelect
+                values={selectedStudios}
+                onChange={(v) => {
+                  const params = new URLSearchParams(searchParams.toString());
+                  if (v.length > 0) params.set('studios', v.join(','));
+                  else params.delete('studios');
+                  params.set('page', '1');
+                  router.push(`/search?${params.toString()}`);
+                }}
                 options={studioOptions}
                 placeholder="Studio"
+                formatDisplay={(selected) => selected.length === 1 ? selected[0].label : `Studio (${selected.length})`}
               />
             </div>
 
