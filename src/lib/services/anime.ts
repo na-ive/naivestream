@@ -198,7 +198,7 @@ export const AnimeService = {
       LEFT JOIN character_voice_actors cva ON (c.id = cva.character_id AND ac.anime_id = cva.anime_id)
       LEFT JOIN voice_actors va ON cva.voice_actor_id = va.id
       WHERE ac.anime_id = ?
-      LIMIT 10
+      LIMIT 15
     `).all(anime.id);
 
     return {
