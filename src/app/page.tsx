@@ -33,7 +33,8 @@ export default async function HomePage() {
     image: anime.poster,
     rating: String(anime.score),
     episodes: anime.status === 'Ongoing' ? `ep ${anime.latest_episode || '??'}` : `${anime.episodes_count || '??'} eps`,
-    releaseDay: anime.release_day
+    releaseDay: anime.release_day,
+    genres: anime.genres ? anime.genres.split(',') : []
   }));
 
   return (

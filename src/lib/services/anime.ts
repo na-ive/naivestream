@@ -98,7 +98,8 @@ const SMART_STATUS_CLAUSES = {
 // SQL subqueries for reuse
 const SQL_LATEST_EP = `(SELECT MAX(eps_number) FROM episodes WHERE anime_id = a.id)`;
 const SQL_ACTUAL_COUNT = `(SELECT COUNT(*) FROM episodes WHERE anime_id = a.id)`;
-const SQL_BASE_SELECT = `a.*, ${SQL_LATEST_EP} as latest_episode, ${SQL_ACTUAL_COUNT} as actual_episodes_count`;
+const SQL_GENRES = `(SELECT GROUP_CONCAT(g.name) FROM genres g JOIN anime_genres ag ON g.id = ag.genre_id WHERE ag.anime_id = a.id)`;
+const SQL_BASE_SELECT = `a.*, ${SQL_LATEST_EP} as latest_episode, ${SQL_ACTUAL_COUNT} as actual_episodes_count, ${SQL_GENRES} as genres`;
 
 export const AnimeService = {
   /**
