@@ -98,7 +98,7 @@ export function AnimeCard({ id, title, image, status, rating, episode, type, hid
 
       {/* Bookmark Button (Outside Link) */}
       {!hideBookmark && (
-        <div className="absolute top-2 right-2 z-40 opacity-0 group-hover:opacity-100 transition-opacity">
+        <div className="absolute top-2 right-2 z-40 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
           <BookmarkButton animeId={id} animeTitle={title} animeImage={image} />
         </div>
       )}
