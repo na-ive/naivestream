@@ -3,6 +3,7 @@ import { AnimeService } from "@/lib/services/anime";
 import { AnimeCard } from "@/components/anime/AnimeCard";
 import { Activity, FaceDissatisfied } from "@carbon/icons-react";
 import { Pagination } from "@/components/layout/Pagination";
+import { formatNextAiring } from "@/lib/utils";
 
 export const metadata: Metadata = {
   title: 'Ongoing Anime - NaiveStream',
@@ -58,7 +59,7 @@ export default async function OngoingPage(props: { searchParams: Promise<{ page?
                 image={anime.poster}
                 rating={String(anime.score)}
                 episode={`ep ${anime.latest_episode || '??'}`}
-                status={anime.release_day}
+                status={anime.next_episode && anime.next_airing_at ? formatNextAiring(anime.next_episode, anime.next_airing_at, true) : anime.release_day}
                 totalEpisodes={anime.actual_episodes_count}
               />
             ))}

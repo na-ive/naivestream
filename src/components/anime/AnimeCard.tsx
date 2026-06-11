@@ -81,7 +81,7 @@ export function AnimeCard({ id, title, titleEnglish, image, status, rating, epis
         )}
 
         {/* Badges */}
-        <div className="absolute top-3 left-3 flex flex-col gap-2 z-20">
+        <div className="absolute top-3 left-3 flex flex-col gap-2 z-20 items-start">
           {rating && (
             <div className={cn(
               "flex items-center space-x-1.5 px-2 py-1 bg-background/90 backdrop-blur-md border text-[10px] font-black uppercase tracking-tighter",
