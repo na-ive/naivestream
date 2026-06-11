@@ -63,8 +63,8 @@ interface CharacterCarouselProps {
 
 export function CharacterCarousel({ characters }: CharacterCarouselProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
-  const [canScrollLeft, setCanScrollLeft] = useState(false);
-  const [canScrollRight, setCanScrollRight] = useState(false);
+  const [canScrollLeft, setCanScrollLeft] = useState(true);
+  const [canScrollRight, setCanScrollRight] = useState(true);
 
   const updateScrollState = () => {
     const el = scrollRef.current;
