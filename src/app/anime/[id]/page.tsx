@@ -267,7 +267,7 @@ export default async function AnimeDetailPage(props: { params: Promise<{ id: str
                 <h2>Synopsis<span className="text-secondary opacity-70">_</span></h2>
               </div>
               <div className="text-foreground/70 leading-relaxed text-sm md:text-base border-l-4 border-secondary/20 pl-6 pr-6 py-4 bg-secondary/[0.02]">
-                {synopsis.split(/\n\s*\n+/).filter(Boolean).map((paragraph, i) => (
+                {synopsis.split(/\n\s*\n+/).filter(Boolean).map((paragraph: string, i: number) => (
                   <p key={i} className={i > 0 ? 'mt-4' : ''}>
                     {paragraph.trim()}
                   </p>

@@ -103,7 +103,7 @@ export default async function SchedulePage({ searchParams }: SchedulePageProps) 
               image={anime.poster}
               rating={String(anime.score)}
               episode={`ep ${anime.latest_episode || '??'}`}
-              status={anime.next_episode && anime.next_airing_at ? formatNextAiring(anime.next_episode, anime.next_airing_at, true) : undefined}
+              status={anime.next_episode && anime.next_airing_at ? formatNextAiring(anime.next_episode, anime.next_airing_at, true) ?? undefined : undefined}
             />
           ))}
         </div>
