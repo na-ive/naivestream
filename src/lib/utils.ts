@@ -45,3 +45,24 @@ export function parseArrayField(data: any): string[] {
     return [strData];
   }
 }
+
+/**
+ * Formats next airing information into a human-readable string.
+ */
+export function formatNextAiring(nextEpisode: number, nextAiringAt: number, detailed = false): string | null {
+  const now = Math.floor(Date.now() / 1000);
+  const diff = nextAiringAt - now;
+  if (diff <= 0) return null;
+  
+  const days = Math.floor(diff / 86400);
+  const hours = Math.floor((diff % 86400) / 3600);
+  
+  if (days > 14) return detailed ? `Ep ${nextEpisode} upcoming` : `Ep ${nextEpisode}`;
+  if (days > 0) {
+    return detailed 
+      ? `Ep ${nextEpisode} in ${days}d ${hours}h` 
+      : `Ep ${nextEpisode} in ${days}d`;
+  }
+  if (hours > 0) return `Ep ${nextEpisode} in ${hours}h`;
+  return `Ep ${nextEpisode} soon`;
+}

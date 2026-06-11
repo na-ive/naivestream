@@ -2,7 +2,8 @@ import React from 'react';
 import { AnimeService } from '@/lib/services/anime';
 import Link from 'next/link';
 import { AnimeCard } from '@/components/anime/AnimeCard';
-import { Calendar, FaceDissatisfied } from '@carbon/icons-react';
+import { Calendar, FaceDissatisfied, Time } from '@carbon/icons-react';
+import { formatNextAiring } from '@/lib/utils';
 
 export const metadata = {
   title: 'Anime Schedule - NaiveStream',
@@ -93,17 +94,29 @@ export default async function SchedulePage({ searchParams }: SchedulePageProps) 
       {/* Anime Grid */}
       {animeList.length > 0 ? (
         <div className="anime-grid">
-          {animeList.map((anime: any) => (
-            <AnimeCard
-              key={anime.slug}
-              id={anime.slug}
-              title={anime.title}
-              titleEnglish={anime.title_english}
-              image={anime.poster}
-              rating={String(anime.score)}
-              episode={String(anime.episodes_count)}
-            />
-          ))}
+          {animeList.map((anime: any) => {
+            const nextAiring = anime.next_episode && anime.next_airing_at
+              ? formatNextAiring(anime.next_episode, anime.next_airing_at)
+              : null;
+            return (
+              <div key={anime.slug} className="space-y-1">
+                <AnimeCard
+                  id={anime.slug}
+                  title={anime.title}
+                  titleEnglish={anime.title_english}
+                  image={anime.poster}
+                  rating={String(anime.score)}
+                  episode={String(anime.episodes_count)}
+                />
+                {nextAiring && (
+                  <div className="flex items-center gap-1.5 px-2 py-1 text-[10px] font-mono font-bold text-secondary/80 uppercase tracking-wider">
+                    <Time className="w-3 h-3" />
+                    <span>{nextAiring}</span>
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </div>
       ) : (
         <div className="flex flex-col items-center justify-center py-20 text-center space-y-6 border-2 border-dashed border-secondary/20 bg-card">

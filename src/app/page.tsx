@@ -3,8 +3,9 @@ import { AnimeCard } from "@/components/anime/AnimeCard";
 import { HeroCarousel } from "@/components/anime/HeroCarousel";
 import { ContinueWatchingHome } from "@/components/anime/ContinueWatchingHome";
 import { AnimeTitleDisplay } from '@/components/anime/AnimeTitleDisplay';
-import { ChevronRight, Calendar } from "@carbon/icons-react";
+import { ChevronRight, Calendar, Time } from "@carbon/icons-react";
 import Link from "next/link";
+import { formatNextAiring } from "@/lib/utils";
 
 const DAY_MAP: Record<number, string> = {
   0: 'Sunday', 1: 'Monday', 2: 'Tuesday',
@@ -34,6 +35,7 @@ export default async function HomePage() {
     ...anime,
     id: anime.slug,
     image: anime.poster,
+    banner: anime.banner || anime.poster,
     rating: String(anime.score),
     episodes: anime.status === 'Ongoing' ? `ep ${anime.latest_episode || '??'}` : `${anime.episodes_count || '??'} eps`,
     releaseDay: anime.release_day,
@@ -165,22 +167,35 @@ export default async function HomePage() {
             </div>
             
             <div className="space-y-2 relative z-10">
-              {todayAnimeList.slice(0, 5).map((anime: any, index: number) => (
-                <Link 
-                  key={anime.slug} 
-                  href={`/anime/${anime.slug}`}
-                  className="group flex items-center justify-between p-4 bg-background/30 hover:bg-secondary/10 border-b border-white/5 last:border-0 transition-all relative overflow-hidden"
-                >
-                  <div className="absolute inset-y-0 left-0 w-1 bg-secondary scale-y-0 group-hover:scale-y-100 transition-transform origin-top" />
-                  <div className="flex items-center gap-4 pl-2">
-                    <span className="text-[10px] font-mono text-muted-text/50">{(index + 1).toString().padStart(2, '0')}</span>
-                    <span className="font-bold text-sm group-hover:text-secondary line-clamp-1 uppercase tracking-wider transition-colors">
-                      <AnimeTitleDisplay title={anime.title} titleEnglish={anime.title_english} />
-                    </span>
-                  </div>
-                  <ChevronRight className="w-4 h-4 text-muted-text group-hover:text-secondary shrink-0 transition-transform group-hover:translate-x-1" />
-                </Link>
-              ))}
+              {todayAnimeList.slice(0, 5).map((anime: any, index: number) => {
+                const nextAiring = anime.next_episode && anime.next_airing_at
+                  ? formatNextAiring(anime.next_episode, anime.next_airing_at)
+                  : null;
+                return (
+                  <Link 
+                    key={anime.slug} 
+                    href={`/anime/${anime.slug}`}
+                    className="group flex items-center justify-between p-4 bg-background/30 hover:bg-secondary/10 border-b border-white/5 last:border-0 transition-all relative overflow-hidden"
+                  >
+                    <div className="absolute inset-y-0 left-0 w-1 bg-secondary scale-y-0 group-hover:scale-y-100 transition-transform origin-top" />
+                    <div className="flex items-center gap-4 pl-2 min-w-0">
+                      <span className="text-[10px] font-mono text-muted-text/50 shrink-0">{(index + 1).toString().padStart(2, '0')}</span>
+                      <span className="font-bold text-sm group-hover:text-secondary line-clamp-1 uppercase tracking-wider transition-colors">
+                        <AnimeTitleDisplay title={anime.title} titleEnglish={anime.title_english} />
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-3 shrink-0">
+                      {nextAiring && (
+                        <span className="text-[10px] font-mono font-bold text-secondary/70 uppercase tracking-wider flex items-center gap-1">
+                          <Time className="w-3 h-3" />
+                          {nextAiring}
+                        </span>
+                      )}
+                      <ChevronRight className="w-4 h-4 text-muted-text group-hover:text-secondary transition-transform group-hover:translate-x-1" />
+                    </div>
+                  </Link>
+                );
+              })}
               
               {todayAnimeList.length > 5 && (
                 <div className="pt-6 text-center">

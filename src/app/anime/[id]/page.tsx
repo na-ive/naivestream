@@ -71,6 +71,7 @@ export default async function AnimeDetailPage(props: { params: Promise<{ id: str
   const similarAnime = await AnimeService.getSimilarAnime(data.id, 6);
 
   const poster = data.poster;
+  const banner = data.banner || poster;
   const episodes = data.episodeList || [];
   const genres = data.genres || [];
   const synopsis = data.synopsis || "No synopsis available.";
@@ -117,10 +118,10 @@ export default async function AnimeDetailPage(props: { params: Promise<{ id: str
       <div className="relative w-full h-[40vh] min-h-[300px] overflow-hidden">
         <div className="absolute inset-0">
           <img
-            src={poster}
+            src={banner}
             alt={data.title}
             loading="eager"
-            className="w-full h-full object-cover blur-sm opacity-50 dark:opacity-100 brightness-110 dark:brightness-[0.3]"
+            className="w-full h-full object-cover object-[center_25%] blur-sm opacity-50 dark:opacity-100 brightness-110 dark:brightness-[0.3]"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-background to-transparent" />
         </div>
@@ -209,6 +210,19 @@ export default async function AnimeDetailPage(props: { params: Promise<{ id: str
                   <span className="text-muted-text shrink-0">Rating</span>
                   <span className="text-foreground text-right leading-relaxed">{ageRating}</span>
                 </div>
+                {data.anilist_id && (
+                  <div className="flex justify-between items-start text-xs font-bold uppercase tracking-wider gap-4 border-t border-white/5 pt-2">
+                    <span className="text-muted-text shrink-0">External</span>
+                    <a 
+                      href={`https://anilist.co/anime/${data.anilist_id}`} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="text-secondary hover:underline"
+                    >
+                      AniList
+                    </a>
+                  </div>
+                )}
               </div>
 
               {/* Sidebar Trailer */}

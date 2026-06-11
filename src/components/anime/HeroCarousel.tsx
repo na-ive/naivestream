@@ -8,6 +8,8 @@ import { cn } from '@/lib/utils';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { SmartWatchButton } from './SmartWatchButton';
 import { useTitleLang } from '@/lib/providers/TitleLangProvider';
+import { formatNextAiring } from '@/lib/utils';
+import { AnimeTitleDisplay } from './AnimeTitleDisplay';
 
 interface HeroCarouselProps {
   items: any[];
@@ -39,7 +41,9 @@ export function HeroCarousel({ items }: HeroCarouselProps) {
   if (!items.length) return null;
 
   const current = items[currentIndex];
-  const displayTitle = titleLang === 'en' && current.title_english ? current.title_english : current.title;
+  const nextAiringStr = current.next_episode && current.next_airing_at
+    ? formatNextAiring(current.next_episode, current.next_airing_at, true)
+    : null;
 
   return (
     <section 
@@ -59,7 +63,7 @@ export function HeroCarousel({ items }: HeroCarouselProps) {
           {/* Background Image with Theme Tint */}
           <div className="absolute inset-0">
             <img
-              src={current.poster || current.image}
+              src={current.banner || current.poster || current.image}
               alt={current.title}
               loading="eager"
               onLoad={() => setImgLoaded(true)}
@@ -137,16 +141,24 @@ export function HeroCarousel({ items }: HeroCarouselProps) {
             className="flex-1 text-center md:text-left pt-2"
           >
             <h1 className="text-3xl md:text-4xl lg:text-5xl font-serif font-black leading-tight tracking-tighter text-foreground mb-2 uppercase line-clamp-2">
-              {displayTitle}
+              <AnimeTitleDisplay title={current.title} titleEnglish={current.title_english} />
             </h1>
 
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-8 h-[1px] bg-secondary/50" />
+            <div className="flex items-center gap-4 mb-6">
+              <div className="w-8 h-[1px] bg-secondary/50 shrink-0" />
               <span className="text-secondary/80 text-[11px] font-mono font-black uppercase tracking-[0.35em]">
                 {current.status === 'Ongoing'
                   ? `Episode ${current.latest_episode || '?'}`
                   : `${current.episodes_count || '?'} Episodes`}
               </span>
+              {nextAiringStr && (
+                <>
+                  <div className="w-2 h-[1px] bg-secondary/30 shrink-0" />
+                  <span className="text-secondary/60 text-[10px] font-mono font-bold uppercase tracking-[0.3em]">
+                    {nextAiringStr}
+                  </span>
+                </>
+              )}
             </div>
 
             <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 mb-8">

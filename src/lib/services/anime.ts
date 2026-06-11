@@ -53,6 +53,10 @@ export interface AnimeMetadata {
   last_updated: string;
   latest_episode?: number;
   actual_episodes_count?: number;
+  anilist_id?: number;
+  banner?: string;
+  next_episode?: number;
+  next_airing_at?: number;
 }
 
 export interface Episode {
@@ -138,8 +142,10 @@ export const AnimeService = {
     }
 
     const allowedOrderBy = ['last_updated', 'popularity', 'score', 'year', 'title'];
-    const safeOrderBy = allowedOrderBy.includes(orderBy) ? `a.${orderBy}` : 'a.last_updated';
-    const direction = (safeOrderBy === 'a.popularity' || safeOrderBy === 'a.title') ? 'ASC' : 'DESC';
+    const safeOrderBy = allowedOrderBy.includes(orderBy)
+        ? (orderBy === 'title' ? "COALESCE(NULLIF(a.title_english, ''), a.title)" : `a.${orderBy}`)
+        : 'a.last_updated';
+    const direction = orderBy === 'title' ? 'ASC' : 'DESC';
 
     // De-prioritize anime with zero actual episodes
     query += ` ORDER BY CASE WHEN ${SQL_ACTUAL_COUNT} > 0 THEN 0 ELSE 1 END ASC, ${safeOrderBy} ${direction} LIMIT ? OFFSET ?`;
@@ -223,7 +229,7 @@ export const AnimeService = {
       ${SQL_ACTUAL_COUNT} as actual_episodes_count
       FROM anime a
       WHERE title LIKE ? OR title_english LIKE ? OR title_japanese LIKE ?
-      ORDER BY CASE WHEN ${SQL_ACTUAL_COUNT} > 0 THEN 0 ELSE 1 END ASC, popularity ASC
+      ORDER BY CASE WHEN ${SQL_ACTUAL_COUNT} > 0 THEN 0 ELSE 1 END ASC, popularity DESC
       LIMIT ?
     `;
     const searchPattern = `%${query}%`;
@@ -239,7 +245,7 @@ export const AnimeService = {
    * Home page data
    */
   async getHomeData() {
-    const popularSql = `SELECT ${SQL_BASE_SELECT} FROM anime a WHERE ${SMART_STATUS_CLAUSES.Ongoing} ORDER BY CASE WHEN ${SQL_ACTUAL_COUNT} > 0 THEN 0 ELSE 1 END ASC, a.popularity ASC LIMIT 12`;
+    const popularSql = `SELECT ${SQL_BASE_SELECT} FROM anime a WHERE ${SMART_STATUS_CLAUSES.Ongoing} ORDER BY CASE WHEN ${SQL_ACTUAL_COUNT} > 0 THEN 0 ELSE 1 END ASC, a.popularity DESC LIMIT 12`;
     const popular = getPreparedStatement(popularSql).all() as any[];
 
     const ongoingSql = `SELECT ${SQL_BASE_SELECT} FROM anime a WHERE ${SMART_STATUS_CLAUSES.Ongoing} ORDER BY CASE WHEN ${SQL_ACTUAL_COUNT} > 0 THEN 0 ELSE 1 END ASC, a.last_updated DESC LIMIT 12`;
@@ -367,9 +373,10 @@ export const AnimeService = {
     }
 
     if (letter) {
-      if (letter === '0-9') whereClauses.push("a.title GLOB '[0-9]*'");
-      else if (letter === '#') whereClauses.push("a.title NOT GLOB '[a-zA-Z0-9]*'");
-      else if (letter !== 'ALL') { whereClauses.push('a.title LIKE ?'); params.push(`${letter}%`); }
+      const titleField = "COALESCE(NULLIF(a.title_english, ''), a.title)";
+      if (letter === '0-9') whereClauses.push(`${titleField} GLOB '[0-9]*'`);
+      else if (letter === '#') whereClauses.push(`${titleField} NOT GLOB '[a-zA-Z0-9]*'`);
+      else if (letter !== 'ALL') { whereClauses.push(`${titleField} LIKE ?`); params.push(`${letter}%`); }
     }
 
     const whereStr = whereClauses.length > 0 ? ' WHERE ' + whereClauses.join(' AND ') : '';
@@ -385,17 +392,17 @@ export const AnimeService = {
     }
 
     const orderByMap: Record<string, string> = {
-      'popularity': 'a.popularity ASC',
-      'popularity_desc': 'a.popularity DESC',
+      'popularity': 'a.popularity DESC',
+      'popularity_desc': 'a.popularity ASC',
       'latest': 'a.last_updated DESC',
       'oldest': 'a.last_updated ASC',
       'score': 'a.score DESC',
-      'title': 'a.title ASC',
-      'title_desc': 'a.title DESC',
+      'title': "COALESCE(NULLIF(a.title_english, ''), a.title) ASC",
+      'title_desc': "COALESCE(NULLIF(a.title_english, ''), a.title) DESC",
       'score_asc': 'a.score ASC'
     };
 
-    const primaryOrder = orderByMap[order] || 'a.popularity ASC';
+    const primaryOrder = orderByMap[order] || 'a.popularity DESC';
     const orderSql = ` ORDER BY CASE WHEN ${SQL_ACTUAL_COUNT} > 0 THEN 0 ELSE 1 END ASC, ${primaryOrder} LIMIT ? OFFSET ?`;
 
     const items = getPreparedStatement(sql + orderSql).all(...params, limit, offset) as any[];
