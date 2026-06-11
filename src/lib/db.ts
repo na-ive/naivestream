@@ -13,8 +13,15 @@ function resolveDbPath(): string {
   }
 
   const selfDir = path.dirname(fileURLToPath(import.meta.url));
-  const alongside = path.join(selfDir, 'example-anime.db');
-  if (fs.existsSync(alongside)) return alongside;
+
+  const animeDb = path.join(selfDir, 'anime.db');
+  if (fs.existsSync(animeDb)) return animeDb;
+
+  const cwdAnime = path.join(process.cwd(), 'anime.db');
+  if (fs.existsSync(cwdAnime)) return cwdAnime;
+
+  const exampleDb = path.join(selfDir, 'example-anime.db');
+  if (fs.existsSync(exampleDb)) return exampleDb;
 
   return path.join(process.cwd(), 'anime.db');
 }
