@@ -1,24 +1,35 @@
 import Database from 'better-sqlite3';
 import path from 'path';
+import fs from 'fs';
+import { fileURLToPath } from 'url';
 
-// Singleton instance to prevent multiple connections in dev (HMR)
 declare global {
   var db: Database.Database | undefined;
 }
 
-const dbPath = process.env.DATABASE_PATH || path.join(process.cwd(), 'anime.db');
+function resolveDbPath(): string {
+  if (process.env.DATABASE_PATH) {
+    return path.resolve(process.env.DATABASE_PATH);
+  }
+
+  const selfDir = path.dirname(fileURLToPath(import.meta.url));
+  const alongside = path.join(selfDir, 'example-anime.db');
+  if (fs.existsSync(alongside)) return alongside;
+
+  return path.join(process.cwd(), 'anime.db');
+}
+
+const dbPath = resolveDbPath();
 
 if (!global.db) {
-  global.db = new Database(dbPath, { 
-    readonly: false, // Set to false so we can update stream_cache if needed
-    fileMustExist: true 
+  global.db = new Database(dbPath, {
+    readonly: false,
+    fileMustExist: true,
   });
-  
-  // Performance optimization for SQLite
+
   global.db.pragma('journal_mode = WAL');
   global.db.pragma('synchronous = NORMAL');
 
-  // Ensure indexes exist
   const indexStmts = [
     `CREATE INDEX IF NOT EXISTS idx_anime_status_last_updated ON anime(status, last_updated DESC)`,
     `CREATE INDEX IF NOT EXISTS idx_anime_status_popularity ON anime(status, popularity ASC)`,
@@ -34,9 +45,9 @@ if (!global.db) {
     `CREATE INDEX IF NOT EXISTS idx_anime_genres_anime ON anime_genres(anime_id)`,
     `CREATE INDEX IF NOT EXISTS idx_anime_genres_genre ON anime_genres(genre_id)`,
     `CREATE INDEX IF NOT EXISTS idx_anime_characters_anime ON anime_characters(anime_id)`,
-    `CREATE INDEX IF NOT EXISTS idx_character_voice_actors_anime ON character_voice_actors(anime_id)`
+    `CREATE INDEX IF NOT EXISTS idx_character_voice_actors_anime ON character_voice_actors(anime_id)`,
   ];
-  
+
   for (const stmt of indexStmts) {
     global.db.exec(stmt);
   }

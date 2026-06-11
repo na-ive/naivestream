@@ -9,6 +9,9 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  outputFileTracingIncludes: {
+    '/*': ['./src/lib/example-anime.db'],
+  },
 };
 
 export default nextConfig;
