@@ -6,7 +6,7 @@ declare global {
   var db: Database.Database | undefined;
 }
 
-const dbPath = path.join(process.cwd(), 'anime.db');
+const dbPath = process.env.DATABASE_PATH || path.join(process.cwd(), 'anime.db');
 
 if (!global.db) {
   global.db = new Database(dbPath, { 
