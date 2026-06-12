@@ -12,20 +12,14 @@ export function ViewToggle() {
   if (!isMounted) return null;
 
   return (
-    <div className="relative flex items-center space-x-1 p-1 shrink-0">
-      {/* Background with clip-path */}
-      <div 
-        className="absolute inset-0 bg-card/50 border border-secondary/20 pointer-events-none" 
-        style={{ clipPath: 'polygon(5px 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 5px)' }} 
-      />
-      
+    <div className="inline-flex items-center space-x-1 bg-card/50 border border-secondary/30 p-1 relative shrink-0">
       <Tooltip content="Grid View" position="bottom" className="!text-[10px]" wrapperClassName="z-10">
         <button
           onClick={() => changeViewMode('grid')}
           className={cn(
             "p-2 transition-colors",
             viewMode === 'grid' 
-              ? "bg-secondary/20 text-secondary" 
+              ? "bg-secondary/20 text-secondary"
               : "text-muted-text hover:text-foreground hover:bg-white/5"
           )}
         >
@@ -38,7 +32,7 @@ export function ViewToggle() {
           className={cn(
             "p-2 transition-colors",
             viewMode === 'detailed' 
-              ? "bg-secondary/20 text-secondary" 
+              ? "bg-secondary/20 text-secondary"
               : "text-muted-text hover:text-foreground hover:bg-white/5"
           )}
         >
@@ -51,7 +45,7 @@ export function ViewToggle() {
           className={cn(
             "p-2 transition-colors",
             viewMode === 'list' 
-              ? "bg-secondary/20 text-secondary" 
+              ? "bg-secondary/20 text-secondary"
               : "text-muted-text hover:text-foreground hover:bg-white/5"
           )}
         >
