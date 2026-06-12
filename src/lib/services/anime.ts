@@ -117,6 +117,7 @@ const SMART_STATUS_CLAUSES = {
 
 // SQL subqueries for reuse
 const SQL_LATEST_EP = `(SELECT MAX(eps_number) FROM episodes WHERE anime_id = a.id)`;
+const SQL_LATEST_EP_DATE = `(SELECT MAX(uploaded_at) FROM episodes WHERE anime_id = a.id)`;
 const SQL_ACTUAL_COUNT = `(SELECT COUNT(*) FROM episodes WHERE anime_id = a.id)`;
 const SQL_GENRES = `(SELECT GROUP_CONCAT(g.name) FROM genres g JOIN anime_genres ag ON g.id = ag.genre_id WHERE ag.anime_id = a.id)`;
 const SQL_BASE_SELECT = `a.*, ${SQL_LATEST_EP} as latest_episode, ${SQL_ACTUAL_COUNT} as actual_episodes_count, ${SQL_GENRES} as genres`;
@@ -143,9 +144,13 @@ export const AnimeService = {
     }
 
     const allowedOrderBy = ['last_updated', 'popularity', 'score', 'year', 'title'];
-    const safeOrderBy = allowedOrderBy.includes(orderBy)
+    let safeOrderBy = allowedOrderBy.includes(orderBy)
         ? (orderBy === 'title' ? "COALESCE(NULLIF(a.title_english, ''), a.title)" : `a.${orderBy}`)
         : 'a.last_updated';
+
+    if (orderBy === 'last_updated' && status === 'Ongoing') {
+      safeOrderBy = `COALESCE(a.next_airing_at, 0)`;
+    }
     const direction = orderBy === 'title' ? 'ASC' : 'DESC';
 
     // De-prioritize anime with zero actual episodes
@@ -249,7 +254,7 @@ export const AnimeService = {
     const popularSql = `SELECT ${SQL_BASE_SELECT} FROM anime a WHERE ${SMART_STATUS_CLAUSES.Ongoing} ORDER BY CASE WHEN ${SQL_ACTUAL_COUNT} > 0 THEN 0 ELSE 1 END ASC, a.popularity DESC LIMIT 12`;
     const popular = getPreparedStatement(popularSql).all() as any[];
 
-    const ongoingSql = `SELECT ${SQL_BASE_SELECT} FROM anime a WHERE ${SMART_STATUS_CLAUSES.Ongoing} ORDER BY CASE WHEN ${SQL_ACTUAL_COUNT} > 0 THEN 0 ELSE 1 END ASC, a.last_updated DESC LIMIT 12`;
+    const ongoingSql = `SELECT ${SQL_BASE_SELECT} FROM anime a WHERE ${SMART_STATUS_CLAUSES.Ongoing} ORDER BY CASE WHEN ${SQL_ACTUAL_COUNT} > 0 THEN 0 ELSE 1 END ASC, COALESCE(a.next_airing_at, 0) DESC LIMIT 12`;
     const ongoing = getPreparedStatement(ongoingSql).all() as any[];
 
     const completedSql = `SELECT ${SQL_BASE_SELECT} FROM anime a WHERE ${SMART_STATUS_CLAUSES.Completed} ORDER BY CASE WHEN ${SQL_ACTUAL_COUNT} > 0 THEN 0 ELSE 1 END ASC, a.last_updated DESC LIMIT 12`;
