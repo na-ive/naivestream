@@ -44,7 +44,7 @@ export function HeroCarouselMobile({ items }: HeroCarouselMobileProps) {
 
   return (
     <section
-      className="relative w-full h-[34vh] min-h-[240px] overflow-hidden bg-background"
+      className="relative w-full min-h-[300px] overflow-hidden group bg-background"
       onMouseEnter={() => setIsAutoPlaying(false)}
       onMouseLeave={() => setIsAutoPlaying(true)}
     >
@@ -73,102 +73,101 @@ export function HeroCarouselMobile({ items }: HeroCarouselMobileProps) {
         </motion.div>
       </AnimatePresence>
 
-      <div className="relative z-10 h-full px-4 sm:px-6 flex flex-col justify-end pb-12">
-        {/* Top Label */}
-        <div className="absolute top-24 left-4 sm:left-6 flex items-center gap-2">
+      <div className="relative z-10 max-w-[1440px] mx-auto px-4 sm:px-6 pt-24 pb-4">
+        {/* Trending - statis, tidak ikut animasi */}
+        <div className="flex items-center gap-2 mb-3">
           <div className="w-0.5 h-3.5 bg-secondary shadow-[0_0_8px_var(--color-secondary)]" />
           <h2 className="text-secondary/80 text-[8px] font-mono font-black uppercase tracking-[0.35em]">
             Trending <span className="text-foreground/40">//</span> Popular
           </h2>
         </div>
 
-        {/* Title */}
-        <motion.h1
-          key={`title-${current.id}`}
-          initial={{ y: 15, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.5, delay: 0.1 }}
-          className="text-[15px] md:text-xl font-serif font-black leading-tight tracking-tighter text-foreground uppercase line-clamp-2 max-w-[85%]"
-        >
-          <AnimeTitleDisplay title={current.title} titleEnglish={current.title_english} />
-        </motion.h1>
+        {/* Content yang berubah tiap slide */}
+        <div className="flex flex-col gap-1.5">
+          <motion.h1
+            key={`title-${current.id}`}
+            initial={{ y: 15, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+            className="text-[15px] md:text-xl font-serif font-black leading-tight tracking-tighter text-foreground uppercase min-h-[2.5em]"
+          >
+            <AnimeTitleDisplay title={current.title} titleEnglish={current.title_english} />
+          </motion.h1>
 
-        {/* Info row */}
-        <motion.div
-          key={`info-${current.id}`}
-          initial={{ y: 10, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.4, delay: 0.2 }}
-          className="flex items-center gap-2 mt-1.5"
-        >
-          <span className="text-secondary/80 text-[9px] font-mono font-black uppercase tracking-[0.25em]">
-            {current.status === 'Ongoing'
-              ? `EP ${current.latest_episode || '?'}`
-              : `${current.episodes_count || '?'} EP`}
-          </span>
-          {current.score && (
-            <>
-              <span className="text-secondary/40 text-[8px]">/</span>
-              <span className="text-secondary/70 text-[9px] font-mono font-bold">{current.score}</span>
-            </>
-          )}
-          {nextAiringStr && (
-            <>
-              <span className="text-secondary/30 text-[8px] mx-0.5">•</span>
-              <span className="text-secondary/50 text-[7px] font-mono font-bold uppercase tracking-[0.2em]">
-                {nextAiringStr}
-              </span>
-            </>
-          )}
-        </motion.div>
-
-        {/* Genres */}
-        {current.genres?.length > 0 && (
           <motion.div
-            key={`genres-${current.id}`}
+            key={`info-${current.id}`}
             initial={{ y: 10, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
-            transition={{ duration: 0.4, delay: 0.3 }}
-            className="flex items-center gap-1.5 mt-1.5"
+            transition={{ duration: 0.4, delay: 0.2 }}
+            className="flex items-center gap-2"
           >
-            {current.genres.slice(0, 2).map((genre: string, idx: number) => (
-              <span
-                key={idx}
-                className="text-[7px] font-mono font-black uppercase tracking-[0.25em] text-secondary/50 border border-secondary/20 px-1.5 py-0.5"
-              >
-                {genre}
-              </span>
-            ))}
+            <span className="text-secondary/80 text-[9px] font-mono font-black uppercase tracking-[0.25em]">
+              {current.status === 'Ongoing'
+                ? `EP ${current.latest_episode || '?'}`
+                : `${current.episodes_count || '?'} EP`}
+            </span>
+            {current.score && (
+              <>
+                <span className="text-secondary/40 text-[8px]">/</span>
+                <span className="text-secondary/70 text-[9px] font-mono font-bold">{current.score}</span>
+              </>
+            )}
+            {nextAiringStr && (
+              <>
+                <span className="text-secondary/30 text-[8px] mx-0.5">•</span>
+                <span className="text-secondary/50 text-[7px] font-mono font-bold uppercase tracking-[0.2em]">
+                  {nextAiringStr}
+                </span>
+              </>
+            )}
           </motion.div>
-        )}
 
-        {/* CTA */}
-        <motion.div
-          key={`cta-${current.id}`}
-          initial={{ y: 10, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.4, delay: 0.35 }}
-          className="flex items-center gap-2 mt-3"
-        >
-          <SmartWatchButton
-            animeId={current.id}
-            animeTitle={current.title}
-            animeImage={current.poster || current.image}
-            label="Watch"
-            iconSize={4}
-            className="h-7 px-4 text-[8px] uppercase tracking-[0.2em] font-black shadow-[0_0_12px_rgba(34,197,94,0.25)] hover:neon-glow"
-          />
-          <Link
-            href={`/anime/${current.id}`}
-            className="h-7 px-4 flex items-center justify-center border-2 border-secondary/30 text-secondary/80 hover:border-secondary hover:text-secondary font-black uppercase tracking-[0.2em] text-[8px] transition-all duration-300"
-            style={{ clipPath: 'polygon(8% 0, 100% 0, 100% 70%, 92% 100%, 0 100%, 0 30%)' }}
+          {current.genres?.length > 0 && (
+            <motion.div
+              key={`genres-${current.id}`}
+              initial={{ y: 10, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ duration: 0.4, delay: 0.3 }}
+              className="flex items-center gap-1.5"
+            >
+              {current.genres.slice(0, 2).map((genre: string, idx: number) => (
+                <span
+                  key={idx}
+                  className="text-[7px] font-mono font-black uppercase tracking-[0.25em] text-secondary/50 border border-secondary/20 px-1.5 py-0.5"
+                >
+                  {genre}
+                </span>
+              ))}
+            </motion.div>
+          )}
+
+          <motion.div
+            key={`cta-${current.id}`}
+            initial={{ y: 10, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.4, delay: 0.35 }}
+            className="flex items-center gap-2"
           >
-            Details
-          </Link>
-        </motion.div>
+            <SmartWatchButton
+              animeId={current.id}
+              animeTitle={current.title}
+              animeImage={current.poster || current.image}
+              label="Watch"
+              iconSize={4}
+              className="h-7 px-4 text-[8px] uppercase tracking-[0.2em] font-black shadow-[0_0_12px_rgba(34,197,94,0.25)] hover:neon-glow"
+            />
+            <Link
+              href={`/anime/${current.id}`}
+              className="h-7 px-4 flex items-center justify-center border-2 border-secondary/30 text-secondary/80 hover:border-secondary hover:text-secondary font-black uppercase tracking-[0.2em] text-[8px] transition-all duration-300"
+              style={{ clipPath: 'polygon(8% 0, 100% 0, 100% 70%, 92% 100%, 0 100%, 0 30%)' }}
+            >
+              Details
+            </Link>
+          </motion.div>
+        </div>
 
         {/* Navigation */}
-        <div className="absolute bottom-3 right-4 sm:right-6 flex items-center gap-4">
+        <div className="flex items-center justify-end gap-4 pt-5">
           <div className="flex items-baseline gap-1">
             <span className="text-secondary font-serif font-black text-sm tracking-tighter">#</span>
             <span className="text-foreground font-serif font-black text-sm tracking-tighter">{(currentIndex + 1).toString().padStart(2, '0')}</span>
@@ -195,37 +194,39 @@ export function HeroCarouselMobile({ items }: HeroCarouselMobileProps) {
 
 export function HeroCarouselMobileSkeleton() {
   return (
-    <section className="relative w-full h-[34vh] min-h-[240px] overflow-hidden bg-background">
+    <section className="relative w-full min-h-[300px] overflow-hidden bg-background">
       <div className="absolute inset-0">
         <Skeleton className="absolute inset-0 rounded-none" />
         <div className="absolute inset-0 bg-gradient-to-r from-background via-background/85 to-transparent" />
         <div className="absolute inset-0 bg-gradient-to-t from-background via-background/80 to-transparent" />
       </div>
 
-      <div className="relative z-10 h-full px-4 sm:px-6 flex flex-col justify-end pb-12">
-        <div className="absolute top-24 left-4 sm:left-6 flex items-center gap-2">
+      <div className="relative z-10 max-w-[1440px] mx-auto px-4 sm:px-6 pt-24 pb-4">
+        <div className="flex items-center gap-2 mb-3">
           <Skeleton className="w-0.5 h-3.5 rounded-none" />
           <Skeleton className="h-2.5 w-32 rounded-none" />
         </div>
 
-        <Skeleton className="h-4 md:h-5 w-3/4 max-w-[200px] rounded-none" />
+        <div className="flex flex-col gap-1.5">
+          <Skeleton className="h-4 md:h-5 w-3/4 max-w-[200px] rounded-none" />
 
-        <div className="flex items-center gap-2 mt-1.5">
-          <Skeleton className="h-3 w-14 rounded-none" />
-          <Skeleton className="h-3 w-6 rounded-none" />
+          <div className="flex items-center gap-2">
+            <Skeleton className="h-3 w-14 rounded-none" />
+            <Skeleton className="h-3 w-6 rounded-none" />
+          </div>
+
+          <div className="flex items-center gap-1.5">
+            <Skeleton className="h-3.5 w-16 rounded-none" />
+            <Skeleton className="h-3.5 w-14 rounded-none" />
+          </div>
+
+          <div className="flex items-center gap-2">
+            <Skeleton className="h-7 w-20 rounded-none" />
+            <Skeleton className="h-7 w-16 rounded-none" />
+          </div>
         </div>
 
-        <div className="flex items-center gap-1.5 mt-1.5">
-          <Skeleton className="h-3.5 w-16 rounded-none" />
-          <Skeleton className="h-3.5 w-14 rounded-none" />
-        </div>
-
-        <div className="flex items-center gap-2 mt-3">
-          <Skeleton className="h-7 w-20 rounded-none" />
-          <Skeleton className="h-7 w-16 rounded-none" />
-        </div>
-
-        <div className="absolute bottom-3 right-4 sm:right-6 flex items-center gap-4">
+        <div className="flex items-center justify-end gap-4 pt-5">
           <div className="flex items-baseline gap-1">
             <Skeleton className="h-4 w-3 rounded-none" />
             <Skeleton className="h-4 w-7 rounded-none" />
