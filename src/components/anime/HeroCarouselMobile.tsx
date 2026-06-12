@@ -110,7 +110,7 @@ export function HeroCarouselMobile({ items }: HeroCarouselMobileProps) {
               initial={{ y: 15, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ duration: 0.5, delay: 0.1 }}
-              className="text-[15px] sm:text-lg md:text-xl font-serif font-black leading-tight tracking-tighter text-foreground uppercase min-h-[2.5em]"
+              className="text-[15px] sm:text-lg md:text-xl font-serif font-black leading-tight tracking-tighter text-foreground uppercase min-h-[2.5em] line-clamp-2"
             >
               <AnimeTitleDisplay title={current.title} titleEnglish={current.title_english} />
             </motion.h1>
