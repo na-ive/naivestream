@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
-import { ChevronLeft, ChevronRight, PageFirst, PageLast, OverflowMenuHorizontal } from '@carbon/icons-react';
+import { ChevronLeft, ChevronRight, OverflowMenuHorizontal } from '@carbon/icons-react';
 import { cn } from '@/lib/utils';
 
 interface PaginationProps {
@@ -48,23 +48,11 @@ export function Pagination({ currentPage, totalPages, baseUrl }: PaginationProps
   return (
     <div className="flex flex-col items-center space-y-6 py-16">
       <div className="flex items-center gap-2 sm:gap-3">
-        {/* First Page */}
-        <Link
-          href={getHref(1)}
-          className={cn(
-            "p-3 bg-card border border-white/5 transition-all cursor-pointer flex items-center justify-center",
-            currentPage <= 1 ? "opacity-30 pointer-events-none" : "hover:border-secondary/50 hover:bg-secondary/10 hover:text-secondary hover:shadow-[0_0_10px_rgba(34,197,94,0.3)]"
-          )}
-          aria-label="First page"
-        >
-          <PageFirst className="w-5 h-5" />
-        </Link>
-
         {/* Previous */}
         <Link
           href={getHref(Math.max(1, currentPage - 1))}
           className={cn(
-            "p-3 bg-card border border-white/5 transition-all cursor-pointer flex items-center justify-center",
+            "w-10 h-10 sm:w-12 sm:h-12 bg-card border border-white/5 transition-all cursor-pointer flex items-center justify-center",
             currentPage <= 1 ? "opacity-30 pointer-events-none" : "hover:border-secondary/50 hover:bg-secondary/10 hover:text-secondary hover:shadow-[0_0_10px_rgba(34,197,94,0.3)]"
           )}
           aria-label="Previous page"
@@ -104,24 +92,12 @@ export function Pagination({ currentPage, totalPages, baseUrl }: PaginationProps
         <Link
           href={getHref(Math.min(totalPages, currentPage + 1))}
           className={cn(
-            "p-3 bg-card border border-white/5 transition-all cursor-pointer flex items-center justify-center",
+            "w-10 h-10 sm:w-12 sm:h-12 bg-card border border-white/5 transition-all cursor-pointer flex items-center justify-center",
             currentPage >= totalPages ? "opacity-30 pointer-events-none" : "hover:border-secondary/50 hover:bg-secondary/10 hover:text-secondary hover:shadow-[0_0_10px_rgba(34,197,94,0.3)]"
           )}
           aria-label="Next page"
         >
           <ChevronRight className="w-5 h-5" />
-        </Link>
-
-        {/* Last Page */}
-        <Link
-          href={getHref(totalPages)}
-          className={cn(
-            "p-3 bg-card border border-white/5 transition-all cursor-pointer flex items-center justify-center",
-            currentPage >= totalPages ? "opacity-30 pointer-events-none" : "hover:border-secondary/50 hover:bg-secondary/10 hover:text-secondary hover:shadow-[0_0_10px_rgba(34,197,94,0.3)]"
-          )}
-          aria-label="Last page"
-        >
-          <PageLast className="w-5 h-5" />
         </Link>
       </div>
       
