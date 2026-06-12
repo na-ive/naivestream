@@ -128,26 +128,26 @@ export default async function HomePage() {
         {/* Today's Schedule Section */}
         {todayAnimeList.length > 0 && (
           <section 
-            className="bg-card/40 border-t border-b border-secondary/30 p-8 md:p-12 relative overflow-hidden mt-20"
-            style={{ clipPath: 'polygon(30px 0, 100% 0, 100% calc(100% - 30px), calc(100% - 30px) 100%, 0 100%, 0 30px)' }}
+            className="bg-card/40 border-t border-b border-secondary/30 p-4 sm:p-8 md:p-12 relative overflow-hidden mt-16 sm:mt-20"
+            style={{ clipPath: 'polygon(15px 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%, 0 15px)' }}
           >
-            <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 relative z-10 border-b border-white/10 pb-6">
-              <div className="space-y-1 flex items-center gap-4">
-                <div className="p-3 bg-secondary/10 text-secondary" style={{ clipPath: 'polygon(5px 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 5px)' }}>
-                  <Calendar className="w-8 h-8" />
+            <div className="flex items-center justify-between mb-4 sm:mb-8 relative z-10 border-b border-white/10 pb-4 sm:pb-6">
+              <div className="flex items-center gap-3 sm:gap-4">
+                <div className="p-2 sm:p-3 bg-secondary/10 text-secondary" style={{ clipPath: 'polygon(4px 0, 100% 0, 100% calc(100% - 4px), calc(100% - 4px) 100%, 0 100%, 0 4px)' }}>
+                  <Calendar className="w-5 h-5 sm:w-8 sm:h-8" />
                 </div>
                 <div>
-                  <h2 className="text-2xl font-serif font-black uppercase tracking-tighter text-foreground leading-none">
+                  <h2 className="text-lg sm:text-2xl font-serif font-black uppercase tracking-tighter text-foreground leading-none">
                     Today's Schedule
                   </h2>
-                  <p className="text-[10px] font-mono font-bold uppercase tracking-[0.3em] text-secondary mt-1">
+                  <p className="text-[9px] sm:text-[10px] font-mono font-bold uppercase tracking-[0.3em] text-secondary mt-0.5 sm:mt-1">
                     {todayFormatted}
                   </p>
                 </div>
               </div>
             </div>
             
-            <div className="space-y-2 relative z-10">
+            <div className="space-y-1 sm:space-y-2 relative z-10">
               {todayAnimeList.slice(0, 5).map((anime: any, index: number) => {
                 const nextAiring = anime.next_episode && anime.next_airing_at
                   ? formatNextAiring(anime.next_episode, anime.next_airing_at)
@@ -156,34 +156,34 @@ export default async function HomePage() {
                   <Link 
                     key={anime.slug} 
                     href={`/anime/${anime.slug}`}
-                    className="group flex items-center justify-between p-4 bg-background/30 hover:bg-secondary/10 border-b border-white/5 last:border-0 transition-all relative overflow-hidden"
+                    className="group flex items-center justify-between p-3 sm:p-4 bg-background/30 hover:bg-secondary/10 border-b border-white/5 last:border-0 transition-all relative overflow-hidden"
                   >
                     <div className="absolute inset-y-0 left-0 w-1 bg-secondary scale-y-0 group-hover:scale-y-100 transition-transform origin-top" />
-                    <div className="flex items-center gap-4 pl-2 min-w-0">
-                      <span className="text-[10px] font-mono text-muted-text/50 shrink-0">{(index + 1).toString().padStart(2, '0')}</span>
-                      <span className="font-bold text-sm group-hover:text-secondary line-clamp-1 uppercase tracking-wider transition-colors">
+                    <div className="flex items-center gap-3 sm:gap-4 pl-2 min-w-0">
+                      <span className="text-[9px] sm:text-[10px] font-mono text-muted-text/50 shrink-0">{(index + 1).toString().padStart(2, '0')}</span>
+                      <span className="font-bold text-xs sm:text-sm group-hover:text-secondary line-clamp-1 uppercase tracking-wider transition-colors">
                         <AnimeTitleDisplay title={anime.title} titleEnglish={anime.title_english} />
                       </span>
                     </div>
-                    <div className="flex items-center gap-3 shrink-0">
+                    <div className="flex items-center gap-2 sm:gap-3 shrink-0">
                       {nextAiring && (
-                        <span className="text-[10px] font-mono font-bold text-secondary/70 uppercase tracking-wider flex items-center gap-1">
-                          <Time className="w-3 h-3" />
+                        <span className="text-[9px] sm:text-[10px] font-mono font-bold text-secondary/70 uppercase tracking-wider flex items-center gap-1">
+                          <Time className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
                           {nextAiring}
                         </span>
                       )}
-                      <ChevronRight className="w-4 h-4 text-muted-text group-hover:text-secondary transition-transform group-hover:translate-x-1" />
+                      <ChevronRight className="w-3 h-3 sm:w-4 sm:h-4 text-muted-text group-hover:text-secondary transition-transform group-hover:translate-x-1" />
                     </div>
                   </Link>
                 );
               })}
               
               {todayAnimeList.length > 5 && (
-                <div className="pt-6 text-center">
+                <div className="pt-4 sm:pt-6 text-center">
                   <Link 
                     href={`/schedule?day=${todayString}`}
-                    className="inline-block px-10 py-4 bg-secondary text-background hover:bg-secondary/90 transition-colors text-xs font-black uppercase tracking-[0.2em] shadow-[0_0_20px_rgba(34,197,94,0.2)]"
-                    style={{ clipPath: 'polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px)' }}
+                    className="inline-block px-6 py-3 sm:px-10 sm:py-4 bg-secondary text-background hover:bg-secondary/90 transition-colors text-[10px] sm:text-xs font-black uppercase tracking-[0.2em] shadow-[0_0_20px_rgba(34,197,94,0.2)]"
+                    style={{ clipPath: 'polygon(5px 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 5px)' }}
                   >
                     Load Full Schedule ({todayAnimeList.length - 5} More)
                   </Link>
