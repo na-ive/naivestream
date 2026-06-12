@@ -451,22 +451,25 @@ export const AnimeService = {
       WHERE a.slug IN (${placeholders})
       GROUP BY ag.genre_id
       ORDER BY freq DESC
-      LIMIT 1
+      LIMIT 3
     `).all(...slugs) as { genre_id: number; freq: number }[];
     
     if (topGenres.length === 0) return [];
     
-    const topGenreId = topGenres[0].genre_id;
+    const topGenreIds = topGenres.map(g => g.genre_id);
+    const genrePlaceholders = topGenreIds.map(() => '?').join(',');
     
     const items = getPreparedStatement(`
-      SELECT DISTINCT ${SQL_BASE_SELECT}
+      SELECT DISTINCT ${SQL_BASE_SELECT},
+        (SELECT COUNT(*) FROM anime_genres ag2 WHERE ag2.anime_id = a.id AND ag2.genre_id IN (${genrePlaceholders})) as genre_overlap
       FROM anime a
-      JOIN anime_genres ag ON a.id = ag.anime_id
-      WHERE ag.genre_id = ?
-        AND a.slug NOT IN (${placeholders})
-      ORDER BY CASE WHEN ${SQL_ACTUAL_COUNT} > 0 THEN 0 ELSE 1 END ASC, a.popularity DESC
+      WHERE a.slug NOT IN (${placeholders})
+        AND EXISTS (
+          SELECT 1 FROM anime_genres ag3 WHERE ag3.anime_id = a.id AND ag3.genre_id IN (${genrePlaceholders})
+        )
+      ORDER BY genre_overlap DESC, CASE WHEN ${SQL_ACTUAL_COUNT} > 0 THEN 0 ELSE 1 END ASC, a.popularity DESC
       LIMIT ?
-    `).all(topGenreId, ...slugs, limit) as any[];
+    `).all(...topGenreIds, ...slugs, ...topGenreIds, limit) as any[];
 
     return items.map(item => ({
       ...item,
