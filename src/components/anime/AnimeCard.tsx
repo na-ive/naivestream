@@ -61,7 +61,7 @@ export function AnimeCard({
       <Link href={`/anime/${id}`} className={cn(
         "block relative overflow-hidden flex-shrink-0",
         isHorizontal 
-          ? cn("aspect-[3/4] border border-white/10", isCompactList ? "w-20 md:w-24" : "w-24 md:w-32")
+          ? cn("self-start aspect-[3/4] border border-white/10", isCompactList ? "w-20 md:w-24" : "w-24 md:w-32")
           : "w-full aspect-[3/4] border-2 border-secondary/20 group-hover:border-secondary",
         !isHorizontal && isEmpty && "border-[#EAB308]"
       )}>
@@ -196,7 +196,7 @@ export function AnimeCard({
             </div>
 
             {genres && genres.length > 0 && (
-              <div className="flex flex-wrap gap-1.5 hidden sm:flex">
+              <div className="flex flex-wrap gap-1.5">
                 {genres.slice(0, 4).map(g => (
                   <span key={g} className="text-[9px] uppercase font-black tracking-widest text-muted-text bg-white/5 px-1.5 py-0.5 border border-white/10">
                     {g.trim()}
@@ -210,7 +210,7 @@ export function AnimeCard({
 
         {/* Detailed View Extras */}
         {isDetailed && !isCompactList && (
-          <div className="mt-3 hidden sm:block">
+          <div className="mt-3">
             {synopsis && (
               <p className="text-xs text-muted-text mt-2 font-sans leading-relaxed line-clamp-2">
                 {synopsis.replace(/<[^>]*>?/gm, '')}
@@ -237,7 +237,7 @@ export function AnimeCardSkeleton({ forceGrid = false }: { forceGrid?: boolean }
     )}>
       <div className={cn(
         "block relative overflow-hidden bg-card flex-shrink-0",
-        isHorizontal ? cn("aspect-[3/4] border border-white/10", isCompactList ? "w-20 md:w-24" : "w-24 md:w-32") : "w-full aspect-[3/4] border-2 border-secondary/10"
+        isHorizontal ? cn("self-start aspect-[3/4] border border-white/10", isCompactList ? "w-20 md:w-24" : "w-24 md:w-32") : "w-full aspect-[3/4] border-2 border-secondary/10"
       )}>
         <Skeleton className="absolute inset-0" />
         {!isHorizontal && (
