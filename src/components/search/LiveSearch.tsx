@@ -70,20 +70,22 @@ export function LiveSearch() {
       return;
     }
     
+    setIsOpen(true);
+    setLoading(true);
+
     debounceRef.current = setTimeout(async () => {
-      setLoading(true);
       try {
         const res = await fetch(`/api/search/live?q=${encodeURIComponent(query)}`);
         const data = await res.json();
         // Limit to 4 results
         const fetched = data.data || [];
         setResults(fetched);
-        setIsOpen(fetched.length > 0);
         setActiveIndex(-1);
       } catch (e) {
         setResults([]);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     }, 300);
     
     return () => {
@@ -147,7 +149,7 @@ export function LiveSearch() {
           placeholder="Search anime..."
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          onFocus={() => { setIsFocused(true); if (results.length > 0) setIsOpen(true); }}
+          onFocus={() => { setIsFocused(true); if (query.length >= 2) setIsOpen(true); }}
           onBlur={() => setIsFocused(false)}
           onKeyDown={handleKeyDown}
           className="w-full bg-card/40 border border-secondary/20 hover:border-secondary/40 focus:border-secondary focus:bg-card rounded-none py-2.5 pl-14 pr-[72px] focus:outline-none transition-all font-mono font-bold text-sm tracking-widest text-foreground placeholder:text-muted-foreground"
@@ -189,33 +191,57 @@ export function LiveSearch() {
       </form>
 
       {/* Dropdown */}
-      {isOpen && (
+      {isOpen && query.length >= 2 && (
         <div
           ref={dropdownRef}
           className="absolute top-full left-0 right-0 mt-2 z-50 animate-in fade-in slide-in-from-top-2 duration-200"
         >
           <div className="bg-card border-2 border-secondary/20 shadow-xl flex flex-col max-h-[400px] overflow-y-auto custom-scrollbar">
-            {results.map((anime, index) => (
-              <SearchResultItem
-                key={anime.slug}
-                anime={anime}
-                isActive={activeIndex === index}
-                onSelect={() => { setIsOpen(false); setQuery(''); }}
-                onHover={() => setActiveIndex(index)}
-              />
-            ))}
-            <button
-              onClick={handleSubmit}
-              onMouseEnter={() => setActiveIndex(results.length)}
-              className={cn(
-                "w-full p-3 text-[10px] uppercase tracking-[0.3em] font-black text-center border-t border-white/5 transition-all",
-                activeIndex === results.length 
-                  ? "bg-secondary text-background shadow-[0_0_20px_rgba(34,197,94,0.4)]" 
-                  : "bg-secondary/5 hover:bg-secondary/10 text-secondary"
-              )}
-            >
-              See all results
-            </button>
+            {loading ? (
+              <>
+                {Array.from({ length: 3 }).map((_, i) => (
+                  <div key={i} className="flex items-center gap-4 p-3 border-b border-white/5">
+                    <Skeleton className="w-12 h-16 shrink-0 rounded-none bg-secondary/10" />
+                    <div className="flex-1 min-w-0 space-y-2">
+                      <Skeleton className="h-4 w-3/4 rounded-none bg-secondary/10" />
+                      <div className="flex items-center gap-2">
+                        <Skeleton className="h-[18px] w-10 rounded-none bg-secondary/10" />
+                        <Skeleton className="h-3 w-24 rounded-none bg-secondary/10" />
+                      </div>
+                    </div>
+                    <Skeleton className="h-4 w-16 rounded-none bg-secondary/10" />
+                  </div>
+                ))}
+              </>
+            ) : results.length > 0 ? (
+              <>
+                {results.map((anime, index) => (
+                  <SearchResultItem
+                    key={anime.slug}
+                    anime={anime}
+                    isActive={activeIndex === index}
+                    onSelect={() => { setIsOpen(false); setQuery(''); }}
+                    onHover={() => setActiveIndex(index)}
+                  />
+                ))}
+                <button
+                  onClick={handleSubmit}
+                  onMouseEnter={() => setActiveIndex(results.length)}
+                  className={cn(
+                    "w-full p-3 text-[10px] uppercase tracking-[0.3em] font-black text-center border-t border-white/5 transition-all",
+                    activeIndex === results.length 
+                      ? "bg-secondary text-background shadow-[0_0_20px_rgba(34,197,94,0.4)]" 
+                      : "bg-secondary/5 hover:bg-secondary/10 text-secondary"
+                  )}
+                >
+                  See all results
+                </button>
+              </>
+            ) : (
+              <div className="p-4 text-center text-sm font-bold text-muted-foreground font-mono">
+                No results found
+              </div>
+            )}
           </div>
         </div>
       )}
