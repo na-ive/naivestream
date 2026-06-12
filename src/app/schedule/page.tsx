@@ -67,24 +67,22 @@ export default async function SchedulePage({ searchParams }: SchedulePageProps) 
               Weekly anime release schedule
             </p>
           </div>
-          
-          <ViewToggle />
         </div>
       </div>
 
       {/* Day Tabs */}
       <div 
-        className="mb-12 bg-card/50 border-y border-secondary/30 p-6 md:p-8 relative"
+        className="mb-8 bg-card/50 border-y border-secondary/30 p-6 md:p-8 relative"
         style={{ clipPath: 'polygon(20px 0, 100% 0, 100% calc(100% - 20px), calc(100% - 20px) 100%, 0 100%, 0 20px)' }}
       >
-        <div className="flex flex-wrap justify-center gap-3 relative z-10">
+        <div className="flex overflow-x-auto snap-x snap-mandatory hide-scrollbar justify-start md:justify-center gap-3 relative z-10 pb-2">
           {DAY_ORDER.map((day) => {
             const isActive = day === activeDay;
             return (
               <Link
                 key={day}
                 href={`/schedule?day=${day}`}
-                className={`px-6 py-2.5 flex items-center gap-2 font-bold text-sm transition-all uppercase tracking-widest ${
+                className={`px-6 py-2.5 flex items-center shrink-0 snap-center gap-2 font-bold text-sm transition-all uppercase tracking-widest ${
                   isActive
                     ? 'bg-secondary text-background shadow-[0_0_15px_rgba(34,197,94,0.4)] pointer-events-none border border-transparent'
                     : 'bg-background/80 text-foreground/70 hover:bg-secondary/20 hover:text-secondary border border-secondary/20 hover:border-secondary/50'
@@ -95,6 +93,11 @@ export default async function SchedulePage({ searchParams }: SchedulePageProps) 
             );
           })}
         </div>
+      </div>
+
+      {/* Grid Controls */}
+      <div className="flex justify-end mb-4">
+        <ViewToggle />
       </div>
 
       {/* Anime Grid */}

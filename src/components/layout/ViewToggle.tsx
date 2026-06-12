@@ -12,7 +12,13 @@ export function ViewToggle() {
   if (!isMounted) return null;
 
   return (
-    <div className="inline-flex items-center space-x-1 bg-card/50 border border-secondary/30 p-1 relative shrink-0">
+    <div className="relative inline-flex items-center gap-1 p-1 shrink-0">
+      {/* Background with clip-path */}
+      <div 
+        className="absolute inset-0 w-full h-full bg-card/50 border border-secondary/30 pointer-events-none" 
+        style={{ clipPath: 'polygon(5px 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 5px)' }} 
+      />
+      
       <Tooltip content="Grid View" position="bottom" className="!text-[10px]" wrapperClassName="z-10">
         <button
           onClick={() => changeViewMode('grid')}
