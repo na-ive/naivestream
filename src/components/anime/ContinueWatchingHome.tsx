@@ -18,33 +18,19 @@ export function ContinueWatchingHome() {
 
   return (
     <section className="animate-in fade-in slide-in-from-bottom-4 duration-700">
-      <div className="flex items-end justify-between mb-8 border-b border-white/5 pb-4">
-        <div className="space-y-2">
-          <div className="flex items-baseline space-x-3">
-            <span className="text-secondary font-mono font-black text-xl leading-none">{'//'}</span>
-            <h2 className="text-2xl md:text-3xl font-serif font-black uppercase tracking-tighter">Continue Watching</h2>
-          </div>
-          <p className="text-[10px] font-mono font-bold uppercase tracking-[0.3em] text-muted-text pl-8">
-            Pick up where you left off
-          </p>
+      <div className="flex items-center justify-between mb-6 pb-3 border-b border-white/5">
+        <div className="flex items-center gap-3">
+          <span className="text-secondary font-mono font-black text-lg leading-none">{'//'}</span>
+          <h2 className="text-lg sm:text-xl md:text-2xl font-serif font-black uppercase tracking-tighter">
+            <span className="sm:hidden">Continue</span>
+            <span className="hidden sm:inline">Continue Watching</span>
+          </h2>
         </div>
-        <Link 
-          href="/library?tab=history" 
-          className="group hidden sm:flex items-center space-x-2 px-4 py-2 bg-card/30 hover:bg-secondary/10 border border-white/5 hover:border-secondary/30 transition-colors text-[10px] uppercase font-black tracking-widest text-muted-text hover:text-foreground"
+        <Link
+          href="/library?tab=history"
+          className="flex items-center gap-1 px-3 py-1.5 text-[10px] uppercase font-black tracking-widest bg-card/30 border border-muted-text/20 hover:border-secondary/30 transition-colors text-muted-text hover:text-foreground"
         >
-          <span>View History</span> 
-          <ChevronRight className="w-3.5 h-3.5 text-secondary group-hover:translate-x-1 transition-transform" />
-        </Link>
-      </div>
-
-      {/* Mobile View All */}
-      <div className="sm:hidden mb-6 flex justify-end">
-        <Link 
-          href="/library?tab=history" 
-          className="group flex items-center space-x-2 text-[10px] uppercase font-black tracking-widest text-secondary"
-        >
-          <span>View History</span> 
-          <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+          View History <ChevronRight className="w-3.5 h-3.5 text-secondary" />
         </Link>
       </div>
 
@@ -75,18 +61,12 @@ export function ContinueWatchingHome() {
 export function ContinueWatchingHomeSkeleton() {
   return (
     <section>
-      <div className="flex items-end justify-between mb-8 border-b border-white/5 pb-4">
-        <div className="space-y-2">
-          <div className="flex items-baseline space-x-3">
-            <Skeleton className="h-7 w-7 rounded-none" />
-            <Skeleton className="h-8 w-64 rounded-none" />
-          </div>
-          <Skeleton className="h-4 w-48 ml-8 rounded-none" />
+      <div className="flex items-center justify-between mb-6 pb-3 border-b border-white/5">
+        <div className="flex items-center gap-3">
+          <Skeleton className="h-5 w-5 rounded-none" />
+          <Skeleton className="h-6 w-56 rounded-none" />
         </div>
-        <Skeleton className="h-10 w-32 rounded-none hidden sm:flex" />
-      </div>
-      <div className="sm:hidden mb-6 flex justify-end">
-        <Skeleton className="h-4 w-24 rounded-none" />
+        <Skeleton className="h-4 w-28 rounded-none" />
       </div>
       <div className="mobile-snap-scroll gap-4 md:gap-6">
         {Array.from({ length: 4 }).map((_, i) => (

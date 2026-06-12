@@ -7,17 +7,10 @@ export function ForYouHome({ recommendations }: { recommendations: any[] }) {
 
   return (
     <section>
-      <div className="flex items-end justify-between mb-8 border-b border-white/5 pb-4">
-        <div className="space-y-2">
-          <div className="flex items-baseline space-x-3">
-            <span className="text-secondary font-mono font-black text-xl leading-none">{'//'}</span>
-            <h2 className="text-2xl md:text-3xl font-serif font-black uppercase tracking-tighter">
-              For You
-            </h2>
-          </div>
-          <p className="text-[10px] font-mono font-bold uppercase tracking-[0.3em] text-muted-text pl-8">
-            Based on your watch history
-          </p>
+      <div className="flex items-center justify-between mb-6 pb-3 border-b border-white/5">
+        <div className="flex items-center gap-3">
+          <span className="text-secondary font-mono font-black text-lg leading-none">{'//'}</span>
+          <h2 className="text-lg sm:text-xl md:text-2xl font-serif font-black uppercase tracking-tighter">For You</h2>
         </div>
       </div>
       <div className="mobile-snap-scroll gap-4 md:gap-6">
