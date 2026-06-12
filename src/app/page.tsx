@@ -2,6 +2,7 @@ import { AnimeService } from "@/lib/services/anime";
 import { AnimeCard } from "@/components/anime/AnimeCard";
 import { HeroCarousel } from "@/components/anime/HeroCarousel";
 import { ContinueWatchingHome } from "@/components/anime/ContinueWatchingHome";
+import { ForYouHome } from "@/components/anime/ForYouHome";
 import { AnimeTitleDisplay } from '@/components/anime/AnimeTitleDisplay';
 import { ChevronRight, Calendar, Time } from "@carbon/icons-react";
 import Link from "next/link";
@@ -50,6 +51,9 @@ export default async function HomePage() {
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 mt-12 space-y-16">
         {/* Continue Watching Section */}
         <ContinueWatchingHome />
+
+        {/* For You Section */}
+        <ForYouHome />
 
         {/* Ongoing Section */}
         <section>

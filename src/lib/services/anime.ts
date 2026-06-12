@@ -439,6 +439,42 @@ export const AnimeService = {
     }));
   },
 
+  async getForYouRecommendations(slugs: string[], limit = 6) {
+    if (!slugs || slugs.length === 0) return [];
+    
+    const placeholders = slugs.map(() => '?').join(',');
+    
+    const topGenres = getPreparedStatement(`
+      SELECT ag.genre_id, COUNT(ag.genre_id) as freq
+      FROM anime_genres ag
+      JOIN anime a ON a.id = ag.anime_id
+      WHERE a.slug IN (${placeholders})
+      GROUP BY ag.genre_id
+      ORDER BY freq DESC
+      LIMIT 1
+    `).all(...slugs) as { genre_id: number; freq: number }[];
+    
+    if (topGenres.length === 0) return [];
+    
+    const topGenreId = topGenres[0].genre_id;
+    
+    const items = getPreparedStatement(`
+      SELECT DISTINCT ${SQL_BASE_SELECT}
+      FROM anime a
+      JOIN anime_genres ag ON a.id = ag.anime_id
+      WHERE ag.genre_id = ?
+        AND a.slug NOT IN (${placeholders})
+      ORDER BY CASE WHEN ${SQL_ACTUAL_COUNT} > 0 THEN 0 ELSE 1 END ASC, a.popularity DESC
+      LIMIT ?
+    `).all(topGenreId, ...slugs, limit) as any[];
+
+    return items.map(item => ({
+      ...item,
+      status: getSmartStatus(item),
+      synopsis: cleanSynopsis(item.synopsis)
+    }));
+  },
+
   async getEpisodes(animeId: number) {
     return getPreparedStatement('SELECT * FROM episodes WHERE anime_id = ? ORDER BY eps_number DESC').all(animeId) as Episode[];
   },
