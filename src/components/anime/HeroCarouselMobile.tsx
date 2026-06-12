@@ -82,88 +82,110 @@ export function HeroCarouselMobile({ items }: HeroCarouselMobileProps) {
           </h2>
         </div>
 
-        {/* Content yang berubah tiap slide */}
-        <div className="flex flex-col gap-1.5">
-          <motion.h1
-            key={`title-${current.id}`}
-            initial={{ y: 15, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            className="text-[15px] md:text-xl font-serif font-black leading-tight tracking-tighter text-foreground uppercase min-h-[2.5em]"
-          >
-            <AnimeTitleDisplay title={current.title} titleEnglish={current.title_english} />
-          </motion.h1>
-
+        {/* Content + Poster row */}
+        <div className="flex flex-col sm:flex-row sm:items-start gap-3">
+          {/* Poster - hanya muncul di sm+ */}
           <motion.div
-            key={`info-${current.id}`}
-            initial={{ y: 10, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ duration: 0.4, delay: 0.2 }}
-            className="flex items-center gap-2"
+            key={`poster-${current.id}`}
+            initial={{ x: -30, opacity: 0, scale: 0.95 }}
+            animate={{ x: 0, opacity: 1, scale: 1 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="hidden sm:block relative shrink-0 w-[90px] md:w-[130px] aspect-[2/3] border-4 border-background shadow-2xl overflow-hidden"
           >
-            <span className="text-secondary/80 text-[9px] font-mono font-black uppercase tracking-[0.25em]">
-              {current.status === 'Ongoing'
-                ? `EP ${current.latest_episode || '?'}`
-                : `${current.episodes_count || '?'} EP`}
-            </span>
-            {current.score && (
-              <>
-                <span className="text-secondary/40 text-[8px]">/</span>
-                <span className="text-secondary/70 text-[9px] font-mono font-bold">{current.score}</span>
-              </>
-            )}
-            {nextAiringStr && (
-              <>
-                <span className="text-secondary/30 text-[8px] mx-0.5">•</span>
-                <span className="text-secondary/50 text-[7px] font-mono font-bold uppercase tracking-[0.2em]">
-                  {nextAiringStr}
-                </span>
-              </>
-            )}
+            <img
+              src={current.poster || current.image}
+              alt={current.title}
+              loading="lazy"
+              onLoad={() => setImgLoaded(true)}
+              onError={() => setImgLoaded(true)}
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 border-2 border-secondary/20 pointer-events-none" />
           </motion.div>
 
-          {current.genres?.length > 0 && (
+          {/* Content yang berubah tiap slide */}
+          <div className="flex flex-col gap-1.5 flex-1 min-w-0">
+            <motion.h1
+              key={`title-${current.id}`}
+              initial={{ y: 15, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+              className="text-[15px] sm:text-lg md:text-xl font-serif font-black leading-tight tracking-tighter text-foreground uppercase min-h-[2.5em]"
+            >
+              <AnimeTitleDisplay title={current.title} titleEnglish={current.title_english} />
+            </motion.h1>
+
             <motion.div
-              key={`genres-${current.id}`}
+              key={`info-${current.id}`}
               initial={{ y: 10, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
-              transition={{ duration: 0.4, delay: 0.3 }}
-              className="flex items-center gap-1.5"
+              transition={{ duration: 0.4, delay: 0.2 }}
+              className="flex items-center gap-2"
             >
-              {current.genres.slice(0, 2).map((genre: string, idx: number) => (
-                <span
-                  key={idx}
-                  className="text-[7px] font-mono font-black uppercase tracking-[0.25em] text-secondary/50 border border-secondary/20 px-1.5 py-0.5"
-                >
-                  {genre}
-                </span>
-              ))}
+              <span className="text-secondary/80 text-[9px] sm:text-[10px] font-mono font-black uppercase tracking-[0.25em]">
+                {current.status === 'Ongoing'
+                  ? `EP ${current.latest_episode || '?'}`
+                  : `${current.episodes_count || '?'} EP`}
+              </span>
+              {current.score && (
+                <>
+              <span className="text-secondary/40 text-[8px] sm:text-[9px]">/</span>
+              <span className="text-secondary/70 text-[9px] sm:text-[10px] font-mono font-bold">{current.score}</span>
+                </>
+              )}
+              {nextAiringStr && (
+                <>
+                  <span className="text-secondary/30 text-[8px] mx-0.5">•</span>
+                  <span className="text-secondary/50 text-[7px] font-mono font-bold uppercase tracking-[0.2em]">
+                    {nextAiringStr}
+                  </span>
+                </>
+              )}
             </motion.div>
-          )}
 
-          <motion.div
-            key={`cta-${current.id}`}
-            initial={{ y: 10, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ duration: 0.4, delay: 0.35 }}
-            className="flex items-center gap-2"
-          >
-            <SmartWatchButton
-              animeId={current.id}
-              animeTitle={current.title}
-              animeImage={current.poster || current.image}
-              label="Watch"
-              iconSize={4}
-              className="h-7 px-4 text-[8px] uppercase tracking-[0.2em] font-black shadow-[0_0_12px_rgba(34,197,94,0.25)] hover:neon-glow"
+            {current.genres?.length > 0 && (
+              <motion.div
+                key={`genres-${current.id}`}
+                initial={{ y: 10, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ duration: 0.4, delay: 0.3 }}
+                className="flex items-center gap-1.5"
+              >
+                {current.genres.slice(0, 2).map((genre: string, idx: number) => (
+                  <span
+                    key={idx}
+                    className="text-[7px] sm:text-[8px] font-mono font-black uppercase tracking-[0.25em] text-secondary/50 border border-secondary/20 px-1.5 py-0.5"
+                  >
+                    {genre}
+                  </span>
+                ))}
+              </motion.div>
+            )}
+
+            <motion.div
+              key={`cta-${current.id}`}
+              initial={{ y: 10, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ duration: 0.4, delay: 0.35 }}
+              className="flex items-center gap-2"
+            >
+              <SmartWatchButton
+                animeId={current.id}
+                animeTitle={current.title}
+                animeImage={current.poster || current.image}
+                label="Watch"
+                iconSize={4}
+              className="h-7 sm:h-8 px-4 text-[8px] sm:text-[9px] uppercase tracking-[0.2em] font-black shadow-[0_0_12px_rgba(34,197,94,0.25)] hover:neon-glow"
             />
             <Link
               href={`/anime/${current.id}`}
-              className="h-7 px-4 flex items-center justify-center border-2 border-secondary/30 text-secondary/80 hover:border-secondary hover:text-secondary font-black uppercase tracking-[0.2em] text-[8px] transition-all duration-300"
-              style={{ clipPath: 'polygon(8% 0, 100% 0, 100% 70%, 92% 100%, 0 100%, 0 30%)' }}
-            >
-              Details
-            </Link>
-          </motion.div>
+              className="h-7 sm:h-8 px-4 flex items-center justify-center border-2 border-secondary/30 text-secondary/80 hover:border-secondary hover:text-secondary font-black uppercase tracking-[0.2em] text-[8px] sm:text-[9px] transition-all duration-300"
+                style={{ clipPath: 'polygon(8% 0, 100% 0, 100% 70%, 92% 100%, 0 100%, 0 30%)' }}
+              >
+                Details
+              </Link>
+            </motion.div>
+          </div>
         </div>
 
         {/* Navigation */}
@@ -207,22 +229,26 @@ export function HeroCarouselMobileSkeleton() {
           <Skeleton className="h-2.5 w-32 rounded-none" />
         </div>
 
-        <div className="flex flex-col gap-1.5">
-          <Skeleton className="h-4 md:h-5 w-3/4 max-w-[200px] rounded-none" />
+        <div className="flex flex-col sm:flex-row sm:items-start gap-3">
+          <Skeleton className="hidden sm:block shrink-0 w-[90px] md:w-[130px] aspect-[2/3] border-4 border-background shadow-2xl rounded-none" />
 
-          <div className="flex items-center gap-2">
-            <Skeleton className="h-3 w-14 rounded-none" />
-            <Skeleton className="h-3 w-6 rounded-none" />
-          </div>
+          <div className="flex flex-col gap-1.5 flex-1 min-w-0">
+            <Skeleton className="h-4 md:h-5 w-3/4 max-w-[200px] rounded-none" />
 
-          <div className="flex items-center gap-1.5">
-            <Skeleton className="h-3.5 w-16 rounded-none" />
-            <Skeleton className="h-3.5 w-14 rounded-none" />
-          </div>
+            <div className="flex items-center gap-2">
+              <Skeleton className="h-3 w-14 rounded-none" />
+              <Skeleton className="h-3 w-6 rounded-none" />
+            </div>
 
-          <div className="flex items-center gap-2">
-            <Skeleton className="h-7 w-20 rounded-none" />
-            <Skeleton className="h-7 w-16 rounded-none" />
+            <div className="flex items-center gap-1.5">
+              <Skeleton className="h-3.5 w-16 rounded-none" />
+              <Skeleton className="h-3.5 w-14 rounded-none" />
+            </div>
+
+            <div className="flex items-center gap-2">
+              <Skeleton className="h-7 w-20 rounded-none" />
+              <Skeleton className="h-7 w-16 rounded-none" />
+            </div>
           </div>
         </div>
 
