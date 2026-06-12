@@ -45,6 +45,11 @@
   h1, h2, h3, h4, h5, h6 {
     @apply font-serif uppercase tracking-widest;
   }
+
+  /* Hide alt text when image is loading/broken */
+  img {
+    color: transparent;
+  }
 }
 
 @layer components {
