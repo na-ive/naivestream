@@ -65,7 +65,7 @@ export default async function OngoingPage(props: { searchParams: Promise<{ page?
                 image={anime.poster}
                 rating={String(anime.score)}
                 episode={`ep ${anime.latest_episode || '??'}`}
-                status={anime.next_episode && anime.next_airing_at ? formatNextAiring(anime.next_episode, anime.next_airing_at, true) : anime.release_day}
+                status={anime.next_episode && anime.next_airing_at ? (formatNextAiring(anime.next_episode, anime.next_airing_at, true) || anime.release_day) : anime.release_day}
                 totalEpisodes={anime.actual_episodes_count}
                 synopsis={anime.synopsis}
                 genres={anime.genres ? anime.genres.split(',') : []}
