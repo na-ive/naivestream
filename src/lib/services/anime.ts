@@ -229,12 +229,12 @@ export const AnimeService = {
       ${SQL_LATEST_EP} as latest_episode,
       ${SQL_ACTUAL_COUNT} as actual_episodes_count
       FROM anime a
-      WHERE title LIKE ? OR title_english LIKE ? OR title_japanese LIKE ?
+      WHERE title LIKE ? OR title_english LIKE ? OR title_japanese LIKE ? OR synopsis LIKE ?
       ORDER BY CASE WHEN ${SQL_ACTUAL_COUNT} > 0 THEN 0 ELSE 1 END ASC, popularity DESC
       LIMIT ?
     `;
     const searchPattern = `%${query}%`;
-    const items = getPreparedStatement(sql).all(searchPattern, searchPattern, searchPattern, limit) as any[];
+    const items = getPreparedStatement(sql).all(searchPattern, searchPattern, searchPattern, searchPattern, limit) as any[];
     return items.map(item => ({
       ...item,
       status: getSmartStatus(item),
@@ -340,9 +340,9 @@ export const AnimeService = {
       }
     }
     if (query) {
-      whereClauses.push('(a.title LIKE ? OR a.title_english LIKE ? OR a.title_japanese LIKE ?)');
+      whereClauses.push('(a.title LIKE ? OR a.title_english LIKE ? OR a.title_japanese LIKE ? OR a.synopsis LIKE ?)');
       const p = `%${query}%`;
-      params.push(p, p, p);
+      params.push(p, p, p, p);
     }
     if (status === 'Ongoing') {
       whereClauses.push(SMART_STATUS_CLAUSES.Ongoing);
