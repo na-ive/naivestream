@@ -6,6 +6,7 @@ import { TitleLangProvider } from "@/lib/providers/TitleLangProvider";
 import { ViewModeProvider } from "@/lib/providers/ViewModeProvider";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
+import { ScrollToTop } from "@/components/layout/ScrollToTop";
 import { Toaster } from "sonner";
 
 const sans = Exo_2({
@@ -43,6 +44,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <div className="flex flex-col min-h-screen relative">
+            <ScrollToTop />
             <TitleLangProvider>
               <ViewModeProvider>
                 <Navbar />
