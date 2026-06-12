@@ -9,6 +9,7 @@ import { BookmarkButton } from "@/components/anime/BookmarkButton";
 import { CharacterCarousel } from "@/components/anime/CharacterCarousel";
 import { AnimeCard } from "@/components/anime/AnimeCard";
 import { AnimeTitleDisplay } from "@/components/anime/AnimeTitleDisplay";
+import { LazyIframe } from "@/components/ui/LazyIframe";
 
 async function getAnimeDetails(slug: string) {
   const anime = await AnimeService.getAnimeBySlug(slug);
@@ -228,10 +229,12 @@ export default async function AnimeDetailPage(props: { params: Promise<{ id: str
               {/* Sidebar Trailer */}
               {trailerUrl && (
                 <div className="aspect-video w-full bg-black border-4 border-background shadow-2xl relative group">
-                  <iframe
+                  <LazyIframe
                     src={trailerUrl}
-                    className="absolute inset-0 w-full h-full pointer-events-auto"
                     title="Anime Trailer"
+                    poster={banner || poster}
+                    overlayText="WATCH TRAILER"
+                    className="absolute inset-0 w-full h-full pointer-events-auto"
                   />
                   <div className="absolute inset-0 pointer-events-none border-2 border-secondary/20 group-hover:border-secondary/50 transition-colors duration-300" />
                 </div>

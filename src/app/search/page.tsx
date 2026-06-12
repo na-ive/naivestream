@@ -8,7 +8,7 @@ import { CustomSelect } from '@/components/ui/CustomSelect';
 import { MultiSelect } from '@/components/ui/MultiSelect';
 import { cn } from '@/lib/utils';
 import { Search as SearchIcon, FaceDissatisfied, Filter } from '@carbon/icons-react';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'motion/react';
 import { AnimeCardSkeleton } from '@/components/anime/AnimeCard';
 
 const FILTER_OPTIONS = {

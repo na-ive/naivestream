@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { CaretRight, StarFilled, Terminal, Warning } from '@carbon/icons-react';
-import { motion } from 'framer-motion';
+import { motion } from 'motion/react';
 import { BookmarkButton } from './BookmarkButton';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { cn } from '@/lib/utils';

@@ -8,9 +8,10 @@ import { useWatchedEpisodes } from '@/lib/hooks/useWatchedEpisodes';
 import { useTitleLang } from '@/lib/providers/TitleLangProvider';
 import { ChevronRight, Grid, Renew, Video, ServerDns, Screen, Theater, Download } from '@carbon/icons-react';
 import Link from 'next/link';
-import { motion } from 'framer-motion';
+import { motion } from 'motion/react';
 import { Tooltip } from '@/components/ui/Tooltip';
 import { Skeleton } from '@/components/ui/Skeleton';
+import { LazyIframe } from '@/components/ui/LazyIframe';
 import { cn } from '@/lib/utils';
 
 export default function WatchContent({ id }: { id: string }) {
@@ -41,6 +42,7 @@ export default function WatchContent({ id }: { id: string }) {
   const [isCinemaMode, setIsCinemaMode] = useState(false);
   const [isTheaterMode, setIsTheaterMode] = useState(false);
   const [showExitHint, setShowExitHint] = useState(false);
+  const [forceLoadIframe, setForceLoadIframe] = useState(false);
   const { saveToHistory } = useHistory();
   const { markAsWatched } = useWatchedEpisodes();
   const activeEpisodeRef = React.useRef<HTMLAnchorElement>(null);
@@ -229,6 +231,7 @@ export default function WatchContent({ id }: { id: string }) {
         setCurrentUrl(serverData.url);
         setCurrentResolution(resolution);
         setCurrentServer(serverName);
+        setForceLoadIframe(true);
       }
     } catch (e) {
       console.error("Failed to change server", e);
@@ -351,12 +354,13 @@ export default function WatchContent({ id }: { id: string }) {
               </div>
             )}
             {currentUrl && currentUrl !== 'No iframe found' ? (
-              <iframe
+              <LazyIframe
                 src={currentUrl}
-                className="absolute inset-0 w-full h-full border-none m-0 p-0"
-                allowFullScreen
-                scrolling="no"
-                style={{ objectFit: 'contain' }}
+                title="Episode Video Player"
+                poster={animeImg}
+                overlayText={episodeDisplay ? `PLAY ${episodeDisplay.toUpperCase()}` : "PLAY EPISODE"}
+                className="absolute inset-0 w-full h-full"
+                forceLoad={forceLoadIframe}
               />
             ) : (
               <div className="flex flex-col items-center justify-center h-full text-center px-4">
