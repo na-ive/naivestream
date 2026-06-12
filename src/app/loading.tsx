@@ -1,4 +1,5 @@
 import { HeroCarouselSkeleton } from '@/components/anime/HeroCarousel';
+import { HeroCarouselMobileSkeleton } from '@/components/anime/HeroCarouselMobile';
 import { ContinueWatchingHomeSkeleton } from '@/components/anime/ContinueWatchingHome';
 import { AnimeCardSkeleton } from '@/components/anime/AnimeCard';
 import { Skeleton } from '@/components/ui/Skeleton';
@@ -31,7 +32,12 @@ function SectionGridSkeleton({ count = 6 }: { count?: number }) {
 export default function HomeLoading() {
   return (
     <div className="pb-20 -mt-20">
-      <HeroCarouselSkeleton />
+      <div className="hidden lg:block">
+        <HeroCarouselSkeleton />
+      </div>
+      <div className="block lg:hidden">
+        <HeroCarouselMobileSkeleton />
+      </div>
 
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 mt-12 space-y-16">
         <ContinueWatchingHomeSkeleton />

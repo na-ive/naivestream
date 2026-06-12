@@ -1,6 +1,7 @@
 import { AnimeService } from "@/lib/services/anime";
 import { AnimeCard } from "@/components/anime/AnimeCard";
 import { HeroCarousel } from "@/components/anime/HeroCarousel";
+import { HeroCarouselMobile } from "@/components/anime/HeroCarouselMobile";
 import { HomeClientWrapper } from "@/components/home/HomeClientWrapper";
 import { AnimeTitleDisplay } from '@/components/anime/AnimeTitleDisplay';
 import { ChevronRight, Calendar, Time } from "@carbon/icons-react";
@@ -45,7 +46,12 @@ export default async function HomePage() {
   return (
     <div className="pb-20 -mt-20">
       {/* Hero Carousel Section */}
-      <HeroCarousel items={trendingItems} />
+      <div className="hidden lg:block">
+        <HeroCarousel items={trendingItems} />
+      </div>
+      <div className="block lg:hidden">
+        <HeroCarouselMobile items={trendingItems} />
+      </div>
 
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 mt-12 space-y-16">
         <HomeClientWrapper>

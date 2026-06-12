@@ -12,6 +12,8 @@ interface SmartWatchButtonProps {
   animeImage: string;
   className?: string;
   variant?: 'primary' | 'outline';
+  label?: string;
+  iconSize?: number;
 }
 
 export function SmartWatchButton({ 
@@ -19,7 +21,9 @@ export function SmartWatchButton({
   animeTitle, 
   animeImage, 
   className,
-  variant = 'primary'
+  variant = 'primary',
+  label = 'Watch Now',
+  iconSize = 6
 }: SmartWatchButtonProps) {
   const router = useRouter();
   const { history } = useHistory();
@@ -73,11 +77,11 @@ export function SmartWatchButton({
       )}
     >
       {loading ? (
-        <Renew className="w-6 h-6 animate-spin" />
+        <Renew style={{ width: iconSize * 4, height: iconSize * 4 }} className="animate-spin fill-current" />
       ) : (
-        <CaretRight className="w-6 h-6 fill-current" />
+        <CaretRight style={{ width: iconSize * 4, height: iconSize * 4 }} className="fill-current" />
       )}
-      <span className="text-xs">{loading ? 'Finding Episode...' : 'Watch Now'}</span>
+      <span>{loading ? 'Finding Episode...' : label}</span>
     </button>
   );
 }
