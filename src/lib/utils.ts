@@ -14,6 +14,32 @@ export function formatDate(date: string | Date) {
 }
 
 /**
+ * Parses an Indonesian date string (e.g. '11 Agustus,2025') into a standard ISO date string ('2025-08-11')
+ */
+export function parseIndonesianDate(dateStr: string): string {
+  if (!dateStr) return dateStr;
+  
+  const months: Record<string, string> = {
+    'januari': '01', 'februari': '02', 'maret': '03', 'april': '04',
+    'mei': '05', 'juni': '06', 'juli': '07', 'agustus': '08',
+    'september': '09', 'oktober': '10', 'november': '11', 'desember': '12'
+  };
+
+  // Match "11 Agustus,2025" or "11 Agustus 2025"
+  const match = dateStr.match(/(\d+)\s+([A-Za-z]+),?\s*(\d{4})/);
+  if (match) {
+    const day = match[1].padStart(2, '0');
+    const monthStr = match[2].toLowerCase();
+    const year = match[3];
+    
+    const month = months[monthStr] || '01';
+    return `${year}-${month}-${day}`;
+  }
+  
+  return dateStr;
+}
+
+/**
  * Parses a string field that might be a JSON array or comma-separated values
  * common in the scraped database.
  */

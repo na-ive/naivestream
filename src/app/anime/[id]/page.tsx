@@ -10,6 +10,7 @@ import { CharacterCarousel } from "@/components/anime/CharacterCarousel";
 import { AnimeCard } from "@/components/anime/AnimeCard";
 import { AnimeTitleDisplay } from "@/components/anime/AnimeTitleDisplay";
 import { LazyIframe } from "@/components/ui/LazyIframe";
+import { parseIndonesianDate, formatDate } from "@/lib/utils";
 
 async function getAnimeDetails(slug: string) {
   const anime = await AnimeService.getAnimeBySlug(slug);
@@ -27,7 +28,7 @@ async function getAnimeDetails(slug: string) {
           episodeId: ep.slug,
           eps: ep.eps_number,
           title: ep.title,
-          date: ep.uploaded_at
+          date: formatDate(parseIndonesianDate(ep.uploaded_at))
         }))
     }
   };

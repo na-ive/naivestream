@@ -117,7 +117,25 @@ const SMART_STATUS_CLAUSES = {
 
 // SQL subqueries for reuse
 const SQL_LATEST_EP = `(SELECT MAX(eps_number) FROM episodes WHERE anime_id = a.id)`;
-const SQL_LATEST_EP_DATE = `(SELECT MAX(uploaded_at) FROM episodes WHERE anime_id = a.id)`;
+const SQL_LATEST_EP_DATE = `(SELECT MAX(
+  SUBSTR(uploaded_at, -4) || 
+  CASE 
+    WHEN uploaded_at LIKE '%Januari%' THEN '01' 
+    WHEN uploaded_at LIKE '%Februari%' THEN '02' 
+    WHEN uploaded_at LIKE '%Maret%' THEN '03' 
+    WHEN uploaded_at LIKE '%April%' THEN '04' 
+    WHEN uploaded_at LIKE '%Mei%' THEN '05' 
+    WHEN uploaded_at LIKE '%Juni%' THEN '06' 
+    WHEN uploaded_at LIKE '%Juli%' THEN '07' 
+    WHEN uploaded_at LIKE '%Agustus%' THEN '08' 
+    WHEN uploaded_at LIKE '%September%' THEN '09' 
+    WHEN uploaded_at LIKE '%Oktober%' THEN '10' 
+    WHEN uploaded_at LIKE '%November%' THEN '11' 
+    WHEN uploaded_at LIKE '%Desember%' THEN '12' 
+    ELSE '00' 
+  END || 
+  PRINTF('%02d', CAST(SUBSTR(uploaded_at, 1, INSTR(uploaded_at, ' ') - 1) AS INTEGER))
+) FROM episodes WHERE anime_id = a.id)`;
 const SQL_ACTUAL_COUNT = `(SELECT COUNT(*) FROM episodes WHERE anime_id = a.id)`;
 const SQL_GENRES = `(SELECT GROUP_CONCAT(g.name) FROM genres g JOIN anime_genres ag ON g.id = ag.genre_id WHERE ag.anime_id = a.id)`;
 const SQL_BASE_SELECT = `a.*, ${SQL_LATEST_EP} as latest_episode, ${SQL_ACTUAL_COUNT} as actual_episodes_count, ${SQL_GENRES} as genres`;
@@ -150,6 +168,8 @@ export const AnimeService = {
 
     if (orderBy === 'last_updated' && status === 'Ongoing') {
       safeOrderBy = `COALESCE(a.next_airing_at, 0)`;
+    } else if (orderBy === 'last_updated' && status === 'Completed') {
+      safeOrderBy = `COALESCE(${SQL_LATEST_EP_DATE}, a.last_updated)`;
     }
     const direction = orderBy === 'title' ? 'ASC' : 'DESC';
 
@@ -257,7 +277,7 @@ export const AnimeService = {
     const ongoingSql = `SELECT ${SQL_BASE_SELECT} FROM anime a WHERE ${SMART_STATUS_CLAUSES.Ongoing} ORDER BY CASE WHEN ${SQL_ACTUAL_COUNT} > 0 THEN 0 ELSE 1 END ASC, COALESCE(a.next_airing_at, 0) DESC LIMIT 12`;
     const ongoing = getPreparedStatement(ongoingSql).all() as any[];
 
-    const completedSql = `SELECT ${SQL_BASE_SELECT} FROM anime a WHERE ${SMART_STATUS_CLAUSES.Completed} ORDER BY CASE WHEN ${SQL_ACTUAL_COUNT} > 0 THEN 0 ELSE 1 END ASC, a.last_updated DESC LIMIT 12`;
+    const completedSql = `SELECT ${SQL_BASE_SELECT} FROM anime a WHERE ${SMART_STATUS_CLAUSES.Completed} ORDER BY CASE WHEN ${SQL_ACTUAL_COUNT} > 0 THEN 0 ELSE 1 END ASC, COALESCE(${SQL_LATEST_EP_DATE}, a.last_updated) DESC LIMIT 12`;
     const completed = getPreparedStatement(completedSql).all() as any[];
     
     const normalizeItems = (list: any[]) => list.map(item => ({
