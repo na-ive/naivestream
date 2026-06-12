@@ -31,6 +31,7 @@ export function ForYouHome({ recommendations }: { recommendations: any[] }) {
             rating={String(anime.score)}
             episode={`${anime.episodes_count || '??'} eps`}
             totalEpisodes={anime.actual_episodes_count}
+            forceGrid={true}
           />
         ))}
       </div>

@@ -312,6 +312,7 @@ export default async function AnimeDetailPage(props: { params: Promise<{ id: str
                       rating={String(anime.score)}
                       episode={anime.status === 'Ongoing' ? `ep ${anime.latest_episode || '??'}` : `${anime.episodes_count || '??'} eps`}
                       totalEpisodes={anime.actual_episodes_count}
+                      forceGrid={true}
                     />
                   ))}
                 </div>

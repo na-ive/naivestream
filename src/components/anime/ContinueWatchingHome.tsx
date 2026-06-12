@@ -63,6 +63,7 @@ export function ContinueWatchingHome() {
               image={item.animeImage}
               episode={displayEp}
               hideBookmark
+              forceGrid={true}
             />
           );
         })}
@@ -89,7 +90,7 @@ export function ContinueWatchingHomeSkeleton() {
       </div>
       <div className="mobile-snap-scroll gap-4 md:gap-6">
         {Array.from({ length: 4 }).map((_, i) => (
-          <AnimeCardSkeleton key={i} />
+          <AnimeCardSkeleton key={i} forceGrid={true} />
         ))}
       </div>
     </section>

@@ -22,7 +22,7 @@ function SectionGridSkeleton({ count = 6 }: { count?: number }) {
   return (
     <div className="mobile-snap-scroll gap-4 md:gap-6">
       {Array.from({ length: count }).map((_, i) => (
-        <AnimeCardSkeleton key={i} />
+        <AnimeCardSkeleton key={i} forceGrid={true} />
       ))}
     </div>
   );

@@ -91,6 +91,7 @@ export default async function HomePage() {
                 episode={`ep ${anime.latest_episode || '??'}`}
                 status={anime.next_episode && anime.next_airing_at ? formatNextAiring(anime.next_episode, anime.next_airing_at, true) : anime.release_day}
                 totalEpisodes={anime.actual_episodes_count}
+                forceGrid={true}
               />
             ))}
           </div>
@@ -137,6 +138,7 @@ export default async function HomePage() {
                 rating={String(anime.score)}
                 episode={`${anime.episodes_count || '??'} eps`}
                 totalEpisodes={anime.actual_episodes_count}
+                forceGrid={true}
               />
             ))}
           </div>
