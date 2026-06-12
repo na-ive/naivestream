@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState } from 'react';
+import * as TooltipPrimitive from '@radix-ui/react-tooltip';
 import { motion, AnimatePresence } from 'motion/react';
 import { cn } from '@/lib/utils';
 
@@ -14,51 +15,7 @@ export interface TooltipProps {
 }
 
 export function Tooltip({ content, children, position = 'top', className, wrapperClassName, delay = 0 }: TooltipProps) {
-  const [isVisible, setIsVisible] = useState(false);
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
-
-  const handleMouseEnter = () => {
-    if (delay > 0) {
-      timeoutRef.current = setTimeout(() => setIsVisible(true), delay);
-    } else {
-      setIsVisible(true);
-    }
-  };
-
-  const handleMouseLeave = () => {
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
-      timeoutRef.current = null;
-    }
-    setIsVisible(false);
-  };
-
-  useEffect(() => {
-    const handleHide = () => {
-      setIsVisible(false);
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-        timeoutRef.current = null;
-      }
-    };
-
-    window.addEventListener('blur', handleHide);
-    document.addEventListener('visibilitychange', handleHide);
-    window.addEventListener('scroll', handleHide, true);
-
-    return () => {
-      window.removeEventListener('blur', handleHide);
-      document.removeEventListener('visibilitychange', handleHide);
-      window.removeEventListener('scroll', handleHide, true);
-    };
-  }, []);
-
-  const positionClasses = {
-    top: 'bottom-full left-1/2 -translate-x-1/2 mb-2',
-    bottom: 'top-full left-1/2 -translate-x-1/2 mt-2',
-    left: 'right-full top-1/2 -translate-y-1/2 mr-2',
-    right: 'left-full top-1/2 -translate-y-1/2 ml-2',
-  };
+  const [open, setOpen] = useState(false);
 
   const variants = {
     top: { initial: { opacity: 0, y: 5 }, animate: { opacity: 1, y: 0 }, exit: { opacity: 0, y: 5 } },
@@ -68,34 +25,44 @@ export function Tooltip({ content, children, position = 'top', className, wrappe
   };
 
   return (
-    <div 
-      className={cn("relative inline-flex", wrapperClassName)}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-      onFocus={handleMouseEnter}
-      onBlur={handleMouseLeave}
-    >
-      {children}
-      <AnimatePresence>
-        {isVisible && (
-          <motion.div
-            initial={variants[position].initial}
-            animate={variants[position].animate}
-            exit={variants[position].exit}
-            transition={{ duration: 0.15, ease: 'easeOut' }}
-            className={cn(
-              "absolute z-[100] whitespace-nowrap px-3 py-1.5 bg-card border border-secondary text-secondary text-[10px] font-mono font-bold uppercase tracking-widest pointer-events-none shadow-[0_0_15px_rgba(34,197,94,0.15)]",
-              positionClasses[position],
-              className
-            )}
-            style={{
-              clipPath: 'polygon(4px 0, 100% 0, 100% calc(100% - 4px), calc(100% - 4px) 100%, 0 100%, 0 4px)'
-            }}
-          >
-            {content}
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
+    <TooltipPrimitive.Provider delayDuration={delay}>
+      <TooltipPrimitive.Root open={open} onOpenChange={setOpen}>
+        <TooltipPrimitive.Trigger asChild>
+          <div className={cn("relative inline-flex cursor-default", wrapperClassName)}>
+            {children}
+          </div>
+        </TooltipPrimitive.Trigger>
+        
+        <AnimatePresence>
+          {open && (
+            <TooltipPrimitive.Portal forceMount>
+              <TooltipPrimitive.Content
+                asChild
+                side={position}
+                sideOffset={8}
+                collisionPadding={16}
+                className="z-100"
+              >
+                <motion.div
+                  initial={variants[position].initial}
+                  animate={variants[position].animate}
+                  exit={variants[position].exit}
+                  transition={{ duration: 0.15, ease: 'easeOut' }}
+                  className={cn(
+                    "whitespace-nowrap px-3 py-1.5 bg-card border border-secondary text-secondary text-[10px] font-mono font-bold uppercase tracking-widest pointer-events-none shadow-[0_0_15px_rgba(34,197,94,0.15)]",
+                    className
+                  )}
+                  style={{
+                    clipPath: 'polygon(4px 0, 100% 0, 100% calc(100% - 4px), calc(100% - 4px) 100%, 0 100%, 0 4px)'
+                  }}
+                >
+                  {content}
+                </motion.div>
+              </TooltipPrimitive.Content>
+            </TooltipPrimitive.Portal>
+          )}
+        </AnimatePresence>
+      </TooltipPrimitive.Root>
+    </TooltipPrimitive.Provider>
   );
 }
