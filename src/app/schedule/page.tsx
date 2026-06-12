@@ -4,6 +4,8 @@ import Link from 'next/link';
 import { AnimeCard } from '@/components/anime/AnimeCard';
 import { Calendar, FaceDissatisfied } from '@carbon/icons-react';
 import { formatNextAiring } from '@/lib/utils';
+import { ViewGridWrapper } from '@/components/layout/ViewGridWrapper';
+import { ViewToggle } from '@/components/layout/ViewToggle';
 
 export const metadata = {
   title: 'Anime Schedule - NaiveStream',
@@ -57,12 +59,16 @@ export default async function SchedulePage({ searchParams }: SchedulePageProps) 
           <h1 className="text-4xl md:text-5xl font-serif font-black uppercase tracking-tighter">Schedule<span className="text-secondary">_</span></h1>
         </div>
         
-        <div className="inline-block px-6 py-3 bg-card/80 border-l-4 border-secondary/50 shadow-lg relative overflow-hidden"
-             style={{ clipPath: 'polygon(0 0, 100% 0, calc(100% - 15px) 100%, 0 100%)' }}>
-          <div className="absolute inset-0 bg-gradient-to-r from-secondary/10 to-transparent pointer-events-none" />
-          <p className="text-xs font-bold uppercase tracking-[0.2em] text-foreground/80 relative z-10">
-            Weekly anime release schedule
-          </p>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="inline-block px-6 py-3 bg-card/80 border-l-4 border-secondary/50 shadow-lg relative overflow-hidden"
+               style={{ clipPath: 'polygon(0 0, 100% 0, calc(100% - 15px) 100%, 0 100%)' }}>
+            <div className="absolute inset-0 bg-gradient-to-r from-secondary/10 to-transparent pointer-events-none" />
+            <p className="text-xs font-bold uppercase tracking-[0.2em] text-foreground/80 relative z-10">
+              Weekly anime release schedule
+            </p>
+          </div>
+          
+          <ViewToggle />
         </div>
       </div>
 
@@ -93,7 +99,7 @@ export default async function SchedulePage({ searchParams }: SchedulePageProps) 
 
       {/* Anime Grid */}
       {animeList.length > 0 ? (
-        <div className="anime-grid">
+        <ViewGridWrapper>
           {animeList.map((anime: any) => (
             <AnimeCard
               key={anime.slug}
@@ -104,9 +110,11 @@ export default async function SchedulePage({ searchParams }: SchedulePageProps) 
               rating={String(anime.score)}
               episode={`ep ${anime.latest_episode || '??'}`}
               status={anime.next_episode && anime.next_airing_at ? formatNextAiring(anime.next_episode, anime.next_airing_at, true) ?? undefined : undefined}
+              synopsis={anime.synopsis}
+              genres={anime.genres ? anime.genres.split(',') : []}
             />
           ))}
-        </div>
+        </ViewGridWrapper>
       ) : (
         <div className="flex flex-col items-center justify-center py-20 text-center space-y-6 border-2 border-dashed border-secondary/20 bg-card">
           <FaceDissatisfied className="w-12 h-12 text-muted-text" />

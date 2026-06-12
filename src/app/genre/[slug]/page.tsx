@@ -3,6 +3,7 @@ import { AnimeService } from '@/lib/services/anime';
 import { notFound } from 'next/navigation';
 import { GenreAnimeList } from './GenreAnimeList';
 import { Tag, FaceDissatisfied } from '@carbon/icons-react';
+import { ViewToggle } from '@/components/layout/ViewToggle';
 
 export const metadata = {
   title: 'Genre - NaiveStream',
@@ -36,12 +37,16 @@ export default async function GenreDetailPage(props: {
           <h1 className="text-4xl md:text-5xl font-serif font-black uppercase tracking-tighter">{genreTitle}<span className="text-secondary">_</span></h1>
         </div>
         
-        <div className="inline-block px-6 py-3 bg-card/80 border-l-4 border-secondary/50 shadow-lg relative overflow-hidden"
-             style={{ clipPath: 'polygon(0 0, 100% 0, calc(100% - 15px) 100%, 0 100%)' }}>
-          <div className="absolute inset-0 bg-gradient-to-r from-secondary/10 to-transparent pointer-events-none" />
-          <p className="text-xs font-bold uppercase tracking-[0.2em] text-foreground/80 relative z-10">
-            Browse anime in {genreTitle} genre
-          </p>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="inline-block px-6 py-3 bg-card/80 border-l-4 border-secondary/50 shadow-lg relative overflow-hidden"
+               style={{ clipPath: 'polygon(0 0, 100% 0, calc(100% - 15px) 100%, 0 100%)' }}>
+            <div className="absolute inset-0 bg-gradient-to-r from-secondary/10 to-transparent pointer-events-none" />
+            <p className="text-xs font-bold uppercase tracking-[0.2em] text-foreground/80 relative z-10">
+              Browse anime in {genreTitle} genre
+            </p>
+          </div>
+          
+          <ViewToggle />
         </div>
       </div>
 

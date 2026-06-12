@@ -22,7 +22,7 @@ export default function LibraryPage() {
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="anime-grid">
           {Array.from({ length: 6 }).map((_, i) => (
-            <AnimeCardSkeleton key={i} />
+            <AnimeCardSkeleton key={i} forceGrid={true} />
           ))}
         </div>
       </div>
@@ -258,6 +258,7 @@ function LibraryContent() {
                       image={item.animeImage}
                       hideBookmark={true}
                       disableHover={isSelectionMode}
+                      forceGrid={true}
                     />
                   </div>
 
@@ -329,6 +330,7 @@ function LibraryContent() {
                       image={item.animeImage}
                       hideBookmark={true}
                       disableHover={isSelectionMode}
+                      forceGrid={true}
                     />
                     
                     <Link 

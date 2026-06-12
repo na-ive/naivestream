@@ -10,6 +10,8 @@ import { cn } from '@/lib/utils';
 import { Search as SearchIcon, FaceDissatisfied, Filter } from '@carbon/icons-react';
 import { AnimatePresence, motion } from 'motion/react';
 import { AnimeCardSkeleton } from '@/components/anime/AnimeCard';
+import { ViewGridWrapper } from '@/components/layout/ViewGridWrapper';
+import { ViewToggle } from '@/components/layout/ViewToggle';
 
 const FILTER_OPTIONS = {
   status: [
@@ -384,27 +386,30 @@ function SearchContent() {
         </AnimatePresence>
 
 
-        <div className="flex items-center justify-between px-2">
+        <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
             <div className="w-1 h-4 bg-secondary" />
             <span className="text-[10px] font-black text-foreground uppercase tracking-widest">
               Found <span className="text-secondary">{pagination.total}</span> Results
             </span>
           </div>
-          <div className="text-[10px] font-bold text-muted-text uppercase tracking-widest">
-            Page {pagination.current_page} of {pagination.last_page}
+          <div className="flex items-center gap-4">
+            <div className="text-[10px] font-bold text-muted-text uppercase tracking-widest hidden sm:block">
+              Page {pagination.current_page} of {pagination.last_page}
+            </div>
+            <ViewToggle />
           </div>
         </div>
 
         {loading ? (
-          <div className="anime-grid">
+          <ViewGridWrapper>
             {Array.from({ length: 24 }).map((_, i) => (
               <AnimeCardSkeleton key={i} />
             ))}
-          </div>
+          </ViewGridWrapper>
         ) : results.length > 0 ? (
           <>
-            <div className="anime-grid">
+            <ViewGridWrapper>
               {results.map((anime: any) => (
                 <AnimeCard
                   key={anime.slug}
@@ -416,9 +421,11 @@ function SearchContent() {
                   status={anime.status}
                   episode={anime.status === 'Ongoing' ? `ep ${anime.latest_episode || '??'}` : `${anime.episodes_count || '??'} eps`}
                   totalEpisodes={anime.actual_episodes_count}
+                  synopsis={anime.synopsis}
+                  genres={anime.genres ? anime.genres.split(',') : []}
                 />
               ))}
-            </div>
+            </ViewGridWrapper>
             <Pagination
               currentPage={pagination.current_page}
               totalPages={pagination.last_page}
@@ -506,11 +513,11 @@ export default function SearchPage() {
   return (
     <Suspense fallback={
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="anime-grid">
+        <ViewGridWrapper>
           {Array.from({ length: 24 }).map((_, i) => (
             <AnimeCardSkeleton key={i} />
           ))}
-        </div>
+        </ViewGridWrapper>
       </div>
     }>
       <SearchContent />

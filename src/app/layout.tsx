@@ -3,6 +3,7 @@ import { Exo_2, Orbitron } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import { TitleLangProvider } from "@/lib/providers/TitleLangProvider";
+import { ViewModeProvider } from "@/lib/providers/ViewModeProvider";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { Toaster } from "sonner";
@@ -43,10 +44,12 @@ export default function RootLayout({
         >
           <div className="flex flex-col min-h-screen relative">
             <TitleLangProvider>
-              <Navbar />
-              <main className="grow pt-20">
-                {children}
-              </main>
+              <ViewModeProvider>
+                <Navbar />
+                <main className="grow pt-20">
+                  {children}
+                </main>
+              </ViewModeProvider>
             </TitleLangProvider>
             <Footer />
           </div>

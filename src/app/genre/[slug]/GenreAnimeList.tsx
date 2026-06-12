@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { AnimeCard } from '@/components/anime/AnimeCard';
 import { Renew, ChevronDown } from '@carbon/icons-react';
+import { ViewGridWrapper } from '@/components/layout/ViewGridWrapper';
 
 interface GenreAnimeListProps {
   initialAnime: any[];
@@ -43,7 +44,7 @@ export function GenreAnimeList({ initialAnime, slug, initialHasMore }: GenreAnim
 
   return (
     <div className="space-y-12">
-      <div className="anime-grid">
+      <ViewGridWrapper>
         {animeList.map((anime: any, index: number) => (
           <AnimeCard
             key={`${anime.slug}-${index}`}
@@ -55,9 +56,11 @@ export function GenreAnimeList({ initialAnime, slug, initialHasMore }: GenreAnim
             status={anime.status}
             episode={anime.status === 'Ongoing' ? `ep ${anime.latest_episode || '??'}` : `${anime.episodes_count || '??'} eps`}
             totalEpisodes={anime.actual_episodes_count}
+            synopsis={anime.synopsis}
+            genres={anime.genres ? anime.genres.split(',') : []}
           />
         ))}
-      </div>
+      </ViewGridWrapper>
 
       {hasMore && (
         <div className="flex justify-center mt-12">

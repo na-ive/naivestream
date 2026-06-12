@@ -3,6 +3,8 @@ import { AnimeService } from "@/lib/services/anime";
 import { AnimeCard } from "@/components/anime/AnimeCard";
 import { CheckmarkOutline, FaceDissatisfied } from "@carbon/icons-react";
 import { Pagination } from "@/components/layout/Pagination";
+import { ViewGridWrapper } from "@/components/layout/ViewGridWrapper";
+import { ViewToggle } from "@/components/layout/ViewToggle";
 
 export const metadata: Metadata = {
   title: 'Completed Anime - NaiveStream',
@@ -30,12 +32,16 @@ export default async function CompletedPage(props: { searchParams: Promise<{ pag
           <h1 className="text-4xl md:text-5xl font-serif font-black uppercase tracking-tighter">Completed<span className="text-secondary">_</span></h1>
         </div>
         
-        <div className="inline-block px-6 py-3 bg-card/80 border-l-4 border-secondary/50 shadow-lg relative overflow-hidden"
-             style={{ clipPath: 'polygon(0 0, 100% 0, calc(100% - 15px) 100%, 0 100%)' }}>
-          <div className="absolute inset-0 bg-gradient-to-r from-secondary/10 to-transparent pointer-events-none" />
-          <p className="text-xs font-bold uppercase tracking-[0.2em] text-foreground/80 relative z-10">
-            Finished series library
-          </p>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="inline-block px-6 py-3 bg-card/80 border-l-4 border-secondary/50 shadow-lg relative overflow-hidden"
+               style={{ clipPath: 'polygon(0 0, 100% 0, calc(100% - 15px) 100%, 0 100%)' }}>
+            <div className="absolute inset-0 bg-gradient-to-r from-secondary/10 to-transparent pointer-events-none" />
+            <p className="text-xs font-bold uppercase tracking-[0.2em] text-foreground/80 relative z-10">
+              Finished series library
+            </p>
+          </div>
+
+          <ViewToggle />
         </div>
       </div>
 
@@ -48,7 +54,7 @@ export default async function CompletedPage(props: { searchParams: Promise<{ pag
 
       {complete.length > 0 && (
         <>
-          <div className="anime-grid">
+          <ViewGridWrapper>
             {complete.map((anime: any) => (
               <AnimeCard
                 key={anime.slug}
@@ -59,9 +65,11 @@ export default async function CompletedPage(props: { searchParams: Promise<{ pag
                 rating={String(anime.score)}
                 episode={`${anime.episodes_count || '??'} eps`}
                 totalEpisodes={anime.actual_episodes_count}
+                synopsis={anime.synopsis}
+                genres={anime.genres ? anime.genres.split(',') : []}
               />
             ))}
-          </div>
+          </ViewGridWrapper>
           <Pagination 
             currentPage={currentPage} 
             totalPages={totalPages} 

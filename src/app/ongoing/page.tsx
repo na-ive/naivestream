@@ -4,6 +4,8 @@ import { AnimeCard } from "@/components/anime/AnimeCard";
 import { Activity, FaceDissatisfied } from "@carbon/icons-react";
 import { Pagination } from "@/components/layout/Pagination";
 import { formatNextAiring } from "@/lib/utils";
+import { ViewGridWrapper } from "@/components/layout/ViewGridWrapper";
+import { ViewToggle } from "@/components/layout/ViewToggle";
 
 export const metadata: Metadata = {
   title: 'Ongoing Anime - NaiveStream',
@@ -31,12 +33,16 @@ export default async function OngoingPage(props: { searchParams: Promise<{ page?
           <h1 className="text-4xl md:text-5xl font-serif font-black uppercase tracking-tighter">Ongoing<span className="text-secondary">_</span></h1>
         </div>
         
-        <div className="inline-block px-6 py-3 bg-card/80 border-l-4 border-secondary/50 shadow-lg relative overflow-hidden"
-             style={{ clipPath: 'polygon(0 0, 100% 0, calc(100% - 15px) 100%, 0 100%)' }}>
-          <div className="absolute inset-0 bg-gradient-to-r from-secondary/10 to-transparent pointer-events-none" />
-          <p className="text-xs font-bold uppercase tracking-[0.2em] text-foreground/80 relative z-10">
-            Latest updates from airing series
-          </p>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="inline-block px-6 py-3 bg-card/80 border-l-4 border-secondary/50 shadow-lg relative overflow-hidden"
+               style={{ clipPath: 'polygon(0 0, 100% 0, calc(100% - 15px) 100%, 0 100%)' }}>
+            <div className="absolute inset-0 bg-gradient-to-r from-secondary/10 to-transparent pointer-events-none" />
+            <p className="text-xs font-bold uppercase tracking-[0.2em] text-foreground/80 relative z-10">
+              Latest updates from airing series
+            </p>
+          </div>
+          
+          <ViewToggle />
         </div>
       </div>
 
@@ -49,7 +55,7 @@ export default async function OngoingPage(props: { searchParams: Promise<{ page?
 
       {ongoing.length > 0 && (
         <>
-          <div className="anime-grid">
+          <ViewGridWrapper>
             {ongoing.map((anime: any) => (
               <AnimeCard
                 key={anime.slug}
@@ -61,9 +67,11 @@ export default async function OngoingPage(props: { searchParams: Promise<{ page?
                 episode={`ep ${anime.latest_episode || '??'}`}
                 status={anime.next_episode && anime.next_airing_at ? formatNextAiring(anime.next_episode, anime.next_airing_at, true) : anime.release_day}
                 totalEpisodes={anime.actual_episodes_count}
+                synopsis={anime.synopsis}
+                genres={anime.genres ? anime.genres.split(',') : []}
               />
             ))}
-          </div>
+          </ViewGridWrapper>
           <Pagination 
             currentPage={currentPage} 
             totalPages={totalPages} 

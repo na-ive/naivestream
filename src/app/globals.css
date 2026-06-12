@@ -262,3 +262,19 @@
 
 
 
+
+/* View Modes Overrides */
+.anime-grid[data-view="detailed"] {
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+.anime-grid[data-view="list"] {
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+@media (min-width: 768px) {
+  .anime-grid[data-view="list"] {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
