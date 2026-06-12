@@ -1,8 +1,7 @@
 import { AnimeService } from "@/lib/services/anime";
 import { AnimeCard } from "@/components/anime/AnimeCard";
 import { HeroCarousel } from "@/components/anime/HeroCarousel";
-import { ContinueWatchingHome } from "@/components/anime/ContinueWatchingHome";
-import { ForYouHome } from "@/components/anime/ForYouHome";
+import { HomeClientWrapper } from "@/components/home/HomeClientWrapper";
 import { AnimeTitleDisplay } from '@/components/anime/AnimeTitleDisplay';
 import { ChevronRight, Calendar, Time } from "@carbon/icons-react";
 import Link from "next/link";
@@ -49,12 +48,7 @@ export default async function HomePage() {
       <HeroCarousel items={trendingItems} />
 
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 mt-12 space-y-16">
-        {/* Continue Watching Section */}
-        <ContinueWatchingHome />
-
-        {/* For You Section */}
-        <ForYouHome />
-
+        <HomeClientWrapper>
         {/* Ongoing Section */}
         <section>
           <div className="flex items-end justify-between mb-8 border-b border-white/5 pb-4">
@@ -147,6 +141,7 @@ export default async function HomePage() {
             ))}
           </div>
         </section>
+        </HomeClientWrapper>
 
         {/* Today's Schedule Section */}
         {todayAnimeList.length > 0 && (

@@ -1,55 +1,7 @@
-'use client';
-
-import { useState, useEffect } from 'react';
-import { useHistory } from '@/lib/hooks/useHistory';
-import { useWatchlist } from '@/lib/hooks/useWatchlist';
 import { AnimeCard } from './AnimeCard';
 
-export function ForYouHome() {
-  const { history } = useHistory();
-  const { watchlist } = useWatchlist();
-  const [recommendations, setRecommendations] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [shouldRender, setShouldRender] = useState(false);
-
-  useEffect(() => {
-    // Collect unique slugs from history and watchlist
-    const slugs = new Set([
-      ...history.map(h => h.animeId),
-      ...watchlist.map(w => w.animeId)
-    ]);
-
-    if (slugs.size < 5) {
-      setShouldRender(false);
-      setLoading(false);
-      return;
-    }
-
-    setShouldRender(true);
-
-    const fetchRecommendations = async () => {
-      try {
-        const res = await fetch('/api/anime/foryou', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ slugs: Array.from(slugs) })
-        });
-        
-        if (res.ok) {
-          const data = await res.json();
-          setRecommendations(data.data || []);
-        }
-      } catch (error) {
-        console.error('Failed to fetch recommendations:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchRecommendations();
-  }, [history, watchlist]);
-
-  if (!shouldRender || loading || recommendations.length === 0) {
+export function ForYouHome({ recommendations }: { recommendations: any[] }) {
+  if (!recommendations || recommendations.length === 0) {
     return null;
   }
 
