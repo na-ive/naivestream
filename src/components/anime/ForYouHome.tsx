@@ -29,6 +29,7 @@ export function ForYouHome({ recommendations }: { recommendations: any[] }) {
             titleEnglish={anime.title_english}
             image={anime.poster}
             rating={String(anime.score)}
+            status={anime.status}
             episode={`${anime.episodes_count || '??'} eps`}
             totalEpisodes={anime.actual_episodes_count}
             forceGrid={true}
