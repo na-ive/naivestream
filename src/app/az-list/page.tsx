@@ -4,6 +4,7 @@ import Link from "next/link";
 import { AnimeTitleDisplay } from '@/components/anime/AnimeTitleDisplay';
 import { Catalog, FaceDissatisfied, ChevronRight } from "@carbon/icons-react";
 import { Pagination } from "@/components/layout/Pagination";
+import { MobileNavSelect } from "@/components/layout/MobileNavSelect";
 
 export const metadata: Metadata = {
   title: 'A-Z List - NaiveStream',
@@ -51,7 +52,7 @@ export default async function AZListPage(props: { searchParams: Promise<{ letter
       </div>
 
       <div 
-        className="mb-12 bg-card/50 border-y border-secondary/30 p-6 relative"
+        className="mb-12 bg-card/50 border-y border-secondary/30 p-6 relative hidden md:block"
         style={{ clipPath: 'polygon(20px 0, 100% 0, 100% calc(100% - 20px), calc(100% - 20px) 100%, 0 100%, 0 20px)' }}
       >
         <div className="flex flex-wrap gap-2 justify-center relative z-10">
@@ -71,7 +72,13 @@ export default async function AZListPage(props: { searchParams: Promise<{ letter
         </div>
       </div>
 
-      <div className="flex items-center justify-between mb-8 border-b-2 border-secondary/20 pb-4">
+      <div className="flex items-center justify-between mb-8 border-b-2 border-secondary/20 pb-4 gap-4">
+        <MobileNavSelect 
+          options={letters.map(l => ({ value: l, label: `Letter: ${l}` }))}
+          currentValue={currentLetter}
+          baseUrl="/az-list"
+          paramName="letter"
+        />
         <span className="text-sm font-bold text-muted-text uppercase tracking-widest">
           Showing {totalItems} titles for "{currentLetter}"
         </span>

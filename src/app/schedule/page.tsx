@@ -6,6 +6,7 @@ import { Calendar, FaceDissatisfied } from '@carbon/icons-react';
 import { formatNextAiring } from '@/lib/utils';
 import { ViewGridWrapper } from '@/components/layout/ViewGridWrapper';
 import { ViewToggle } from '@/components/layout/ViewToggle';
+import { MobileNavSelect } from '@/components/layout/MobileNavSelect';
 
 export const metadata = {
   title: 'Anime Schedule - NaiveStream',
@@ -72,7 +73,7 @@ export default async function SchedulePage({ searchParams }: SchedulePageProps) 
 
       {/* Day Tabs */}
       <div 
-        className="mb-8 bg-card/50 border-y border-secondary/30 p-6 md:p-8 relative"
+        className="mb-8 bg-card/50 border-y border-secondary/30 p-6 md:p-8 relative hidden md:block"
         style={{ clipPath: 'polygon(20px 0, 100% 0, 100% calc(100% - 20px), calc(100% - 20px) 100%, 0 100%, 0 20px)' }}
       >
         <div className="flex overflow-x-auto snap-x snap-mandatory hide-scrollbar justify-start md:justify-center gap-3 relative z-10 pb-2">
@@ -96,7 +97,14 @@ export default async function SchedulePage({ searchParams }: SchedulePageProps) 
       </div>
 
       {/* Grid Controls */}
-      <div className="flex justify-end mb-4">
+      <div className="flex justify-between items-center mb-4 gap-4">
+        <MobileNavSelect 
+          options={DAY_ORDER.map(d => ({ value: d, label: `${d} (${dayCounts[d]})` }))}
+          currentValue={activeDay}
+          baseUrl="/schedule"
+          paramName="day"
+        />
+        <div className="hidden md:block flex-1" />
         <ViewToggle />
       </div>
 
