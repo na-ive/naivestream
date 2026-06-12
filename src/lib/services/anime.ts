@@ -78,6 +78,7 @@ function cleanSynopsis(synopsis: string): string {
     .replace(/\[Written by.*?\]/gi, '')
     .replace(/Written by.*?$/gi, '')
     .replace(/Source:.*?$/gi, '')
+    .replace(/(?:\n|<br\s*\/?>)*\s*\*?\*?Note:[\s\S]*$/gi, '')
     .replace(/\n{3,}/g, '\n\n')
     .trim();
 }
