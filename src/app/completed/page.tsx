@@ -41,7 +41,9 @@ export default async function CompletedPage(props: { searchParams: Promise<{ pag
             </p>
           </div>
 
-          <ViewToggle />
+          <div className="hidden sm:block">
+            <ViewToggle />
+          </div>
         </div>
       </div>
 
@@ -54,6 +56,9 @@ export default async function CompletedPage(props: { searchParams: Promise<{ pag
 
       {complete.length > 0 && (
         <>
+          <div className="flex justify-end mb-4 sm:hidden">
+            <ViewToggle />
+          </div>
           <ViewGridWrapper>
             {complete.map((anime: any) => (
               <AnimeCard

@@ -42,7 +42,9 @@ export default async function OngoingPage(props: { searchParams: Promise<{ page?
             </p>
           </div>
           
-          <ViewToggle />
+          <div className="hidden sm:block">
+            <ViewToggle />
+          </div>
         </div>
       </div>
 
@@ -55,6 +57,9 @@ export default async function OngoingPage(props: { searchParams: Promise<{ page?
 
       {ongoing.length > 0 && (
         <>
+          <div className="flex justify-end mb-4 sm:hidden">
+            <ViewToggle />
+          </div>
           <ViewGridWrapper>
             {ongoing.map((anime: any) => (
               <AnimeCard

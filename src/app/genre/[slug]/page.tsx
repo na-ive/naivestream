@@ -46,12 +46,19 @@ export default async function GenreDetailPage(props: {
             </p>
           </div>
           
-          <ViewToggle />
+          <div className="hidden sm:block">
+            <ViewToggle />
+          </div>
         </div>
       </div>
 
       {animeList.length > 0 ? (
-        <GenreAnimeList initialAnime={animeList} slug={slug} initialHasMore={result.pagination.current_page < result.pagination.last_page} />
+        <>
+          <div className="flex justify-end mb-4 sm:hidden">
+            <ViewToggle />
+          </div>
+          <GenreAnimeList initialAnime={animeList} slug={slug} initialHasMore={result.pagination.current_page < result.pagination.last_page} />
+        </>
       ) : (
         <div className="flex flex-col items-center justify-center py-20 text-center space-y-4 border-2 border-dashed border-secondary/20 bg-card">
           <FaceDissatisfied className="w-12 h-12 text-muted-text" />
