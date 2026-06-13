@@ -175,7 +175,7 @@ export function EpisodeList({
           return (
             <Link
               key={`${currentEpId}-${globalIndex}`}
-              href={`/watch/${currentEpId}?anime=${animeId}&title=${encodeURIComponent(displayTitle)}&img=${encodeURIComponent(poster)}&source=${source}`}
+              href={`/watch/${currentEpId}`}
               className={cn(
                 "flex items-center p-3 transition-all group relative overflow-hidden h-20",
                 isLastWatched 

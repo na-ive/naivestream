@@ -45,7 +45,7 @@ export function ContinueWatching({
     }
   }, [history, animeId, episodes]);
 
-  const watchUrl = (id: string) => `/watch/${id}?anime=${animeId}&title=${encodeURIComponent(displayTitle)}&img=${encodeURIComponent(animeImage)}&source=${source}`;
+  const watchUrl = (id: string) => `/watch/${id}`;
 
   if (!lastWatched) {
     if (episodes.length === 0) return null;

@@ -1,42 +1,32 @@
 import { Suspense } from 'react';
 import type { Metadata } from 'next';
-import { AnimeAPI } from '@/lib/api';
+import { AnimeService } from '@/lib/services/anime';
 import { Skeleton } from '@/components/ui/Skeleton';
 import WatchContent from './WatchContent';
 
 export async function generateMetadata(
-  props: { params: Promise<{ id: string }>; searchParams: Promise<{ [key: string]: string | string[] | undefined }> }
+  props: { params: Promise<{ id: string }> }
 ): Promise<Metadata> {
-  const searchParams = await props.searchParams;
-  const animeTitle = searchParams.title ? String(searchParams.title) : 'Unknown Anime';
-  const source = searchParams.source ? String(searchParams.source) : 'otakudesu';
   const episodeSlug = (await props.params).id;
   
   let formattedEpisode = episodeSlug.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
-  
+
   try {
-    const res = source === 'samehadaku' 
-      ? await AnimeAPI.samehadaku.getEpisode(episodeSlug)
-      : await AnimeAPI.otakudesu.getEpisode(episodeSlug);
-      
-    const data = res?.data || (res?.title ? res : null);
-    if (data && data.title) {
-      formattedEpisode = data.title;
+    const episode = await AnimeService.getEpisodeBySlug(episodeSlug);
+    if (episode && episode.title) {
+      formattedEpisode = episode.title;
     }
   } catch (error) {
     // fallback to formatted slug
   }
-  
-  const finalTitle = formattedEpisode.toLowerCase().includes(animeTitle.toLowerCase()) 
-    ? formattedEpisode 
-    : `${animeTitle} - ${formattedEpisode}`;
+
+  const cleanEpisodeTitle = formattedEpisode.replace(/\s*Subtitle\s+Indonesia\s*$/i, '').trim();
   
   return {
-    title: finalTitle,
-    description: `Streaming ${formattedEpisode} on NaiveStream`,
+    title: cleanEpisodeTitle,
+    description: `Streaming ${cleanEpisodeTitle} on NaiveStream`,
   };
 }
-
 export default async function WatchPage(props: { params: Promise<{ id: string }> }) {
   const params = await props.params;
   return (

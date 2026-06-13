@@ -22,6 +22,7 @@ export async function GET(req: NextRequest) {
       animeId: slug, 
       title: anime.title, 
       titleEnglish: anime.title_english, 
+      image: anime.poster,
       episodes: filteredEpisodes 
     });
   } catch (error) {

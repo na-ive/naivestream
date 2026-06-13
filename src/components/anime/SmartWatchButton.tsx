@@ -38,7 +38,7 @@ export function SmartWatchButton({
     
     if (savedProgress) {
       // Resume from last watched
-      router.push(`/watch/${savedProgress.lastEpisodeId}?anime=${animeId}&title=${encodeURIComponent(animeTitle)}&img=${encodeURIComponent(animeImage)}`);
+      router.push(`/watch/${savedProgress.lastEpisodeId}`);
       return;
     }
 
@@ -54,7 +54,7 @@ export function SmartWatchButton({
         const firstEpisode = episodes[episodes.length - 1];
         const epId = firstEpisode.slug;
         
-        router.push(`/watch/${epId}?anime=${animeId}&title=${encodeURIComponent(animeTitle)}&img=${encodeURIComponent(animeImage)}`);
+        router.push(`/watch/${epId}`);
       } else {
         router.push(`/anime/${animeId}`);
       }

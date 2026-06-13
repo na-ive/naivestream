@@ -3,7 +3,6 @@ const API_BASE_URL = 'https://www.sankavollerei.com/anime';
 async function fetchWithRetry(url: string, options: RequestInit = {}) {
   const isBrowser = typeof window !== 'undefined';
   
-  // Use proxy for client-side requests to avoid CORS
   const fullUrl = isBrowser 
     ? `/api/proxy?path=${encodeURIComponent(url)}`
     : `${API_BASE_URL}${url}`;
@@ -19,38 +18,34 @@ async function fetchWithRetry(url: string, options: RequestInit = {}) {
 
   try {
     const res = await fetch(fullUrl, defaultOptions);
-    
-    if (!res.ok) {
-      if (res.status !== 404) {
-        console.error(`[API Error] ${res.status} on ${fullUrl}`);
-      }
-      return null;
-    }
-    
+    if (!res.ok) return null;
     const json = await res.json();
-    
-    if (json && json.ok === false) {
-      console.error(`[API Internal Error] ${json.message} on ${fullUrl}`);
-      return null;
-    }
-
+    if (json && json.ok === false) return null;
     return json;
-  } catch (error) {
-    console.error(`[Fetch Error] ${error} on ${fullUrl}`);
+  } catch {
+    return null;
+  }
+}
+
+export async function getEpisode(slug: string) {
+  try {
+    const res = await fetch(`/api/episode/${slug}`, { next: { revalidate: 3600 } });
+    return res.ok ? res.json() : null;
+  } catch {
+    return null;
+  }
+}
+
+export async function getServer(serverId: string) {
+  try {
+    const res = await fetch(`/api/server?id=${encodeURIComponent(serverId)}`);
+    return res.ok ? res.json() : null;
+  } catch {
     return null;
   }
 }
 
 export const AnimeAPI = {
-  // Main Source: Otakudesu (Used only for streaming metadata)
-  otakudesu: {
-    getEpisode: (slug: string) => fetchWithRetry(`/episode/${slug}`),
-    getServer: (id: string) => fetchWithRetry(`/server/${id}`),
-  },
-
-  // Fallback Source: Samehadaku
-  samehadaku: {
-    getEpisode: (id: string) => fetchWithRetry(`/samehadaku/episode/${id}`),
-    getServer: (id: string) => fetchWithRetry(`/samehadaku/server/${id}`),
-  },
+  getEpisode,
+  getServer,
 };

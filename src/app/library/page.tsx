@@ -334,7 +334,7 @@ function LibraryContent() {
                     />
                     
                     <Link 
-                      href={`/watch/${item.lastEpisodeId}?anime=${item.animeId}&title=${encodeURIComponent(item.animeTitle)}&img=${encodeURIComponent(item.animeImage)}`}
+                      href={`/watch/${item.lastEpisodeId}`}
                       onClick={(e) => { if (isSelectionMode) e.preventDefault(); }}
                       className="mt-3 p-3 bg-card border border-secondary/10 hover:border-secondary/50 transition-all relative block group/card"
                     >

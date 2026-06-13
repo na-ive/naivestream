@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState, Suspense, use, useCallback } from 'react';
-import { useSearchParams, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { AnimeAPI } from '@/lib/api';
 import { useHistory } from '@/lib/hooks/useHistory';
 import { useWatchedEpisodes } from '@/lib/hooks/useWatchedEpisodes';
@@ -15,16 +15,14 @@ import { LazyIframe } from '@/components/ui/LazyIframe';
 import { cn } from '@/lib/utils';
 
 export default function WatchContent({ id }: { id: string }) {
-  const searchParams = useSearchParams();
   const router = useRouter();
-  const animeId = searchParams.get('anime') || '';
-  const animeTitle = searchParams.get('title') || '';
-  const animeImg = searchParams.get('img') || '';
-  const source = searchParams.get('source') || 'otakudesu';
   const { titleLang } = useTitleLang();
 
   const [episodeData, setEpisodeData] = useState<any>(null);
   const [animeData, setAnimeData] = useState<any>(null);
+  const [animeId, setAnimeId] = useState('');
+  const [animeTitle, setAnimeTitle] = useState('');
+  const [animeImg, setAnimeImg] = useState('');
   const [rawTitle, setRawTitle] = useState('');
   const [rawTitleEnglish, setRawTitleEnglish] = useState('');
 
@@ -116,10 +114,10 @@ export default function WatchContent({ id }: { id: string }) {
         setIsCinemaMode(prev => !prev);
       }
       if (e.key.toLowerCase() === 'n' && e.shiftKey && nextEp) {
-        router.push(`/watch/${nextEp.episodeId}?anime=${animeId}&title=${encodeURIComponent(displayTitle)}&img=${encodeURIComponent(animeImg)}&source=${source}`);
+        router.push(`/watch/${nextEp.episodeId}`);
       }
       if (e.key.toLowerCase() === 'p' && e.shiftKey && prevEp) {
-        router.push(`/watch/${prevEp.episodeId}?anime=${animeId}&title=${encodeURIComponent(displayTitle)}&img=${encodeURIComponent(animeImg)}&source=${source}`);
+        router.push(`/watch/${prevEp.episodeId}`);
       }
     };
 
@@ -127,7 +125,7 @@ export default function WatchContent({ id }: { id: string }) {
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [isCinemaMode, toggleTheaterMode, prevEp, nextEp, router, animeId, displayTitle, animeImg, source]);
+  }, [isCinemaMode, toggleTheaterMode, prevEp, nextEp, router]);
 
   const [historySaved, setHistorySaved] = useState(false);
 
@@ -149,16 +147,16 @@ export default function WatchContent({ id }: { id: string }) {
     if (!id || id === 'undefined') return;
 
     setLoading(true);
-    let res;
-    if (source === 'samehadaku') {
-      res = await AnimeAPI.samehadaku.getEpisode(id);
-    } else {
-      res = await AnimeAPI.otakudesu.getEpisode(id);
-    }
+    const res = await AnimeAPI.getEpisode(id);
 
     const data = res?.data || (res?.title ? res : null);
 
     if (data) {
+      // Set anime metadata from episode data (clean URLs, no query params needed)
+      if (data.animeId) setAnimeId(data.animeId);
+      if (data.animeTitle) setAnimeTitle(data.animeTitle);
+      if (data.animeImage) setAnimeImg(data.animeImage);
+
       // Filter next/prev episodes to ensure they aren't anomalies (missing eps_number)
       const sanitizedData = { ...data };
       if (sanitizedData.nextEpisode && (sanitizedData.nextEpisode.eps === null || sanitizedData.nextEpisode.eps === undefined)) {
@@ -170,7 +168,7 @@ export default function WatchContent({ id }: { id: string }) {
 
       setEpisodeData(sanitizedData);
       setCurrentUrl(sanitizedData.defaultStreamingUrl || '');
-      
+
       // Set initial resolution/server if available from default url
       if (sanitizedData.server?.qualities) {
         for (const quality of sanitizedData.server.qualities) {
@@ -186,12 +184,14 @@ export default function WatchContent({ id }: { id: string }) {
       // Save to history (done in separate useEffect after all data loads)
     }
     setLoading(false);
-  }, [id, animeId, animeTitle, animeImg, source]);
+    if (data?.animeId) fetchAnimeDataFrom(data.animeId);
+  }, [id]);
 
-  const fetchAnimeData = useCallback(async () => {
-    if (!animeId || animeId === 'undefined') return;
+  const fetchAnimeDataFrom = useCallback(async (slug: string) => {
+    if (!slug) return;
     try {
-      const res = await fetch(`/api/anime/episodes?slug=${animeId}`);
+      const res = await fetch(`/api/anime/episodes?slug=${slug}`);
+      if (!res.ok) return;
       const data = await res.json();
       if (data?.episodes) {
         const episodes = data.episodes.map((ep: any) => ({
@@ -204,27 +204,26 @@ export default function WatchContent({ id }: { id: string }) {
         if (data.title) {
           setRawTitle(data.title);
           setRawTitleEnglish(data.titleEnglish || '');
+          // Override scraped title/image with DB data
+          setAnimeTitle(data.title);
+        }
+        if (data.image) {
+          setAnimeImg(data.image);
         }
       }
     } catch (e) {
       console.error('Failed to fetch anime data for episode list', e);
     }
-  }, [animeId]);
+  }, []);
 
   useEffect(() => {
     fetchEpisode();
-    fetchAnimeData();
-  }, [fetchEpisode, fetchAnimeData]);
+  }, [fetchEpisode]);
 
   const changeServer = async (serverId: string, resolution: string, serverName: string) => {
     setServerLoading(true);
     try {
-      let res;
-      if (source === 'samehadaku') {
-        res = await AnimeAPI.samehadaku.getServer(serverId);
-      } else {
-        res = await AnimeAPI.otakudesu.getServer(serverId);
-      }
+      const res = await AnimeAPI.getServer(serverId);
 
       const serverData = res?.data || (res?.url ? res : null);
       if (serverData?.url) {
@@ -423,7 +422,7 @@ export default function WatchContent({ id }: { id: string }) {
               {prevEp ? (
                 <Tooltip content="Shift + P" position="top" wrapperClassName="w-full">
                   <Link
-                    href={`/watch/${prevEp.episodeId}?anime=${animeId}&title=${encodeURIComponent(displayTitle)}&img=${encodeURIComponent(animeImg)}&source=${source}`}
+                    href={`/watch/${prevEp.episodeId}`}
                     className="btn-accent w-full py-2.5 text-[10px] tracking-[0.2em] flex items-center justify-center text-center"
                   >
                     Prev
@@ -440,7 +439,7 @@ export default function WatchContent({ id }: { id: string }) {
               {nextEp ? (
                 <Tooltip content="Shift + N" position="top" wrapperClassName="w-full">
                   <Link
-                    href={`/watch/${nextEp.episodeId}?anime=${animeId}&title=${encodeURIComponent(displayTitle)}&img=${encodeURIComponent(animeImg)}&source=${source}`}
+                    href={`/watch/${nextEp.episodeId}`}
                     className="btn-primary w-full py-2.5 text-[10px] tracking-[0.2em] flex items-center justify-center text-center"
                   >
                     Next
@@ -471,7 +470,7 @@ export default function WatchContent({ id }: { id: string }) {
                       <Link
                         key={ep.episodeId}
                         ref={isActive ? activeEpisodeRef : null}
-                        href={`/watch/${ep.episodeId}?anime=${animeId}&title=${encodeURIComponent(displayTitle)}&img=${encodeURIComponent(animeImg)}&source=${source}`}
+                        href={`/watch/${ep.episodeId}`}
                         className={`w-full aspect-square flex items-center justify-center text-xs font-bold transition-all ${isActive
                             ? 'bg-secondary text-background shadow-[0_0_10px_rgba(34,197,94,0.3)] pointer-events-none'
                             : 'bg-background hover:bg-secondary/20 border border-white/5 hover:border-secondary/50 text-foreground/70 hover:text-secondary'
@@ -530,7 +529,7 @@ export default function WatchContent({ id }: { id: string }) {
 
           <div className="lg:hidden p-6 bg-card border-l-4 border-secondary">
             <h1 className="text-xl font-serif font-black tracking-tighter uppercase leading-none">{displayTitle}{episodeDisplay ? ` ${episodeDisplay}` : ''}</h1>
-            <p className="text-secondary font-bold text-[10px] mt-1 tracking-[0.2em] uppercase opacity-60">Source: {source}</p>
+            <p className="text-secondary font-bold text-[10px] mt-1 tracking-[0.2em] uppercase opacity-60">Streaming</p>
           </div>
         </div>
       </div>
