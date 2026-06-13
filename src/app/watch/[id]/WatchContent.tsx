@@ -321,7 +321,7 @@ export default function WatchContent({ id }: { id: string }) {
           <ChevronRight className="w-3 h-3 shrink-0 text-secondary" />
           <Link href={`/anime/${animeId}`} className="hover:text-foreground truncate max-w-[120px] sm:max-w-[200px] transition-colors">{displayTitle}</Link>
           <ChevronRight className="w-3 h-3 shrink-0 text-secondary" />
-          <span className="text-secondary truncate max-w-[150px] sm:max-w-[300px]">{displayTitle}</span>
+          <span className="text-secondary truncate max-w-[150px] sm:max-w-[300px]">{episodeDisplay || displayTitle}</span>
         </div>
       </div>
 
