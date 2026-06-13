@@ -12,6 +12,7 @@ const nextConfig: NextConfig = {
   outputFileTracingIncludes: {
     '/*': ['./src/lib/example-anime.db'],
   },
+  allowedDevOrigins: ['[IP_ADDRESS]'],
 };
 
 export default nextConfig;
