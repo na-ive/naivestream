@@ -18,10 +18,9 @@ NaiveStream is a high-bandwidth, high-fidelity media system designed for a premi
 
 ## Core Features
 1. **Intelligent Playback**: Resume from the last watched episode or start from Episode 1 automatically. (carousel)
-2. **CORS Bypass Proxy**: Dedicated `/api/proxy` route ensures stable client-side data fetching.
-3. **Local History**: Progress tracked directly in `localStorage` for privacy and ease of use.
-4. **Resilient Data Mapping**: Multi-provider fallback and robust property extraction (poster, episodes, synopsis).
-5. **Dynamic Library**: Advanced pagination thanks to api.
+2. **Local History**: Progress tracked directly in `localStorage` for privacy and ease of use.
+3. **Resilient Data Mapping**: Multi-provider fallback and robust property extraction (poster, episodes, synopsis).
+4. **Dynamic Library**: Advanced pagination thanks to api.
 
 ## Handover Instructions
 1. Refer to `PLAN.md` for immediate next steps.
