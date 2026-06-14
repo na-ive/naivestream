@@ -8,6 +8,7 @@ import { exec } from 'child_process';
 import { promisify } from 'util';
 import path from 'path';
 import fs from 'fs';
+import os from 'os';
 import { parseIndonesianDate } from '@/lib/utils';
 
 const execPromise = promisify(exec);
@@ -209,6 +210,9 @@ export async function updateAnimeMapping(id: number, malId: number | null, anili
     if (info.changes > 0) {
       if (triggerResync) {
         exec(`node dist/fill-from-anilist.js --id=${id}`, { cwd: path.join(process.cwd(), 'backend') });
+        await addSystemLog(`Updated mappings for anime ID ${id} and triggered background resync.`);
+      } else {
+        await addSystemLog(`Updated mappings for anime ID ${id}.`);
       }
       revalidatePath('/admin/database');
       return { success: true };
@@ -248,6 +252,7 @@ export async function triggerScraper(scriptName: string) {
     const child = exec(`npm run ${scriptName}`, { cwd: path.join(process.cwd(), 'backend') });
     
     // Kita bisa biarkan jalan di background, atau menyimpan log-nya ke file tertentu
+    await addSystemLog(`Started scraper script: ${scriptName}`);
     return { success: true, message: `Process '${scriptName}' initiated in background.` };
   } catch (error: any) {
     return { success: false, error: error.message || 'Failed to spawn process' };
@@ -270,6 +275,7 @@ export async function triggerScrapeSlug(slug: string, correctSlug?: string) {
 
     await execPromise(`node dist/index.js --slug=${targetSlug}`, { cwd: path.join(process.cwd(), 'backend') });
     revalidatePath('/admin/operations');
+    await addSystemLog(`Scraped data for slug: ${targetSlug}`, 'success');
     return { success: true, message: `Scraping process completed for ${targetSlug}.` };
   } catch (error: any) {
     return { success: false, error: error.message || 'Failed to spawn process' };
@@ -287,6 +293,7 @@ export async function deleteAnime(id: number) {
     if (info.changes > 0) {
       revalidatePath('/admin/database');
       revalidatePath('/admin/operations');
+      await addSystemLog(`Deleted anime ID ${id}`, 'warning');
       return { success: true, message: `Anime deleted successfully.` };
     }
     return { success: false, error: 'Anime not found' };
@@ -326,11 +333,61 @@ export async function addAnimeMinimal(slug: string, anilistId: number | null) {
       
       revalidatePath('/admin/database');
       revalidatePath('/admin/operations');
+      await addSystemLog(`Manually added new anime slug: ${cleanSlug}`, 'success');
       return { success: true, message: `Anime added. Syncing metadata in background.` };
     }
     return { success: false, error: 'Failed to add anime' };
   } catch (error: any) {
     return { success: false, error: error.message || 'Failed to add anime' };
+  }
+}
+
+export async function addSystemLog(message: string, type: 'info' | 'warning' | 'error' | 'success' = 'info') {
+  try {
+    const stmt = db.prepare('INSERT INTO system_logs (message, type) VALUES (?, ?)');
+    stmt.run(message, type);
+  } catch (error) {
+    console.error('Failed to add system log', error);
+  }
+}
+
+export async function getSystemLogs(limit: number = 50) {
+  await checkAuth();
+  try {
+    const stmt = db.prepare('SELECT id, message, type, created_at FROM system_logs ORDER BY id DESC LIMIT ?');
+    return stmt.all(limit) as any[];
+  } catch (error) {
+    console.error('Failed to get system logs', error);
+    return [];
+  }
+}
+
+export async function getServerMetrics() {
+  await checkAuth();
+  return {
+    totalMem: os.totalmem(),
+    freeMem: os.freemem(),
+    cpuUsage: os.loadavg(),
+    uptime: os.uptime()
+  };
+}
+
+export async function getTodaysScrapeSummary() {
+  await checkAuth();
+  try {
+    const animeStmt = db.prepare("SELECT COUNT(*) as count FROM anime WHERE DATE(created_at) = DATE('now', 'localtime')");
+    const animeCount = (animeStmt.get() as any)?.count || 0;
+    
+    const epStmt = db.prepare("SELECT COUNT(*) as count FROM episodes WHERE DATE(created_at) = DATE('now', 'localtime')");
+    const episodeCount = (epStmt.get() as any)?.count || 0;
+    
+    return {
+      animeAdded: animeCount,
+      episodesAdded: episodeCount
+    };
+  } catch (error) {
+    console.error('Failed to get todays scrape summary', error);
+    return { animeAdded: 0, episodesAdded: 0 };
   }
 }
 

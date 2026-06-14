@@ -1,13 +1,16 @@
-import { getAdminStats, getRecentOngoingEpisodes } from './actions';
+import { getAdminStats, getRecentOngoingEpisodes, getServerMetrics, getTodaysScrapeSummary, getSystemLogs } from './actions';
 import Link from 'next/link';
 import RefreshButton from './RefreshButton';
 
 export const dynamic = 'force-dynamic';
 
 export default async function AdminDashboard() {
-  const [stats, recentEpisodes] = await Promise.all([
+  const [stats, recentEpisodes, serverMetrics, todaysSummary, systemLogs] = await Promise.all([
     getAdminStats(),
-    getRecentOngoingEpisodes(10)
+    getRecentOngoingEpisodes(10),
+    getServerMetrics(),
+    getTodaysScrapeSummary(),
+    getSystemLogs(30)
   ]);
 
   const metrics = [
@@ -65,6 +68,43 @@ export default async function AdminDashboard() {
                 <div className="absolute top-0 right-0 w-4 h-4 border-t border-r border-secondary/30" />
               </div>
             ))}
+          </div>
+        </section>
+
+        {/* Server Health & Scraping Summary */}
+        <section className="space-y-6">
+          <div className="flex flex-col lg:flex-row justify-between gap-6">
+            <div className="flex-1 space-y-6">
+              <h2 className="text-xl font-bold uppercase tracking-wider">Server Health</h2>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div className="bg-card border border-border p-4 flex flex-col group min-w-0">
+                  <span className="text-[10px] text-muted-text font-bold uppercase tracking-widest mb-1 truncate">CPU Load (1m)</span>
+                  <span className="text-xl font-mono font-black text-secondary truncate">{serverMetrics.cpuUsage[0].toFixed(2)}</span>
+                </div>
+                <div className="bg-card border border-border p-4 flex flex-col group min-w-0">
+                  <span className="text-[10px] text-muted-text font-bold uppercase tracking-widest mb-1 truncate">Free RAM</span>
+                  <span className="text-xl font-mono font-black text-secondary truncate">{(serverMetrics.freeMem / 1024 / 1024 / 1024).toFixed(2)} GB</span>
+                </div>
+                <div className="bg-card border border-border p-4 flex flex-col group min-w-0">
+                  <span className="text-[10px] text-muted-text font-bold uppercase tracking-widest mb-1 truncate">Uptime</span>
+                  <span className="text-xl font-mono font-black text-secondary truncate">{Math.floor(serverMetrics.uptime / 3600)}h {Math.floor((serverMetrics.uptime % 3600) / 60)}m</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="w-full lg:w-1/3 space-y-6">
+              <h2 className="text-xl font-bold uppercase tracking-wider">Today's Ingestion</h2>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="bg-secondary/5 border border-secondary/20 p-4 flex flex-col group min-w-0 hover:border-secondary/50 transition-colors">
+                  <span className="text-[10px] text-secondary/80 font-bold uppercase tracking-widest mb-1 truncate">Anime Added</span>
+                  <span className="text-xl font-mono font-black text-secondary truncate">+{todaysSummary.animeAdded}</span>
+                </div>
+                <div className="bg-secondary/5 border border-secondary/20 p-4 flex flex-col group min-w-0 hover:border-secondary/50 transition-colors">
+                  <span className="text-[10px] text-secondary/80 font-bold uppercase tracking-widest mb-1 truncate">Eps Added</span>
+                  <span className="text-xl font-mono font-black text-secondary truncate">+{todaysSummary.episodesAdded}</span>
+                </div>
+              </div>
+            </div>
           </div>
         </section>
 
@@ -143,6 +183,34 @@ export default async function AdminDashboard() {
                 )}
               </tbody>
             </table>
+          </div>
+        </section>
+
+        {/* System Activity Logs */}
+        <section className="space-y-6">
+          <div className="flex items-center justify-between border-b border-border pb-4">
+            <h2 className="text-xl font-bold uppercase tracking-wider">Terminal Logs</h2>
+          </div>
+          <div className="bg-black border border-border p-4 h-64 overflow-y-auto font-mono text-xs flex flex-col gap-2 rounded-sm shadow-inner">
+            {systemLogs.length === 0 ? (
+              <span className="text-muted-text">No recent activity detected.</span>
+            ) : (
+              systemLogs.map((log) => (
+                <div key={log.id} className="flex gap-4 group items-start hover:bg-white/5 px-2 py-1 -mx-2 rounded transition-colors">
+                  <span className="text-muted-text shrink-0 opacity-50 group-hover:opacity-100 transition-opacity">[{new Date(log.created_at).toLocaleTimeString()}]</span>
+                  <span className={`
+                    ${log.type === 'error' ? 'text-red-500' : ''}
+                    ${log.type === 'warning' ? 'text-yellow-500' : ''}
+                    ${log.type === 'success' ? 'text-secondary' : ''}
+                    ${log.type === 'info' ? 'text-foreground/80 group-hover:text-foreground' : ''}
+                  `}>
+                    {log.type === 'error' ? '[ERROR] ' : log.type === 'warning' ? '[WARN] ' : ''}
+                    {log.message}
+                  </span>
+                </div>
+              ))
+            )}
+            <div className="mt-auto text-secondary/30 pt-4 animate-pulse">_</div>
           </div>
         </section>
 
