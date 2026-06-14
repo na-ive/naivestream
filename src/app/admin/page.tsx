@@ -1,237 +1,70 @@
-'use client';
+import { getAdminStats } from './actions';
 
-import { useEffect, useState, useTransition } from 'react';
-import { getAnomalies, injectMetadata, handleLogout, triggerScraper } from './actions';
-import Link from 'next/link';
-import { toast } from 'sonner';
-import { useTheme } from 'next-themes';
-import { Tooltip } from '@/components/ui/Tooltip';
+export const dynamic = 'force-dynamic';
 
-type Anomaly = {
-  id: number;
-  slug: string;
-  title: string;
-  type: string | null;
-};
+export default async function AdminDashboard() {
+  const stats = await getAdminStats();
 
-const SCRAPERS = [
-  { id: 'scrape:latest', name: 'Scrape Latest', desc: 'Fetch recent episodes from source grid' },
-  { id: 'scrape:ongoing', name: 'Scrape Ongoing', desc: 'Synchronize active simulcast transmissions' },
-  { id: 'update:metadata', name: 'Update Metadata', desc: 'Align entity records with AniList databanks' },
-  { id: 'fill:schedule', name: 'Fill Schedule', desc: 'Refresh global broadcast timetables' },
-];
+  const metrics = [
+    { label: 'Total Anime', value: stats.totalAnime, color: 'text-secondary' },
+    { label: 'Total Episodes', value: stats.totalEpisodes, color: 'text-foreground' },
+    { label: 'Total Characters', value: stats.totalCharacters, color: 'text-foreground' },
+    { label: 'Total Voice Actors', value: stats.totalVoiceActors, color: 'text-foreground' },
+  ];
 
-export default function AdminDashboard() {
-  const [anomalies, setAnomalies] = useState<Anomaly[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isPending, startTransition] = useTransition();
-  const { theme, setTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-    getAnomalies().then((data) => {
-      setAnomalies(data as Anomaly[]);
-      setIsLoading(false);
-    });
-  }, []);
-
-  const handleInject = (animeId: number, formData: FormData) => {
-    const anilistIdRaw = formData.get('anilistId') as string;
-    
-    const anilistId = anilistIdRaw ? parseInt(anilistIdRaw, 10) : null;
-
-    if (!anilistId) {
-      toast.error('You must provide an AniList ID');
-      return;
-    }
-
-    startTransition(async () => {
-      const result = await injectMetadata(animeId, anilistId);
-      if (result.success) {
-        toast.success('Metadata injected successfully');
-        setAnomalies((prev) => prev.filter(a => a.id !== animeId));
-      } else {
-        toast.error('Failed to inject: ' + result.error);
-      }
-    });
-  };
-
-  const handleTriggerScraper = (scriptId: string) => {
-    startTransition(async () => {
-      toast.info(`Initiating process: ${scriptId}...`);
-      const result = await triggerScraper(scriptId);
-      if (result.success) {
-        toast.success(result.message);
-      } else {
-        toast.error(result.error);
-      }
-    });
-  };
+  const warnings = [
+    { label: 'Missing MAL ID', value: stats.missingMalId },
+    { label: 'Missing AniList ID', value: stats.missingAnilistId },
+  ];
 
   return (
-    <>
-      {/* Mobile Blocker */}
-      <div className="md:hidden flex h-[100dvh] items-center justify-center p-6 text-center bg-background text-foreground font-sans">
-        <div className="space-y-4 max-w-sm">
-          <h1 className="text-2xl font-bold uppercase text-red-500 tracking-widest border border-red-500/50 bg-red-500/10 p-4">
-            Access Denied
-          </h1>
-          <p className="text-sm text-muted-text uppercase tracking-wider">
-            Operator Panel requires desktop interface.<br/><br/>Mobile uplinks are prohibited.
-          </p>
-          <div className="pt-8">
-            <button 
-              onClick={() => handleLogout()}
-              className="text-xs text-red-500 hover:text-red-400 uppercase tracking-wider transition-colors font-bold cursor-pointer"
-            >
-              [ Terminate Session ]
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <div className="hidden md:block min-h-[100dvh] bg-background text-foreground p-4 md:p-8 font-sans">
+    <div className="min-h-full p-4 md:p-8 font-sans">
       <div className="max-w-6xl mx-auto space-y-12">
         
         {/* Header */}
-        <header className="flex flex-col md:flex-row justify-between items-start md:items-end border-b border-border pb-6 gap-4">
-          <div className="space-y-2">
-            <h1 className="text-4xl md:text-5xl font-serif uppercase tracking-tighter text-secondary">
-              Operator Panel
-            </h1>
-            <p className="text-muted-text uppercase tracking-widest text-sm">
-              Manual Override & Telemetry
-            </p>
-          </div>
-          <div className="flex gap-3 items-center">
-            {mounted && (
-              <Tooltip content="Switch UI Theme" position="bottom">
-                <button
-                  onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-                  className="bg-foreground/5 text-foreground border border-border hover:bg-foreground hover:text-background px-4 py-1.5 text-xs font-bold uppercase tracking-wider transition-colors cursor-pointer"
-                >
-                  THEME: {theme === 'dark' ? 'LIGHT' : 'DARK'}
-                </button>
-              </Tooltip>
-            )}
-            <Link 
-              href="/" 
-              className="bg-secondary/10 text-secondary border border-secondary/50 hover:bg-secondary hover:text-black px-4 py-1.5 text-xs font-bold uppercase tracking-wider transition-colors"
-            >
-              Public Grid
-            </Link>
-            <button 
-              onClick={() => handleLogout()}
-              className="bg-red-500/10 text-red-500 border border-red-500/50 hover:bg-red-500 hover:text-black px-4 py-1.5 text-xs font-bold uppercase tracking-wider transition-colors cursor-pointer"
-            >
-              Terminate Session
-            </button>
-          </div>
+        <header className="border-b border-border pb-6">
+          <h1 className="text-3xl md:text-4xl font-serif uppercase tracking-tighter text-secondary">
+            Command Center
+          </h1>
+          <p className="text-muted-text uppercase tracking-widest text-sm mt-2">
+            System Overview & Metrics
+          </p>
         </header>
 
-        {/* Telemetry / Scraper Controls */}
+        {/* Metrics Grid */}
         <section className="space-y-6">
-          <div>
-            <h2 className="text-xl font-bold uppercase tracking-wider">Backend Telemetry</h2>
-            <p className="text-sm text-muted-text mt-1">Manual invocation of background scraper routines</p>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {SCRAPERS.map((scraper) => (
-              <div key={scraper.id} className="border border-border bg-card p-4 flex flex-col justify-between hover:border-secondary transition-colors">
-                <div className="space-y-1 mb-4">
-                  <h3 className="font-bold text-sm uppercase tracking-widest text-secondary">{scraper.name}</h3>
-                  <p className="text-xs text-muted-text">{scraper.desc}</p>
+          <h2 className="text-xl font-bold uppercase tracking-wider">Global Databanks</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {metrics.map((metric, idx) => (
+              <div key={idx} className="bg-card border border-border p-6 hover:border-secondary transition-colors relative overflow-hidden group">
+                <div className="absolute inset-0 bg-secondary/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+                <div className="relative z-10">
+                  <p className="text-xs text-muted-text font-bold uppercase tracking-widest mb-2">{metric.label}</p>
+                  <p className={`text-4xl font-serif font-black ${metric.color}`}>
+                    {metric.value.toLocaleString()}
+                  </p>
                 </div>
-                <button
-                  onClick={() => handleTriggerScraper(scraper.id)}
-                  disabled={isPending}
-                  className="bg-secondary/10 text-secondary border border-secondary/50 hover:bg-secondary hover:text-black px-4 py-2 text-xs font-bold uppercase tracking-wider transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer w-full"
-                >
-                  Execute
-                </button>
+                {/* Decorative corner */}
+                <div className="absolute top-0 right-0 w-4 h-4 border-t border-r border-secondary/30" />
               </div>
             ))}
           </div>
         </section>
 
-        {/* Content Section: Anomalies Table */}
+        {/* Warnings */}
         <section className="space-y-6">
-          <div className="flex justify-between items-end">
-            <div>
-              <h2 className="text-xl font-bold uppercase tracking-wider">Unmatched Entities</h2>
-              <p className="text-sm text-muted-text mt-1">Data strands requiring manual AniList/MAL mapping</p>
-            </div>
-            <div className="text-xs font-mono bg-card px-3 py-1 border border-border">
-              {anomalies.length} entries found
-            </div>
-          </div>
-
-          <div className="overflow-x-auto border border-border bg-card/30">
-            <table className="w-full text-left text-sm whitespace-nowrap">
-              <thead className="bg-card text-muted-text uppercase tracking-widest text-[11px] border-b border-border">
-                <tr>
-                  <th className="px-6 py-4 font-normal">ID / Type</th>
-                  <th className="px-6 py-4 font-normal">Source Title (Otakudesu)</th>
-                  <th className="px-6 py-4 font-normal text-right">Inject Anilist ID</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border">
-                {isLoading ? (
-                  <tr>
-                    <td colSpan={5} className="px-6 py-12 text-center text-muted-text font-mono">
-                      Scanning databanks...
-                    </td>
-                  </tr>
-                ) : anomalies.length === 0 ? (
-                  <tr>
-                    <td colSpan={5} className="px-6 py-12 text-center text-secondary font-mono">
-                      No anomalies detected. Grid is optimal.
-                    </td>
-                  </tr>
-                ) : (
-                  anomalies.map((anime) => (
-                    <tr key={anime.id} className="hover:bg-card/50 transition-colors">
-                      <td className="px-6 py-4">
-                        <span className="font-mono text-xs text-muted-text mr-2">#{anime.id}</span>
-                        <span className="bg-secondary/10 text-secondary border border-secondary/30 px-2 py-0.5 text-[10px] uppercase">
-                          {anime.type || 'UNKNOWN'}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 font-medium max-w-[250px] truncate" title={anime.title}>
-                        {anime.title}
-                        <div className="text-[10px] text-muted-text font-mono mt-1 truncate">{anime.slug}</div>
-                      </td>
-                      
-                      {/* Inject Form */}
-                      <td className="px-6 py-2">
-                        <form action={(formData) => handleInject(anime.id, formData)} className="flex items-center justify-end gap-3 w-full">
-                          <input 
-                            name="anilistId"
-                            type="number" 
-                            placeholder="Anilist ID" 
-                            className="w-28 bg-transparent border border-border px-3 py-1.5 focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary/50 font-mono text-xs [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                          />
-                          <button 
-                            type="submit" 
-                            disabled={isPending}
-                            className="bg-secondary/10 text-secondary border border-secondary/50 hover:bg-secondary hover:text-black px-4 py-1.5 font-bold uppercase tracking-wider text-[11px] transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
-                          >
-                            Inject
-                          </button>
-                        </form>
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
+          <h2 className="text-xl font-bold uppercase tracking-wider text-red-500">System Anomalies</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {warnings.map((warning, idx) => (
+              <div key={idx} className="bg-red-500/5 border border-red-500/20 p-6 flex justify-between items-center">
+                <span className="text-sm font-bold text-red-500 uppercase tracking-widest">{warning.label}</span>
+                <span className="text-2xl font-mono font-black text-red-500">{warning.value.toLocaleString()}</span>
+              </div>
+            ))}
           </div>
         </section>
 
       </div>
-      </div>
-    </>
+    </div>
   );
 }
