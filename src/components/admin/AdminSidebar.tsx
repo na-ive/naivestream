@@ -19,14 +19,22 @@ import { useRouter } from 'next/navigation';
 import { useTheme } from 'next-themes';
 import { Tooltip } from '@/components/ui/Tooltip';
 
-export function AdminSidebar() {
-  const [collapsed, setCollapsed] = useState(false);
+export function AdminSidebar({ initialCollapsed = false }: { initialCollapsed?: boolean }) {
+  const [collapsed, setCollapsed] = useState(initialCollapsed);
   const [mounted, setMounted] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
   const { theme, setTheme } = useTheme();
 
-  useEffect(() => setMounted(true), []);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const toggleSidebar = () => {
+    const newVal = !collapsed;
+    setCollapsed(newVal);
+    document.cookie = `sidebar_collapsed=${newVal}; path=/; max-age=31536000`;
+  };
 
   const menuItems = [
     { name: 'Dashboard', path: '/admin', icon: Dashboard },
@@ -63,7 +71,7 @@ export function AdminSidebar() {
       {/* Collapse Toggle */}
       <div className="absolute -right-3 top-4 z-50 flex items-center justify-center filter drop-shadow-md dark:drop-shadow-[0_0_4px_rgba(34,197,94,0.3)]">
         <button 
-          onClick={() => setCollapsed(!collapsed)}
+          onClick={toggleSidebar}
           className="w-6 h-12 bg-card group relative overflow-hidden flex items-center justify-center"
           style={{ 
             clipPath: collapsed 

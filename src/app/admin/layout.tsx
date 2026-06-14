@@ -2,6 +2,7 @@ import { getSession } from '@/lib/auth';
 import type { Metadata } from 'next';
 import { AdminSidebar } from '@/components/admin/AdminSidebar';
 import { redirect } from 'next/navigation';
+import { cookies } from 'next/headers';
 
 export const metadata: Metadata = {
   title: 'Operator Panel',
@@ -14,6 +15,8 @@ export default async function AdminLayout({
   children: React.ReactNode;
 }) {
   const session = await getSession();
+  const cookieStore = await cookies();
+  const isCollapsed = cookieStore.get('sidebar_collapsed')?.value === 'true';
 
   if (!session) {
     redirect('/login');
@@ -34,7 +37,7 @@ export default async function AdminLayout({
 
       <div className="hidden md:flex h-full w-full">
         {/* Sidebar Navigation */}
-        <AdminSidebar />
+        <AdminSidebar initialCollapsed={isCollapsed} />
         
         {/* Main Content Area */}
         <main className="flex-1 h-full overflow-y-auto bg-background relative">
