@@ -13,7 +13,7 @@ export default async function AdminDashboard() {
   ];
 
   const warnings = [
-    { label: 'Missing MAL ID', value: stats.missingMalId },
+    { label: 'No Episodes', value: stats.noEpisodes },
     { label: 'Missing AniList ID', value: stats.missingAnilistId },
   ];
 

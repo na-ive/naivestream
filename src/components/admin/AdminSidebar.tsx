@@ -60,7 +60,7 @@ export function AdminSidebar() {
       </div>
 
       {/* Collapse Toggle */}
-      <div className="absolute -right-3 top-4 z-50 flex items-center justify-center filter drop-shadow-md">
+      <div className="absolute -right-3 top-4 z-50 flex items-center justify-center filter drop-shadow-md dark:drop-shadow-[0_0_4px_rgba(34,197,94,0.3)]">
         <button 
           onClick={() => setCollapsed(!collapsed)}
           className="w-6 h-12 bg-card group relative overflow-hidden flex items-center justify-center"

@@ -63,7 +63,7 @@ export async function getAdminStats() {
   const totalEpisodes = (db.prepare('SELECT COUNT(*) as count FROM episodes').get() as any).count;
   const totalCharacters = (db.prepare('SELECT COUNT(*) as count FROM characters').get() as any).count;
   const totalVoiceActors = (db.prepare('SELECT COUNT(*) as count FROM voice_actors').get() as any).count;
-  const missingMalId = (db.prepare('SELECT COUNT(*) as count FROM anime WHERE mal_id IS NULL OR mal_id = 0').get() as any).count;
+  const noEpisodes = (db.prepare('SELECT COUNT(*) as count FROM anime WHERE id NOT IN (SELECT DISTINCT anime_id FROM episodes)').get() as any).count;
   const missingAnilistId = (db.prepare('SELECT COUNT(*) as count FROM anime WHERE anilist_id IS NULL OR anilist_id = 0').get() as any).count;
 
   return {
@@ -71,7 +71,7 @@ export async function getAdminStats() {
     totalEpisodes,
     totalCharacters,
     totalVoiceActors,
-    missingMalId,
+    noEpisodes,
     missingAnilistId
   };
 }
@@ -109,7 +109,7 @@ export async function getAnimeListAdmin({ page = 1, limit = 50, search = '', sor
   const total = (db.prepare(countQuery).get(...countParams) as any).total;
 
   return {
-    items: rows,
+    items: rows as any[],
     total,
     totalPages: Math.ceil(total / limit)
   };
