@@ -18,7 +18,6 @@ async function getAnimeDetails(slug: string) {
     data: {
       ...anime,
       episodeList: episodes
-        .filter(ep => ep.eps_number !== null && ep.eps_number !== undefined)
         .map(ep => ({
           episodeId: ep.slug,
           eps: ep.eps_number,

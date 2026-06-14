@@ -52,8 +52,8 @@ export async function injectMetadata(animeId: number, anilistId: number) {
     const info = stmt.run(...params);
 
     if (info.changes > 0) {
+      await execPromise(`node dist/fill-from-anilist.js --id=${animeId}`, { cwd: path.join(process.cwd(), 'backend') });
       revalidatePath('/admin');
-      exec(`node dist/fill-from-anilist.js --id=${animeId}`, { cwd: path.join(process.cwd(), 'backend') });
       return { success: true };
     }
     
@@ -175,6 +175,28 @@ export async function triggerScraper(scriptName: string) {
     
     // Kita bisa biarkan jalan di background, atau menyimpan log-nya ke file tertentu
     return { success: true, message: `Process '${scriptName}' initiated in background.` };
+  } catch (error: any) {
+    return { success: false, error: error.message || 'Failed to spawn process' };
+  }
+}
+
+export async function triggerScrapeSlug(slug: string, correctSlug?: string) {
+  await checkAuth();
+
+  try {
+    let targetSlug = slug;
+    
+    if (correctSlug && correctSlug.trim() !== '' && correctSlug !== slug) {
+      targetSlug = correctSlug.trim();
+      // Update the slug in DB first so the scraper updates the right record
+      if (!db) throw new Error("Database connection failed");
+      const stmt = db.prepare('UPDATE anime SET slug = ? WHERE slug = ?');
+      stmt.run(targetSlug, slug);
+    }
+
+    await execPromise(`node dist/index.js --slug=${targetSlug}`, { cwd: path.join(process.cwd(), 'backend') });
+    revalidatePath('/admin/operations');
+    return { success: true, message: `Scraping process completed for ${targetSlug}.` };
   } catch (error: any) {
     return { success: false, error: error.message || 'Failed to spawn process' };
   }

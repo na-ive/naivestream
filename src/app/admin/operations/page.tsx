@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState, useTransition } from 'react';
-import { getAnomalies, getNoEpisodesAnime, injectMetadata, handleLogout, triggerScraper } from '../actions';
+import { getAnomalies, getNoEpisodesAnime, injectMetadata, handleLogout, triggerScraper, triggerScrapeSlug } from '../actions';
 import Link from 'next/link';
 import { toast } from 'sonner';
 import { useTheme } from 'next-themes';
@@ -71,6 +71,22 @@ export default function AdminDashboard() {
         toast.success(result.message);
       } else {
         toast.error(result.error);
+      }
+    });
+  };
+
+  const handleTriggerScrapeSlug = (slug: string, formData?: FormData) => {
+    startTransition(async () => {
+      const correctSlug = formData?.get('correctSlug') as string || slug;
+      
+      const result = await triggerScrapeSlug(slug, correctSlug);
+      if (result.success) {
+        toast.success(result.message || `Successfully scraped episodes for ${correctSlug}`);
+        setNoEpisodeAnomalies((prev) => prev.filter(a => a.slug !== slug));
+      } else {
+        toast.error('Scraping failed', {
+          description: result.error,
+        });
       }
     });
   };
@@ -251,9 +267,22 @@ export default function AdminDashboard() {
                         </td>
                         
                         <td className="px-6 py-4 text-right">
-                          <span className="text-xs text-red-500 font-bold uppercase tracking-widest bg-red-500/10 px-3 py-1 border border-red-500/20">
-                            PENDING FIX
-                          </span>
+                          <form action={(formData) => handleTriggerScrapeSlug(anime.slug, formData)} className="flex items-center justify-end gap-3 w-full">
+                            <input 
+                              name="correctSlug"
+                              type="text" 
+                              placeholder="Correct Slug (Optional)" 
+                              defaultValue={anime.slug}
+                              className="w-48 bg-transparent border border-border px-3 py-1.5 focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary/50 font-mono text-xs"
+                            />
+                            <button
+                              type="submit"
+                              disabled={isPending}
+                              className="bg-secondary/10 text-secondary border border-secondary/50 hover:bg-secondary hover:text-black px-4 py-1.5 font-bold uppercase tracking-wider text-[11px] transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer shrink-0"
+                            >
+                              Fix (Scrape)
+                            </button>
+                          </form>
                         </td>
                       </tr>
                     ))
