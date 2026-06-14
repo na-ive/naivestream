@@ -1,9 +1,10 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Exo_2, Orbitron } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import { Toaster } from "sonner";
 import { AppLayout } from "@/components/layout/AppLayout";
+import { PwaRegister } from "@/components/PwaRegister";
 
 const sans = Exo_2({
   subsets: ["latin"],
@@ -16,12 +17,25 @@ const serif = Orbitron({
   variable: "--font-serif",
 });
 
+export const viewport: Viewport = {
+  themeColor: "#0a0a0a",
+};
+
 export const metadata: Metadata = {
   title: {
     template: "%s | NaiveStream",
     default: "NaiveStream",
   },
   description: "A personal anime streaming web interface.",
+  manifest: "/manifest.webmanifest",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "NaiveStream",
+  },
+  other: {
+    "mobile-web-app-capable": "yes",
+  },
 };
 
 export default function RootLayout({
@@ -52,6 +66,7 @@ export default function RootLayout({
           enableColorScheme={false}
           disableTransitionOnChange
         >
+          <PwaRegister />
           <AppLayout>{children}</AppLayout>
           <Toaster 
             theme="dark" 
