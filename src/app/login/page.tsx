@@ -1,11 +1,13 @@
 'use client';
 
-import { useActionState } from 'react';
+import { useActionState, useState } from 'react';
 import { authenticate } from './actions';
 import Link from 'next/link';
+import { View, ViewOff } from '@carbon/icons-react';
 
 export default function LoginPage() {
   const [state, formAction, isPending] = useActionState(authenticate, null);
+  const [showPassword, setShowPassword] = useState(false);
 
   return (
     <>
@@ -67,14 +69,24 @@ export default function LoginPage() {
               >
                 Passphrase
               </label>
-              <input
-                id="password"
-                name="password"
-                type="password"
-                required
-                className="w-full px-4 py-3 bg-card border border-border text-foreground focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary/50 transition-all rounded-none"
-                placeholder="••••••••"
-              />
+              <div className="relative">
+                <input
+                  id="password"
+                  name="password"
+                  type={showPassword ? "text" : "password"}
+                  required
+                  className="w-full pl-4 pr-12 py-3 bg-card border border-border text-foreground focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary/50 transition-all rounded-none"
+                  placeholder="••••••••"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-text hover:text-foreground transition-colors"
+                  aria-label="Toggle password visibility"
+                >
+                  {showPassword ? <ViewOff className="w-5 h-5" /> : <View className="w-5 h-5" />}
+                </button>
+              </div>
             </div>
 
           </div>
