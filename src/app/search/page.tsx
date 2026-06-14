@@ -97,7 +97,13 @@ function SearchContent() {
   const [studioOptions, setStudioOptions] = useState<{ value: string; label: string }[]>([]);
   const [loading, setLoading] = useState(true);
   const [pagination, setPagination] = useState({ current_page: 1, last_page: 1, total: 0 });
-  const [showFilters, setShowFilters] = useState(true);
+  const [showFilters, setShowFilters] = useState(false); // Default to false for mobile
+
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.innerWidth >= 768) {
+      setShowFilters(true);
+    }
+  }, []);
 
   useEffect(() => {
     async function fetchGenres() {
@@ -123,8 +129,9 @@ function SearchContent() {
   }, []);
 
   useEffect(() => {
+    let timeoutId: NodeJS.Timeout;
+
     async function doSearch() {
-      setLoading(true);
       try {
         const params = new URLSearchParams();
         if (query) params.set('q', query);
@@ -149,7 +156,13 @@ function SearchContent() {
       }
       setLoading(false);
     }
-    doSearch();
+
+    setLoading(true); // Trigger loading state instantly
+    timeoutId = setTimeout(() => {
+      doSearch();
+    }, 500); // Debounce API call by 500ms
+
+    return () => clearTimeout(timeoutId);
   }, [query, genresParam, genreMode, status, type, order, year, season, source, rating, studiosParam, page]);
 
   const updateFilters = useCallback((updates: Record<string, string | number>) => {
@@ -181,7 +194,9 @@ function SearchContent() {
 
   const years = Array.from({ length: 2026 - 1990 + 1 }, (_, i) => (2026 - i).toString());
 
-  const genreOptions = genres.map((g: any) => ({ value: g.slug, label: g.name }));
+  const genreOptions = genres
+    .filter((g: any) => g.name && g.name.trim() !== '')
+    .map((g: any) => ({ value: g.slug, label: g.name }));
   const yearOptions = [
     { value: 'All', label: 'All Years' },
     ...years.map(y => ({ value: y, label: y })),
@@ -208,7 +223,7 @@ function SearchContent() {
         </div>
       </div>
 
-      <div className="flex items-center gap-3 mb-6">
+      <div className="sticky top-[76px] md:relative md:top-0 z-[45] bg-background/95 backdrop-blur-md pt-2 pb-4 -mx-4 px-4 md:mx-0 md:px-0 md:bg-transparent md:backdrop-blur-none md:pt-0 md:pb-0 flex items-stretch gap-3 mb-6">
         <div className="relative flex-1">
           <DebouncedSearchInput
             initialValue={query}
@@ -218,14 +233,14 @@ function SearchContent() {
         <button
           onClick={() => setShowFilters(!showFilters)}
           className={cn(
-            "flex items-center justify-center gap-2 px-5 py-4 border-2 text-sm font-black uppercase tracking-wider transition-all shrink-0",
+            "flex items-center justify-center gap-2 px-4 md:px-5 border-2 text-sm font-black uppercase tracking-wider transition-all shrink-0 aspect-square md:aspect-auto",
             showFilters
               ? "bg-secondary text-background border-secondary"
               : "bg-card/50 text-muted-text border-secondary/20 hover:border-secondary/50"
           )}
         >
           <Filter className="w-4 h-4 shrink-0" />
-          <span className="relative grid">
+          <span className="relative hidden md:grid">
             <span className="invisible col-start-1 row-start-1">Show Filters</span>
             <span className="col-start-1 row-start-1">{showFilters ? 'Hide Filters' : 'Show Filters'}</span>
           </span>
@@ -242,7 +257,19 @@ function SearchContent() {
             transition={{ duration: 0.3, ease: 'easeInOut' }}
             key="filters"
           >
-          <div className="space-y-4 p-4 bg-card/20 border border-secondary/10">
+          <div className="space-y-4 p-4 md:bg-card/20 md:border md:border-secondary/10 max-md:fixed max-md:inset-0 max-md:z-50 max-md:bg-background/95 max-md:backdrop-blur-xl max-md:p-6 max-md:overflow-y-auto max-md:h-[100dvh]">
+            
+            {/* Mobile Close Button */}
+            <div className="md:hidden flex items-center justify-between mb-6 pb-4 border-b border-secondary/20">
+              <h2 className="text-xl font-black uppercase tracking-widest text-foreground">Filters</h2>
+              <button onClick={() => setShowFilters(false)} className="p-2 bg-secondary/10 text-secondary border border-secondary/30 hover:bg-secondary/20 transition-colors">
+                <div className="relative w-5 h-5">
+                  <div className="absolute top-1/2 left-0 w-full h-0.5 bg-current rotate-45" />
+                  <div className="absolute top-1/2 left-0 w-full h-0.5 bg-current -rotate-45" />
+                </div>
+              </button>
+            </div>
+
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
               <div className="flex flex-col gap-1">
                 <span className="text-xs font-bold uppercase tracking-wider text-foreground">Status</span>
@@ -380,6 +407,17 @@ function SearchContent() {
                 })}
               </div>
             </div>
+
+            {/* Mobile Apply Button */}
+            <div className="md:hidden pt-6 mt-6 border-t border-secondary/20 pb-12">
+              <button
+                onClick={() => setShowFilters(false)}
+                className="w-full py-4 bg-secondary text-background font-black uppercase tracking-widest text-sm hover:shadow-[0_0_20px_rgba(34,197,94,0.4)] transition-all"
+                style={{ clipPath: 'polygon(15px 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%, 0 15px)' }}
+              >
+                Apply Filters & Close
+              </button>
+            </div>
           </div>
           </motion.div>
           )}
@@ -485,6 +523,7 @@ function DebouncedSearchInput({ initialValue, onSearch }: { initialValue: string
         <SearchIcon className="text-secondary w-3.5 h-3.5" />
       </div>
       <input
+        id="search-page-input"
         type="text"
         placeholder="Search by title..."
         value={value}

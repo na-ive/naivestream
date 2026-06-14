@@ -16,8 +16,17 @@ export function MobileBottomNav() {
     { name: 'Ongoing', href: '/ongoing', icon: PlayOutline },
     { 
       name: 'Search', 
-      icon: isSearchOpen ? Close : Search, 
-      action: () => setIsSearchOpen(!isSearchOpen) 
+      icon: (isSearchOpen && pathname !== '/search') ? Close : Search, 
+      action: () => {
+        if (pathname === '/search') {
+          const input = document.getElementById('search-page-input');
+          if (input) {
+            input.focus();
+          }
+        } else {
+          setIsSearchOpen(!isSearchOpen);
+        }
+      } 
     },
     { name: 'Completed', href: '/completed', icon: CheckmarkOutline },
     { name: 'Library', href: '/library', icon: Bookmark },
@@ -41,7 +50,7 @@ export function MobileBottomNav() {
                   <div 
                     className={cn(
                       "flex items-center justify-center w-[56px] h-[56px] shadow-lg border-2 transition-all duration-300",
-                      isSearchOpen 
+                      (isSearchOpen || pathname === '/search')
                         ? "bg-secondary/20 text-secondary border-secondary shadow-[0_0_20px_rgba(34,197,94,0.4)]" 
                         : "bg-card border-secondary/50 text-secondary group-hover:bg-secondary/10 group-active:scale-95 group-hover:border-secondary shadow-[0_4px_10px_rgba(0,0,0,0.5)]"
                     )}
@@ -51,7 +60,7 @@ export function MobileBottomNav() {
                   </div>
                   <span className={cn(
                     "absolute -bottom-4 text-[10px] font-mono font-bold tracking-wider uppercase transition-colors",
-                    isSearchOpen ? "text-secondary" : "text-foreground/60 group-hover:text-foreground"
+                    (isSearchOpen || pathname === '/search') ? "text-secondary" : "text-foreground/60 group-hover:text-foreground"
                   )}>
                     {item.name}
                   </span>
