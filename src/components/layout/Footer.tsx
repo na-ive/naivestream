@@ -22,7 +22,7 @@ export function Footer() {
         </div>
       </div>
 
-      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-12 relative z-10">
+      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-28 md:pb-12 relative z-10">
         <div className="flex flex-col items-center justify-center space-y-8">
           <Link href="/" className="relative w-60 h-12 block">
             <Image
