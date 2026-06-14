@@ -17,6 +17,7 @@ import {
 import { cn } from '@/lib/utils';
 import { useRouter } from 'next/navigation';
 import { useTheme } from 'next-themes';
+import { Tooltip } from '@/components/ui/Tooltip';
 
 export function AdminSidebar() {
   const [collapsed, setCollapsed] = useState(false);
@@ -81,17 +82,16 @@ export function AdminSidebar() {
       <nav className="flex-1 py-8 flex flex-col gap-2 overflow-x-hidden overflow-y-auto">
         {menuItems.map((item) => {
           const isActive = pathname === item.path;
-          return (
+          
+          const linkContent = (
             <Link 
-              key={item.path} 
               href={item.path}
               className={cn(
-                "group flex items-center py-3 text-sm font-bold tracking-widest uppercase transition-colors relative",
+                "group flex items-center py-3 text-sm font-bold tracking-widest uppercase transition-colors relative w-full",
                 isActive 
                   ? "text-secondary bg-secondary/10" 
                   : "text-muted-text hover:text-foreground hover:bg-foreground/5"
               )}
-              title={collapsed ? item.name : undefined}
             >
               {/* Active Indicator */}
               {isActive && (
@@ -113,60 +113,92 @@ export function AdminSidebar() {
               </span>
             </Link>
           );
+
+          return collapsed ? (
+            <Tooltip key={item.path} content={item.name} position="right" wrapperClassName="w-full flex">
+              {linkContent}
+            </Tooltip>
+          ) : (
+            <React.Fragment key={item.path}>
+              {linkContent}
+            </React.Fragment>
+          );
         })}
       </nav>
 
       {/* Footer / Logout */}
       <div className="border-t border-secondary/20 shrink-0 flex flex-col py-4 overflow-x-hidden">
-        <Link
-          href="/"
-          className="w-full flex items-center py-3 text-muted-text hover:text-foreground hover:bg-foreground/5 font-bold uppercase tracking-widest text-sm transition-colors cursor-pointer group"
-          title={collapsed ? "Public Grid" : undefined}
-        >
-          <div className="w-[80px] shrink-0 flex justify-center items-center">
-            <Home className="w-5 h-5 group-hover:text-foreground transition-colors" />
-          </div>
-          <span className={cn(
-            "whitespace-nowrap transition-all duration-300 overflow-hidden",
-            collapsed ? "max-w-0 opacity-0" : "max-w-[200px] opacity-100"
-          )}>
-            Public Grid
-          </span>
-        </Link>
+        {(() => {
+          const homeContent = (
+            <Link
+              href="/"
+              className="w-full flex items-center py-3 text-muted-text hover:text-foreground hover:bg-foreground/5 font-bold uppercase tracking-widest text-sm transition-colors cursor-pointer group"
+            >
+              <div className="w-[80px] shrink-0 flex justify-center items-center">
+                <Home className="w-5 h-5 group-hover:text-foreground transition-colors" />
+              </div>
+              <span className={cn(
+                "whitespace-nowrap transition-all duration-300 overflow-hidden",
+                collapsed ? "max-w-0 opacity-0" : "max-w-[200px] opacity-100"
+              )}>
+                Public Grid
+              </span>
+            </Link>
+          );
+          return collapsed ? (
+            <Tooltip content="Public Grid" position="right" wrapperClassName="w-full flex">
+              {homeContent}
+            </Tooltip>
+          ) : homeContent;
+        })()}
 
-        {mounted && (
-          <button
-            onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-            className="w-full flex items-center py-3 text-muted-text hover:text-secondary hover:bg-secondary/10 font-bold uppercase tracking-widest text-sm transition-colors cursor-pointer group"
-            title={collapsed ? "Toggle Theme" : undefined}
-          >
-            <div className="w-[80px] shrink-0 flex justify-center items-center">
-              {theme === 'dark' ? <Sun className="w-5 h-5 group-hover:text-secondary transition-colors" /> : <Moon className="w-5 h-5 group-hover:text-secondary transition-colors" />}
-            </div>
-            <span className={cn(
-              "whitespace-nowrap transition-all duration-300 overflow-hidden",
-              collapsed ? "max-w-0 opacity-0" : "max-w-[200px] opacity-100"
-            )}>
-              {theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
-            </span>
-          </button>
-        )}
+        {mounted && (() => {
+          const themeContent = (
+            <button
+              onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+              className="w-full flex items-center py-3 text-muted-text hover:text-secondary hover:bg-secondary/10 font-bold uppercase tracking-widest text-sm transition-colors cursor-pointer group"
+            >
+              <div className="w-[80px] shrink-0 flex justify-center items-center">
+                {theme === 'dark' ? <Sun className="w-5 h-5 group-hover:text-secondary transition-colors" /> : <Moon className="w-5 h-5 group-hover:text-secondary transition-colors" />}
+              </div>
+              <span className={cn(
+                "whitespace-nowrap transition-all duration-300 overflow-hidden",
+                collapsed ? "max-w-0 opacity-0" : "max-w-[200px] opacity-100"
+              )}>
+                {theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
+              </span>
+            </button>
+          );
+          return collapsed ? (
+            <Tooltip content="Toggle Theme" position="right" wrapperClassName="w-full flex">
+              {themeContent}
+            </Tooltip>
+          ) : themeContent;
+        })()}
 
-        <button
-          onClick={handleLogout}
-          className="w-full flex items-center py-3 text-red-500 hover:text-red-400 hover:bg-red-500/10 font-bold uppercase tracking-widest text-sm transition-colors cursor-pointer group"
-          title={collapsed ? "Terminate Session" : undefined}
-        >
-          <div className="w-[80px] shrink-0 flex justify-center items-center">
-            <Power className="w-5 h-5 group-hover:text-red-400 transition-colors" />
-          </div>
-          <span className={cn(
-            "whitespace-nowrap transition-all duration-300 overflow-hidden",
-            collapsed ? "max-w-0 opacity-0" : "max-w-[200px] opacity-100"
-          )}>
-            Terminate
-          </span>
-        </button>
+        {(() => {
+          const logoutContent = (
+            <button
+              onClick={handleLogout}
+              className="w-full flex items-center py-3 text-red-500 hover:text-red-400 hover:bg-red-500/10 font-bold uppercase tracking-widest text-sm transition-colors cursor-pointer group"
+            >
+              <div className="w-[80px] shrink-0 flex justify-center items-center">
+                <Power className="w-5 h-5 group-hover:text-red-400 transition-colors" />
+              </div>
+              <span className={cn(
+                "whitespace-nowrap transition-all duration-300 overflow-hidden",
+                collapsed ? "max-w-0 opacity-0" : "max-w-[200px] opacity-100"
+              )}>
+                Terminate
+              </span>
+            </button>
+          );
+          return collapsed ? (
+            <Tooltip content="Terminate Session" position="right" wrapperClassName="w-full flex">
+              {logoutContent}
+            </Tooltip>
+          ) : logoutContent;
+        })()}
       </div>
     </aside>
   );
