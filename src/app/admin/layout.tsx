@@ -4,7 +4,7 @@ import { AdminSidebar } from '@/components/admin/AdminSidebar';
 import { redirect } from 'next/navigation';
 
 export const metadata: Metadata = {
-  title: 'Admin Panel | NaiveStream',
+  title: 'Operator Panel',
   description: 'Manage NaiveStream database and scraper operations',
 };
 

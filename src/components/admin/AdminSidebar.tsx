@@ -47,18 +47,16 @@ export function AdminSidebar() {
       )}
     >
       {/* Header */}
-      <div className="h-20 flex items-center justify-between px-6 border-b border-secondary/20 shrink-0">
-        {!collapsed && (
-          <div className="flex items-center gap-3 overflow-hidden">
-            <img src="/icon.png" alt="NaiveStream" className="w-8 h-8 bg-black object-contain shrink-0" />
-            <span className="font-black tracking-tighter text-secondary uppercase whitespace-nowrap">Operator Panel</span>
-          </div>
-        )}
-        {collapsed && (
-          <div className="w-full flex justify-center">
-            <img src="/icon.png" alt="NaiveStream" className="w-8 h-8 bg-black object-contain shrink-0" />
-          </div>
-        )}
+      <div className="h-20 flex items-center border-b border-secondary/20 shrink-0 overflow-x-hidden">
+        <div className="w-[80px] shrink-0 flex justify-center items-center">
+          <img src="/icon.png" alt="NaiveStream" className="w-8 h-8 bg-black object-contain shrink-0" />
+        </div>
+        <span className={cn(
+          "font-black tracking-tighter text-secondary uppercase whitespace-nowrap transition-all duration-300 overflow-hidden",
+          collapsed ? "max-w-0 opacity-0" : "max-w-[200px] opacity-100"
+        )}>
+          Operator Panel
+        </span>
       </div>
 
       {/* Collapse Toggle */}
@@ -80,7 +78,7 @@ export function AdminSidebar() {
       </div>
 
       {/* Navigation Links */}
-      <nav className="flex-1 py-8 px-4 flex flex-col gap-2 overflow-y-auto">
+      <nav className="flex-1 py-8 flex flex-col gap-2 overflow-x-hidden overflow-y-auto">
         {menuItems.map((item) => {
           const isActive = pathname === item.path;
           return (
@@ -88,8 +86,7 @@ export function AdminSidebar() {
               key={item.path} 
               href={item.path}
               className={cn(
-                "group flex items-center px-4 py-3 gap-4 text-sm font-bold tracking-widest uppercase transition-all duration-300 relative",
-                collapsed ? "justify-center" : "",
+                "group flex items-center py-3 text-sm font-bold tracking-widest uppercase transition-colors relative",
                 isActive 
                   ? "text-secondary bg-secondary/10" 
                   : "text-muted-text hover:text-foreground hover:bg-foreground/5"
@@ -101,57 +98,74 @@ export function AdminSidebar() {
                 <div className="absolute left-0 top-0 bottom-0 w-1 bg-secondary" />
               )}
               
-              <item.icon className={cn(
-                "w-5 h-5 shrink-0 transition-colors",
-                isActive ? "text-secondary" : "text-muted-text group-hover:text-foreground"
-              )} />
+              <div className="w-[80px] shrink-0 flex justify-center items-center">
+                <item.icon className={cn(
+                  "w-5 h-5 transition-colors",
+                  isActive ? "text-secondary" : "group-hover:text-foreground"
+                )} />
+              </div>
               
-              {!collapsed && (
-                <span className="whitespace-nowrap">{item.name}</span>
-              )}
+              <span className={cn(
+                "whitespace-nowrap transition-all duration-300 overflow-hidden",
+                collapsed ? "max-w-0 opacity-0" : "max-w-[200px] opacity-100"
+              )}>
+                {item.name}
+              </span>
             </Link>
           );
         })}
       </nav>
 
       {/* Footer / Logout */}
-      <div className="p-4 border-t border-secondary/20 shrink-0 flex flex-col gap-2">
+      <div className="border-t border-secondary/20 shrink-0 flex flex-col py-4 overflow-x-hidden">
         <Link
           href="/"
-          className={cn(
-            "w-full flex items-center gap-3 px-4 py-3 text-muted-text hover:text-foreground hover:bg-foreground/5 font-bold uppercase tracking-widest text-sm transition-all duration-300 cursor-pointer",
-            collapsed ? "justify-center" : ""
-          )}
+          className="w-full flex items-center py-3 text-muted-text hover:text-foreground hover:bg-foreground/5 font-bold uppercase tracking-widest text-sm transition-colors cursor-pointer group"
           title={collapsed ? "Public Grid" : undefined}
         >
-          <Home className="w-5 h-5 shrink-0" />
-          {!collapsed && <span className="whitespace-nowrap">Public Grid</span>}
+          <div className="w-[80px] shrink-0 flex justify-center items-center">
+            <Home className="w-5 h-5 group-hover:text-foreground transition-colors" />
+          </div>
+          <span className={cn(
+            "whitespace-nowrap transition-all duration-300 overflow-hidden",
+            collapsed ? "max-w-0 opacity-0" : "max-w-[200px] opacity-100"
+          )}>
+            Public Grid
+          </span>
         </Link>
 
         {mounted && (
           <button
             onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-            className={cn(
-              "w-full flex items-center gap-3 px-4 py-3 text-muted-text hover:text-secondary hover:bg-secondary/10 font-bold uppercase tracking-widest text-sm transition-all duration-300 cursor-pointer",
-              collapsed ? "justify-center" : ""
-            )}
+            className="w-full flex items-center py-3 text-muted-text hover:text-secondary hover:bg-secondary/10 font-bold uppercase tracking-widest text-sm transition-colors cursor-pointer group"
             title={collapsed ? "Toggle Theme" : undefined}
           >
-            {theme === 'dark' ? <Sun className="w-5 h-5 shrink-0" /> : <Moon className="w-5 h-5 shrink-0" />}
-            {!collapsed && <span className="whitespace-nowrap">{theme === 'dark' ? 'Light Mode' : 'Dark Mode'}</span>}
+            <div className="w-[80px] shrink-0 flex justify-center items-center">
+              {theme === 'dark' ? <Sun className="w-5 h-5 group-hover:text-secondary transition-colors" /> : <Moon className="w-5 h-5 group-hover:text-secondary transition-colors" />}
+            </div>
+            <span className={cn(
+              "whitespace-nowrap transition-all duration-300 overflow-hidden",
+              collapsed ? "max-w-0 opacity-0" : "max-w-[200px] opacity-100"
+            )}>
+              {theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
+            </span>
           </button>
         )}
 
         <button
           onClick={handleLogout}
-          className={cn(
-            "w-full flex items-center gap-3 px-4 py-3 text-red-500 hover:text-red-400 hover:bg-red-500/10 font-bold uppercase tracking-widest text-sm transition-all duration-300 cursor-pointer",
-            collapsed ? "justify-center" : ""
-          )}
+          className="w-full flex items-center py-3 text-red-500 hover:text-red-400 hover:bg-red-500/10 font-bold uppercase tracking-widest text-sm transition-colors cursor-pointer group"
           title={collapsed ? "Terminate Session" : undefined}
         >
-          <Power className="w-5 h-5 shrink-0" />
-          {!collapsed && <span className="whitespace-nowrap">Terminate</span>}
+          <div className="w-[80px] shrink-0 flex justify-center items-center">
+            <Power className="w-5 h-5 group-hover:text-red-400 transition-colors" />
+          </div>
+          <span className={cn(
+            "whitespace-nowrap transition-all duration-300 overflow-hidden",
+            collapsed ? "max-w-0 opacity-0" : "max-w-[200px] opacity-100"
+          )}>
+            Terminate
+          </span>
         </button>
       </div>
     </aside>
