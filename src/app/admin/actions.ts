@@ -344,7 +344,8 @@ export async function addAnimeMinimal(slug: string, anilistId: number | null) {
 
 export async function addSystemLog(message: string, type: 'info' | 'warning' | 'error' | 'success' = 'info') {
   try {
-    const stmt = db.prepare('INSERT INTO system_logs (message, type) VALUES (?, ?)');
+    if (!db) return;
+    const stmt = db.prepare('INSERT INTO system_logs (message, type, created_at) VALUES (?, ?, datetime("now", "localtime"))');
     stmt.run(message, type);
   } catch (error) {
     console.error('Failed to add system log', error);
@@ -354,6 +355,7 @@ export async function addSystemLog(message: string, type: 'info' | 'warning' | '
 export async function getSystemLogs(limit: number = 50) {
   await checkAuth();
   try {
+    if (!db) return [];
     const stmt = db.prepare('SELECT id, message, type, created_at FROM system_logs ORDER BY id DESC LIMIT ?');
     return stmt.all(limit) as any[];
   } catch (error) {
@@ -375,6 +377,7 @@ export async function getServerMetrics() {
 export async function getTodaysScrapeSummary() {
   await checkAuth();
   try {
+    if (!db) return { animeAdded: 0, episodesAdded: 0 };
     const animeStmt = db.prepare("SELECT COUNT(*) as count FROM anime WHERE DATE(created_at) = DATE('now', 'localtime')");
     const animeCount = (animeStmt.get() as any)?.count || 0;
     
