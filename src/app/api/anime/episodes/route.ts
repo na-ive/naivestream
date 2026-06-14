@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { AnimeService } from '@/lib/services/anime';
+import { sanitizeEpisodeList } from '@/lib/sanitize';
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
@@ -23,7 +24,7 @@ export async function GET(req: NextRequest) {
       title: anime.title, 
       titleEnglish: anime.title_english, 
       image: anime.poster,
-      episodes: filteredEpisodes 
+      episodes: sanitizeEpisodeList(filteredEpisodes)
     });
   } catch (error) {
     console.error('Episodes API Error:', error);

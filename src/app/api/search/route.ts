@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { AnimeService } from '@/lib/services/anime';
+import { sanitizeAnimeList, clampLimit } from '@/lib/sanitize';
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
@@ -18,13 +19,13 @@ export async function GET(req: NextRequest) {
   const studios = searchParams.get('studios') || '';
   const order = searchParams.get('order') || 'popularity';
   const page = parseInt(searchParams.get('page') || '1');
-  const limit = parseInt(searchParams.get('limit') || '24');
+  const limit = clampLimit(parseInt(searchParams.get('limit') || '24'));
 
   try {
     const results = await AnimeService.advancedSearch({
       query, genre, genres, genreMode, status, type, letter, year, season, rating, source, studio, studios, order, page, limit
     });
-    return NextResponse.json(results);
+    return NextResponse.json({ ...results, items: sanitizeAnimeList(results.items) });
   } catch (error) {
     console.error('Search API Error:', error);
     return NextResponse.json({ error: 'Search failed' }, { status: 500 });
