@@ -1,11 +1,14 @@
 'use client';
 
-import { useEffect, useState, useTransition } from 'react';
+import { useEffect, useState, useTransition, Suspense } from 'react';
 import { getAnomalies, getNoEpisodesAnime, injectMetadata, handleLogout, triggerScraper, triggerScrapeSlug } from '../actions';
 import Link from 'next/link';
 import { toast } from 'sonner';
 import { useTheme } from 'next-themes';
 import { Tooltip } from '@/components/ui/Tooltip';
+import { useSearchParams, useRouter } from 'next/navigation';
+import { cn } from '@/lib/utils';
+import { Warning, Video, Renew } from '@carbon/icons-react';
 
 type Anomaly = {
   id: number;
@@ -22,8 +25,20 @@ const SCRAPERS = [
 ];
 
 export default function AdminDashboard() {
+  return (
+    <Suspense fallback={<div className="min-h-full p-4 md:p-8 font-sans">Loading...</div>}>
+      <AdminDashboardContent />
+    </Suspense>
+  );
+}
+
+function AdminDashboardContent() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const [activeTab, setActiveTab] = useState<'unmatched' | 'noEpisodes'>('unmatched');
   
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
+
   const [anomalies, setAnomalies] = useState<Anomaly[]>([]);
   const [anomaliesPage, setAnomaliesPage] = useState(1);
   const [anomaliesTotalPages, setAnomaliesTotalPages] = useState(1);
@@ -41,6 +56,32 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     setMounted(true);
+    
+    // Check URL param first (priority)
+    const tabParam = searchParams.get('tab') as 'unmatched' | 'noEpisodes';
+    if (tabParam === 'unmatched' || tabParam === 'noEpisodes') {
+      setActiveTab(tabParam);
+    } else {
+      // Check localStorage if no URL param
+      const savedTab = localStorage.getItem('operations_active_tab') as 'unmatched' | 'noEpisodes';
+      if (savedTab === 'unmatched' || savedTab === 'noEpisodes') {
+        setActiveTab(savedTab);
+      }
+    }
+  }, [searchParams]);
+
+  const handleTabChange = (tab: 'unmatched' | 'noEpisodes') => {
+    setActiveTab(tab);
+    localStorage.setItem('operations_active_tab', tab);
+    
+    // Update URL without full refresh to stay in sync
+    const params = new URLSearchParams(searchParams.toString());
+    params.set('tab', tab);
+    router.replace(`/admin/operations?${params.toString()}`, { scroll: false });
+  };
+
+  useEffect(() => {
+    if (!mounted) return;
     setIsLoading(true);
     if (activeTab === 'unmatched') {
       getAnomalies(anomaliesPage).then((data) => {
@@ -57,7 +98,7 @@ export default function AdminDashboard() {
         setIsLoading(false);
       });
     }
-  }, [activeTab, anomaliesPage, noEpisodePage]);
+  }, [activeTab, anomaliesPage, noEpisodePage, mounted, refreshTrigger]);
 
   const handleInject = (animeId: number, formData: FormData) => {
     const anilistIdRaw = formData.get('anilistId') as string;
@@ -160,26 +201,50 @@ export default function AdminDashboard() {
             </div>
           </div>
 
-          <div className="flex space-x-2 border-b border-border">
+          <div className="flex items-center justify-between gap-4 mb-6">
+            <div className="flex items-center gap-2">
+              <button 
+                onClick={() => handleTabChange('unmatched')}
+                className={cn(
+                  "flex items-center space-x-2 px-6 py-2.5 transition-all text-xs uppercase font-black tracking-widest relative overflow-hidden group",
+                  activeTab === 'unmatched' 
+                    ? "bg-secondary/10 text-secondary border border-secondary/50 shadow-[0_0_15px_rgba(34,197,94,0.1)]" 
+                    : "bg-card/50 text-muted-text border border-white/5 hover:border-secondary/30 hover:text-foreground"
+                )}
+              >
+                <div className={cn(
+                  "absolute bottom-0 left-0 h-1 w-full transition-all",
+                  activeTab === 'unmatched' ? "bg-secondary scale-x-100" : "bg-secondary scale-x-0 group-hover:scale-x-100"
+                )} />
+                <Warning className="w-4 h-4" />
+                <span>Unmatched Entities</span>
+              </button>
+              <button 
+                onClick={() => handleTabChange('noEpisodes')}
+                className={cn(
+                  "flex items-center space-x-2 px-6 py-2.5 transition-all text-xs uppercase font-black tracking-widest relative overflow-hidden group",
+                  activeTab === 'noEpisodes' 
+                    ? "bg-red-500/10 text-red-500 border border-red-500/50 shadow-[0_0_15px_rgba(239,68,68,0.1)]" 
+                    : "bg-card/50 text-muted-text border border-white/5 hover:border-red-500/30 hover:text-foreground"
+                )}
+              >
+                <div className={cn(
+                  "absolute bottom-0 left-0 h-1 w-full transition-all",
+                  activeTab === 'noEpisodes' ? "bg-red-500 scale-x-100" : "bg-red-500 scale-x-0 group-hover:scale-x-100"
+                )} />
+                <Video className="w-4 h-4" />
+                <span>No Episodes</span>
+              </button>
+            </div>
+
             <button
-              onClick={() => setActiveTab('unmatched')}
-              className={`px-4 py-2 uppercase tracking-widest text-xs font-bold transition-colors border-b-2 ${
-                activeTab === 'unmatched'
-                  ? 'border-secondary text-secondary bg-secondary/5'
-                  : 'border-transparent text-muted-text hover:text-foreground hover:bg-card'
-              }`}
+              onClick={() => setRefreshTrigger(p => p + 1)}
+              disabled={isLoading}
+              className="flex items-center space-x-2 px-4 py-2 border border-border bg-card/50 hover:bg-card hover:border-secondary hover:text-secondary text-muted-text text-xs uppercase tracking-widest font-bold transition-all disabled:opacity-50"
+              title="Refresh Data"
             >
-              Unmatched Entities
-            </button>
-            <button
-              onClick={() => setActiveTab('noEpisodes')}
-              className={`px-4 py-2 uppercase tracking-widest text-xs font-bold transition-colors border-b-2 ${
-                activeTab === 'noEpisodes'
-                  ? 'border-red-500 text-red-500 bg-red-500/5'
-                  : 'border-transparent text-muted-text hover:text-foreground hover:bg-card'
-              }`}
-            >
-              No Episodes
+              <Renew className={cn("w-4 h-4", isLoading && "animate-spin text-secondary")} />
+              <span className="hidden sm:inline">Refresh</span>
             </button>
           </div>
 
@@ -188,21 +253,21 @@ export default function AdminDashboard() {
               <table className="w-full text-left text-sm whitespace-nowrap">
                 <thead className="bg-card text-muted-text uppercase tracking-widest text-[11px] border-b border-border">
                   <tr>
-                    <th className="px-6 py-4 font-normal">ID / Type</th>
-                    <th className="px-6 py-4 font-normal">Source Title (Otakudesu)</th>
-                    <th className="px-6 py-4 font-normal text-right">Inject Anilist ID</th>
+                    <th className="px-6 py-4 font-normal w-[15%]">ID / Type</th>
+                    <th className="px-6 py-4 font-normal w-[55%]">Source Title (Otakudesu)</th>
+                    <th className="px-6 py-4 font-normal text-right w-[30%]">Inject Anilist ID</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border">
                   {isLoading ? (
                     <tr>
-                      <td colSpan={5} className="px-6 py-12 text-center text-muted-text font-mono">
+                      <td colSpan={3} className="px-6 py-12 text-center text-muted-text font-mono">
                         Scanning databanks...
                       </td>
                     </tr>
                   ) : anomalies.length === 0 ? (
                     <tr>
-                      <td colSpan={5} className="px-6 py-12 text-center text-secondary font-mono">
+                      <td colSpan={3} className="px-6 py-12 text-center text-secondary font-mono">
                         No anomalies detected. Grid is optimal.
                       </td>
                     </tr>
@@ -274,21 +339,21 @@ export default function AdminDashboard() {
               <table className="w-full text-left text-sm whitespace-nowrap">
                 <thead className="bg-card text-muted-text uppercase tracking-widest text-[11px] border-b border-border">
                   <tr>
-                    <th className="px-6 py-4 font-normal">ID / Type</th>
-                    <th className="px-6 py-4 font-normal">Title (Otakudesu)</th>
-                    <th className="px-6 py-4 font-normal text-right">Action</th>
+                    <th className="px-6 py-4 font-normal w-[15%]">ID / Type</th>
+                    <th className="px-6 py-4 font-normal w-[55%]">Title (Otakudesu)</th>
+                    <th className="px-6 py-4 font-normal text-right w-[30%]">Action</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border">
                   {isLoading ? (
                     <tr>
-                      <td colSpan={5} className="px-6 py-12 text-center text-muted-text font-mono">
+                      <td colSpan={3} className="px-6 py-12 text-center text-muted-text font-mono">
                         Scanning databanks...
                       </td>
                     </tr>
                   ) : noEpisodeAnomalies.length === 0 ? (
                     <tr>
-                      <td colSpan={5} className="px-6 py-12 text-center text-secondary font-mono">
+                      <td colSpan={3} className="px-6 py-12 text-center text-secondary font-mono">
                         No anomalies detected. Grid is optimal.
                       </td>
                     </tr>
