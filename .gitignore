@@ -40,7 +40,9 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+anime.db
 anime.db-*
 .idea/
 .gemini/
 design-system/
+backups/
