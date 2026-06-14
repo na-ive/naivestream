@@ -134,7 +134,7 @@ export function Navbar() {
           </Link>
 
           {/* Desktop Search */}
-          <div className="hidden lg:flex flex-1 max-w-lg mx-12">
+          <div className="hidden xl:flex flex-1 max-w-lg mx-12">
             <LiveSearch />
           </div>
 
@@ -198,7 +198,7 @@ export function Navbar() {
             
             <div className="flex items-center space-x-2 ml-2">
               {/* Tablet Search Button & Dropdown */}
-              <div className="hidden md:flex lg:hidden relative" ref={tabletSearchRef}>
+              <div className="hidden md:flex xl:hidden relative" ref={tabletSearchRef}>
                 <Tooltip content="Search" position="bottom">
                   <button
                     onClick={() => setIsSearchOpen(!isSearchOpen)}

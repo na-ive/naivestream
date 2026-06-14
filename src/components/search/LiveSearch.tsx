@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Search } from '@carbon/icons-react';
+import { Search, SettingsAdjust } from '@carbon/icons-react';
 import { cn } from '@/lib/utils';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { useTitleLang } from '@/lib/providers/TitleLangProvider';
@@ -172,35 +172,56 @@ export function LiveSearch({ onClose, dropdownPosition = 'bottom', onQueryChange
         >
           <Search className="text-secondary w-3.5 h-3.5" />
         </div>
-        {!query && !isFocused && (
-          <div className="absolute right-2 top-2 w-max h-7 pointer-events-none hidden md:flex items-center z-20">
+        <div className="absolute right-2 top-2 bottom-2 flex items-center gap-1.5 z-20">
+          {/* CTRL+K Badge */}
+          {!query && !isFocused && (
+            <div className="w-max h-7 pointer-events-none hidden md:flex items-center">
+              <div
+                className="px-1.5 h-full flex items-center bg-warning/10 border border-warning/40 text-warning"
+                style={{ clipPath: 'polygon(4px 0, 100% 0, 100% calc(100% - 4px), calc(100% - 4px) 100%, 0 100%, 0 4px)' }}
+              >
+                <span className="text-[9px] font-black uppercase tracking-wider">{isMac ? '\u2318 + K' : 'Ctrl + K'}</span>
+              </div>
+            </div>
+          )}
+
+          {/* Clear Button */}
+          {query && (
+            <button
+              type="button"
+              onClick={() => {
+                setQuery('');
+                if (onQueryChange) onQueryChange('');
+                setIsOpen(false);
+                inputRef.current?.focus();
+              }}
+              className="w-7 h-7 bg-red-100 dark:bg-red-950/50 border border-red-300 dark:border-red-900/50 hover:bg-red-200 dark:hover:bg-red-900/80 text-red-600 dark:text-red-500 flex items-center justify-center transition-all"
+              style={{ clipPath: 'polygon(5px 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 5px)' }}
+              aria-label="Clear search"
+            >
+              <div className="relative w-4 h-4">
+                <div className="absolute top-1/2 left-0 w-full h-0.5 bg-current rotate-45" />
+                <div className="absolute top-1/2 left-0 w-full h-0.5 bg-current -rotate-45" />
+              </div>
+            </button>
+          )}
+
+          {/* Filter Badge */}
+          <Link
+            href="/search"
+            onClick={() => { setIsOpen(false); if (onClose) onClose(); }}
+            className="w-max h-7 flex items-center group/filter"
+            title="Advanced Search / Filters"
+          >
             <div
-              className="px-1.5 h-full flex items-center bg-warning/10 border border-warning/40 text-warning"
+              className="px-2 h-full flex items-center bg-secondary/10 border border-secondary/30 group-hover/filter:border-secondary group-hover/filter:bg-secondary/20 text-secondary transition-all"
               style={{ clipPath: 'polygon(4px 0, 100% 0, 100% calc(100% - 4px), calc(100% - 4px) 100%, 0 100%, 0 4px)' }}
             >
-              <span className="text-[9px] font-black uppercase tracking-wider">{isMac ? '\u2318 + K' : 'Ctrl + K'}</span>
+              <SettingsAdjust className="w-3.5 h-3.5 md:mr-1.5" />
+              <span className="text-[9px] font-black uppercase tracking-wider hidden md:inline">Filter</span>
             </div>
-          </div>
-        )}
-        {query && (
-          <button
-            type="button"
-            onClick={() => {
-              setQuery('');
-              if (onQueryChange) onQueryChange('');
-              setIsOpen(false);
-              inputRef.current?.focus();
-            }}
-            className="absolute right-2 top-2 w-7 h-7 bg-red-100 dark:bg-red-950/50 border border-red-300 dark:border-red-900/50 hover:bg-red-200 dark:hover:bg-red-900/80 text-red-600 dark:text-red-500 flex items-center justify-center transition-all z-20"
-            style={{ clipPath: 'polygon(5px 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 5px)' }}
-            aria-label="Clear search"
-          >
-            <div className="relative w-4 h-4">
-              <div className="absolute top-1/2 left-0 w-full h-0.5 bg-current rotate-45" />
-              <div className="absolute top-1/2 left-0 w-full h-0.5 bg-current -rotate-45" />
-            </div>
-          </button>
-        )}
+          </Link>
+        </div>
       </form>
 
       {/* Dropdown */}
