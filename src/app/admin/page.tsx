@@ -143,18 +143,18 @@ export default async function AdminDashboard() {
               <div className="flex items-center justify-between border-b border-border pb-4">
                 <h2 className="text-xl font-bold uppercase tracking-wider">Terminal Logs</h2>
               </div>
-              <div className="bg-black border border-border p-4 h-64 overflow-y-auto font-mono text-xs flex flex-col gap-2 rounded-sm shadow-inner">
+              <div className="bg-black border border-border p-4 h-64 overflow-y-auto font-mono text-xs flex flex-col gap-2 rounded-sm shadow-inner text-gray-300">
                 {systemLogs.length === 0 ? (
-                  <span className="text-muted-text">No recent activity detected.</span>
+                  <span className="text-gray-500">No recent activity detected.</span>
                 ) : (
                   systemLogs.map((log) => (
-                    <div key={log.id} className="flex gap-4 group items-start hover:bg-white/5 px-2 py-1 -mx-2 rounded transition-colors">
-                      <span className="text-muted-text shrink-0 opacity-50 group-hover:opacity-100 transition-opacity">[{new Date(log.created_at).toLocaleTimeString()}]</span>
+                    <div key={log.id} className="flex gap-4 group items-start hover:bg-white/10 px-2 py-1 -mx-2 rounded transition-colors">
+                      <span className="text-gray-500 shrink-0 opacity-80 group-hover:opacity-100 group-hover:text-gray-400 transition-colors">[{new Date(log.created_at).toLocaleTimeString()}]</span>
                       <span className={`
-                        ${log.type === 'error' ? 'text-red-500' : ''}
+                        ${log.type === 'error' ? 'text-red-500 font-bold' : ''}
                         ${log.type === 'warning' ? 'text-yellow-500' : ''}
-                        ${log.type === 'success' ? 'text-secondary' : ''}
-                        ${log.type === 'info' ? 'text-foreground/80 group-hover:text-foreground' : ''}
+                        ${log.type === 'success' ? 'text-green-400' : ''}
+                        ${log.type === 'info' ? 'text-gray-300 group-hover:text-white' : ''}
                       `}>
                         {log.type === 'error' ? '[ERROR] ' : log.type === 'warning' ? '[WARN] ' : ''}
                         {log.message}
