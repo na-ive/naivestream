@@ -6,6 +6,7 @@ import { toast } from 'sonner';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import { Search, ChevronDown, ChevronUp, Renew, Checkmark, Close, ChevronLeft, ChevronRight, TrashCan, Add } from '@carbon/icons-react';
 import { Modal } from '@/components/ui/Modal';
+import { CustomSelect } from '@/components/ui/CustomSelect';
 import { cn } from '@/lib/utils';
 
 type AnimeRow = {
@@ -27,6 +28,7 @@ interface DatabaseTableProps {
   currentSearch: string;
   currentSort: string;
   currentOrder: string;
+  currentSource?: string;
 }
 
 export function DatabaseTable({ 
@@ -36,7 +38,8 @@ export function DatabaseTable({
   currentPage, 
   currentSearch, 
   currentSort, 
-  currentOrder 
+  currentOrder,
+  currentSource = ''
 }: DatabaseTableProps) {
   const router = useRouter();
   const pathname = usePathname();
@@ -151,16 +154,34 @@ export function DatabaseTable({
     <div className="space-y-6">
       {/* Controls Bar */}
       <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-4 bg-card border border-border p-4">
-        {/* Left: Search Bar */}
-        <div className="relative w-full xl:w-[450px]">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-text" />
-          <input 
-            type="text" 
-            placeholder="Search by Title or Slug..." 
-            value={searchValue}
-            onChange={(e) => setSearchValue(e.target.value)}
-            className="w-full bg-background border border-border pl-10 pr-4 py-2.5 text-sm font-mono text-foreground focus:outline-none focus:border-secondary transition-colors placeholder:text-muted-text"
-          />
+        {/* Left: Search Bar & Filters */}
+        <div className="flex flex-col sm:flex-row w-full xl:w-auto gap-4">
+          <div className="relative w-full sm:w-[350px]">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-text" />
+            <input 
+              type="text" 
+              placeholder="Search by Title or Slug..." 
+              value={searchValue}
+              onChange={(e) => setSearchValue(e.target.value)}
+              className="w-full bg-background border border-border pl-10 pr-4 py-2.5 text-sm font-mono text-foreground focus:outline-none focus:border-secondary transition-colors placeholder:text-muted-text"
+            />
+          </div>
+          <div className="w-full sm:w-[220px]">
+            <CustomSelect
+              value={currentSource}
+              onChange={(val) => updateQuery({ source: val, page: 1 })}
+              options={[
+                { value: "", label: "All Sources" },
+                { value: "ORIGINAL", label: "Original" },
+                { value: "MANGA", label: "Manga" },
+                { value: "LIGHT NOVEL", label: "Light Novel" },
+                { value: "VISUAL NOVEL", label: "Visual Novel" },
+                { value: "VIDEO GAME", label: "Video Game" },
+                { value: "OTHER", label: "Other" }
+              ]}
+              placeholder="All Sources"
+            />
+          </div>
         </div>
         
         {/* Right: Info & Action Buttons */}
@@ -202,8 +223,8 @@ export function DatabaseTable({
               <th className="px-4 py-3 font-normal cursor-pointer hover:text-foreground group" onClick={() => handleSort('title')}>
                 <div className="flex items-center gap-2">Title / Slug {renderSortIcon('title')}</div>
               </th>
-              <th className="px-4 py-3 font-normal cursor-pointer hover:text-foreground group" onClick={() => handleSort('source')}>
-                <div className="flex items-center gap-2">Source {renderSortIcon('source')}</div>
+              <th className="px-4 py-3 font-normal text-muted-text">
+                <div className="flex items-center gap-2">Source</div>
               </th>
               <th className="px-4 py-3 font-normal cursor-pointer hover:text-foreground group" onClick={() => handleSort('mal_id')}>
                 <div className="flex items-center gap-2">MAL ID {renderSortIcon('mal_id')}</div>

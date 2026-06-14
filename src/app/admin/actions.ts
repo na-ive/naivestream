@@ -160,17 +160,27 @@ export async function getRecentOngoingEpisodes(limit: number = 10) {
   return rows.slice(0, limit);
 }
 
-export async function getAnimeListAdmin({ page = 1, limit = 50, search = '', sort = 'id', order = 'desc' }) {
+export async function getAnimeListAdmin({ page = 1, limit = 50, search = '', sort = 'id', order = 'desc', source = '' }) {
   await checkAuth();
   if (!db) throw new Error("Database connection failed");
 
   const offset = (page - 1) * limit;
   let query = 'SELECT id, slug, title, source, mal_id, anilist_id, is_fully_scraped, last_updated FROM anime';
   const params: any[] = [];
+  const conditions: string[] = [];
 
   if (search) {
-    query += ' WHERE title LIKE ? OR slug LIKE ?';
+    conditions.push('(title LIKE ? OR slug LIKE ?)');
     params.push(`%${search}%`, `%${search}%`);
+  }
+
+  if (source) {
+    conditions.push('source = ?');
+    params.push(source);
+  }
+
+  if (conditions.length > 0) {
+    query += ' WHERE ' + conditions.join(' AND ');
   }
 
   // Safe sorting
@@ -186,9 +196,12 @@ export async function getAnimeListAdmin({ page = 1, limit = 50, search = '', sor
   
   let countQuery = 'SELECT COUNT(*) as total FROM anime';
   const countParams: any[] = [];
-  if (search) {
-    countQuery += ' WHERE title LIKE ? OR slug LIKE ?';
-    countParams.push(`%${search}%`, `%${search}%`);
+  
+  if (conditions.length > 0) {
+    countQuery += ' WHERE ' + conditions.join(' AND ');
+    // The params array has search and source params. We can reuse them without LIMIT and OFFSET
+    // params currently has limit and offset at the end.
+    countParams.push(...params.slice(0, -2)); 
   }
   const total = (db.prepare(countQuery).get(...countParams) as any).total;
 

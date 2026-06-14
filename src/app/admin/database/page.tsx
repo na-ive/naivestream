@@ -6,15 +6,16 @@ export const dynamic = 'force-dynamic';
 export default async function AdminDatabase({
   searchParams
 }: {
-  searchParams: Promise<{ page?: string, search?: string, sort?: string, order?: string }>
+  searchParams: Promise<{ page?: string, search?: string, sort?: string, order?: string, source?: string }>
 }) {
   const params = await searchParams;
   const page = parseInt(params.page || '1', 10);
   const search = params.search || '';
   const sort = params.sort || 'id';
   const order = params.order || 'desc';
+  const source = params.source || '';
 
-  const data = await getAnimeListAdmin({ page, limit: 50, search, sort, order });
+  const data = await getAnimeListAdmin({ page, limit: 50, search, sort, order, source });
 
   return (
     <div className="min-h-full p-4 md:p-8 font-sans">
@@ -36,6 +37,7 @@ export default async function AdminDatabase({
           currentSearch={search}
           currentSort={sort}
           currentOrder={order}
+          currentSource={source}
         />
       </div>
     </div>
