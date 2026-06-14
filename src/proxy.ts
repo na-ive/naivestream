@@ -85,11 +85,28 @@ function addCorsHeaders(response: NextResponse, origin: string | null): NextResp
 
 // ---------------------------------------------------------------------------
 // Middleware
-// ---------------------------------------------------------------------------
+import { decrypt } from './lib/auth';
 
-export function proxy(request: NextRequest) {
-  // Only apply to API routes
-  if (!request.nextUrl.pathname.startsWith('/api')) {
+export async function proxy(request: NextRequest) {
+  const path = request.nextUrl.pathname;
+
+  // --- Admin Auth Check ---
+  if (path.startsWith('/admin')) {
+    const session = request.cookies.get('admin_session')?.value;
+    if (!session) {
+      return NextResponse.redirect(new URL('/login', request.url));
+    }
+    try {
+      const payload = await decrypt(session);
+      if (!payload) throw new Error('Invalid session');
+    } catch (error) {
+      return NextResponse.redirect(new URL('/login', request.url));
+    }
+    return NextResponse.next();
+  }
+
+  // Only apply rate limiting to API routes
+  if (!path.startsWith('/api')) {
     return NextResponse.next();
   }
 
@@ -138,5 +155,5 @@ export function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: '/api/:path*',
+  matcher: ['/api/:path*', '/admin/:path*'],
 };

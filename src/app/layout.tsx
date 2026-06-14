@@ -2,13 +2,8 @@ import type { Metadata } from "next";
 import { Exo_2, Orbitron } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
-import { TitleLangProvider } from "@/lib/providers/TitleLangProvider";
-import { ViewModeProvider } from "@/lib/providers/ViewModeProvider";
-import { Navbar } from "@/components/layout/Navbar";
-import { MobileBottomNav } from "@/components/layout/MobileBottomNav";
-import { Footer } from "@/components/layout/Footer";
-import { ScrollToTop } from "@/components/layout/ScrollToTop";
 import { Toaster } from "sonner";
+import { AppLayout } from "@/components/layout/AppLayout";
 
 const sans = Exo_2({
   subsets: ["latin"],
@@ -36,6 +31,19 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              const originalError = console.error;
+              console.error = function(...args) {
+                if (typeof args[0] === 'string' && args[0].includes('Encountered a script tag while rendering React component')) return;
+                originalError.apply(console, args);
+              };
+            `,
+          }}
+        />
+      </head>
       <body className={`${sans.variable} ${serif.variable} antialiased selection:bg-secondary selection:text-black`}>
         <ThemeProvider
           attribute="class"
@@ -44,19 +52,7 @@ export default function RootLayout({
           enableColorScheme={false}
           disableTransitionOnChange
         >
-          <div className="flex flex-col min-h-screen relative">
-            <ScrollToTop />
-            <TitleLangProvider>
-              <ViewModeProvider>
-                <Navbar />
-                <MobileBottomNav />
-                <main className="grow pt-20 pb-16 md:pb-0">
-                  {children}
-                </main>
-              </ViewModeProvider>
-            </TitleLangProvider>
-            <Footer />
-          </div>
+          <AppLayout>{children}</AppLayout>
           <Toaster 
             theme="dark" 
             position="bottom-right"
