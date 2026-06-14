@@ -7,6 +7,7 @@ import { revalidatePath } from 'next/cache';
 import { exec } from 'child_process';
 import { promisify } from 'util';
 import path from 'path';
+import { parseIndonesianDate } from '@/lib/utils';
 
 const execPromise = promisify(exec);
 
@@ -97,6 +98,50 @@ export async function getAdminStats() {
     noEpisodes,
     missingAnilistId
   };
+}
+
+export async function getRecentOngoingEpisodes(limit: number = 10) {
+  await checkAuth();
+  if (!db) throw new Error("Database connection failed");
+
+  const query = `
+    SELECT 
+      e.id, 
+      e.title as episode_title, 
+      e.eps_number, 
+      e.uploaded_at,
+      a.title as anime_title, 
+      a.slug as anime_slug
+    FROM episodes e
+    JOIN anime a ON e.anime_id = a.id
+    WHERE a.status = 'Ongoing' COLLATE NOCASE
+    ORDER BY e.id DESC
+    LIMIT 100
+  `;
+
+  const rows = db.prepare(query).all() as {
+    id: number;
+    episode_title: string;
+    eps_number: number;
+    uploaded_at: string;
+    anime_title: string;
+    anime_slug: string;
+  }[];
+
+  // Sort by parsed date descending
+  rows.sort((a, b) => {
+    const dateA = new Date(parseIndonesianDate(a.uploaded_at)).getTime();
+    const dateB = new Date(parseIndonesianDate(b.uploaded_at)).getTime();
+    
+    // If dates are valid and different, sort by date
+    if (!isNaN(dateA) && !isNaN(dateB) && dateA !== dateB) {
+      return dateB - dateA;
+    }
+    // Fallback to insertion order (ID) if dates are same or invalid
+    return b.id - a.id;
+  });
+
+  return rows.slice(0, limit);
 }
 
 export async function getAnimeListAdmin({ page = 1, limit = 50, search = '', sort = 'id', order = 'desc' }) {

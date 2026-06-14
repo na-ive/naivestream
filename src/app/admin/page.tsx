@@ -1,9 +1,12 @@
-import { getAdminStats } from './actions';
+import { getAdminStats, getRecentOngoingEpisodes } from './actions';
 
 export const dynamic = 'force-dynamic';
 
 export default async function AdminDashboard() {
-  const stats = await getAdminStats();
+  const [stats, recentEpisodes] = await Promise.all([
+    getAdminStats(),
+    getRecentOngoingEpisodes(10)
+  ]);
 
   const metrics = [
     { label: 'Total Anime', value: stats.totalAnime, color: 'text-secondary' },
@@ -61,6 +64,59 @@ export default async function AdminDashboard() {
                 <span className="text-2xl font-mono font-black text-red-500">{warning.value.toLocaleString()}</span>
               </div>
             ))}
+          </div>
+        </section>
+
+        {/* Recent Ongoing Episodes */}
+        <section className="space-y-6">
+          <div className="flex items-center justify-between border-b border-border pb-4">
+            <h2 className="text-xl font-bold uppercase tracking-wider text-secondary">Recently Added Ongoing Episodes</h2>
+          </div>
+          
+          <div className="bg-card/30 border border-border overflow-x-auto">
+            <table className="w-full text-left text-sm whitespace-nowrap">
+              <thead className="bg-card text-muted-text uppercase tracking-widest text-[11px] border-b border-border">
+                <tr>
+                  <th className="px-6 py-4 font-normal">Anime Title</th>
+                  <th className="px-6 py-4 font-normal">Episode</th>
+                  <th className="px-6 py-4 font-normal">Upload Date</th>
+                  <th className="px-6 py-4 font-normal text-right">Action</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-border">
+                {recentEpisodes.length === 0 ? (
+                  <tr>
+                    <td colSpan={4} className="px-6 py-8 text-center text-muted-text font-mono text-xs uppercase">
+                      No recent episodes found
+                    </td>
+                  </tr>
+                ) : (
+                  recentEpisodes.map((ep) => (
+                    <tr key={ep.id} className="hover:bg-card/40 transition-colors">
+                      <td className="px-6 py-4 font-medium text-foreground max-w-[200px] sm:max-w-xs truncate" title={ep.anime_title}>
+                        {ep.anime_title}
+                      </td>
+                      <td className="px-6 py-4 text-secondary font-mono">
+                        Episode {ep.eps_number}
+                      </td>
+                      <td className="px-6 py-4 text-muted-text font-mono text-xs">
+                        {ep.uploaded_at || 'Unknown'}
+                      </td>
+                      <td className="px-6 py-4 text-right">
+                        <a 
+                          href={`/anime/${ep.anime_slug}`} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center px-3 py-1.5 bg-secondary/10 hover:bg-secondary text-secondary hover:text-black border border-secondary/30 transition-colors text-[10px] uppercase font-bold tracking-widest"
+                        >
+                          View
+                        </a>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
           </div>
         </section>
 
