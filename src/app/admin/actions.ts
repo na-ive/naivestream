@@ -235,3 +235,42 @@ export async function deleteAnime(id: number) {
   }
 }
 
+export async function addAnimeMinimal(slug: string, anilistId: number | null) {
+  await checkAuth();
+  if (!db) throw new Error("Database connection failed");
+
+  try {
+    if (!slug || slug.trim() === '') {
+      return { success: false, error: 'Slug is required' };
+    }
+    const cleanSlug = slug.trim();
+
+    const checkStmt = db.prepare('SELECT id FROM anime WHERE slug = ? OR (anilist_id = ? AND anilist_id IS NOT NULL)');
+    const existing = checkStmt.get(cleanSlug, anilistId) as any;
+    if (existing) {
+      return { success: false, error: 'Anime with this slug or anilist_id already exists' };
+    }
+
+    const title = cleanSlug.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+
+    const stmt = db.prepare('INSERT INTO anime (slug, anilist_id, title, source) VALUES (?, ?, ?, ?)');
+    const info = stmt.run(cleanSlug, anilistId, title, 'otakudesu');
+
+    if (info.changes > 0) {
+      // Trigger background sync
+      exec(`node dist/index.js --slug=${cleanSlug}`, { cwd: path.join(process.cwd(), 'backend') }, (err) => {
+        if (!err && anilistId) {
+          exec(`node dist/fill-from-anilist.js --id=${info.lastInsertRowid}`, { cwd: path.join(process.cwd(), 'backend') });
+        }
+      });
+      
+      revalidatePath('/admin/database');
+      revalidatePath('/admin/operations');
+      return { success: true, message: `Anime added. Syncing metadata in background.` };
+    }
+    return { success: false, error: 'Failed to add anime' };
+  } catch (error: any) {
+    return { success: false, error: error.message || 'Failed to add anime' };
+  }
+}
+

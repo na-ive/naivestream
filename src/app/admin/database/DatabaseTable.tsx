@@ -1,11 +1,12 @@
 'use client';
 
 import { useState, useTransition, useEffect } from 'react';
-import { updateAnimeMapping, deleteAnime } from '../actions';
+import { updateAnimeMapping, deleteAnime, addAnimeMinimal } from '../actions';
 import { toast } from 'sonner';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
-import { Search, ChevronDown, ChevronUp, Renew, Checkmark, Close, ChevronLeft, ChevronRight, TrashCan } from '@carbon/icons-react';
+import { Search, ChevronDown, ChevronUp, Renew, Checkmark, Close, ChevronLeft, ChevronRight, TrashCan, Add } from '@carbon/icons-react';
 import { Modal } from '@/components/ui/Modal';
+import { cn } from '@/lib/utils';
 
 type AnimeRow = {
   id: number;
@@ -46,6 +47,8 @@ export function DatabaseTable({
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editValues, setEditValues] = useState<{malId: string, anilistId: string}>({ malId: '', anilistId: '' });
   const [animeToDelete, setAnimeToDelete] = useState<{id: number, title: string} | null>(null);
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [newAnime, setNewAnime] = useState<{slug: string, anilistId: string}>({ slug: '', anilistId: '' });
 
   // Debounced search
   useEffect(() => {
@@ -108,6 +111,20 @@ export function DatabaseTable({
     });
   };
 
+  const handleAddAnime = () => {
+    startTransition(async () => {
+      const anilistParsed = newAnime.anilistId ? parseInt(newAnime.anilistId, 10) : null;
+      const result = await addAnimeMinimal(newAnime.slug, anilistParsed);
+      if (result.success) {
+        toast.success(result.message);
+        setShowAddModal(false);
+        setNewAnime({ slug: '', anilistId: '' });
+      } else {
+        toast.error(`Error: ${result.error}`);
+      }
+    });
+  };
+
   const handleDelete = (id: number, title: string) => {
     setAnimeToDelete({ id, title });
   };
@@ -133,19 +150,44 @@ export function DatabaseTable({
   return (
     <div className="space-y-6">
       {/* Controls Bar */}
-      <div className="flex flex-col sm:flex-row justify-between items-center gap-4 bg-card border border-border p-4">
-        <div className="relative w-full sm:max-w-xs">
+      <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-4 bg-card border border-border p-4">
+        {/* Left: Search Bar */}
+        <div className="relative w-full xl:w-[450px]">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-text" />
           <input 
             type="text" 
             placeholder="Search by Title or Slug..." 
             value={searchValue}
             onChange={(e) => setSearchValue(e.target.value)}
-            className="w-full bg-background border border-border pl-10 pr-4 py-2 text-sm font-mono text-foreground focus:outline-none focus:border-secondary transition-colors placeholder:text-muted-text"
+            className="w-full bg-background border border-border pl-10 pr-4 py-2.5 text-sm font-mono text-foreground focus:outline-none focus:border-secondary transition-colors placeholder:text-muted-text"
           />
         </div>
-        <div className="text-xs font-mono text-muted-text">
-          Showing <span className="text-secondary font-black">{initialData.length}</span> of {total} entries
+        
+        {/* Right: Info & Action Buttons */}
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between xl:justify-end gap-4 w-full xl:w-auto">
+          <div className="text-xs font-mono text-muted-text">
+            Showing <span className="text-secondary font-black">{initialData.length}</span> of {total} entries
+          </div>
+          
+          <div className="flex items-center gap-2 w-full sm:w-auto">
+            <button
+              onClick={() => startTransition(() => router.refresh())}
+              disabled={isPending}
+              className="flex items-center justify-center flex-1 sm:flex-none gap-2 px-4 py-2.5 bg-card hover:bg-card/80 border border-border hover:border-secondary/50 text-muted-text hover:text-secondary text-xs uppercase font-bold tracking-widest transition-colors"
+              title="Refresh Data"
+            >
+              <Renew className={cn("w-4 h-4", isPending && "animate-spin")} />
+              <span className="hidden sm:inline">Refresh</span>
+            </button>
+            <button
+              onClick={() => setShowAddModal(true)}
+              className="flex items-center justify-center flex-1 sm:flex-none gap-2 px-6 py-2.5 bg-secondary/10 hover:bg-secondary text-secondary hover:text-black border border-secondary/50 text-xs uppercase font-bold tracking-widest transition-colors shadow-[0_0_10px_rgba(34,197,94,0.1)]"
+              title="Add New Anime"
+            >
+              <Add className="w-4 h-4" />
+              <span>Add Anime</span>
+            </button>
+          </div>
         </div>
       </div>
 
@@ -358,6 +400,68 @@ export function DatabaseTable({
         <p className="text-sm text-red-400 mt-4">
           This will remove the anime and cascade delete all its episodes and metadata. This action CANNOT be undone.
         </p>
+      </Modal>
+
+      {/* Add Anime Modal */}
+      <Modal
+        isOpen={showAddModal}
+        onClose={() => setShowAddModal(false)}
+        title={
+          <div className="flex items-center gap-3">
+            <div className="w-1.5 h-6 bg-secondary shadow-[0_0_10px_rgba(34,197,94,0.5)]" />
+            <h2 className="text-secondary text-xs font-mono font-black uppercase tracking-[0.4em]">
+              Insert <span className="text-foreground/50">//</span> New Anime
+            </h2>
+          </div>
+        }
+        footer={
+          <>
+            <button
+              onClick={() => setShowAddModal(false)}
+              className="px-4 py-2 font-black uppercase text-xs tracking-widest text-muted-text hover:text-white transition-colors"
+              disabled={isPending}
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleAddAnime}
+              className="flex items-center space-x-2 px-6 py-2.5 bg-secondary text-black font-black text-[10px] uppercase tracking-[0.2em] shadow-[0_0_15px_rgba(34,197,94,0.5)] hover:shadow-[0_0_25px_rgba(34,197,94,0.7)] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              style={{ clipPath: 'polygon(4px 0, 100% 0, 100% calc(100% - 4px), calc(100% - 4px) 100%, 0 100%, 0 4px)' }}
+              disabled={isPending || !newAnime.slug.trim()}
+            >
+              {isPending ? <Renew className="w-4 h-4 animate-spin" /> : <Add className="w-4 h-4" />}
+              <span>{isPending ? 'Processing...' : 'Add Anime'}</span>
+            </button>
+          </>
+        }
+      >
+        <div className="space-y-4">
+          <p className="text-sm text-muted-text">
+            Provide the <strong className="text-secondary">Slug</strong> and optionally the <strong className="text-secondary">AniList ID</strong>. The system will automatically scrape the metadata and episodes in the background once added. The title will be temporarily generated from the slug.
+          </p>
+          <div className="space-y-3 pt-4 border-t border-border">
+            <div>
+              <label className="block text-xs uppercase font-bold tracking-widest text-secondary mb-1">Slug (Required)</label>
+              <input 
+                type="text" 
+                value={newAnime.slug}
+                onChange={(e) => setNewAnime({...newAnime, slug: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '')})}
+                placeholder="e.g. naruto-shippuden"
+                className="w-full bg-background border border-border px-3 py-2 text-sm font-mono focus:outline-none focus:border-secondary transition-colors text-foreground"
+              />
+            </div>
+            <div>
+              <label className="block text-xs uppercase font-bold tracking-widest text-muted-text mb-1">AniList ID (Optional)</label>
+              <input 
+                type="number" 
+                value={newAnime.anilistId}
+                onChange={(e) => setNewAnime({...newAnime, anilistId: e.target.value})}
+                placeholder="e.g. 1735"
+                className="w-full bg-background border border-border px-3 py-2 text-sm font-mono focus:outline-none focus:border-secondary transition-colors text-foreground [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+              />
+            </div>
+          </div>
+        </div>
       </Modal>
     </div>
   );
