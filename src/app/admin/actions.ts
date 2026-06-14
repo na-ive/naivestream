@@ -18,22 +18,36 @@ async function checkAuth() {
   return session;
 }
 
-export async function getAnomalies() {
+export async function getAnomalies(page: number = 1) {
   await checkAuth();
   
   if (!db) throw new Error("Database connection failed");
-  const stmt = db.prepare('SELECT id, slug, title, type FROM anime WHERE anilist_id IS NULL ORDER BY id DESC LIMIT 50');
-  const rows = stmt.all();
-  return rows;
+  const limit = 50;
+  const offset = (page - 1) * limit;
+
+  const countStmt = db.prepare('SELECT COUNT(*) as total FROM anime WHERE anilist_id IS NULL');
+  const total = (countStmt.get() as any).total;
+
+  const stmt = db.prepare('SELECT id, slug, title, type FROM anime WHERE anilist_id IS NULL ORDER BY id DESC LIMIT ? OFFSET ?');
+  const rows = stmt.all(limit, offset);
+  
+  return { items: rows, total, totalPages: Math.ceil(total / limit) };
 }
 
-export async function getNoEpisodesAnime() {
+export async function getNoEpisodesAnime(page: number = 1) {
   await checkAuth();
   
   if (!db) throw new Error("Database connection failed");
-  const stmt = db.prepare('SELECT id, slug, title, type FROM anime WHERE id NOT IN (SELECT DISTINCT anime_id FROM episodes) ORDER BY id DESC LIMIT 50');
-  const rows = stmt.all();
-  return rows;
+  const limit = 50;
+  const offset = (page - 1) * limit;
+
+  const countStmt = db.prepare('SELECT COUNT(*) as total FROM anime WHERE id NOT IN (SELECT DISTINCT anime_id FROM episodes)');
+  const total = (countStmt.get() as any).total;
+
+  const stmt = db.prepare('SELECT id, slug, title, type FROM anime WHERE id NOT IN (SELECT DISTINCT anime_id FROM episodes) ORDER BY id DESC LIMIT ? OFFSET ?');
+  const rows = stmt.all(limit, offset);
+  
+  return { items: rows, total, totalPages: Math.ceil(total / limit) };
 }
 
 export async function injectMetadata(animeId: number, anilistId: number) {

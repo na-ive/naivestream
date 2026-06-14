@@ -23,8 +23,17 @@ const SCRAPERS = [
 
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState<'unmatched' | 'noEpisodes'>('unmatched');
+  
   const [anomalies, setAnomalies] = useState<Anomaly[]>([]);
+  const [anomaliesPage, setAnomaliesPage] = useState(1);
+  const [anomaliesTotalPages, setAnomaliesTotalPages] = useState(1);
+  const [anomaliesTotal, setAnomaliesTotal] = useState(0);
+
   const [noEpisodeAnomalies, setNoEpisodeAnomalies] = useState<Anomaly[]>([]);
+  const [noEpisodePage, setNoEpisodePage] = useState(1);
+  const [noEpisodeTotalPages, setNoEpisodeTotalPages] = useState(1);
+  const [noEpisodeTotal, setNoEpisodeTotal] = useState(0);
+
   const [isLoading, setIsLoading] = useState(true);
   const [isPending, startTransition] = useTransition();
   const { theme, setTheme } = useTheme();
@@ -32,15 +41,23 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     setMounted(true);
-    Promise.all([
-      getAnomalies(),
-      getNoEpisodesAnime()
-    ]).then(([anomaliesData, noEpisodesData]) => {
-      setAnomalies(anomaliesData as Anomaly[]);
-      setNoEpisodeAnomalies(noEpisodesData as Anomaly[]);
-      setIsLoading(false);
-    });
-  }, []);
+    setIsLoading(true);
+    if (activeTab === 'unmatched') {
+      getAnomalies(anomaliesPage).then((data) => {
+        setAnomalies(data.items as Anomaly[]);
+        setAnomaliesTotal(data.total);
+        setAnomaliesTotalPages(data.totalPages);
+        setIsLoading(false);
+      });
+    } else {
+      getNoEpisodesAnime(noEpisodePage).then((data) => {
+        setNoEpisodeAnomalies(data.items as Anomaly[]);
+        setNoEpisodeTotal(data.total);
+        setNoEpisodeTotalPages(data.totalPages);
+        setIsLoading(false);
+      });
+    }
+  }, [activeTab, anomaliesPage, noEpisodePage]);
 
   const handleInject = (animeId: number, formData: FormData) => {
     const anilistIdRaw = formData.get('anilistId') as string;
@@ -138,8 +155,8 @@ export default function AdminDashboard() {
               <h2 className="text-xl font-bold uppercase tracking-wider">System Anomalies</h2>
               <p className="text-sm text-muted-text mt-1">Review missing parameters and telemetry gaps</p>
             </div>
-            <div className="text-xs font-mono bg-card px-3 py-1 border border-border">
-              {activeTab === 'unmatched' ? anomalies.length : noEpisodeAnomalies.length} entries found
+            <div className="text-xs font-mono bg-card px-3 py-1 border border-border uppercase tracking-widest text-muted-text">
+              {activeTab === 'unmatched' ? anomaliesTotal : noEpisodeTotal} ENTRIES TOTAL
             </div>
           </div>
 
@@ -226,6 +243,29 @@ export default function AdminDashboard() {
                   )}
                 </tbody>
               </table>
+              {!isLoading && anomaliesTotalPages > 1 && (
+                <div className="flex justify-between items-center px-6 py-4 border-t border-border bg-card">
+                  <span className="text-xs text-muted-text font-mono uppercase tracking-wider">
+                    Page {anomaliesPage} of {anomaliesTotalPages}
+                  </span>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => setAnomaliesPage(p => Math.max(1, p - 1))}
+                      disabled={anomaliesPage === 1 || isPending || isLoading}
+                      className="px-3 py-1 bg-secondary/10 text-secondary border border-secondary/30 disabled:opacity-50 text-xs font-bold uppercase tracking-wider hover:bg-secondary hover:text-black transition-colors"
+                    >
+                      Prev
+                    </button>
+                    <button
+                      onClick={() => setAnomaliesPage(p => Math.min(anomaliesTotalPages, p + 1))}
+                      disabled={anomaliesPage === anomaliesTotalPages || isPending || isLoading}
+                      className="px-3 py-1 bg-secondary/10 text-secondary border border-secondary/30 disabled:opacity-50 text-xs font-bold uppercase tracking-wider hover:bg-secondary hover:text-black transition-colors"
+                    >
+                      Next
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           )}
 
@@ -236,7 +276,7 @@ export default function AdminDashboard() {
                   <tr>
                     <th className="px-6 py-4 font-normal">ID / Type</th>
                     <th className="px-6 py-4 font-normal">Title (Otakudesu)</th>
-                    <th className="px-6 py-4 font-normal text-right">Status</th>
+                    <th className="px-6 py-4 font-normal text-right">Action</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border">
@@ -289,6 +329,29 @@ export default function AdminDashboard() {
                   )}
                 </tbody>
               </table>
+              {!isLoading && noEpisodeTotalPages > 1 && (
+                <div className="flex justify-between items-center px-6 py-4 border-t border-border bg-card">
+                  <span className="text-xs text-muted-text font-mono uppercase tracking-wider">
+                    Page {noEpisodePage} of {noEpisodeTotalPages}
+                  </span>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => setNoEpisodePage(p => Math.max(1, p - 1))}
+                      disabled={noEpisodePage === 1 || isPending || isLoading}
+                      className="px-3 py-1 bg-secondary/10 text-secondary border border-secondary/30 disabled:opacity-50 text-xs font-bold uppercase tracking-wider hover:bg-secondary hover:text-black transition-colors"
+                    >
+                      Prev
+                    </button>
+                    <button
+                      onClick={() => setNoEpisodePage(p => Math.min(noEpisodeTotalPages, p + 1))}
+                      disabled={noEpisodePage === noEpisodeTotalPages || isPending || isLoading}
+                      className="px-3 py-1 bg-secondary/10 text-secondary border border-secondary/30 disabled:opacity-50 text-xs font-bold uppercase tracking-wider hover:bg-secondary hover:text-black transition-colors"
+                    >
+                      Next
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </section>
