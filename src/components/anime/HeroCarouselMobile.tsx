@@ -49,7 +49,7 @@ export function HeroCarouselMobile({ items }: HeroCarouselMobileProps) {
 
   return (
     <section
-      className="relative w-full min-h-[300px] overflow-hidden group bg-background"
+      className="relative w-full min-h-[300px] flex flex-col overflow-hidden group bg-background"
       onMouseEnter={() => setIsAutoPlaying(false)}
       onMouseLeave={() => setIsAutoPlaying(true)}
     >
@@ -78,7 +78,7 @@ export function HeroCarouselMobile({ items }: HeroCarouselMobileProps) {
         </motion.div>
       </AnimatePresence>
 
-      <div className="relative z-10 max-w-[1440px] mx-auto px-4 sm:px-6 pt-24 pb-4">
+      <div className="relative z-10 w-full flex-1 flex flex-col max-w-[1440px] mx-auto px-4 sm:px-6 pt-24 pb-4">
         {/* Trending - statis, tidak ikut animasi */}
         <div className="flex items-center gap-2 mb-3">
           <div className="w-0.5 h-3.5 bg-secondary shadow-[0_0_8px_var(--color-secondary)]" />
@@ -88,7 +88,7 @@ export function HeroCarouselMobile({ items }: HeroCarouselMobileProps) {
         </div>
 
         {/* Content + Poster row */}
-        <div className="flex flex-col sm:flex-row sm:items-start gap-3">
+        <div className="flex flex-col sm:flex-row sm:items-end gap-3 mt-auto">
           {/* Poster - hanya muncul di sm+ */}
           <motion.div
             key={`poster-${current.id}`}
@@ -108,14 +108,14 @@ export function HeroCarouselMobile({ items }: HeroCarouselMobileProps) {
             <div className="absolute inset-0 border-2 border-secondary/20 pointer-events-none" />
           </motion.div>
 
-          {/* Content yang berubah tiap slide */}
-          <div className="flex flex-col gap-1.5 flex-1 min-w-0">
+          {/* Content yang berubah tiap slide - pb-1 offsets the 4px border of the poster */}
+          <div className="flex flex-col gap-1.5 flex-1 min-w-0 pb-1">
             <motion.h1
               key={`title-${current.id}`}
               initial={{ y: 15, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ duration: 0.5, delay: 0.1 }}
-              className="text-[15px] sm:text-lg md:text-xl font-serif font-black leading-tight tracking-tighter text-foreground uppercase min-h-[2.5em] line-clamp-2"
+              className="text-[15px] sm:text-lg md:text-xl font-serif font-black leading-tight tracking-tighter text-foreground uppercase line-clamp-2 sm:max-w-[85%] md:max-w-[75%]"
             >
               <AnimeTitleDisplay title={current.title} titleEnglish={current.title_english} />
             </motion.h1>
@@ -167,6 +167,20 @@ export function HeroCarouselMobile({ items }: HeroCarouselMobileProps) {
               </motion.div>
             )}
 
+            {current.synopsis && (
+              <div className="hidden md:block mt-1 mb-1 max-w-[90%]">
+                <motion.p
+                  key={`synopsis-${current.id}`}
+                  initial={{ y: 10, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  transition={{ duration: 0.4, delay: 0.32 }}
+                  className="text-[10px] md:text-[11px] text-foreground/60 leading-relaxed line-clamp-2"
+                >
+                  {current.synopsis}
+                </motion.p>
+              </div>
+            )}
+
             <motion.div
               key={`cta-${current.id}`}
               initial={{ y: 10, opacity: 0 }}
@@ -180,7 +194,7 @@ export function HeroCarouselMobile({ items }: HeroCarouselMobileProps) {
                 animeImage={current.poster || current.image}
                 label="Watch"
                 iconSize={4}
-              className="h-7 sm:h-8 px-4 text-[8px] sm:text-[9px] uppercase tracking-[0.2em] font-black shadow-[0_0_12px_rgba(34,197,94,0.25)] hover:neon-glow"
+              className="h-7 sm:h-8 px-4 py-0 text-[8px] sm:text-[9px] uppercase tracking-[0.2em] font-black shadow-[0_0_12px_rgba(34,197,94,0.25)] hover:neon-glow"
             />
             <Link
               href={`/anime/${current.id}`}
@@ -221,23 +235,23 @@ export function HeroCarouselMobile({ items }: HeroCarouselMobileProps) {
 
 export function HeroCarouselMobileSkeleton() {
   return (
-    <section className="relative w-full min-h-[300px] overflow-hidden bg-background">
+    <section className="relative w-full min-h-[300px] flex flex-col overflow-hidden bg-background">
       <div className="absolute inset-0">
         <Skeleton className="absolute inset-0 rounded-none" />
         <div className="absolute inset-0 bg-gradient-to-r from-background via-background/85 to-transparent" />
         <div className="absolute inset-0 bg-gradient-to-t from-background via-background/80 to-transparent" />
       </div>
 
-      <div className="relative z-10 max-w-[1440px] mx-auto px-4 sm:px-6 pt-24 pb-4">
+      <div className="relative z-10 w-full flex-1 flex flex-col max-w-[1440px] mx-auto px-4 sm:px-6 pt-24 pb-4">
         <div className="flex items-center gap-2 mb-3">
           <Skeleton className="w-0.5 h-3.5 rounded-none" />
           <Skeleton className="h-2.5 w-32 rounded-none" />
         </div>
 
-        <div className="flex flex-col sm:flex-row sm:items-start gap-3">
+        <div className="flex flex-col sm:flex-row sm:items-end gap-3 mt-auto">
           <Skeleton className="hidden sm:block shrink-0 w-[90px] md:w-[130px] aspect-[2/3] border-4 border-background shadow-2xl rounded-none" />
 
-          <div className="flex flex-col gap-1.5 flex-1 min-w-0">
+          <div className="flex flex-col gap-1.5 flex-1 min-w-0 pb-1">
             <Skeleton className="h-4 md:h-5 w-3/4 max-w-[200px] rounded-none" />
 
             <div className="flex items-center gap-2">
@@ -248,6 +262,11 @@ export function HeroCarouselMobileSkeleton() {
             <div className="flex items-center gap-1.5">
               <Skeleton className="h-3.5 w-16 rounded-none" />
               <Skeleton className="h-3.5 w-14 rounded-none" />
+            </div>
+
+            <div className="hidden md:flex flex-col gap-1 mt-1 mb-1">
+              <Skeleton className="h-2 w-[90%] rounded-none" />
+              <Skeleton className="h-2 w-[80%] rounded-none" />
             </div>
 
             <div className="flex items-center gap-2">
