@@ -18,6 +18,11 @@ export function HeroCarouselMobile({ items }: HeroCarouselMobileProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
   const [imgLoaded, setImgLoaded] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   const nextSlide = useCallback(() => {
     setCurrentIndex((prev) => (prev + 1) % items.length);
@@ -38,7 +43,7 @@ export function HeroCarouselMobile({ items }: HeroCarouselMobileProps) {
   if (!items.length) return null;
 
   const current = items[currentIndex];
-  const nextAiringStr = current.next_episode && current.next_airing_at
+  const nextAiringStr = isMounted && current.next_episode && current.next_airing_at
     ? formatNextAiring(current.next_episode, current.next_airing_at, true)
     : null;
 

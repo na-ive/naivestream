@@ -1,3 +1,5 @@
+export const revalidate = 60;
+
 import { AnimeService } from "@/lib/services/anime";
 import { AnimeCard } from "@/components/anime/AnimeCard";
 import { HeroCarousel } from "@/components/anime/HeroCarousel";
