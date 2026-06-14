@@ -346,6 +346,13 @@ export default function WatchContent({ id }: { id: string }) {
 
         {/* Main Content: Video Player */}
         <motion.div layout transition={{ duration: 0.1, ease: 'easeInOut' }} className={`self-start ${isCinemaMode ? 'relative z-[60]' : ''} ${isTheaterMode ? 'lg:col-span-2' : 'lg:col-span-1'}`}>
+          
+          {/* Mobile Title */}
+          <div className="lg:hidden mb-4 p-4 sm:p-5 bg-card border-l-4 border-secondary shadow-md">
+            <h1 className="text-base sm:text-lg font-serif font-black tracking-tighter uppercase leading-tight">{displayTitle}{episodeDisplay ? ` ${episodeDisplay}` : ''}</h1>
+            <p className="text-secondary font-bold text-[10px] mt-2 tracking-[0.2em] uppercase opacity-60">Streaming</p>
+          </div>
+
           <div className={`relative aspect-video bg-black border-b-4 border-secondary/20 shadow-2xl overflow-hidden group transition-all duration-500 ${isCinemaMode ? 'shadow-[0_0_50px_rgba(34,197,94,0.15)] ring-1 ring-secondary/30' : ''}`}>
             {serverLoading && (
               <div className="absolute inset-0 z-20 bg-black/60 backdrop-blur-sm flex items-center justify-center">
@@ -376,7 +383,7 @@ export default function WatchContent({ id }: { id: string }) {
               style={{ clipPath: 'polygon(0 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%)' }}
             >
               <div className="relative z-10">
-                <h1 className="text-2xl font-serif font-black tracking-tighter uppercase leading-none">{displayTitle}{episodeDisplay ? ` ${episodeDisplay}` : ''}</h1>
+                <h1 className="text-xl font-serif font-black tracking-tighter uppercase leading-tight">{displayTitle}{episodeDisplay ? ` ${episodeDisplay}` : ''}</h1>
                 <p className="text-secondary font-bold text-xs mt-2 tracking-[0.3em] uppercase opacity-60 flex items-center">
                   <ServerDns className="w-3 h-3 mr-2" />
                   Streaming from {currentServer || 'Primary Server'} {currentResolution && `• ${currentResolution}`}
@@ -526,11 +533,6 @@ export default function WatchContent({ id }: { id: string }) {
               ))}
             </div>
           </div>
-
-          <div className="lg:hidden p-6 bg-card border-l-4 border-secondary">
-            <h1 className="text-xl font-serif font-black tracking-tighter uppercase leading-none">{displayTitle}{episodeDisplay ? ` ${episodeDisplay}` : ''}</h1>
-            <p className="text-secondary font-bold text-[10px] mt-1 tracking-[0.2em] uppercase opacity-60">Streaming</p>
-          </div>
         </div>
       </div>
 
@@ -539,7 +541,7 @@ export default function WatchContent({ id }: { id: string }) {
         <div 
           className={cn(
             "bg-card/50 border-y border-secondary/30 p-10 relative overflow-hidden mb-12",
-            isTheaterMode ? "mt-6" : "mt-0"
+            isTheaterMode ? "mt-6" : "mt-8 lg:mt-12"
           )}
           style={{ clipPath: 'polygon(20px 0, 100% 0, 100% calc(100% - 20px), calc(100% - 20px) 100%, 0 100%, 0 20px)' }}
         >
