@@ -20,7 +20,13 @@ interface SearchResult {
   score: number;
 }
 
-export function LiveSearch() {
+export interface LiveSearchProps {
+  onClose?: () => void;
+  dropdownPosition?: 'top' | 'bottom';
+  onQueryChange?: (query: string) => void;
+}
+
+export function LiveSearch({ onClose, dropdownPosition = 'bottom', onQueryChange }: LiveSearchProps) {
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<SearchResult[]>([]);
   const [isOpen, setIsOpen] = useState(false);
@@ -100,6 +106,7 @@ export function LiveSearch() {
       router.push(`/anime/${results[activeIndex].slug}`);
       setIsOpen(false);
       setQuery('');
+      if (onClose) onClose();
       return;
     }
 
@@ -109,6 +116,7 @@ export function LiveSearch() {
     
     router.push(targetUrl);
     setIsOpen(false);
+    if (onClose) onClose();
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -148,7 +156,10 @@ export function LiveSearch() {
           type="text"
           placeholder="Search anime..."
           value={query}
-          onChange={(e) => setQuery(e.target.value)}
+          onChange={(e) => {
+            setQuery(e.target.value);
+            if (onQueryChange) onQueryChange(e.target.value);
+          }}
           onFocus={() => { setIsFocused(true); if (query.length >= 2) setIsOpen(true); }}
           onBlur={() => setIsFocused(false)}
           onKeyDown={handleKeyDown}
@@ -162,7 +173,7 @@ export function LiveSearch() {
           <Search className="text-secondary w-3.5 h-3.5" />
         </div>
         {!query && !isFocused && (
-          <div className="absolute right-2 top-2 w-max h-7 pointer-events-none flex items-center z-20">
+          <div className="absolute right-2 top-2 w-max h-7 pointer-events-none hidden md:flex items-center z-20">
             <div
               className="px-1.5 h-full flex items-center bg-warning/10 border border-warning/40 text-warning"
               style={{ clipPath: 'polygon(4px 0, 100% 0, 100% calc(100% - 4px), calc(100% - 4px) 100%, 0 100%, 0 4px)' }}
@@ -176,7 +187,9 @@ export function LiveSearch() {
             type="button"
             onClick={() => {
               setQuery('');
+              if (onQueryChange) onQueryChange('');
               setIsOpen(false);
+              inputRef.current?.focus();
             }}
             className="absolute right-2 top-2 w-7 h-7 bg-red-100 dark:bg-red-950/50 border border-red-300 dark:border-red-900/50 hover:bg-red-200 dark:hover:bg-red-900/80 text-red-600 dark:text-red-500 flex items-center justify-center transition-all z-20"
             style={{ clipPath: 'polygon(5px 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 5px)' }}
@@ -194,7 +207,12 @@ export function LiveSearch() {
       {isOpen && query.length >= 2 && (
         <div
           ref={dropdownRef}
-          className="absolute top-full left-0 right-0 mt-2 z-50 animate-in fade-in slide-in-from-top-2 duration-200"
+          className={cn(
+            "absolute left-0 right-0 z-50 animate-in fade-in duration-200",
+            dropdownPosition === 'top' 
+              ? "bottom-full mb-2 slide-in-from-bottom-2" 
+              : "top-full mt-2 slide-in-from-top-2"
+          )}
         >
           <div className="bg-card border-2 border-secondary/20 shadow-xl flex flex-col max-h-[400px] overflow-y-auto custom-scrollbar">
             {loading ? (
@@ -220,12 +238,12 @@ export function LiveSearch() {
                     key={anime.slug}
                     anime={anime}
                     isActive={activeIndex === index}
-                    onSelect={() => { setIsOpen(false); setQuery(''); }}
+                    onSelect={() => { setIsOpen(false); setQuery(''); if (onClose) onClose(); }}
                     onHover={() => setActiveIndex(index)}
                   />
                 ))}
                 <button
-                  onClick={handleSubmit}
+                  onClick={() => { handleSubmit(); if (onClose) onClose(); }}
                   onMouseEnter={() => setActiveIndex(results.length)}
                   className={cn(
                     "w-full p-3 text-[10px] uppercase tracking-[0.3em] font-black text-center border-t border-white/5 transition-all",
@@ -303,7 +321,7 @@ function SearchResultItem({ anime, isActive, onSelect, onHover }: { anime: Searc
   );
 }
 
-export function LiveSearchSkeleton() {
+export function LiveSearchSkeleton({ dropdownPosition = 'bottom' }: { dropdownPosition?: 'top' | 'bottom' }) {
   return (
     <div className="relative w-full group">
       <div className="relative w-full">
@@ -313,7 +331,12 @@ export function LiveSearchSkeleton() {
           style={{ clipPath: 'polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px)' }}
         />
       </div>
-      <div className="absolute top-full left-0 right-0 mt-2 z-50">
+      <div 
+        className={cn(
+          "absolute left-0 right-0 z-50",
+          dropdownPosition === 'top' ? "bottom-full mb-2" : "top-full mt-2"
+        )}
+      >
         <div className="bg-card border-2 border-secondary/20 shadow-xl flex flex-col">
           {Array.from({ length: 4 }).map((_, i) => (
             <div key={i} className="flex items-center gap-4 p-3 border-b border-white/5">

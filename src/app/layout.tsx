@@ -5,6 +5,7 @@ import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import { TitleLangProvider } from "@/lib/providers/TitleLangProvider";
 import { ViewModeProvider } from "@/lib/providers/ViewModeProvider";
 import { Navbar } from "@/components/layout/Navbar";
+import { MobileBottomNav } from "@/components/layout/MobileBottomNav";
 import { Footer } from "@/components/layout/Footer";
 import { ScrollToTop } from "@/components/layout/ScrollToTop";
 import { Toaster } from "sonner";
@@ -48,7 +49,8 @@ export default function RootLayout({
             <TitleLangProvider>
               <ViewModeProvider>
                 <Navbar />
-                <main className="grow pt-20">
+                <MobileBottomNav />
+                <main className="grow pt-20 pb-16 md:pb-0">
                   {children}
                 </main>
               </ViewModeProvider>

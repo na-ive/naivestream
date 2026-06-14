@@ -8,6 +8,8 @@ import { Search, Moon, Sun, Menu, Close, ChevronDown, Shuffle } from '@carbon/ic
 import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
 import { Tooltip } from '@/components/ui/Tooltip';
+import { SettingsAdjust, Asleep, AsleepFilled, Light, LightFilled } from '@carbon/icons-react';
+import { useTitleLang } from '@/lib/providers/TitleLangProvider';
 
 import { PreferenceMenu } from './PreferenceMenu';
 import { LiveSearch } from '@/components/search/LiveSearch';
@@ -22,6 +24,7 @@ export function Navbar() {
   const { theme, setTheme } = useTheme();
   const pathname = usePathname();
   const router = useRouter();
+  const { titleLang, setTitleLang } = useTitleLang();
   const [isRandomLoading, setIsRandomLoading] = useState(false);
 
   // Handle mounting on client to avoid hydration mismatch
@@ -69,11 +72,20 @@ export function Navbar() {
     const handleClickOutside = (e: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
         setOpenDropdown(null);
+        setIsMenuOpen(false);
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+
+  const changeTheme = (next: string) => {
+    if (typeof document !== 'undefined' && (document as any).startViewTransition) {
+      (document as any).startViewTransition(() => setTheme(next));
+    } else {
+      setTheme(next);
+    }
+  };
 
   const navLinks = [
     { name: 'Home', href: '/' },
@@ -199,7 +211,7 @@ export function Navbar() {
           </div>
 
           {/* Mobile Actions */}
-          <div className="flex md:hidden items-center space-x-2">
+          <div className="flex md:hidden items-center gap-2 relative" ref={dropdownRef}>
             <button
               onClick={handleRandomAnime}
               disabled={isRandomLoading}
@@ -208,74 +220,118 @@ export function Navbar() {
             >
               <Shuffle className={cn("w-5 h-5", isRandomLoading && "animate-spin")} />
             </button>
-            <PreferenceMenu />
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="p-2 bg-secondary text-background cursor-pointer min-w-[44px] min-h-[44px] flex items-center justify-center"
+              className={cn(
+                "relative p-[2px] transition-all cursor-pointer min-w-[44px] h-[44px] group",
+                isMenuOpen
+                  ? "border border-secondary bg-secondary/10"
+                  : "border border-secondary/30 hover:border-secondary"
+              )}
+              aria-label="Menu"
             >
-              {isMenuOpen ? <Close className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              <div className={cn(
+                "relative w-full h-full flex items-center justify-center transition-all overflow-hidden",
+                isMenuOpen ? "bg-secondary/50" : "bg-secondary/30 group-hover:bg-secondary/50"
+              )}>
+                <div className="transition-transform duration-300 group-hover:scale-110 relative z-10 flex items-center justify-center">
+                  {isMenuOpen ? <Close className="w-5 h-5 text-secondary" /> : <Menu className="w-5 h-5 text-secondary" />}
+                </div>
+                <div className="absolute inset-0 pointer-events-none bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.1)_50%)] bg-[length:100%_4px] z-20" />
+              </div>
             </button>
+            
+            {/* Mobile Dropdown Menu */}
+            {isMenuOpen && (
+              <div className="absolute top-full right-0 mt-2 w-56 pt-2 z-50 animate-in fade-in slide-in-from-top-2 duration-200">
+                <div className="bg-card border-2 border-secondary/20 shadow-xl flex flex-col">
+                  {/* Links */}
+                  <Link
+                    href="/genre"
+                    onClick={() => setIsMenuOpen(false)}
+                    className={cn(
+                      "px-4 py-3 text-xs font-mono font-bold uppercase tracking-[0.2em] transition-all hover:bg-secondary/10 hover:text-secondary border-b border-white/5",
+                      pathname.startsWith('/genre') ? "text-secondary bg-secondary/5" : "text-foreground/70"
+                    )}
+                  >
+                    Browse Genre
+                  </Link>
+                  <Link
+                    href="/schedule"
+                    onClick={() => setIsMenuOpen(false)}
+                    className={cn(
+                      "px-4 py-3 text-xs font-mono font-bold uppercase tracking-[0.2em] transition-all hover:bg-secondary/10 hover:text-secondary border-b border-white/5",
+                      pathname.startsWith('/schedule') ? "text-secondary bg-secondary/5" : "text-foreground/70"
+                    )}
+                  >
+                    Schedule
+                  </Link>
+
+                  {/* Settings section */}
+                  {/* Theme Toggle */}
+                  <div className="flex items-center justify-between px-4 h-[52px] border-b border-secondary/20 bg-black/20">
+                    <span className="text-xs font-mono font-bold uppercase tracking-[0.2em] text-foreground/70">Theme</span>
+                    <div className="inline-flex bg-card/50 border border-secondary/30 p-0.5">
+                      <button
+                        onClick={() => changeTheme('dark')}
+                        className={cn(
+                          "px-3 py-1.5 flex items-center justify-center transition-all",
+                          theme === 'dark'
+                            ? "bg-secondary text-background shadow-[0_0_10px_rgba(34,197,94,0.4)]"
+                            : "text-muted-text hover:text-foreground hover:bg-secondary/10"
+                        )}
+                      >
+                        {theme === 'dark' ? <AsleepFilled className="w-3.5 h-3.5" /> : <Asleep className="w-3.5 h-3.5" />}
+                      </button>
+                      <button
+                        onClick={() => changeTheme('light')}
+                        className={cn(
+                          "px-3 py-1.5 flex items-center justify-center transition-all",
+                          theme === 'light'
+                            ? "bg-secondary text-background shadow-[0_0_10px_rgba(34,197,94,0.4)]"
+                            : "text-muted-text hover:text-foreground hover:bg-secondary/10"
+                        )}
+                      >
+                        {theme === 'light' ? <LightFilled className="w-3.5 h-3.5" /> : <Light className="w-3.5 h-3.5" />}
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Title Language Toggle */}
+                  <div className="flex items-center justify-between px-4 h-[52px] bg-black/20">
+                    <span className="text-xs font-mono font-bold uppercase tracking-[0.2em] text-foreground/70">Title</span>
+                    <div className="inline-flex bg-card/50 border border-secondary/30 p-0.5">
+                      <button
+                        onClick={() => setTitleLang('jp')}
+                        className={cn(
+                          "px-3 py-1.5 font-bold uppercase tracking-widest text-[10px] transition-all",
+                          titleLang === 'jp'
+                            ? "bg-secondary text-background shadow-[0_0_10px_rgba(34,197,94,0.4)]"
+                            : "text-muted-text hover:text-foreground hover:bg-secondary/10"
+                        )}
+                      >
+                        JP
+                      </button>
+                      <button
+                        onClick={() => setTitleLang('en')}
+                        className={cn(
+                          "px-3 py-1.5 font-bold uppercase tracking-widest text-[10px] transition-all",
+                          titleLang === 'en'
+                            ? "bg-secondary text-background shadow-[0_0_10px_rgba(34,197,94,0.4)]"
+                            : "text-muted-text hover:text-foreground hover:bg-secondary/10"
+                        )}
+                      >
+                        EN
+                      </button>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
-
-      {/* Mobile Menu */}
-      {isMenuOpen && (
-        <div className="md:hidden bg-background border-b-2 border-secondary/30 animate-in slide-in-from-top duration-300">
-          <div className="px-4 py-8 space-y-6">
-            <LiveSearch />
-            <div className="grid grid-cols-1 gap-2">
-              {navLinks.map((link) => {
-                if (link.type === 'dropdown') {
-                  return (
-                    <div key={link.name} className="flex flex-col">
-                      <div className={cn(
-                        "p-5 font-mono font-bold uppercase tracking-widest bg-white/5",
-                        link.items?.some(item => pathname.startsWith(item.href)) ? "text-secondary" : "text-foreground/70"
-                      )}>
-                        {link.name}
-                      </div>
-                      <div className="flex flex-col pl-4 border-l-4 border-transparent">
-                        {link.items?.map((item) => (
-                          <Link
-                            key={item.href}
-                            href={item.href}
-                            onClick={() => setIsMenuOpen(false)}
-                            className={cn(
-                              "flex items-center p-4 font-mono font-bold uppercase tracking-widest border-l-4 transition-all",
-                              pathname.startsWith(item.href) 
-                                ? "bg-secondary/10 border-secondary text-secondary" 
-                                : "border-transparent text-foreground/50 hover:text-foreground"
-                            )}
-                          >
-                            {item.name}
-                          </Link>
-                        ))}
-                      </div>
-                    </div>
-                  );
-                }
-
-                return (
-                  <Link
-                    key={link.name}
-                    href={link.href as string}
-                    onClick={() => setIsMenuOpen(false)}
-                    className={cn(
-                      "flex items-center p-5 font-mono font-bold uppercase tracking-widest border-l-4 transition-all",
-                      pathname === link.href 
-                        ? "bg-secondary/10 border-secondary text-secondary" 
-                        : "border-transparent text-foreground/50 hover:text-foreground"
-                    )}
-                  >
-                    {link.name}
-                  </Link>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-      )}
     </nav>
   );
 }
