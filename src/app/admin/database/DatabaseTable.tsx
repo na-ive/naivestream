@@ -1,10 +1,11 @@
 'use client';
 
 import { useState, useTransition, useEffect } from 'react';
-import { updateAnimeMapping } from '../actions';
+import { updateAnimeMapping, deleteAnime } from '../actions';
 import { toast } from 'sonner';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
-import { Search, ChevronDown, ChevronUp, Renew, Checkmark, Close, ChevronLeft, ChevronRight } from '@carbon/icons-react';
+import { Search, ChevronDown, ChevronUp, Renew, Checkmark, Close, ChevronLeft, ChevronRight, TrashCan } from '@carbon/icons-react';
+import { Modal } from '@/components/ui/Modal';
 
 type AnimeRow = {
   id: number;
@@ -44,6 +45,7 @@ export function DatabaseTable({
   const [searchValue, setSearchValue] = useState(currentSearch);
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editValues, setEditValues] = useState<{malId: string, anilistId: string}>({ malId: '', anilistId: '' });
+  const [animeToDelete, setAnimeToDelete] = useState<{id: number, title: string} | null>(null);
 
   // Debounced search
   useEffect(() => {
@@ -103,6 +105,23 @@ export function DatabaseTable({
       } else {
         toast.error(`Error: ${result.error}`);
       }
+    });
+  };
+
+  const handleDelete = (id: number, title: string) => {
+    setAnimeToDelete({ id, title });
+  };
+
+  const confirmDelete = () => {
+    if (!animeToDelete) return;
+    startTransition(async () => {
+      const result = await deleteAnime(animeToDelete.id);
+      if (result.success) {
+        toast.success(result.message || `Anime deleted successfully`);
+      } else {
+        toast.error(`Error: ${result.error}`);
+      }
+      setAnimeToDelete(null);
     });
   };
 
@@ -249,12 +268,22 @@ export function DatabaseTable({
                           </button>
                         </div>
                       ) : (
-                        <button 
-                          onClick={() => startEditing(anime)}
-                          className="text-[10px] uppercase font-bold tracking-widest text-muted-text hover:text-secondary px-3 py-1.5 border border-border hover:border-secondary/50 transition-colors bg-card"
-                        >
-                          EDIT ID
-                        </button>
+                        <div className="flex items-center justify-end gap-2">
+                          <button 
+                            onClick={() => startEditing(anime)}
+                            className="text-[10px] uppercase font-bold tracking-widest text-muted-text hover:text-secondary px-3 py-1.5 border border-border hover:border-secondary/50 transition-colors bg-card"
+                          >
+                            EDIT ID
+                          </button>
+                          <button
+                            onClick={() => handleDelete(anime.id, anime.title)}
+                            disabled={isPending}
+                            className="p-1.5 text-muted-text hover:text-red-500 bg-card hover:bg-red-500/10 transition-colors border border-border hover:border-red-500/50 disabled:opacity-50"
+                            title="Delete Anime"
+                          >
+                            <TrashCan className="w-4 h-4" />
+                          </button>
+                        </div>
                       )}
                     </td>
                   </tr>
@@ -289,6 +318,47 @@ export function DatabaseTable({
           </button>
         </div>
       )}
+
+      {/* Delete Confirmation Modal */}
+      <Modal
+        isOpen={animeToDelete !== null}
+        onClose={() => setAnimeToDelete(null)}
+        title={
+          <div className="flex items-center gap-3">
+            <div className="w-1.5 h-6 bg-red-500 shadow-[0_0_10px_rgba(239,68,68,0.5)]" />
+            <h2 className="text-red-500 text-xs font-mono font-black uppercase tracking-[0.4em]">
+              Delete <span className="text-foreground/50">//</span> Confirm Action
+            </h2>
+          </div>
+        }
+        footer={
+          <>
+            <button
+              onClick={() => setAnimeToDelete(null)}
+              className="px-4 py-2 font-black uppercase text-xs tracking-widest text-muted-text hover:text-white transition-colors"
+              disabled={isPending}
+            >
+              Cancel
+            </button>
+            <button
+              onClick={confirmDelete}
+              className="flex items-center space-x-2 px-6 py-2.5 bg-red-500 text-white font-black text-[10px] uppercase tracking-[0.2em] shadow-[0_0_15px_rgba(239,68,68,0.5)] hover:shadow-[0_0_25px_rgba(239,68,68,0.7)] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              style={{ clipPath: 'polygon(4px 0, 100% 0, 100% calc(100% - 4px), calc(100% - 4px) 100%, 0 100%, 0 4px)' }}
+              disabled={isPending}
+            >
+              {isPending ? <Renew className="w-4 h-4 animate-spin" /> : <TrashCan className="w-4 h-4" />}
+              <span>{isPending ? 'Deleting...' : 'Confirm Delete'}</span>
+            </button>
+          </>
+        }
+      >
+        <p className="text-sm text-muted-text">
+          WARNING: Are you sure you want to permanently delete <strong className="text-foreground">"{animeToDelete?.title}"</strong> (ID: {animeToDelete?.id})?
+        </p>
+        <p className="text-sm text-red-400 mt-4">
+          This will remove the anime and cascade delete all its episodes and metadata. This action CANNOT be undone.
+        </p>
+      </Modal>
     </div>
   );
 }

@@ -215,3 +215,23 @@ export async function triggerScrapeSlug(slug: string, correctSlug?: string) {
     return { success: false, error: error.message || 'Failed to spawn process' };
   }
 }
+
+export async function deleteAnime(id: number) {
+  await checkAuth();
+  if (!db) throw new Error("Database connection failed");
+
+  try {
+    const stmt = db.prepare('DELETE FROM anime WHERE id = ?');
+    const info = stmt.run(id);
+
+    if (info.changes > 0) {
+      revalidatePath('/admin/database');
+      revalidatePath('/admin/operations');
+      return { success: true, message: `Anime deleted successfully.` };
+    }
+    return { success: false, error: 'Anime not found' };
+  } catch (error: any) {
+    return { success: false, error: error.message || 'Failed to delete anime' };
+  }
+}
+
