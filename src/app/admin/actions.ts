@@ -7,6 +7,7 @@ import { revalidatePath } from 'next/cache';
 import { exec } from 'child_process';
 import { promisify } from 'util';
 import path from 'path';
+import fs from 'fs';
 import { parseIndonesianDate } from '@/lib/utils';
 
 const execPromise = promisify(exec);
@@ -90,13 +91,27 @@ export async function getAdminStats() {
   const noEpisodes = (db.prepare('SELECT COUNT(*) as count FROM anime WHERE id NOT IN (SELECT DISTINCT anime_id FROM episodes)').get() as any).count;
   const missingAnilistId = (db.prepare('SELECT COUNT(*) as count FROM anime WHERE anilist_id IS NULL OR anilist_id = 0').get() as any).count;
 
+  // Get Last Updated
+  const lastUpdatedObj = db.prepare('SELECT MAX(last_updated) as last FROM anime').get() as any;
+  const lastSync = lastUpdatedObj?.last ? new Date(lastUpdatedObj.last + 'Z').toLocaleString('en-US', { timeZone: 'Asia/Jakarta', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : 'Never';
+
+  // Get DB Size
+  let dbSizeMB = '0.00';
+  try {
+    const dbPath = path.join(process.cwd(), 'anime.db');
+    const stats = fs.statSync(dbPath);
+    dbSizeMB = (stats.size / (1024 * 1024)).toFixed(2);
+  } catch(e) {}
+
   return {
     totalAnime,
     totalEpisodes,
     totalCharacters,
     totalVoiceActors,
     noEpisodes,
-    missingAnilistId
+    missingAnilistId,
+    lastSync,
+    dbSizeMB
   };
 }
 

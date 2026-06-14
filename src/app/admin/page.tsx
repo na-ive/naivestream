@@ -1,4 +1,6 @@
 import { getAdminStats, getRecentOngoingEpisodes } from './actions';
+import Link from 'next/link';
+import RefreshButton from './RefreshButton';
 
 export const dynamic = 'force-dynamic';
 
@@ -12,12 +14,12 @@ export default async function AdminDashboard() {
     { label: 'Total Anime', value: stats.totalAnime, color: 'text-secondary' },
     { label: 'Total Episodes', value: stats.totalEpisodes, color: 'text-foreground' },
     { label: 'Total Characters', value: stats.totalCharacters, color: 'text-foreground' },
-    { label: 'Total Voice Actors', value: stats.totalVoiceActors, color: 'text-foreground' },
+    { label: 'Database Size', value: `${stats.dbSizeMB} MB`, color: 'text-foreground' },
   ];
 
   const warnings = [
-    { label: 'No Episodes', value: stats.noEpisodes },
-    { label: 'Missing AniList ID', value: stats.missingAnilistId },
+    { label: 'No Episodes', value: stats.noEpisodes, tab: 'noEpisodes' },
+    { label: 'Missing AniList ID', value: stats.missingAnilistId, tab: 'unmatched' },
   ];
 
   return (
@@ -25,13 +27,22 @@ export default async function AdminDashboard() {
       <div className="max-w-6xl mx-auto space-y-12">
         
         {/* Header */}
-        <header className="border-b border-border pb-6">
-          <h1 className="text-3xl md:text-4xl font-serif uppercase tracking-tighter text-secondary">
-            Command Center
-          </h1>
-          <p className="text-muted-text uppercase tracking-widest text-sm mt-2">
-            System Overview & Metrics
-          </p>
+        <header className="flex flex-col md:flex-row md:items-end justify-between border-b border-border pb-6 gap-4">
+          <div>
+            <h1 className="text-3xl md:text-4xl font-serif uppercase tracking-tighter text-secondary">
+              Command Center
+            </h1>
+            <p className="text-muted-text uppercase tracking-widest text-sm mt-2">
+              System Overview & Metrics
+            </p>
+          </div>
+          <div className="flex items-end gap-6">
+            <div className="text-right">
+              <div className="text-xs font-bold uppercase tracking-widest text-muted-text">Last Sync</div>
+              <div className="text-sm font-mono text-secondary">{stats.lastSync}</div>
+            </div>
+            <RefreshButton />
+          </div>
         </header>
 
         {/* Metrics Grid */}
@@ -44,7 +55,7 @@ export default async function AdminDashboard() {
                 <div className="relative z-10">
                   <p className="text-xs text-muted-text font-bold uppercase tracking-widest mb-2">{metric.label}</p>
                   <p className={`text-4xl font-serif font-black ${metric.color}`}>
-                    {metric.value.toLocaleString()}
+                    {typeof metric.value === 'number' ? metric.value.toLocaleString() : metric.value}
                   </p>
                 </div>
                 {/* Decorative corner */}
@@ -59,10 +70,17 @@ export default async function AdminDashboard() {
           <h2 className="text-xl font-bold uppercase tracking-wider text-red-500">System Anomalies</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {warnings.map((warning, idx) => (
-              <div key={idx} className="bg-red-500/5 border border-red-500/20 p-6 flex justify-between items-center">
-                <span className="text-sm font-bold text-red-500 uppercase tracking-widest">{warning.label}</span>
+              <Link 
+                href={`/admin/operations?tab=${warning.tab}`} 
+                key={idx} 
+                className="bg-red-500/5 border border-red-500/20 p-6 flex justify-between items-center hover:bg-red-500/10 hover:border-red-500/50 transition-all cursor-pointer group"
+              >
+                <div className="flex flex-col">
+                  <span className="text-sm font-bold text-red-500 uppercase tracking-widest">{warning.label}</span>
+                  <span className="text-[10px] uppercase text-red-500/40 group-hover:text-red-500/80 font-mono mt-1 transition-colors">Click to resolve &rarr;</span>
+                </div>
                 <span className="text-2xl font-mono font-black text-red-500">{warning.value.toLocaleString()}</span>
-              </div>
+              </Link>
             ))}
           </div>
         </section>
