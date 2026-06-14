@@ -27,6 +27,15 @@ export async function getAnomalies() {
   return rows;
 }
 
+export async function getNoEpisodesAnime() {
+  await checkAuth();
+  
+  if (!db) throw new Error("Database connection failed");
+  const stmt = db.prepare('SELECT id, slug, title, type FROM anime WHERE id NOT IN (SELECT DISTINCT anime_id FROM episodes) ORDER BY id DESC LIMIT 50');
+  const rows = stmt.all();
+  return rows;
+}
+
 export async function injectMetadata(animeId: number, anilistId: number) {
   await checkAuth();
 
