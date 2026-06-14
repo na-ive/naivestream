@@ -42,7 +42,22 @@ export function Navbar() {
     handleScroll();
     
     window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+
+    // Tablet CTRL+K handler
+    const handleGlobalKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        if (window.innerWidth >= 768 && window.innerWidth < 1280) {
+          e.preventDefault();
+          setIsSearchOpen(true);
+        }
+      }
+    };
+    document.addEventListener('keydown', handleGlobalKeyDown);
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      document.removeEventListener('keydown', handleGlobalKeyDown);
+    };
   }, []);
 
   const handleSearch = (e: React.FormEvent) => {
@@ -216,7 +231,7 @@ export function Navbar() {
                 
                 {isSearchOpen && (
                   <div className="absolute top-full right-0 mt-4 w-[400px] z-50 animate-in fade-in slide-in-from-top-2 duration-200">
-                    <LiveSearch onClose={() => setIsSearchOpen(false)} />
+                    <LiveSearch autoFocus={true} onClose={() => setIsSearchOpen(false)} />
                   </div>
                 )}
               </div>

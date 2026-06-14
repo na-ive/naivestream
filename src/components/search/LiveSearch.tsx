@@ -24,9 +24,10 @@ export interface LiveSearchProps {
   onClose?: () => void;
   dropdownPosition?: 'top' | 'bottom';
   onQueryChange?: (query: string) => void;
+  autoFocus?: boolean;
 }
 
-export function LiveSearch({ onClose, dropdownPosition = 'bottom', onQueryChange }: LiveSearchProps) {
+export function LiveSearch({ onClose, dropdownPosition = 'bottom', onQueryChange, autoFocus = false }: LiveSearchProps) {
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<SearchResult[]>([]);
   const [isOpen, setIsOpen] = useState(false);
@@ -123,6 +124,7 @@ export function LiveSearch({ onClose, dropdownPosition = 'bottom', onQueryChange
     if (e.key === 'Escape') {
       setIsOpen(false);
       inputRef.current?.blur();
+      if (onClose) onClose();
       return;
     }
 
@@ -156,6 +158,7 @@ export function LiveSearch({ onClose, dropdownPosition = 'bottom', onQueryChange
           type="text"
           placeholder="Search anime..."
           value={query}
+          autoFocus={autoFocus}
           onChange={(e) => {
             setQuery(e.target.value);
             if (onQueryChange) onQueryChange(e.target.value);
