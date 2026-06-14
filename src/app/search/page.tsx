@@ -256,8 +256,9 @@ function SearchContent() {
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.3, ease: 'easeInOut' }}
             key="filters"
+            className="max-md:fixed max-md:inset-0 max-md:z-50 max-md:bg-background/95 max-md:backdrop-blur-xl"
           >
-          <div className="space-y-4 p-4 md:bg-card/20 md:border md:border-secondary/10 max-md:fixed max-md:inset-0 max-md:z-50 max-md:bg-background/95 max-md:backdrop-blur-xl max-md:p-6 max-md:overflow-y-auto max-md:h-[100dvh]">
+          <div className="space-y-4 p-4 md:bg-card/20 md:border md:border-secondary/10 max-md:p-6 max-md:pb-[260px] max-md:overflow-y-auto max-md:h-[100dvh]">
             
             {/* Mobile Close Button */}
             <div className="md:hidden flex items-center justify-between mb-6 pb-4 border-b border-secondary/20">
@@ -408,8 +409,9 @@ function SearchContent() {
               </div>
             </div>
 
+          </div>
             {/* Mobile Apply Button */}
-            <div className="md:hidden pt-6 mt-6 border-t border-secondary/20 pb-12">
+            <div className="md:hidden absolute bottom-0 left-0 right-0 z-[60] bg-background border-t border-secondary/20 p-4 px-6 pb-[84px]">
               <button
                 onClick={() => setShowFilters(false)}
                 className="w-full py-4 bg-secondary text-background font-black uppercase tracking-widest text-sm hover:shadow-[0_0_20px_rgba(34,197,94,0.4)] transition-all"
@@ -418,7 +420,6 @@ function SearchContent() {
                 Apply Filters & Close
               </button>
             </div>
-          </div>
           </motion.div>
           )}
         </AnimatePresence>

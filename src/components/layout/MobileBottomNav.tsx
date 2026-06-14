@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, Activity, Search, CheckmarkOutline, Bookmark, Close } from '@carbon/icons-react';
+import { Home, Activity, Search, Checkmark, Bookmark, Close } from '@carbon/icons-react';
 import { cn } from '@/lib/utils';
 import { MobileSearchOverlay } from '@/components/search/MobileSearchOverlay';
 
@@ -28,7 +28,7 @@ export function MobileBottomNav() {
         }
       } 
     },
-    { name: 'Completed', href: '/completed', icon: CheckmarkOutline },
+    { name: 'Completed', href: '/completed', icon: Checkmark },
     { name: 'Library', href: '/library', icon: Bookmark },
   ];
 

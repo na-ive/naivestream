@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 import { AnimeService } from "@/lib/services/anime";
 import { AnimeCard } from "@/components/anime/AnimeCard";
-import { CheckmarkOutline, FaceDissatisfied } from "@carbon/icons-react";
+import { Checkmark, FaceDissatisfied } from "@carbon/icons-react";
 import { Pagination } from "@/components/layout/Pagination";
 import { ViewGridWrapper } from "@/components/layout/ViewGridWrapper";
 import { ViewToggle } from "@/components/layout/ViewToggle";
@@ -25,7 +25,7 @@ export default async function CompletedPage(props: { searchParams: Promise<{ pag
       <div className="mb-12">
         <div className="flex items-center space-x-4 mb-6">
           <div className="p-3 bg-secondary/10 text-secondary border border-secondary/30 relative">
-            <CheckmarkOutline className="w-8 h-8 relative z-10" />
+            <Checkmark className="w-8 h-8 relative z-10" />
             <div className="absolute top-0 left-0 w-2 h-2 border-t-2 border-l-2 border-secondary" />
             <div className="absolute bottom-0 right-0 w-2 h-2 border-b-2 border-r-2 border-secondary" />
           </div>
