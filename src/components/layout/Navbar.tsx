@@ -13,14 +13,17 @@ import { useTitleLang } from '@/lib/providers/TitleLangProvider';
 
 import { PreferenceMenu } from './PreferenceMenu';
 import { LiveSearch } from '@/components/search/LiveSearch';
+import { MobileSearchOverlay } from '@/components/search/MobileSearchOverlay';
 
 export function Navbar() {
   const [mounted, setMounted] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [isScrolled, setIsScrolled] = useState(false);
   const dropdownRef = React.useRef<HTMLDivElement>(null);
+  const tabletSearchRef = React.useRef<HTMLDivElement>(null);
   const { theme, setTheme } = useTheme();
   const pathname = usePathname();
   const router = useRouter();
@@ -73,6 +76,9 @@ export function Navbar() {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
         setOpenDropdown(null);
         setIsMenuOpen(false);
+      }
+      if (tabletSearchRef.current && !tabletSearchRef.current.contains(e.target as Node)) {
+        setIsSearchOpen(false);
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
@@ -191,6 +197,30 @@ export function Navbar() {
             })}
             
             <div className="flex items-center space-x-2 ml-2">
+              {/* Tablet Search Button & Dropdown */}
+              <div className="hidden md:flex lg:hidden relative" ref={tabletSearchRef}>
+                <Tooltip content="Search" position="bottom">
+                  <button
+                    onClick={() => setIsSearchOpen(!isSearchOpen)}
+                    className={cn(
+                      "relative p-2.5 transition-all cursor-pointer min-w-[44px] min-h-[44px] flex items-center justify-center group",
+                      isSearchOpen 
+                        ? "border border-secondary bg-secondary/10 text-secondary"
+                        : "border border-secondary/30 hover:border-secondary text-secondary"
+                    )}
+                    aria-label="Search"
+                  >
+                    <Search className="w-5 h-5 transition-transform duration-300 group-hover:scale-110" />
+                  </button>
+                </Tooltip>
+                
+                {isSearchOpen && (
+                  <div className="absolute top-full right-0 mt-4 w-[400px] z-50 animate-in fade-in slide-in-from-top-2 duration-200">
+                    <LiveSearch onClose={() => setIsSearchOpen(false)} />
+                  </div>
+                )}
+              </div>
+
               {/* Random Anime Button */}
               <Tooltip content="Random Anime" position="bottom">
                 <button
