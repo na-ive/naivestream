@@ -19,7 +19,7 @@ type DeleteActionType = 'all' | 'bulk' | null;
 export default function LibraryPage() {
   return (
     <Suspense fallback={
-      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-28 md:pb-12">
         <div className="anime-grid">
           {Array.from({ length: 6 }).map((_, i) => (
             <AnimeCardSkeleton key={i} forceGrid={true} />
@@ -110,7 +110,7 @@ function LibraryContent() {
   if (!mounted) return null; // Avoid hydration mismatch
 
   return (
-    <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-28 md:pb-12">
       {/* Header & Tabs */}
       <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6 border-b border-white/5 pb-6">
         <div className="space-y-6">
@@ -167,19 +167,24 @@ function LibraryContent() {
         
         {/* Bulk Action Controls */}
         {((activeTab === 'watchlist' && watchlist.length > 0) || (activeTab === 'history' && history.length > 0)) && (
-          <div className="flex items-center space-x-3">
+          <div className={cn(
+            "flex flex-wrap items-center justify-end gap-3",
+            isSelectionMode
+              ? "fixed bottom-[100px] left-4 right-4 md:relative md:bottom-auto md:left-auto md:right-auto z-[45]"
+              : "relative"
+          )}>
             {isSelectionMode ? (
               <>
                 <button 
                   onClick={() => setDeleteAction('bulk')}
                   disabled={selectedIds.length === 0}
                   className={cn(
-                    "flex items-center space-x-2 px-6 py-2.5 transition-all font-black text-[10px] uppercase tracking-[0.2em]",
+                    "flex-1 md:flex-none flex items-center justify-center space-x-2 px-6 py-3 transition-all font-black text-[10px] uppercase tracking-[0.2em] shadow-[0_10px_20px_rgba(0,0,0,0.5)] md:shadow-none",
                     selectedIds.length > 0
                       ? "bg-red-500 hover:bg-red-600 text-white shadow-[0_0_15px_rgba(239,68,68,0.3)]"
-                      : "bg-card/50 text-muted-text cursor-not-allowed"
+                      : "bg-card/90 text-muted-text cursor-not-allowed"
                   )}
-                  style={{ clipPath: 'polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px)' }}
+                  style={{ clipPath: 'polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px)' }}
                 >
                   <TrashCan className="w-4 h-4 shrink-0" />
                   <span>Delete Selected ({selectedIds.length})</span>
@@ -189,8 +194,8 @@ function LibraryContent() {
                     setIsSelectionMode(false);
                     setSelectedIds([]);
                   }}
-                  className="px-6 py-2.5 bg-card/80 border border-white/10 hover:border-white/30 text-foreground transition-all font-black text-[10px] uppercase tracking-[0.2em]"
-                  style={{ clipPath: 'polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px)' }}
+                  className="px-6 py-3 bg-card border border-white/10 hover:border-white/30 text-foreground transition-all font-black text-[10px] uppercase tracking-[0.2em] shadow-[0_10px_20px_rgba(0,0,0,0.5)] md:shadow-none"
+                  style={{ clipPath: 'polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px)' }}
                 >
                   Cancel
                 </button>
@@ -347,7 +352,7 @@ function LibraryContent() {
                           const wc = getWatchedCount(item.animeId);
                           return wc > 0 ? (
                             <span className="flex items-center gap-1 text-[9px] font-mono font-bold text-secondary">
-                              <Checkmark className="w-2.5 h-2.5 fill-current" />
+                              <Checkmark className="hidden sm:block w-2.5 h-2.5 fill-current" />
                               {wc} watched
                             </span>
                           ) : null;
