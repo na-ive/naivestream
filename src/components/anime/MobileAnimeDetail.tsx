@@ -82,21 +82,21 @@ export function MobileAnimeDetail({ id, data, source, similarAnime, charactersDa
           {/* Horizontal Scrollable Metadata Badges */}
           <div className="flex overflow-x-auto gap-3 py-4 mt-2 no-scrollbar snap-x">
             {rating && (
-              <div className="flex items-center gap-1.5 px-3 py-1.5 bg-card border border-white/5 shrink-0 snap-start rounded-md">
+              <div className="flex items-center gap-1.5 px-3 py-1.5 bg-card border border-white/5 shrink-0 snap-start">
                 <StarFilled className="text-secondary w-3.5 h-3.5" />
                 <span className="text-xs font-black">{rating}</span>
               </div>
             )}
-            <div className="flex items-center gap-1.5 px-3 py-1.5 bg-card border border-white/5 shrink-0 snap-start rounded-md text-xs font-bold uppercase tracking-wider text-muted-text">
+            <div className="flex items-center gap-1.5 px-3 py-1.5 bg-card border border-white/5 shrink-0 snap-start text-xs font-bold uppercase tracking-wider text-muted-text">
               Status <span className="text-secondary ml-1">{status}</span>
             </div>
-            <div className="flex items-center gap-1.5 px-3 py-1.5 bg-card border border-white/5 shrink-0 snap-start rounded-md text-xs font-bold uppercase tracking-wider text-muted-text">
+            <div className="flex items-center gap-1.5 px-3 py-1.5 bg-card border border-white/5 shrink-0 snap-start text-xs font-bold uppercase tracking-wider text-muted-text">
               Eps <span className="text-foreground ml-1">{numEpisodes}</span>
             </div>
-            <div className="flex items-center gap-1.5 px-3 py-1.5 bg-card border border-white/5 shrink-0 snap-start rounded-md text-xs font-bold uppercase tracking-wider text-muted-text">
+            <div className="flex items-center gap-1.5 px-3 py-1.5 bg-card border border-white/5 shrink-0 snap-start text-xs font-bold uppercase tracking-wider text-muted-text">
               Season <span className="text-foreground ml-1 capitalize">{season}</span>
             </div>
-            <div className="flex items-center gap-1.5 px-3 py-1.5 bg-card border border-white/5 shrink-0 snap-start rounded-md text-xs font-bold uppercase tracking-wider text-muted-text">
+            <div className="flex items-center gap-1.5 px-3 py-1.5 bg-card border border-white/5 shrink-0 snap-start text-xs font-bold uppercase tracking-wider text-muted-text">
               Type <span className="text-foreground ml-1">{animeType}</span>
             </div>
           </div>
@@ -143,7 +143,7 @@ export function MobileAnimeDetail({ id, data, source, similarAnime, charactersDa
               <div className="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-background to-transparent flex items-end justify-center">
                 <button 
                   onClick={() => setShowFullSynopsis(true)}
-                  className="text-secondary text-xs font-bold uppercase tracking-wider bg-background px-4 py-1 rounded-t-lg shadow-[0_-10px_20px_rgba(0,0,0,0.5)]"
+                  className="text-secondary text-xs font-bold uppercase tracking-wider bg-background px-4 py-1 border-t border-x border-secondary/20 shadow-[0_-10px_20px_rgba(0,0,0,0.5)] clip-path-polygon-small"
                 >
                   Read More
                 </button>
