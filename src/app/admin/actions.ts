@@ -71,6 +71,7 @@ export async function injectMetadata(animeId: number, anilistId: number) {
     if (info.changes > 0) {
       await execPromise(`node dist/fill-from-anilist.js --id=${animeId}`, { cwd: path.join(process.cwd(), 'backend') });
       revalidatePath('/admin');
+      revalidatePath('/');
       return { success: true };
     }
     
@@ -228,6 +229,7 @@ export async function updateAnimeMapping(id: number, malId: number | null, anili
         await addSystemLog(`Updated mappings for anime ID ${id}.`);
       }
       revalidatePath('/admin/database');
+      revalidatePath('/');
       return { success: true };
     }
     return { success: false, error: 'Failed to update mapping' };
@@ -266,6 +268,7 @@ export async function triggerScraper(scriptName: string) {
     
     // Kita bisa biarkan jalan di background, atau menyimpan log-nya ke file tertentu
     await addSystemLog(`Started scraper script: ${scriptName}`);
+    revalidatePath('/');
     return { success: true, message: `Process '${scriptName}' initiated in background.` };
   } catch (error: any) {
     return { success: false, error: error.message || 'Failed to spawn process' };
@@ -288,6 +291,7 @@ export async function triggerScrapeSlug(slug: string, correctSlug?: string) {
 
     await execPromise(`node dist/index.js --slug=${targetSlug}`, { cwd: path.join(process.cwd(), 'backend') });
     revalidatePath('/admin/operations');
+    revalidatePath('/');
     await addSystemLog(`Scraped data for slug: ${targetSlug}`, 'success');
     return { success: true, message: `Scraping process completed for ${targetSlug}.` };
   } catch (error: any) {
@@ -306,6 +310,7 @@ export async function deleteAnime(id: number) {
     if (info.changes > 0) {
       revalidatePath('/admin/database');
       revalidatePath('/admin/operations');
+      revalidatePath('/');
       await addSystemLog(`Deleted anime ID ${id}`, 'warning');
       return { success: true, message: `Anime deleted successfully.` };
     }
@@ -346,6 +351,7 @@ export async function addAnimeMinimal(slug: string, anilistId: number | null) {
       
       revalidatePath('/admin/database');
       revalidatePath('/admin/operations');
+      revalidatePath('/');
       await addSystemLog(`Manually added new anime slug: ${cleanSlug}`, 'success');
       return { success: true, message: `Anime added. Syncing metadata in background.` };
     }
