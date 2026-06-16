@@ -290,12 +290,17 @@ export function Navbar() {
             {isMenuOpen && (
               <div className="absolute top-full right-0 mt-2 w-56 pt-2 z-50 animate-in fade-in slide-in-from-top-2 duration-200">
                 <div className="bg-card border-2 border-secondary/20 shadow-xl flex flex-col">
-                  {/* Links */}
+                  {/* Nav Links */}
+                  <div className="flex items-center gap-2 px-4 pt-3 pb-1">
+                    <div className="flex-1 h-px bg-gradient-to-r from-transparent via-border to-transparent" />
+                    <span className="text-[10px] font-mono font-bold uppercase tracking-[0.3em] text-foreground/30">Navigate</span>
+                    <div className="flex-1 h-px bg-gradient-to-r from-transparent via-border to-transparent" />
+                  </div>
                   <Link
                     href="/genre"
                     onClick={() => setIsMenuOpen(false)}
                     className={cn(
-                      "px-4 py-3 text-xs font-mono font-bold uppercase tracking-[0.2em] transition-all hover:bg-secondary/10 hover:text-secondary border-b border-white/5",
+                      "flex items-center h-[52px] px-4 text-xs font-mono font-bold uppercase tracking-[0.2em] transition-all hover:bg-secondary/10 hover:text-secondary",
                       pathname.startsWith('/genre') ? "text-secondary bg-secondary/5" : "text-foreground/70"
                     )}
                   >
@@ -305,7 +310,7 @@ export function Navbar() {
                     href="/schedule"
                     onClick={() => setIsMenuOpen(false)}
                     className={cn(
-                      "px-4 py-3 text-xs font-mono font-bold uppercase tracking-[0.2em] transition-all hover:bg-secondary/10 hover:text-secondary border-b border-white/5",
+                      "flex items-center h-[52px] px-4 text-xs font-mono font-bold uppercase tracking-[0.2em] transition-all hover:bg-secondary/10 hover:text-secondary",
                       pathname.startsWith('/schedule') ? "text-secondary bg-secondary/5" : "text-foreground/70"
                     )}
                   >
@@ -313,8 +318,14 @@ export function Navbar() {
                   </Link>
 
                   {/* Settings section */}
+                  <div className="flex items-center gap-2 px-4 py-2">
+                    <div className="flex-1 h-px bg-gradient-to-r from-transparent via-border to-transparent" />
+                    <span className="text-[10px] font-mono font-bold uppercase tracking-[0.3em] text-foreground/30">Settings</span>
+                    <div className="flex-1 h-px bg-gradient-to-r from-transparent via-border to-transparent" />
+                  </div>
+
                   {/* Theme Toggle */}
-                  <div className="flex items-center justify-between px-4 h-[52px] border-b border-secondary/20 bg-black/20">
+                  <div className="flex items-center justify-between h-[52px] px-4 hover:bg-secondary/10 transition-all">
                     <span className="text-xs font-mono font-bold uppercase tracking-[0.2em] text-foreground/70">Theme</span>
                     <div className="inline-flex bg-card/50 border border-secondary/30 p-0.5">
                       <button
@@ -343,7 +354,7 @@ export function Navbar() {
                   </div>
 
                   {/* Title Language Toggle */}
-                  <div className="flex items-center justify-between px-4 h-[52px] bg-black/20">
+                  <div className="flex items-center justify-between h-[52px] px-4 hover:bg-secondary/10 transition-all">
                     <span className="text-xs font-mono font-bold uppercase tracking-[0.2em] text-foreground/70">Title</span>
                     <div className="inline-flex bg-card/50 border border-secondary/30 p-0.5">
                       <button
