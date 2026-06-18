@@ -151,7 +151,7 @@ function AdminDashboardContent() {
 
   return (
     <div className="min-h-full p-4 md:p-8 font-sans">
-      <div className="max-w-6xl mx-auto space-y-12">
+      <div className="max-w-[1440px] mx-auto space-y-12">
         
         {/* Header */}
         <header className="border-b border-border pb-6">
@@ -237,15 +237,16 @@ function AdminDashboardContent() {
               </button>
             </div>
 
+            <Tooltip content="Refresh Data" position="bottom">
             <button
               onClick={() => setRefreshTrigger(p => p + 1)}
               disabled={isLoading}
               className="flex items-center space-x-2 px-4 py-2 border border-border bg-card/50 hover:bg-card hover:border-secondary hover:text-secondary text-muted-text text-xs uppercase tracking-widest font-bold transition-all disabled:opacity-50"
-              title="Refresh Data"
             >
               <Renew className={cn("w-4 h-4", isLoading && "animate-spin text-secondary")} />
               <span className="hidden sm:inline">Refresh</span>
             </button>
+            </Tooltip>
           </div>
 
           {activeTab === 'unmatched' && (

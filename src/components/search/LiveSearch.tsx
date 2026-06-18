@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { Search, SettingsAdjust } from '@carbon/icons-react';
 import { cn } from '@/lib/utils';
 import { Skeleton } from '@/components/ui/Skeleton';
+import { Tooltip } from '@/components/ui/Tooltip';
 import { useTitleLang } from '@/lib/providers/TitleLangProvider';
 
 interface SearchResult {
@@ -210,12 +211,12 @@ export function LiveSearch({ onClose, dropdownPosition = 'bottom', onQueryChange
           )}
 
           {/* Filter Badge */}
-          <Link
-            href="/search"
-            onClick={() => { setIsOpen(false); if (onClose) onClose(); }}
-            className="w-max h-7 flex items-center group/filter"
-            title="Advanced Search / Filters"
-          >
+          <Tooltip content="Advanced Search / Filters" position="bottom">
+            <Link
+              href="/search"
+              onClick={() => { setIsOpen(false); if (onClose) onClose(); }}
+              className="w-max h-7 flex items-center group/filter"
+            >
             <div
               className="px-2 h-full flex items-center bg-secondary/10 border border-secondary/30 group-hover/filter:border-secondary group-hover/filter:bg-secondary/20 text-secondary transition-all"
               style={{ clipPath: 'polygon(4px 0, 100% 0, 100% calc(100% - 4px), calc(100% - 4px) 100%, 0 100%, 0 4px)' }}
@@ -224,6 +225,7 @@ export function LiveSearch({ onClose, dropdownPosition = 'bottom', onQueryChange
               <span className="text-[9px] font-black uppercase tracking-wider hidden md:inline">Filter</span>
             </div>
           </Link>
+          </Tooltip>
         </div>
       </form>
 

@@ -7,6 +7,7 @@ import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import { Search, ChevronDown, ChevronUp, Renew, Checkmark, Close, ChevronLeft, ChevronRight, TrashCan, Add } from '@carbon/icons-react';
 import { Modal } from '@/components/ui/Modal';
 import { CustomSelect } from '@/components/ui/CustomSelect';
+import { Tooltip } from '@/components/ui/Tooltip';
 import { cn } from '@/lib/utils';
 
 type AnimeRow = {
@@ -191,23 +192,25 @@ export function DatabaseTable({
           </div>
           
           <div className="flex items-center gap-2 w-full sm:w-auto">
+            <Tooltip content="Refresh Data" position="bottom">
             <button
               onClick={() => startTransition(() => router.refresh())}
               disabled={isPending}
               className="flex items-center justify-center flex-1 sm:flex-none gap-2 px-4 py-2.5 bg-card hover:bg-card/80 border border-border hover:border-secondary/50 text-muted-text hover:text-secondary text-xs uppercase font-bold tracking-widest transition-colors"
-              title="Refresh Data"
             >
               <Renew className={cn("w-4 h-4", isPending && "animate-spin")} />
               <span className="hidden sm:inline">Refresh</span>
             </button>
+            </Tooltip>
+            <Tooltip content="Add New Anime" position="bottom">
             <button
               onClick={() => setShowAddModal(true)}
               className="flex items-center justify-center flex-1 sm:flex-none gap-2 px-6 py-2.5 bg-secondary/10 hover:bg-secondary text-secondary hover:text-black border border-secondary/50 text-xs uppercase font-bold tracking-widest transition-colors shadow-[0_0_10px_rgba(34,197,94,0.1)]"
-              title="Add New Anime"
             >
               <Add className="w-4 h-4" />
               <span>Add Anime</span>
             </button>
+            </Tooltip>
           </div>
         </div>
       </div>
@@ -306,29 +309,32 @@ export function DatabaseTable({
                     <td className="px-4 py-3 text-right">
                       {isEditing ? (
                         <div className="flex items-center justify-end gap-2">
+                          <Tooltip content="Cancel" position="bottom">
                           <button 
                             onClick={cancelEditing}
                             className="p-1.5 text-muted-text hover:text-foreground bg-foreground/5 hover:bg-foreground/20 transition-colors border border-transparent hover:border-border"
-                            title="Cancel"
                           >
                             <Close className="w-4 h-4" />
                           </button>
+                          </Tooltip>
+                          <Tooltip content="Save Mapping" position="bottom">
                           <button 
                             onClick={() => saveMapping(anime.id, false)}
                             disabled={isPending}
                             className="p-1.5 text-secondary bg-secondary/10 hover:bg-secondary hover:text-black transition-colors border border-secondary/30 disabled:opacity-50"
-                            title="Save Mapping"
                           >
                             <Checkmark className="w-4 h-4" />
                           </button>
+                          </Tooltip>
+                          <Tooltip content="Save & Trigger Resync Scraper" position="bottom">
                           <button 
                             onClick={() => saveMapping(anime.id, true)}
                             disabled={isPending}
                             className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-secondary bg-secondary/10 hover:bg-secondary hover:text-black transition-colors border border-secondary/30 flex items-center gap-1 disabled:opacity-50"
-                            title="Save & Trigger Resync Scraper"
                           >
                             <Renew className="w-3.5 h-3.5" /> Save & Sync
                           </button>
+                          </Tooltip>
                         </div>
                       ) : (
                         <div className="flex items-center justify-end gap-2">
@@ -338,14 +344,15 @@ export function DatabaseTable({
                           >
                             EDIT ID
                           </button>
+                          <Tooltip content="Delete Anime" position="bottom">
                           <button
                             onClick={() => handleDelete(anime.id, anime.title)}
                             disabled={isPending}
                             className="p-1.5 text-muted-text hover:text-red-500 bg-card hover:bg-red-500/10 transition-colors border border-border hover:border-red-500/50 disabled:opacity-50"
-                            title="Delete Anime"
                           >
                             <TrashCan className="w-4 h-4" />
                           </button>
+                          </Tooltip>
                         </div>
                       )}
                     </td>
