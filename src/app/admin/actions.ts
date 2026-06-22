@@ -167,7 +167,7 @@ export async function getAnimeListAdmin({ page = 1, limit = 50, search = '', sor
   if (!db) throw new Error("Database connection failed");
 
   const offset = (page - 1) * limit;
-  let query = 'SELECT id, slug, title, source, mal_id, anilist_id, is_fully_scraped, last_updated FROM anime';
+  let query = 'SELECT id, slug, title, source, mal_id, anilist_id, is_fully_scraped, is_protected, last_updated FROM anime';
   const params: any[] = [];
   const conditions: string[] = [];
 
@@ -186,7 +186,7 @@ export async function getAnimeListAdmin({ page = 1, limit = 50, search = '', sor
   }
 
   // Safe sorting
-  const validSortColumns = ['id', 'title', 'source', 'mal_id', 'anilist_id', 'last_updated'];
+  const validSortColumns = ['id', 'title', 'source', 'mal_id', 'anilist_id', 'is_protected', 'last_updated'];
   const validOrder = ['asc', 'desc'];
   const sortCol = validSortColumns.includes(sort) ? sort : 'id';
   const sortDir = validOrder.includes(order.toLowerCase()) ? order.toLowerCase() : 'desc';
@@ -365,7 +365,7 @@ export async function addAnimeMinimal(slug: string, anilistId: number | null) {
 async function addSystemLog(message: string, type: 'info' | 'warning' | 'error' | 'success' = 'info') {
   try {
     if (!db) return;
-    const stmt = db.prepare('INSERT INTO system_logs (message, type, created_at) VALUES (?, ?, datetime("now", "localtime"))');
+    const stmt = db.prepare(`INSERT INTO system_logs (message, type, created_at) VALUES (?, ?, datetime('now', 'localtime'))`);
     stmt.run(message, type);
   } catch (error) {
     console.error('Failed to add system log', error);
@@ -412,5 +412,98 @@ export async function getTodaysScrapeSummary() {
     console.error('Failed to get todays scrape summary', error);
     return { animeAdded: 0, episodesAdded: 0 };
   }
+}
+
+// ==========================================
+// PROTECTED CONTROL CENTER ACTIONS
+// ==========================================
+
+export async function toggleProtectedStatus(id: number, isProtected: boolean) {
+  await checkAuth();
+  if (!db) throw new Error("Database connection failed");
+  try {
+    const stmt = db.prepare('UPDATE anime SET is_protected = ? WHERE id = ?');
+    stmt.run(isProtected ? 1 : 0, id);
+    revalidatePath('/admin/database');
+    revalidatePath('/admin/protected');
+    await addSystemLog(`${isProtected ? 'Protected' : 'Unprotected'} anime ID ${id}`);
+    return { success: true };
+  } catch (error: any) {
+    return { success: false, error: error.message };
+  }
+}
+
+export async function getProtectedAnime() {
+  await checkAuth();
+  if (!db) throw new Error("Database connection failed");
+  const stmt = db.prepare('SELECT * FROM anime WHERE is_protected = 1 ORDER BY last_updated DESC');
+  return stmt.all() as any[];
+}
+
+export async function getAnimeEpisodes(animeId: number) {
+  await checkAuth();
+  if (!db) throw new Error("Database connection failed");
+  const stmt = db.prepare('SELECT * FROM episodes WHERE anime_id = ? ORDER BY eps_number DESC');
+  return stmt.all(animeId) as any[];
+}
+
+export async function updateProtectedAnimeData(id: number, anilistId: number | null, slug: string, data: any) {
+  await checkAuth();
+  if (!db) throw new Error("Database connection failed");
+  try {
+    const keys = Object.keys(data);
+    if (keys.length > 0) {
+      const setClause = keys.map(k => `${k} = ?`).join(', ');
+      const values = keys.map(k => data[k]);
+      const stmt = db.prepare(`UPDATE anime SET ${setClause}, anilist_id = ?, slug = ? WHERE id = ?`);
+      stmt.run(...values, anilistId, slug, id);
+    } else {
+      const stmt = db.prepare('UPDATE anime SET anilist_id = ?, slug = ? WHERE id = ?');
+      stmt.run(anilistId, slug, id);
+    }
+    
+    revalidatePath('/admin/protected');
+    revalidatePath('/admin/database');
+    revalidatePath(`/anime/${slug}`);
+    await addSystemLog(`Updated protected metadata for anime ID ${id}`);
+    return { success: true };
+  } catch (error: any) {
+    return { success: false, error: error.message };
+  }
+}
+
+export async function unlinkEpisode(episodeId: number) {
+  await checkAuth();
+  if (!db) throw new Error("Database connection failed");
+  try {
+    const stmt = db.prepare('UPDATE episodes SET anime_id = NULL WHERE id = ?');
+    stmt.run(episodeId);
+    revalidatePath('/admin/protected');
+    await addSystemLog(`Unlinked episode ID ${episodeId} from its anime.`);
+    return { success: true };
+  } catch (error: any) {
+    return { success: false, error: error.message };
+  }
+}
+
+export async function attachEpisode(animeId: number, episodeId: number) {
+  await checkAuth();
+  if (!db) throw new Error("Database connection failed");
+  try {
+    const stmt = db.prepare('UPDATE episodes SET anime_id = ? WHERE id = ?');
+    stmt.run(animeId, episodeId);
+    revalidatePath('/admin/protected');
+    await addSystemLog(`Attached episode ID ${episodeId} to anime ID ${animeId}.`);
+    return { success: true };
+  } catch (error: any) {
+    return { success: false, error: error.message };
+  }
+}
+
+export async function getOrphanedEpisodes() {
+  await checkAuth();
+  if (!db) throw new Error("Database connection failed");
+  const stmt = db.prepare('SELECT * FROM episodes WHERE anime_id IS NULL ORDER BY id DESC LIMIT 100');
+  return stmt.all() as any[];
 }
 
