@@ -167,9 +167,7 @@ export const AnimeService = {
         ? (orderBy === 'title' ? "COALESCE(NULLIF(a.title_english, ''), a.title)" : `a.${orderBy}`)
         : 'a.last_updated';
 
-    if (orderBy === 'last_updated' && status === 'Ongoing') {
-      safeOrderBy = `COALESCE(a.next_airing_at, 0)`;
-    } else if (orderBy === 'last_updated' && status === 'Completed') {
+    if (orderBy === 'last_updated' && (status === 'Ongoing' || status === 'Completed')) {
       safeOrderBy = `COALESCE(${SQL_LATEST_EP_DATE}, a.last_updated)`;
     }
     const direction = orderBy === 'title' ? 'ASC' : 'DESC';
