@@ -295,7 +295,7 @@ export const AnimeService = {
   },
 
   async getAllGenres() {
-    return getPreparedStatement('SELECT g.* FROM genres g WHERE EXISTS (SELECT 1 FROM anime_genres ag WHERE ag.genre_id = g.id) ORDER BY g.name ASC').all() as { id: number; name: string; slug: string }[];
+    return getPreparedStatement('SELECT g.*, COUNT(ag.anime_id) as total_anime FROM genres g JOIN anime_genres ag ON g.id = ag.genre_id GROUP BY g.id ORDER BY g.name ASC').all() as { id: number; name: string; slug: string; total_anime: number }[];
   },
 
   async getAnimeByGenre(genreSlug: string, page = 1, limit = 24) {

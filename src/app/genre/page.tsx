@@ -10,7 +10,7 @@ export const metadata = {
 
 export default async function GenrePage() {
   const genresData = await AnimeService.getAllGenres();
-  const genres = genresData.map(g => ({ genreId: g.slug, title: g.name }));
+  const genres = genresData.map(g => ({ genreId: g.slug, title: g.name, count: g.total_anime }));
 
   return (
     <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-12">

@@ -59,9 +59,14 @@ export function GenreView({ genres }: GenreViewProps) {
               }}
             >
               <div className="absolute inset-0 bg-secondary/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300 pointer-events-none" />
-              <span className="relative z-10 font-black uppercase tracking-widest text-sm text-center px-2 group-hover:text-secondary transition-colors">
-                {genre.title}
-              </span>
+              <div className="flex flex-col items-center justify-center relative z-10 px-2">
+                <span className="font-black uppercase tracking-widest text-sm text-center group-hover:text-secondary transition-colors">
+                  {genre.title}
+                </span>
+                <span className="text-[11px] font-mono font-bold text-secondary/80 mt-1 group-hover:text-secondary transition-colors">
+                  [{genre.count}]
+                </span>
+              </div>
             </Link>
           ))}
         </div>
@@ -78,6 +83,9 @@ export function GenreView({ genres }: GenreViewProps) {
                 {genre.title}
               </span>
               <div className="flex items-center gap-4">
+                <span className="text-[11px] font-mono font-bold text-secondary/80 group-hover:text-secondary transition-colors">
+                  [{genre.count}]
+                </span>
                 <ChevronRight className="w-5 h-5 text-muted-text group-hover:text-secondary transition-transform group-hover:translate-x-1" />
               </div>
             </Link>
