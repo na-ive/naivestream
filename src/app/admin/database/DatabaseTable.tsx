@@ -430,7 +430,7 @@ export function DatabaseTable({
           <>
             <button
               onClick={() => setAnimeToDelete(null)}
-              className="px-4 py-2 font-black uppercase text-xs tracking-widest text-muted-text hover:text-white transition-colors"
+              className="px-4 py-2 font-black uppercase text-xs tracking-widest text-muted-text hover:text-foreground transition-colors"
               disabled={isPending}
             >
               Cancel
@@ -471,7 +471,7 @@ export function DatabaseTable({
           <>
             <button
               onClick={() => setShowAddModal(false)}
-              className="px-4 py-2 font-black uppercase text-xs tracking-widest text-muted-text hover:text-white transition-colors"
+              className="px-4 py-2 font-black uppercase text-xs tracking-widest text-muted-text hover:text-foreground transition-colors"
               disabled={isPending}
             >
               Cancel

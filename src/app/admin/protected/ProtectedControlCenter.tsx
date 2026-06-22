@@ -364,7 +364,7 @@ export function ProtectedControlCenter({ initialData }: { initialData: any[] }) 
             <button
               onClick={handleSaveMetadata}
               disabled={isPending}
-              className="w-full py-2.5 bg-secondary text-black font-bold uppercase tracking-widest text-xs hover:bg-white transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
+              className="w-full py-2.5 bg-secondary text-black font-bold uppercase tracking-widest text-xs hover:bg-foreground hover:text-background transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
             >
               <Checkmark className="w-4 h-4" /> Save Metadata
             </button>

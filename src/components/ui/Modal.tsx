@@ -91,7 +91,7 @@ export function Modal({ isOpen, onClose, title, children, footer, className, siz
                 )}
                 <button
                   onClick={onClose}
-                  className="p-1 hover:bg-white/10 transition-colors text-muted-text hover:text-white cursor-pointer"
+                  className="p-1 hover:bg-foreground/10 transition-colors text-muted-text hover:text-foreground cursor-pointer"
                   style={{
                     clipPath: 'polygon(4px 0, 100% 0, 100% calc(100% - 4px), calc(100% - 4px) 100%, 0 100%, 0 4px)',
                   }}

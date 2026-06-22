@@ -194,7 +194,7 @@ function LibraryContent() {
                     setIsSelectionMode(false);
                     setSelectedIds([]);
                   }}
-                  className="px-6 py-3 bg-card border border-white/10 hover:border-white/30 text-foreground transition-all font-black text-[10px] uppercase tracking-[0.2em] shadow-[0_10px_20px_rgba(0,0,0,0.5)] md:shadow-none"
+                  className="px-6 py-3 bg-card border border-border hover:border-foreground/30 text-foreground transition-all font-black text-[10px] uppercase tracking-[0.2em] shadow-[0_10px_20px_rgba(0,0,0,0.5)] md:shadow-none"
                   style={{ clipPath: 'polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px)' }}
                 >
                   Cancel
@@ -424,7 +424,7 @@ function LibraryContent() {
           <>
             <button
               onClick={() => setDeleteAction(null)}
-              className="px-4 py-2 font-black uppercase text-xs tracking-widest text-muted-text hover:text-white transition-colors"
+              className="px-4 py-2 font-black uppercase text-xs tracking-widest text-muted-text hover:text-foreground transition-colors"
             >
               Cancel
             </button>
