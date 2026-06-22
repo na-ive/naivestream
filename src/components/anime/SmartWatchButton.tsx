@@ -72,7 +72,7 @@ export function SmartWatchButton({
       disabled={loading}
       className={cn(
         "flex items-center justify-center space-x-2 transition-all disabled:opacity-70 cursor-pointer",
-        variant === 'primary' ? "btn-primary" : "px-6 py-3 rounded-lg border border-border font-medium hover:bg-white/5",
+        variant === 'primary' ? "btn-primary" : "px-6 py-3 rounded-lg border border-border font-medium hover:bg-foreground/5",
         className
       )}
     >

@@ -209,7 +209,7 @@ function AdminDashboardContent() {
                   "flex items-center space-x-2 px-6 py-2.5 transition-all text-xs uppercase font-black tracking-widest relative overflow-hidden group",
                   activeTab === 'unmatched' 
                     ? "bg-secondary/10 text-secondary border border-secondary/50 shadow-[0_0_15px_rgba(34,197,94,0.1)]" 
-                    : "bg-card/50 text-muted-text border border-white/5 hover:border-secondary/30 hover:text-foreground"
+                    : "bg-card/50 text-muted-text border border-border hover:border-secondary/30 hover:text-foreground"
                 )}
               >
                 <div className={cn(
@@ -225,7 +225,7 @@ function AdminDashboardContent() {
                   "flex items-center space-x-2 px-6 py-2.5 transition-all text-xs uppercase font-black tracking-widest relative overflow-hidden group",
                   activeTab === 'noEpisodes' 
                     ? "bg-red-500/10 text-red-500 border border-red-500/50 shadow-[0_0_15px_rgba(239,68,68,0.1)]" 
-                    : "bg-card/50 text-muted-text border border-white/5 hover:border-red-500/30 hover:text-foreground"
+                    : "bg-card/50 text-muted-text border border-border hover:border-red-500/30 hover:text-foreground"
                 )}
               >
                 <div className={cn(

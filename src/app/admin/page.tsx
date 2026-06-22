@@ -148,7 +148,7 @@ export default async function AdminDashboard() {
                   <span className="text-gray-500">No recent activity detected.</span>
                 ) : (
                   systemLogs.map((log) => (
-                    <div key={log.id} className="flex gap-4 group items-start hover:bg-white/10 px-2 py-1 -mx-2 rounded transition-colors">
+                    <div key={log.id} className="flex gap-4 group items-start hover:bg-foreground/10 px-2 py-1 -mx-2 rounded transition-colors">
                       <span className="text-gray-500 shrink-0 opacity-80 group-hover:opacity-100 group-hover:text-gray-400 transition-colors">[{new Date(log.created_at).toLocaleTimeString()}]</span>
                       <span className={`
                         ${log.type === 'error' ? 'text-red-500 font-bold' : ''}

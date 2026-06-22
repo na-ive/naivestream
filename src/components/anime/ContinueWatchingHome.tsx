@@ -18,7 +18,7 @@ export function ContinueWatchingHome() {
 
   return (
     <section className="animate-in fade-in slide-in-from-bottom-4 duration-700">
-      <div className="flex items-center justify-between mb-6 pb-3 border-b border-white/5">
+      <div className="flex items-center justify-between mb-6 pb-3 border-b border-border">
         <div className="flex items-center gap-3">
           <span className="text-secondary font-mono font-black text-lg leading-none">{'//'}</span>
           <h2 className="text-lg sm:text-xl md:text-2xl font-serif font-black uppercase tracking-tighter">
@@ -61,7 +61,7 @@ export function ContinueWatchingHome() {
 export function ContinueWatchingHomeSkeleton() {
   return (
     <section>
-      <div className="flex items-center justify-between mb-6 pb-3 border-b border-white/5">
+      <div className="flex items-center justify-between mb-6 pb-3 border-b border-border">
         <div className="flex items-center gap-3">
           <Skeleton className="h-5 w-5 rounded-none" />
           <Skeleton className="h-6 w-56 rounded-none" />

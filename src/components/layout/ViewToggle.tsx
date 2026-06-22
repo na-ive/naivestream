@@ -26,7 +26,7 @@ export function ViewToggle() {
             "p-2 transition-colors",
             viewMode === 'grid' 
               ? "bg-secondary/20 text-secondary"
-              : "text-muted-text hover:text-foreground hover:bg-white/5"
+              : "text-muted-text hover:text-foreground hover:bg-foreground/5"
           )}
         >
           <Grid className="w-5 h-5" />
@@ -39,7 +39,7 @@ export function ViewToggle() {
             "p-2 transition-colors",
             viewMode === 'detailed' 
               ? "bg-secondary/20 text-secondary"
-              : "text-muted-text hover:text-foreground hover:bg-white/5"
+              : "text-muted-text hover:text-foreground hover:bg-foreground/5"
           )}
         >
           <ListBoxes className="w-5 h-5" />
@@ -52,7 +52,7 @@ export function ViewToggle() {
             "p-2 transition-colors",
             viewMode === 'list' 
               ? "bg-secondary/20 text-secondary"
-              : "text-muted-text hover:text-foreground hover:bg-white/5"
+              : "text-muted-text hover:text-foreground hover:bg-foreground/5"
           )}
         >
           <ListBulleted className="w-5 h-5" />

@@ -46,7 +46,7 @@ export default async function WatchPage(props: { params: Promise<{ id: string }>
           </div>
           <div className="space-y-6">
             <div className="bg-card/50 p-6 space-y-4" style={{ clipPath: 'polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px)' }}>
-              <div className="flex items-center space-x-2 pb-3 mb-4 border-b border-white/5">
+              <div className="flex items-center space-x-2 pb-3 mb-4 border-b border-border">
                 <Skeleton className="w-1 h-4 rounded-none" />
                 <Skeleton className="w-3.5 h-3.5 rounded-none" />
                 <Skeleton className="h-3 w-24 rounded-none" />
@@ -66,7 +66,7 @@ export default async function WatchPage(props: { params: Promise<{ id: string }>
               <Skeleton className="h-[42px] w-full mt-2 rounded-none" />
             </div>
             <div className="bg-card/50 p-6 space-y-6" style={{ clipPath: 'polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px)' }}>
-              <div className="flex items-center space-x-2 pb-3 mb-4 border-b border-white/5">
+              <div className="flex items-center space-x-2 pb-3 mb-4 border-b border-border">
                 <Skeleton className="w-1 h-4 rounded-none" />
                 <Skeleton className="w-3.5 h-3.5 rounded-none" />
                 <Skeleton className="h-3 w-24 rounded-none" />

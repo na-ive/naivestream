@@ -97,7 +97,7 @@ export default async function AZListPage(props: { searchParams: Promise<{ letter
               <Link
                 key={`${anime.slug}-${idx}`}
                 href={`/anime/${anime.slug}`}
-                className="group p-4 bg-background/30 hover:bg-secondary/10 border-b border-white/5 transition-all flex items-center justify-between relative overflow-hidden"
+                className="group p-4 bg-background/30 hover:bg-secondary/10 border-b border-border transition-all flex items-center justify-between relative overflow-hidden"
               >
                 <div className="absolute inset-y-0 left-0 w-1 bg-secondary scale-y-0 group-hover:scale-y-100 transition-transform origin-top" />
                 <span className="font-bold text-sm group-hover:text-secondary line-clamp-1 mr-4 uppercase tracking-wider transition-colors pl-2">

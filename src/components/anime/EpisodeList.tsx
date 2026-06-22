@@ -110,7 +110,7 @@ export function EpisodeList({
                   placeholder="Jump to EP..."
                   value={jumpValue}
                   onChange={(e) => setJumpValue(e.target.value)}
-                  className="bg-card/50 border border-white/10 px-3 py-1.5 pl-8 text-[10px] font-black uppercase tracking-widest w-32 group-hover:border-secondary/50 focus:border-secondary focus:outline-none transition-all"
+                  className="bg-card/50 border border-border px-3 py-1.5 pl-8 text-[10px] font-black uppercase tracking-widest w-32 group-hover:border-secondary/50 focus:border-secondary focus:outline-none transition-all"
                   style={{ clipPath: 'polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px)' }}
                 />
                 <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-text group-hover:text-secondary transition-colors" />
@@ -124,7 +124,7 @@ export function EpisodeList({
                 <button 
                   onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
                   disabled={currentPage === 1}
-                  className="w-8 h-8 flex items-center justify-center bg-card border border-white/10 hover:border-secondary hover:text-secondary transition-colors disabled:opacity-30 disabled:pointer-events-none"
+                  className="w-8 h-8 flex items-center justify-center bg-card border border-border hover:border-secondary hover:text-secondary transition-colors disabled:opacity-30 disabled:pointer-events-none"
                   aria-label="Previous page"
                 >
                   <ChevronLeft className="w-4 h-4" />
@@ -132,7 +132,7 @@ export function EpisodeList({
                 <button 
                   onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
                   disabled={currentPage === totalPages}
-                  className="w-8 h-8 flex items-center justify-center bg-card border border-white/10 hover:border-secondary hover:text-secondary transition-colors disabled:opacity-30 disabled:pointer-events-none"
+                  className="w-8 h-8 flex items-center justify-center bg-card border border-border hover:border-secondary hover:text-secondary transition-colors disabled:opacity-30 disabled:pointer-events-none"
                   aria-label="Next page"
                 >
                   <ChevronRight className="w-4 h-4" />

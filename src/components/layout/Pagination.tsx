@@ -52,7 +52,7 @@ export function Pagination({ currentPage, totalPages, baseUrl }: PaginationProps
         <Link
           href={getHref(Math.max(1, currentPage - 1))}
           className={cn(
-            "w-10 h-10 sm:w-12 sm:h-12 bg-card border border-white/5 transition-all cursor-pointer flex items-center justify-center",
+            "w-10 h-10 sm:w-12 sm:h-12 bg-card border border-border transition-all cursor-pointer flex items-center justify-center",
             currentPage <= 1 ? "opacity-30 pointer-events-none" : "hover:border-secondary/50 hover:bg-secondary/10 hover:text-secondary hover:shadow-[0_0_10px_rgba(34,197,94,0.3)]"
           )}
           aria-label="Previous page"
@@ -79,7 +79,7 @@ export function Pagination({ currentPage, totalPages, baseUrl }: PaginationProps
                   "w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center font-mono font-black text-sm transition-all cursor-pointer border",
                   currentPage === pageNum
                     ? "bg-secondary text-background border-secondary shadow-[0_0_15px_rgba(34,197,94,0.5)] z-10"
-                    : "bg-card border-white/5 text-foreground/50 hover:bg-secondary/10 hover:text-secondary hover:border-secondary/50"
+                    : "bg-card border-border text-foreground/50 hover:bg-secondary/10 hover:text-secondary hover:border-secondary/50"
                 )}
               >
                 {pageNum}
@@ -92,7 +92,7 @@ export function Pagination({ currentPage, totalPages, baseUrl }: PaginationProps
         <Link
           href={getHref(Math.min(totalPages, currentPage + 1))}
           className={cn(
-            "w-10 h-10 sm:w-12 sm:h-12 bg-card border border-white/5 transition-all cursor-pointer flex items-center justify-center",
+            "w-10 h-10 sm:w-12 sm:h-12 bg-card border border-border transition-all cursor-pointer flex items-center justify-center",
             currentPage >= totalPages ? "opacity-30 pointer-events-none" : "hover:border-secondary/50 hover:bg-secondary/10 hover:text-secondary hover:shadow-[0_0_10px_rgba(34,197,94,0.3)]"
           )}
           aria-label="Next page"

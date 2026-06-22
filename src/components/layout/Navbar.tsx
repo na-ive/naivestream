@@ -182,7 +182,7 @@ export function Navbar() {
                               href={item.href}
                               onClick={() => setOpenDropdown(null)}
                               className={cn(
-                                "px-4 py-3 text-xs font-mono font-bold uppercase tracking-[0.2em] transition-all hover:bg-secondary/10 hover:text-secondary border-b border-white/5 last:border-0",
+                                "px-4 py-3 text-xs font-mono font-bold uppercase tracking-[0.2em] transition-all hover:bg-secondary/10 hover:text-secondary border-b border-border last:border-0",
                                 pathname.startsWith(item.href) ? "text-secondary bg-secondary/5" : "text-foreground/70"
                               )}
                             >

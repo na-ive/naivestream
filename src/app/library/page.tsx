@@ -112,7 +112,7 @@ function LibraryContent() {
   return (
     <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-28 md:pb-12">
       {/* Header & Tabs */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6 border-b border-white/5 pb-6">
+      <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6 border-b border-border pb-6">
         <div className="space-y-6">
           <div className="flex items-center space-x-4">
             <div className="p-3 bg-secondary/10 text-secondary border border-secondary/30 relative">
@@ -136,7 +136,7 @@ function LibraryContent() {
                 "flex items-center space-x-2 px-6 py-2.5 transition-all text-xs uppercase font-black tracking-widest relative overflow-hidden group",
                 activeTab === 'watchlist' 
                   ? "bg-secondary/10 text-secondary border border-secondary/50 shadow-[0_0_15px_rgba(34,197,94,0.1)]" 
-                  : "bg-card/50 text-muted-text border border-white/5 hover:border-secondary/30 hover:text-foreground"
+                  : "bg-card/50 text-muted-text border border-border hover:border-secondary/30 hover:text-foreground"
               )}
             >
               <div className={cn(
@@ -152,7 +152,7 @@ function LibraryContent() {
                 "flex items-center space-x-2 px-6 py-2.5 transition-all text-xs uppercase font-black tracking-widest relative overflow-hidden group",
                 activeTab === 'history' 
                   ? "bg-secondary/10 text-secondary border border-secondary/50 shadow-[0_0_15px_rgba(34,197,94,0.1)]" 
-                  : "bg-card/50 text-muted-text border border-white/5 hover:border-secondary/30 hover:text-foreground"
+                  : "bg-card/50 text-muted-text border border-border hover:border-secondary/30 hover:text-foreground"
               )}
             >
               <div className={cn(
@@ -274,7 +274,7 @@ function LibraryContent() {
                         "w-12 h-12 flex items-center justify-center border-2 transition-all duration-300",
                         selectedIds.includes(item.animeId) 
                           ? "bg-secondary border-secondary text-background shadow-[0_0_15px_rgba(34,197,94,0.5)]" 
-                          : "border-white/50 text-white/50 bg-black/50 group-hover/sel:border-secondary/50 group-hover/sel:text-secondary/50"
+                          : "border-border0 text-muted-text bg-black/50 group-hover/sel:border-secondary/50 group-hover/sel:text-secondary/50"
                       )}
                       style={{ clipPath: 'polygon(4px 0, 100% 0, 100% calc(100% - 4px), calc(100% - 4px) 100%, 0 100%, 0 4px)' }}>
                         <CheckboxChecked className={cn("w-6 h-6", selectedIds.includes(item.animeId) ? "fill-current" : "")} />
@@ -290,7 +290,7 @@ function LibraryContent() {
                             e.stopPropagation();
                             removeFromWatchlist(item.animeId);
                           }}
-                          className="w-8 h-8 bg-red-500/80 text-white flex items-center justify-center hover:bg-red-600 border border-white/10"
+                          className="w-8 h-8 bg-red-500/80 text-white flex items-center justify-center hover:bg-red-600 border border-border"
                           style={{ clipPath: 'polygon(5px 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 5px)' }}
                         >
                           <TrashCan className="w-4 h-4" />
@@ -376,7 +376,7 @@ function LibraryContent() {
                         "w-12 h-12 flex items-center justify-center border-2 transition-all duration-300",
                         selectedIds.includes(item.animeId) 
                           ? "bg-secondary border-secondary text-background shadow-[0_0_15px_rgba(34,197,94,0.5)]" 
-                          : "border-white/50 text-white/50 bg-black/50 group-hover/sel:border-secondary/50 group-hover/sel:text-secondary/50"
+                          : "border-border0 text-muted-text bg-black/50 group-hover/sel:border-secondary/50 group-hover/sel:text-secondary/50"
                       )}
                       style={{ clipPath: 'polygon(4px 0, 100% 0, 100% calc(100% - 4px), calc(100% - 4px) 100%, 0 100%, 0 4px)' }}>
                         <CheckboxChecked className={cn("w-6 h-6", selectedIds.includes(item.animeId) ? "fill-current" : "")} />
@@ -394,7 +394,7 @@ function LibraryContent() {
                             resetAnime(item.animeId);
                             removeFromHistory(item.animeId);
                           }}
-                          className="w-8 h-8 bg-red-500/80 text-white flex items-center justify-center hover:bg-red-600 border border-white/10"
+                          className="w-8 h-8 bg-red-500/80 text-white flex items-center justify-center hover:bg-red-600 border border-border"
                           style={{ clipPath: 'polygon(5px 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 5px)' }}
                         >
                           <TrashCan className="w-4 h-4" />

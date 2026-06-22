@@ -30,7 +30,7 @@ export function GenreView({ genres }: GenreViewProps) {
                 "p-2 transition-colors",
                 viewMode === 'grid' 
                   ? "bg-secondary/20 text-secondary"
-                  : "text-muted-text hover:text-foreground hover:bg-white/5"
+                  : "text-muted-text hover:text-foreground hover:bg-foreground/5"
               )}
             >
               <Grid className="w-5 h-5" />
@@ -43,7 +43,7 @@ export function GenreView({ genres }: GenreViewProps) {
                 "p-2 transition-colors",
                 viewMode === 'list' 
                   ? "bg-secondary/20 text-secondary"
-                  : "text-muted-text hover:text-foreground hover:bg-white/5"
+                  : "text-muted-text hover:text-foreground hover:bg-foreground/5"
               )}
             >
               <List className="w-5 h-5" />
@@ -82,7 +82,7 @@ export function GenreView({ genres }: GenreViewProps) {
             <Link
               key={genre.genreId}
               href={`/genre/${genre.genreId}`}
-              className="group flex items-center justify-between p-4 bg-background/30 hover:bg-secondary/10 border-b border-white/5 transition-all relative overflow-hidden"
+              className="group flex items-center justify-between p-4 bg-background/30 hover:bg-secondary/10 border-b border-border transition-all relative overflow-hidden"
             >
               <div className="absolute inset-y-0 left-0 w-1 bg-secondary scale-y-0 group-hover:scale-y-100 transition-transform origin-top" />
               <span className="font-black uppercase tracking-widest text-sm sm:text-base group-hover:text-secondary transition-colors pl-2">

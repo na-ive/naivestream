@@ -49,7 +49,7 @@ export function AnimeCard({
         "relative flex h-full animate-in fade-in zoom-in-95 duration-300",
         !disableHover && "group",
         isHorizontal 
-          ? "flex-row p-3 gap-4 bg-card/50 border border-white/5 hover:border-secondary/30" 
+          ? "flex-row p-3 gap-4 bg-card/50 border border-border hover:border-secondary/30" 
           : "flex-col bg-transparent"
       )}
     >
@@ -57,7 +57,7 @@ export function AnimeCard({
       <Link href={`/anime/${id}`} className={cn(
         "block relative overflow-hidden flex-shrink-0",
         isHorizontal 
-          ? cn("self-start aspect-[3/4] border border-white/10", isCompactList ? "w-20 md:w-24" : "w-24 md:w-32")
+          ? cn("self-start aspect-[3/4] border border-border", isCompactList ? "w-20 md:w-24" : "w-24 md:w-32")
           : "w-full aspect-[3/4] border-2 border-secondary/20 group-hover:border-secondary",
         !isHorizontal && isEmpty && "border-[#EAB308]"
       )}>
@@ -129,7 +129,7 @@ export function AnimeCard({
         {episode && !isEmpty && (
           <div className={cn(
             "absolute px-3 py-1 bg-background/90 text-[10px] font-black text-foreground tracking-widest uppercase z-20",
-            isHorizontal ? "top-0 left-0 border-r border-b border-white/10" : "bottom-3 right-3 border-r-4 border-secondary"
+            isHorizontal ? "top-0 left-0 border-r border-b border-border" : "bottom-3 right-3 border-r-4 border-secondary"
           )}>
             {episode}
           </div>
@@ -183,7 +183,7 @@ export function AnimeCard({
                 </div>
               )}
               {type && (
-                <div className="px-2 py-0.5 bg-white/5 border border-white/10 text-muted-text text-[10px] font-mono uppercase tracking-widest">
+                <div className="px-2 py-0.5 bg-foreground/5 border border-border text-muted-text text-[10px] font-mono uppercase tracking-widest">
                   {type}
                 </div>
               )}
@@ -192,7 +192,7 @@ export function AnimeCard({
             {genres && genres.length > 0 && (
               <div className="flex flex-wrap gap-1.5">
                 {genres.slice(0, 4).map(g => (
-                  <span key={g} className="text-[9px] uppercase font-black tracking-widest text-muted-text bg-white/5 px-1.5 py-0.5 border border-white/10">
+                  <span key={g} className="text-[9px] uppercase font-black tracking-widest text-muted-text bg-foreground/5 px-1.5 py-0.5 border border-border">
                     {g.trim()}
                   </span>
                 ))}
@@ -227,11 +227,11 @@ export function AnimeCardSkeleton({ forceGrid = false }: { forceGrid?: boolean }
   return (
     <div className={cn(
       "relative flex",
-      isHorizontal ? "flex-row p-3 gap-4 bg-card/50 border border-white/5" : "flex-col h-full bg-transparent"
+      isHorizontal ? "flex-row p-3 gap-4 bg-card/50 border border-border" : "flex-col h-full bg-transparent"
     )}>
       <div className={cn(
         "block relative overflow-hidden bg-card flex-shrink-0",
-        isHorizontal ? cn("self-start aspect-[3/4] border border-white/10", isCompactList ? "w-20 md:w-24" : "w-24 md:w-32") : "w-full aspect-[3/4] border-2 border-secondary/10"
+        isHorizontal ? cn("self-start aspect-[3/4] border border-border", isCompactList ? "w-20 md:w-24" : "w-24 md:w-32") : "w-full aspect-[3/4] border-2 border-secondary/10"
       )}>
         <Skeleton className="absolute inset-0" />
         {!isHorizontal && (

@@ -110,7 +110,7 @@ export function DesktopAnimeDetail({ id, data, source, similarAnime, charactersD
                   <span className="text-muted-text">Episodes</span>
                   <span className="text-foreground">{numEpisodes}</span>
                 </div>
-                <div className="flex justify-between text-xs font-bold uppercase tracking-wider border-t border-white/5 pt-2">
+                <div className="flex justify-between text-xs font-bold uppercase tracking-wider border-t border-border pt-2">
                   <span className="text-muted-text">Type</span>
                   <span className="text-foreground text-right">{animeType}</span>
                 </div>
@@ -139,7 +139,7 @@ export function DesktopAnimeDetail({ id, data, source, similarAnime, charactersD
                   <span className="text-foreground text-right leading-relaxed">{ageRating}</span>
                 </div>
                 {data.anilist_id && (
-                  <div className="flex justify-between items-start text-xs font-bold uppercase tracking-wider gap-4 border-t border-white/5 pt-2">
+                  <div className="flex justify-between items-start text-xs font-bold uppercase tracking-wider gap-4 border-t border-border pt-2">
                     <span className="text-muted-text shrink-0">External</span>
                     <a 
                       href={`https://anilist.co/anime/${data.anilist_id}`} 

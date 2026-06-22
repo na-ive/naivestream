@@ -59,7 +59,7 @@ export default async function HomePage() {
         <HomeClientWrapper>
         {/* Ongoing Section */}
         <section>
-          <div className="flex items-center justify-between mb-6 pb-3 border-b border-white/5">
+          <div className="flex items-center justify-between mb-6 pb-3 border-b border-border">
             <div className="flex items-center gap-3">
               <span className="text-secondary font-mono font-black text-lg leading-none">{'//'}</span>
               <h2 className="text-lg sm:text-xl md:text-2xl font-serif font-black uppercase tracking-tighter">
@@ -94,7 +94,7 @@ export default async function HomePage() {
 
         {/* Complete Section */}
         <section>
-          <div className="flex items-center justify-between mb-6 pb-3 border-b border-white/5">
+          <div className="flex items-center justify-between mb-6 pb-3 border-b border-border">
             <div className="flex items-center gap-3">
               <span className="text-secondary font-mono font-black text-lg leading-none">{'//'}</span>
               <h2 className="text-lg sm:text-xl md:text-2xl font-serif font-black uppercase tracking-tighter">
@@ -133,7 +133,7 @@ export default async function HomePage() {
             className="bg-card/40 border-t border-b border-secondary/30 p-4 sm:p-8 md:p-12 relative overflow-hidden mt-16 sm:mt-20"
             style={{ clipPath: 'polygon(15px 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%, 0 15px)' }}
           >
-            <div className="flex items-center justify-between mb-4 sm:mb-8 relative z-10 border-b border-white/10 pb-4 sm:pb-6">
+            <div className="flex items-center justify-between mb-4 sm:mb-8 relative z-10 border-b border-border pb-4 sm:pb-6">
               <div className="flex items-center gap-3 sm:gap-4">
                 <div className="p-2 sm:p-3 bg-secondary/10 text-secondary" style={{ clipPath: 'polygon(4px 0, 100% 0, 100% calc(100% - 4px), calc(100% - 4px) 100%, 0 100%, 0 4px)' }}>
                   <Calendar className="w-5 h-5 sm:w-8 sm:h-8" />
@@ -158,7 +158,7 @@ export default async function HomePage() {
                   <Link 
                     key={anime.slug} 
                     href={`/anime/${anime.slug}`}
-                    className="group flex items-center justify-between p-3 sm:p-4 bg-background/30 hover:bg-secondary/10 border-b border-white/5 last:border-0 transition-all relative overflow-hidden"
+                    className="group flex items-center justify-between p-3 sm:p-4 bg-background/30 hover:bg-secondary/10 border-b border-border last:border-0 transition-all relative overflow-hidden"
                   >
                     <div className="absolute inset-y-0 left-0 w-1 bg-secondary scale-y-0 group-hover:scale-y-100 transition-transform origin-top" />
                     <div className="flex items-center gap-3 sm:gap-4 pl-2 min-w-0">

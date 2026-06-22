@@ -256,7 +256,7 @@ export default function WatchContent({ id }: { id: string }) {
           </div>
           <div className="space-y-6">
             <div className="bg-card/50 p-6 space-y-4" style={{ clipPath: 'polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px)' }}>
-              <div className="flex items-center space-x-2 pb-3 mb-4 border-b border-white/5">
+              <div className="flex items-center space-x-2 pb-3 mb-4 border-b border-border">
                 <Skeleton className="w-1 h-4 rounded-none" />
                 <Skeleton className="w-3.5 h-3.5 rounded-none" />
                 <Skeleton className="h-3 w-24 rounded-none" />
@@ -276,7 +276,7 @@ export default function WatchContent({ id }: { id: string }) {
               <Skeleton className="h-[42px] w-full mt-2 rounded-none" />
             </div>
             <div className="bg-card/50 p-6 space-y-6" style={{ clipPath: 'polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px)' }}>
-              <div className="flex items-center space-x-2 pb-3 mb-4 border-b border-white/5">
+              <div className="flex items-center space-x-2 pb-3 mb-4 border-b border-border">
                 <Skeleton className="w-1 h-4 rounded-none" />
                 <Skeleton className="w-3.5 h-3.5 rounded-none" />
                 <Skeleton className="h-3 w-24 rounded-none" />
@@ -374,7 +374,7 @@ export default function WatchContent({ id }: { id: string }) {
                 <p className="text-sm font-bold uppercase tracking-widest text-muted-text">Video source offline</p>
               </div>
             )}
-            <div className="absolute inset-0 pointer-events-none border-x border-white/5 z-10" />
+            <div className="absolute inset-0 pointer-events-none border-x border-border z-10" />
           </div>
 
           <div className={`hidden lg:flex items-center gap-4 transition-all duration-500 self-start ${isCinemaMode ? 'relative z-[60]' : ''} ${isTheaterMode ? 'lg:col-span-1 lg:col-start-1 lg:row-start-2' : 'lg:col-span-1 lg:col-start-1 lg:row-start-2'}`}>
@@ -420,7 +420,7 @@ export default function WatchContent({ id }: { id: string }) {
             className="bg-card/50 border-l-4 border-secondary/50 p-6 space-y-4 relative overflow-hidden"
             style={{ clipPath: 'polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px)' }}
           >
-            <div className="flex items-center space-x-2 border-b border-white/5 pb-3 mb-4 relative z-10">
+            <div className="flex items-center space-x-2 border-b border-border pb-3 mb-4 relative z-10">
               <div className="w-1 h-4 bg-secondary" />
               <Grid className="w-3.5 h-3.5 text-secondary" />
               <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-text">Navigation</h3>
@@ -480,7 +480,7 @@ export default function WatchContent({ id }: { id: string }) {
                         href={`/watch/${ep.episodeId}`}
                         className={`w-full aspect-square flex items-center justify-center text-xs font-bold transition-all ${isActive
                             ? 'bg-secondary text-background shadow-[0_0_10px_rgba(34,197,94,0.3)] pointer-events-none'
-                            : 'bg-background hover:bg-secondary/20 border border-white/5 hover:border-secondary/50 text-foreground/70 hover:text-secondary'
+                            : 'bg-background hover:bg-secondary/20 border border-border hover:border-secondary/50 text-foreground/70 hover:text-secondary'
                           }`}
                         title={ep.title}
                       >
@@ -506,7 +506,7 @@ export default function WatchContent({ id }: { id: string }) {
             className="bg-card/50 border-l-4 border-secondary/30 p-6 space-y-6 relative"
             style={{ clipPath: 'polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px)' }}
           >
-            <div className="flex items-center space-x-2 border-b border-white/5 pb-3 mb-4 relative z-10">
+            <div className="flex items-center space-x-2 border-b border-border pb-3 mb-4 relative z-10">
               <div className="w-1 h-4 bg-secondary" />
               <Video className="w-3.5 h-3.5 text-secondary" />
               <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-text">Video Servers</h3>
@@ -556,9 +556,9 @@ export default function WatchContent({ id }: { id: string }) {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 relative z-10">
             {episodeData.downloadUrl.qualities.map((quality: any) => (
               <div key={quality.title} className="space-y-4">
-                <div className="flex items-center justify-between border-b border-white/5 pb-2 mb-2">
+                <div className="flex items-center justify-between border-b border-border pb-2 mb-2">
                   <span className="text-[10px] font-black uppercase tracking-[0.2em] text-secondary">{quality.title.replace('Mp4_', '')}</span>
-                  {quality.size && <span className="text-[9px] font-mono font-bold text-muted-text opacity-60 bg-white/5 px-1.5 py-0.5">{quality.size}</span>}
+                  {quality.size && <span className="text-[9px] font-mono font-bold text-muted-text opacity-60 bg-foreground/5 px-1.5 py-0.5">{quality.size}</span>}
                 </div>
                 
                 <div className="flex flex-wrap gap-2">

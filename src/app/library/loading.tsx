@@ -4,7 +4,7 @@ import { Skeleton } from '@/components/ui/Skeleton';
 export default function LibraryLoading() {
   return (
     <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6 border-b border-white/5 pb-6">
+      <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6 border-b border-border pb-6">
         <div className="space-y-6">
           <div className="flex items-center space-x-4">
             <Skeleton className="w-14 h-14 rounded-none" />

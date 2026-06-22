@@ -40,7 +40,7 @@ export function BookmarkButton({ animeId, animeTitle, animeTitleEnglish, animeIm
           "flex items-center justify-center space-x-2 px-6 py-3 font-black uppercase tracking-widest text-sm transition-all relative overflow-hidden group border",
           active 
             ? "bg-secondary/10 border-secondary text-secondary" 
-            : "bg-card/50 hover:bg-secondary/10 border-white/5 hover:border-secondary/30 text-muted-text hover:text-foreground",
+            : "bg-card/50 hover:bg-secondary/10 border-border hover:border-secondary/30 text-muted-text hover:text-foreground",
           className
         )}
       >
@@ -65,7 +65,7 @@ export function BookmarkButton({ animeId, animeTitle, animeTitleEnglish, animeIm
         onClick={handleClick}
         className={cn(
           "p-2 bg-background/90 border transition-all relative overflow-hidden group",
-          active ? "border-secondary text-secondary hover:border-red-500 hover:text-red-500 hover:bg-red-500/10" : "border-white/10 text-muted-text hover:border-secondary/50 hover:text-foreground",
+          active ? "border-secondary text-secondary hover:border-red-500 hover:text-red-500 hover:bg-red-500/10" : "border-border text-muted-text hover:border-secondary/50 hover:text-foreground",
           className
         )}
         style={{ clipPath: 'polygon(5px 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 5px)' }}

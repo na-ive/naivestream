@@ -82,21 +82,21 @@ export function MobileAnimeDetail({ id, data, source, similarAnime, charactersDa
           {/* Horizontal Scrollable Metadata Badges */}
           <div className="flex overflow-x-auto gap-3 py-4 mt-2 no-scrollbar snap-x">
             {rating && (
-              <div className="flex items-center gap-1.5 px-3 py-1.5 bg-card border border-white/5 shrink-0 snap-start">
+              <div className="flex items-center gap-1.5 px-3 py-1.5 bg-card border border-border shrink-0 snap-start">
                 <StarFilled className="text-secondary w-3.5 h-3.5" />
                 <span className="text-xs font-black">{rating}</span>
               </div>
             )}
-            <div className="flex items-center gap-1.5 px-3 py-1.5 bg-card border border-white/5 shrink-0 snap-start text-xs font-bold uppercase tracking-wider text-muted-text">
+            <div className="flex items-center gap-1.5 px-3 py-1.5 bg-card border border-border shrink-0 snap-start text-xs font-bold uppercase tracking-wider text-muted-text">
               Status <span className="text-secondary ml-1">{status}</span>
             </div>
-            <div className="flex items-center gap-1.5 px-3 py-1.5 bg-card border border-white/5 shrink-0 snap-start text-xs font-bold uppercase tracking-wider text-muted-text">
+            <div className="flex items-center gap-1.5 px-3 py-1.5 bg-card border border-border shrink-0 snap-start text-xs font-bold uppercase tracking-wider text-muted-text">
               Eps <span className="text-foreground ml-1">{numEpisodes}</span>
             </div>
-            <div className="flex items-center gap-1.5 px-3 py-1.5 bg-card border border-white/5 shrink-0 snap-start text-xs font-bold uppercase tracking-wider text-muted-text">
+            <div className="flex items-center gap-1.5 px-3 py-1.5 bg-card border border-border shrink-0 snap-start text-xs font-bold uppercase tracking-wider text-muted-text">
               Season <span className="text-foreground ml-1 capitalize">{season}</span>
             </div>
-            <div className="flex items-center gap-1.5 px-3 py-1.5 bg-card border border-white/5 shrink-0 snap-start text-xs font-bold uppercase tracking-wider text-muted-text">
+            <div className="flex items-center gap-1.5 px-3 py-1.5 bg-card border border-border shrink-0 snap-start text-xs font-bold uppercase tracking-wider text-muted-text">
               Type <span className="text-foreground ml-1">{animeType}</span>
             </div>
           </div>
@@ -187,7 +187,7 @@ export function MobileAnimeDetail({ id, data, source, similarAnime, charactersDa
               <PlayOutline className="w-5 h-5 text-secondary" />
               <h2>Trailer<span className="text-secondary opacity-70">_</span></h2>
             </div>
-            <div className="aspect-video w-full bg-black border-2 border-white/5 relative group">
+            <div className="aspect-video w-full bg-black border-2 border-border relative group">
               <LazyIframe
                 src={trailerUrl}
                 title="Anime Trailer"

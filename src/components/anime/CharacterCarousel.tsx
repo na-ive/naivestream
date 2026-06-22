@@ -10,7 +10,7 @@ function CharacterCard({ character, va, charItem }: { character: any; va: any; c
 
   return (
     <div className="min-w-[120px] max-w-[120px] flex-shrink-0 space-y-2 snap-start group">
-      <div className="aspect-[3/4] relative overflow-hidden bg-black ring-1 ring-white/5 group-hover:ring-secondary/50 transition-all duration-300" style={{ clipPath: 'polygon(15px 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%, 0 15px)' }}>
+      <div className="aspect-[3/4] relative overflow-hidden bg-black ring-1 ring-border group-hover:ring-secondary/50 transition-all duration-300" style={{ clipPath: 'polygon(15px 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%, 0 15px)' }}>
         {!imgLoaded && (
           <Skeleton className="absolute inset-0 rounded-none" />
         )}
@@ -48,7 +48,7 @@ function CharacterCard({ character, va, charItem }: { character: any; va: any; c
         <p className="text-xs font-bold truncate text-foreground">{character.name.split(',').reverse().join(' ').trim()}</p>
         <p className="text-[10px] uppercase tracking-widest text-secondary truncate">{charItem.role}</p>
         {va && (
-          <p className="text-[9px] uppercase tracking-widest text-muted-text truncate mt-1 border-t border-white/5 pt-1" title={va.name}>
+          <p className="text-[9px] uppercase tracking-widest text-muted-text truncate mt-1 border-t border-border pt-1" title={va.name}>
             VA: {va.name.split(',').reverse().join(' ').trim()}
           </p>
         )}
@@ -115,8 +115,8 @@ export function CharacterCarousel({ characters }: CharacterCarouselProps) {
             className={cn(
               "w-8 h-8 flex items-center justify-center bg-card border transition-colors",
               canScrollLeft
-                ? "border-white/10 hover:border-secondary hover:text-secondary cursor-pointer"
-                : "border-white/5 text-muted-text/30 cursor-default"
+                ? "border-border hover:border-secondary hover:text-secondary cursor-pointer"
+                : "border-border text-muted-text/30 cursor-default"
             )}
             aria-label="Scroll left"
           >
@@ -128,8 +128,8 @@ export function CharacterCarousel({ characters }: CharacterCarouselProps) {
             className={cn(
               "w-8 h-8 flex items-center justify-center bg-card border transition-colors",
               canScrollRight
-                ? "border-white/10 hover:border-secondary hover:text-secondary cursor-pointer"
-                : "border-white/5 text-muted-text/30 cursor-default"
+                ? "border-border hover:border-secondary hover:text-secondary cursor-pointer"
+                : "border-border text-muted-text/30 cursor-default"
             )}
             aria-label="Scroll right"
           >

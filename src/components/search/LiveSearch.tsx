@@ -244,7 +244,7 @@ export function LiveSearch({ onClose, dropdownPosition = 'bottom', onQueryChange
             {loading ? (
               <>
                 {Array.from({ length: 3 }).map((_, i) => (
-                  <div key={i} className="flex items-center gap-4 p-3 border-b border-white/5">
+                  <div key={i} className="flex items-center gap-4 p-3 border-b border-border">
                     <Skeleton className="w-12 h-16 shrink-0 rounded-none bg-secondary/10" />
                     <div className="flex-1 min-w-0 space-y-2">
                       <Skeleton className="h-4 w-3/4 rounded-none bg-secondary/10" />
@@ -272,7 +272,7 @@ export function LiveSearch({ onClose, dropdownPosition = 'bottom', onQueryChange
                   onClick={() => { handleSubmit(); if (onClose) onClose(); }}
                   onMouseEnter={() => setActiveIndex(results.length)}
                   className={cn(
-                    "w-full p-3 text-[10px] uppercase tracking-[0.3em] font-black text-center border-t border-white/5 transition-all",
+                    "w-full p-3 text-[10px] uppercase tracking-[0.3em] font-black text-center border-t border-border transition-all",
                     activeIndex === results.length 
                       ? "bg-secondary text-background shadow-[0_0_20px_rgba(34,197,94,0.4)]" 
                       : "bg-secondary/5 hover:bg-secondary/10 text-secondary"
@@ -304,7 +304,7 @@ function SearchResultItem({ anime, isActive, onSelect, onHover }: { anime: Searc
       onClick={onSelect}
       onMouseEnter={onHover}
       className={cn(
-        "flex items-center gap-4 p-3 border-b border-white/5 last:border-0 transition-all group/item",
+        "flex items-center gap-4 p-3 border-b border-border last:border-0 transition-all group/item",
         isActive ? "bg-secondary/20" : "hover:bg-secondary/10"
       )}
     >
@@ -365,7 +365,7 @@ export function LiveSearchSkeleton({ dropdownPosition = 'bottom' }: { dropdownPo
       >
         <div className="bg-card border-2 border-secondary/20 shadow-xl flex flex-col">
           {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="flex items-center gap-4 p-3 border-b border-white/5">
+            <div key={i} className="flex items-center gap-4 p-3 border-b border-border">
               <Skeleton className="w-12 h-16 shrink-0 rounded-none" />
               <div className="flex-1 min-w-0 space-y-2">
                 <Skeleton className="h-4 w-3/4 rounded-none" />
