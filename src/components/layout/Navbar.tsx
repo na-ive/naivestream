@@ -22,7 +22,8 @@ export function Navbar() {
   const [searchQuery, setSearchQuery] = useState('');
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [isScrolled, setIsScrolled] = useState(false);
-  const dropdownRef = React.useRef<HTMLDivElement>(null);
+  const desktopDropdownRef = React.useRef<HTMLDivElement>(null);
+  const mobileMenuRef = React.useRef<HTMLDivElement>(null);
   const tabletSearchRef = React.useRef<HTMLDivElement>(null);
   const { theme, setTheme } = useTheme();
   const pathname = usePathname();
@@ -88,8 +89,10 @@ export function Navbar() {
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+      if (desktopDropdownRef.current && !desktopDropdownRef.current.contains(e.target as Node)) {
         setOpenDropdown(null);
+      }
+      if (mobileMenuRef.current && !mobileMenuRef.current.contains(e.target as Node)) {
         setIsMenuOpen(false);
       }
       if (tabletSearchRef.current && !tabletSearchRef.current.contains(e.target as Node)) {
@@ -158,7 +161,7 @@ export function Navbar() {
             {navLinks.map((link) => {
               if (link.type === 'dropdown') {
                 return (
-                  <div key={link.name} className="relative py-2" ref={dropdownRef}>
+                  <div key={link.name} className="relative py-2" ref={desktopDropdownRef}>
                     <button 
                       type="button"
                       onClick={() => setOpenDropdown(prev => prev === link.name ? null : link.name)}
@@ -256,7 +259,7 @@ export function Navbar() {
           </div>
 
           {/* Mobile Actions */}
-          <div className="flex md:hidden items-center gap-2 relative" ref={dropdownRef}>
+          <div className="flex md:hidden items-center gap-2 relative" ref={mobileMenuRef}>
             <button
               onClick={handleRandomAnime}
               disabled={isRandomLoading}
