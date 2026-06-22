@@ -12,6 +12,7 @@ import { AnimatePresence, motion } from 'motion/react';
 import { AnimeCardSkeleton } from '@/components/anime/AnimeCard';
 import { ViewGridWrapper } from '@/components/layout/ViewGridWrapper';
 import { ViewToggle } from '@/components/layout/ViewToggle';
+import { useTitleLang } from '@/lib/providers/TitleLangProvider';
 
 const FILTER_OPTIONS = {
   status: [
@@ -98,6 +99,7 @@ function SearchContent() {
   const [loading, setLoading] = useState(true);
   const [pagination, setPagination] = useState({ current_page: 1, last_page: 1, total: 0 });
   const [showFilters, setShowFilters] = useState(false); // Default to false for mobile
+  const { titleLang } = useTitleLang();
 
   useEffect(() => {
     if (typeof window !== 'undefined' && window.innerWidth >= 768) {
@@ -146,6 +148,7 @@ function SearchContent() {
         if (rating !== 'All') params.set('rating', rating);
         if (selectedStudios.length > 0) params.set('studios', selectedStudios.join(','));
         params.set('page', page.toString());
+        params.set('titleLang', titleLang);
 
         const res = await fetch(`/api/search?${params.toString()}`);
         const data = await res.json();
@@ -163,7 +166,7 @@ function SearchContent() {
     }, 500); // Debounce API call by 500ms
 
     return () => clearTimeout(timeoutId);
-  }, [query, genresParam, genreMode, status, type, order, year, season, source, rating, studiosParam, page]);
+  }, [query, genresParam, genreMode, status, type, order, year, season, source, rating, studiosParam, page, titleLang]);
 
   const updateFilters = useCallback((updates: Record<string, string | number>) => {
     const params = new URLSearchParams(searchParams.toString());

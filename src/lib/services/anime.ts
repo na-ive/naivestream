@@ -336,7 +336,7 @@ export const AnimeService = {
   },
 
   async advancedSearch({ 
-    query = '', genre = '', genres = '', genreMode = 'any', status = '', type = '', letter = '', year = '', season = '', rating = '', source = '', studio = '', studios = '', order = 'popularity', page = 1, limit = 24 
+    query = '', genre = '', genres = '', genreMode = 'any', status = '', type = '', letter = '', year = '', season = '', rating = '', source = '', studio = '', studios = '', order = 'popularity', page = 1, limit = 24, titleLang = 'jp'
   }) {
     const offset = (page - 1) * limit;
 
@@ -399,8 +399,11 @@ export const AnimeService = {
       studioList.forEach(s => params.push(`%${s}%`));
     }
 
+    const titleField = titleLang === 'en' 
+      ? "COALESCE(NULLIF(a.title_english, ''), a.title)" 
+      : "a.title";
+
     if (letter) {
-      const titleField = "COALESCE(NULLIF(a.title_english, ''), a.title)";
       if (letter === '0-9') whereClauses.push(`${titleField} GLOB '[0-9]*'`);
       else if (letter === '#') whereClauses.push(`${titleField} NOT GLOB '[a-zA-Z0-9]*'`);
       else if (letter !== 'ALL') { whereClauses.push(`${titleField} LIKE ?`); params.push(`${letter}%`); }
@@ -421,11 +424,11 @@ export const AnimeService = {
     const orderByMap: Record<string, string> = {
       'popularity': 'a.popularity DESC',
       'popularity_desc': 'a.popularity ASC',
-      'latest': 'a.last_updated DESC',
-      'oldest': 'a.last_updated ASC',
+      'latest': 'a.year DESC, CASE a.season WHEN \'fall\' THEN 4 WHEN \'summer\' THEN 3 WHEN \'spring\' THEN 2 WHEN \'winter\' THEN 1 ELSE 0 END DESC, a.last_updated DESC',
+      'oldest': 'a.year ASC, CASE a.season WHEN \'winter\' THEN 1 WHEN \'spring\' THEN 2 WHEN \'summer\' THEN 3 WHEN \'fall\' THEN 4 ELSE 5 END ASC, a.last_updated ASC',
       'score': 'a.score DESC',
-      'title': "COALESCE(NULLIF(a.title_english, ''), a.title) ASC",
-      'title_desc': "COALESCE(NULLIF(a.title_english, ''), a.title) DESC",
+      'title': `${titleField} ASC`,
+      'title_desc': `${titleField} DESC`,
       'score_asc': 'a.score ASC'
     };
 

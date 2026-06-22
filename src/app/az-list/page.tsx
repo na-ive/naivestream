@@ -11,17 +11,23 @@ export const metadata: Metadata = {
   description: 'Browse all anime from A to Z.',
 };
 
+import { cookies } from 'next/headers';
+
 export default async function AZListPage(props: { searchParams: Promise<{ letter?: string, page?: string }> }) {
   const searchParams = await props.searchParams;
   const currentLetter = searchParams.letter || "ALL";
   const currentPage = parseInt(searchParams.page || "1", 10);
   const itemsPerPage = 24;
 
+  const cookieStore = await cookies();
+  const titleLang = cookieStore.get('titleLang')?.value || 'jp';
+
   const result = await AnimeService.advancedSearch({
     letter: currentLetter,
     page: currentPage,
     limit: itemsPerPage,
-    order: 'title'
+    order: 'title',
+    titleLang: titleLang as any
   });
 
   const paginatedData = result.items;

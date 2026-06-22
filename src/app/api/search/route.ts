@@ -21,9 +21,11 @@ export async function GET(req: NextRequest) {
   const page = parseInt(searchParams.get('page') || '1');
   const limit = clampLimit(parseInt(searchParams.get('limit') || '24'));
 
+  const titleLang = searchParams.get('titleLang') || 'jp';
+
   try {
     const results = await AnimeService.advancedSearch({
-      query, genre, genres, genreMode, status, type, letter, year, season, rating, source, studio, studios, order, page, limit
+      query, genre, genres, genreMode, status, type, letter, year, season, rating, source, studio, studios, order, page, limit, titleLang
     });
     return NextResponse.json({ ...results, items: sanitizeAnimeList(results.items) });
   } catch (error) {
