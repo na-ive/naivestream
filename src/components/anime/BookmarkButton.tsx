@@ -64,7 +64,7 @@ export function BookmarkButton({ animeId, animeTitle, animeTitleEnglish, animeIm
       <button
         onClick={handleClick}
         className={cn(
-          "p-2 bg-background/90 backdrop-blur-md border transition-all relative overflow-hidden group",
+          "p-2 bg-background/90 border transition-all relative overflow-hidden group",
           active ? "border-secondary text-secondary hover:border-red-500 hover:text-red-500 hover:bg-red-500/10" : "border-white/10 text-muted-text hover:border-secondary/50 hover:text-foreground",
           className
         )}

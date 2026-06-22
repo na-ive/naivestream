@@ -110,7 +110,7 @@ export function AnimeCard({
           <div className="absolute top-3 left-3 flex flex-col gap-2 z-20 items-start">
             {rating && (
               <div className={cn(
-                "flex items-center space-x-1.5 px-2 py-1 bg-background/90 backdrop-blur-md border text-[10px] font-black uppercase tracking-tighter",
+                "flex items-center space-x-1.5 px-2 py-1 bg-background/90 border text-[10px] font-black uppercase tracking-tighter",
                 isEmpty ? "border-[#EAB308]/50 text-[#EAB308]" : "border-secondary/50 text-secondary"
               )}>
                 <StarFilled className="w-3 h-3 fill-current" />
@@ -132,15 +132,13 @@ export function AnimeCard({
         {/* Episode Badge */}
         {episode && !isEmpty && (
           <div className={cn(
-            "absolute px-3 py-1 bg-background/90 backdrop-blur-md text-[10px] font-black text-foreground tracking-widest uppercase z-20",
+            "absolute px-3 py-1 bg-background/90 text-[10px] font-black text-foreground tracking-widest uppercase z-20",
             isHorizontal ? "top-0 left-0 border-r border-b border-white/10" : "bottom-3 right-3 border-r-4 border-secondary"
           )}>
             {episode}
           </div>
         )}
 
-        {/* Scanline Effect */}
-        <div className="absolute inset-0 pointer-events-none bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.1)_50%),linear-gradient(90deg,rgba(255,0,0,0.02),rgba(0,255,0,0.01),rgba(0,0,255,0.02))] bg-[length:100%_4px,100%_100%] z-30" />
       </Link>
 
       {/* Content Area */}
