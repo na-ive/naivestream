@@ -3,7 +3,6 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { CaretRight, StarFilled, Terminal, Warning } from '@carbon/icons-react';
-import { motion } from 'motion/react';
 import { BookmarkButton } from './BookmarkButton';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { cn } from '@/lib/utils';
@@ -45,12 +44,9 @@ export function AnimeCard({
   const isHorizontal = isDetailed || isCompactList;
 
   return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.95 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.3 }}
+    <div
       className={cn(
-        "relative flex h-full",
+        "relative flex h-full animate-in fade-in zoom-in-95 duration-300",
         !disableHover && "group",
         isHorizontal 
           ? "flex-row p-3 gap-4 bg-card/50 border border-white/5 hover:border-secondary/30" 
@@ -217,7 +213,7 @@ export function AnimeCard({
           </div>
         )}
       </div>
-    </motion.div>
+    </div>
   );
 }
 
