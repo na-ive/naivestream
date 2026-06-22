@@ -176,6 +176,11 @@ export function HeroCarousel({ items }: HeroCarouselProps) {
                   <span className="inline-block skew-x-[15deg]">{genre}</span>
                 </Link>
               ))}
+              {current.genres?.length > 3 && (
+                <span className="text-[10px] text-muted-text font-mono font-bold">
+                  +{current.genres.length - 3}
+                </span>
+              )}
             </div>
 
             <p className="text-muted-text text-[14px] md:text-[15px] leading-relaxed w-full mb-10 font-medium tracking-wide line-clamp-3">

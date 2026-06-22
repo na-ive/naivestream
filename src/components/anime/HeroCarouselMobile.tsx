@@ -164,6 +164,11 @@ export function HeroCarouselMobile({ items }: HeroCarouselMobileProps) {
                     {genre}
                   </span>
                 ))}
+                {current.genres.length > 2 && (
+                  <span className="text-[7px] sm:text-[8px] text-muted-text font-mono font-bold ml-0.5">
+                    +{current.genres.length - 2}
+                  </span>
+                )}
               </motion.div>
             )}
 
