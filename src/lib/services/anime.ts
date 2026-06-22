@@ -273,7 +273,7 @@ export const AnimeService = {
     const popularSql = `SELECT ${SQL_BASE_SELECT} FROM anime a WHERE ${SMART_STATUS_CLAUSES.Ongoing} ORDER BY CASE WHEN ${SQL_ACTUAL_COUNT} > 0 THEN 0 ELSE 1 END ASC, a.popularity DESC LIMIT 12`;
     const popular = getPreparedStatement(popularSql).all() as any[];
 
-    const ongoingSql = `SELECT ${SQL_BASE_SELECT} FROM anime a WHERE ${SMART_STATUS_CLAUSES.Ongoing} ORDER BY CASE WHEN ${SQL_ACTUAL_COUNT} > 0 THEN 0 ELSE 1 END ASC, COALESCE(a.next_airing_at, 0) DESC LIMIT 12`;
+    const ongoingSql = `SELECT ${SQL_BASE_SELECT} FROM anime a WHERE ${SMART_STATUS_CLAUSES.Ongoing} ORDER BY CASE WHEN ${SQL_ACTUAL_COUNT} > 0 THEN 0 ELSE 1 END ASC, COALESCE(${SQL_LATEST_EP_DATE}, a.last_updated) DESC LIMIT 12`;
     const ongoing = getPreparedStatement(ongoingSql).all() as any[];
 
     const completedSql = `SELECT ${SQL_BASE_SELECT} FROM anime a WHERE ${SMART_STATUS_CLAUSES.Completed} ORDER BY CASE WHEN ${SQL_ACTUAL_COUNT} > 0 THEN 0 ELSE 1 END ASC, COALESCE(${SQL_LATEST_EP_DATE}, a.last_updated) DESC LIMIT 12`;
