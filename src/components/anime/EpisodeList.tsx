@@ -100,7 +100,7 @@ export function EpisodeList({
           <h2>Episode List<span className="text-secondary opacity-70">_</span></h2>
         </div>
 
-        <div className="flex flex-wrap items-center gap-3">
+        <div className="flex w-full sm:w-auto items-center justify-between gap-3 mt-2 sm:mt-0">
           {episodes.length > itemsPerPage ? (
             <>
               {/* Jump to Episode */}

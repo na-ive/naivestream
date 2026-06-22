@@ -38,7 +38,7 @@ export function MobileAnimeDetail({ id, data, source, similarAnime, charactersDa
       {/* Hero Section: Backdrop + Poster + Title */}
       <div className="relative w-full pb-8">
         {/* Blurred Background Banner */}
-        <div className="absolute inset-0 h-[350px] w-full overflow-hidden z-0">
+        <div className="absolute inset-0 w-full h-full overflow-hidden z-0">
           <img
             src={banner}
             alt="Background"
@@ -126,10 +126,10 @@ export function MobileAnimeDetail({ id, data, source, similarAnime, charactersDa
       <div className="px-4 space-y-8">
         {/* Synopsis */}
         <div className="space-y-3">
-          <div className="flex items-center space-x-2 text-base font-serif font-black uppercase tracking-widest">
-            <div className="w-1 h-4 bg-secondary" />
-            <Information className="w-4 h-4 text-secondary" />
-            <h2>Synopsis</h2>
+          <div className="flex items-center space-x-3 text-lg font-serif font-black uppercase tracking-widest border-b-2 border-secondary/20 pb-4 mb-2">
+            <div className="w-1.5 h-6 bg-secondary" />
+            <Information className="w-5 h-5 text-secondary" />
+            <h2>Synopsis<span className="text-secondary opacity-70">_</span></h2>
           </div>
           <div className="relative">
             <div className={`text-foreground/70 leading-relaxed text-sm ${!showFullSynopsis ? 'line-clamp-4' : ''}`}>
@@ -182,10 +182,10 @@ export function MobileAnimeDetail({ id, data, source, similarAnime, charactersDa
         {/* Trailer */}
         {trailerUrl && (
           <div className="space-y-3 pt-2">
-            <div className="flex items-center space-x-2 text-base font-serif font-black uppercase tracking-widest">
-              <div className="w-1 h-4 bg-secondary" />
-              <PlayOutline className="w-4 h-4 text-secondary" />
-              <h2>Trailer</h2>
+            <div className="flex items-center space-x-3 text-lg font-serif font-black uppercase tracking-widest border-b-2 border-secondary/20 pb-4 mb-2">
+              <div className="w-1.5 h-6 bg-secondary" />
+              <PlayOutline className="w-5 h-5 text-secondary" />
+              <h2>Trailer<span className="text-secondary opacity-70">_</span></h2>
             </div>
             <div className="aspect-video w-full bg-black border-2 border-white/5 relative group">
               <LazyIframe
@@ -202,10 +202,10 @@ export function MobileAnimeDetail({ id, data, source, similarAnime, charactersDa
         {/* Similar Anime Section */}
         {similarAnime.length > 0 && (
           <div className="space-y-4 pt-4">
-            <div className="flex items-center space-x-2 text-base font-serif font-black uppercase tracking-widest">
-              <div className="w-1 h-4 bg-secondary" />
-              <Grid className="w-4 h-4 text-secondary" />
-              <h2>Similar Anime</h2>
+            <div className="flex items-center space-x-3 text-lg font-serif font-black uppercase tracking-widest border-b-2 border-secondary/20 pb-4 mb-2">
+              <div className="w-1.5 h-6 bg-secondary" />
+              <Grid className="w-5 h-5 text-secondary" />
+              <h2>Similar Anime<span className="text-secondary opacity-70">_</span></h2>
             </div>
             <div className="anime-grid">
               {similarAnime.map((anime: any) => (
