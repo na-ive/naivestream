@@ -478,7 +478,7 @@ export function DatabaseTable({
             </button>
             <button
               onClick={handleAddAnime}
-              className="flex items-center space-x-2 px-6 py-2.5 bg-secondary text-black font-black text-[10px] uppercase tracking-[0.2em] shadow-[0_0_15px_rgba(34,197,94,0.5)] hover:shadow-[0_0_25px_rgba(34,197,94,0.7)] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex items-center space-x-2 px-6 py-2.5 bg-secondary text-white dark:text-black font-black text-[10px] uppercase tracking-[0.2em] shadow-[0_0_15px_rgba(34,197,94,0.5)] hover:shadow-[0_0_25px_rgba(34,197,94,0.7)] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               style={{ clipPath: 'polygon(4px 0, 100% 0, 100% calc(100% - 4px), calc(100% - 4px) 100%, 0 100%, 0 4px)' }}
               disabled={isPending || !newAnime.slug.trim()}
             >

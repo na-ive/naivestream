@@ -101,7 +101,7 @@ export function Modal({ isOpen, onClose, title, children, footer, className, siz
               </div>
 
               {/* Body */}
-              <div className="relative flex-1 min-h-0 flex flex-col">
+              <div className={cn("relative flex-1 min-h-0 flex flex-col", !footer && "mb-6")}>
                 {/* Decorative L-Shapes (HUD Reticle Style) */}
                 <div className="absolute top-0 left-4 w-4 h-4 border-t-2 border-l-2 border-secondary/50 pointer-events-none z-10" />
                 <div className="absolute bottom-0 right-4 w-4 h-4 border-b-2 border-r-2 border-secondary/50 pointer-events-none z-10" />

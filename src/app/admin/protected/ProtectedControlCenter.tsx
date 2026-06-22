@@ -364,7 +364,8 @@ export function ProtectedControlCenter({ initialData }: { initialData: any[] }) 
             <button
               onClick={handleSaveMetadata}
               disabled={isPending}
-              className="w-full py-2.5 bg-secondary text-black font-bold uppercase tracking-widest text-xs hover:bg-foreground hover:text-background transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
+              className="w-full py-2.5 bg-secondary text-white dark:text-black font-black uppercase tracking-[0.2em] text-[10px] shadow-[0_0_15px_rgba(34,197,94,0.5)] hover:shadow-[0_0_25px_rgba(34,197,94,0.7)] hover:opacity-80 transition-all flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer"
+              style={{ clipPath: 'polygon(4px 0, 100% 0, 100% calc(100% - 4px), calc(100% - 4px) 100%, 0 100%, 0 4px)' }}
             >
               <Checkmark className="w-4 h-4" /> Save Metadata
             </button>
@@ -425,6 +426,8 @@ export function ProtectedControlCenter({ initialData }: { initialData: any[] }) 
                 </ul>
               )}
             </div>
+            {/* Spacer for bottom corner L-Shape */}
+            <div className="h-4" />
           </div>
 
         </div>
