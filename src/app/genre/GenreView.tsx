@@ -9,6 +9,8 @@ interface GenreViewProps {
   genres: any[];
 }
 
+import { Tooltip } from '@/components/ui/Tooltip';
+
 export function GenreView({ genres }: GenreViewProps) {
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
 
@@ -16,33 +18,37 @@ export function GenreView({ genres }: GenreViewProps) {
     <div>
       {/* View Toggle */}
       <div className="flex justify-end mb-8">
-        <div 
-          className="inline-flex bg-card/50 border border-secondary/30 p-1 relative"
-        >
-          <button
-            onClick={() => setViewMode('grid')}
-            className={cn(
-              "flex items-center gap-2 px-6 py-2.5 font-bold uppercase tracking-widest text-xs transition-all",
-              viewMode === 'grid'
-                ? "bg-secondary text-background shadow-[0_0_15px_rgba(34,197,94,0.4)]"
-                : "text-muted-text hover:text-foreground hover:bg-secondary/10"
-            )}
-          >
-            <Grid className="w-4 h-4" />
-            <span className="hidden sm:inline">Grid</span>
-          </button>
-          <button
-            onClick={() => setViewMode('list')}
-            className={cn(
-              "flex items-center gap-2 px-6 py-2.5 font-bold uppercase tracking-widest text-xs transition-all",
-              viewMode === 'list'
-                ? "bg-secondary text-background shadow-[0_0_15px_rgba(34,197,94,0.4)]"
-                : "text-muted-text hover:text-foreground hover:bg-secondary/10"
-            )}
-          >
-            <List className="w-4 h-4" />
-            <span className="hidden sm:inline">List</span>
-          </button>
+        <div className="relative inline-flex items-center gap-1 p-1 shrink-0">
+          <div 
+            className="absolute inset-0 w-full h-full bg-card/50 border border-secondary/30 pointer-events-none" 
+            style={{ clipPath: 'polygon(5px 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 5px)' }} 
+          />
+          <Tooltip content="Grid View" position="bottom" className="!text-[10px]" wrapperClassName="z-10">
+            <button
+              onClick={() => setViewMode('grid')}
+              className={cn(
+                "p-2 transition-colors",
+                viewMode === 'grid' 
+                  ? "bg-secondary/20 text-secondary"
+                  : "text-muted-text hover:text-foreground hover:bg-white/5"
+              )}
+            >
+              <Grid className="w-5 h-5" />
+            </button>
+          </Tooltip>
+          <Tooltip content="List View" position="bottom" className="!text-[10px]" wrapperClassName="z-10">
+            <button
+              onClick={() => setViewMode('list')}
+              className={cn(
+                "p-2 transition-colors",
+                viewMode === 'list' 
+                  ? "bg-secondary/20 text-secondary"
+                  : "text-muted-text hover:text-foreground hover:bg-white/5"
+              )}
+            >
+              <List className="w-5 h-5" />
+            </button>
+          </Tooltip>
         </div>
       </div>
 
