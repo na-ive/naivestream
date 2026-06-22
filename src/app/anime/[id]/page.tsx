@@ -6,9 +6,14 @@ import { notFound } from "next/navigation";
 import { DesktopAnimeDetail } from "@/components/anime/DesktopAnimeDetail";
 import { MobileAnimeDetail } from "@/components/anime/MobileAnimeDetail";
 import { parseIndonesianDate, formatDate } from "@/lib/utils";
+import { Suspense, cache } from "react";
+import { AnimeDetailSkeleton } from "@/components/anime/AnimeDetailSkeleton";
 
-async function getAnimeDetails(slug: string) {
-  const anime = await AnimeService.getAnimeBySlug(slug);
+// Use React cache to deduplicate requests within the same render cycle
+// (e.g. across generateMetadata and the page component)
+const getCachedAnime = cache((slug: string) => AnimeService.getAnimeBySlug(slug));
+
+async function getAnimeDetails(anime: any) {
   if (!anime) return null;
   
   const episodes = await AnimeService.getEpisodes(anime.id);
@@ -18,7 +23,7 @@ async function getAnimeDetails(slug: string) {
     data: {
       ...anime,
       episodeList: episodes
-        .map(ep => ({
+        .map((ep: any) => ({
           episodeId: ep.slug,
           eps: ep.eps_number,
           title: ep.title,
@@ -36,7 +41,7 @@ export async function generateMetadata(props: { params: Promise<{ id: string }> 
     notFound();
   }
 
-  const anime = await AnimeService.getAnimeBySlug(id);
+  const anime = await getCachedAnime(id);
   
   if (!anime) {
     notFound();
@@ -48,11 +53,8 @@ export async function generateMetadata(props: { params: Promise<{ id: string }> 
   };
 }
 
-import { Suspense } from "react";
-import { AnimeDetailSkeleton } from "@/components/anime/AnimeDetailSkeleton";
-
-async function AnimeDetailContent({ id }: { id: string }) {
-  const result = await getAnimeDetails(id);
+async function AnimeDetailContent({ id, anime }: { id: string, anime: any }) {
+  const result = await getAnimeDetails(anime);
 
   if (!result || !result.data) {
     notFound();
@@ -138,14 +140,14 @@ export default async function AnimeDetailPage(props: { params: Promise<{ id: str
 
   // Fast synchronous check to trigger 404 BEFORE streaming the Suspense boundary.
   // This guarantees that Next.js will return HTTP 404 instead of HTTP 200, crucial for SEO.
-  const animeExists = await AnimeService.getAnimeBySlug(id);
-  if (!animeExists) {
+  const anime = await getCachedAnime(id);
+  if (!anime) {
     notFound();
   }
 
   return (
     <Suspense fallback={<AnimeDetailSkeleton />}>
-      <AnimeDetailContent id={id} />
+      <AnimeDetailContent id={id} anime={anime} />
     </Suspense>
   );
 }
