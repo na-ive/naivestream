@@ -4,14 +4,14 @@ import { getSession, logout } from '@/lib/auth';
 import db from '@/lib/db';
 import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
-import { exec } from 'child_process';
+import { execFile } from 'child_process';
 import { promisify } from 'util';
 import path from 'path';
 import fs from 'fs';
 import os from 'os';
 import { parseIndonesianDate } from '@/lib/utils';
 
-const execPromise = promisify(exec);
+const execFilePromise = promisify(execFile);
 
 async function checkAuth() {
   const session = await getSession();
@@ -69,7 +69,7 @@ export async function injectMetadata(animeId: number, anilistId: number) {
     const info = stmt.run(...params);
 
     if (info.changes > 0) {
-      await execPromise(`node dist/fill-from-anilist.js --id=${animeId}`, { cwd: path.join(process.cwd(), 'backend') });
+      await execFilePromise('node', ['dist/fill-from-anilist.js', `--id=${animeId}`], { cwd: path.join(process.cwd(), 'backend') });
       revalidatePath('/admin');
       revalidatePath('/');
       return { success: true };
@@ -223,7 +223,7 @@ export async function updateAnimeMapping(id: number, malId: number | null, anili
 
     if (info.changes > 0) {
       if (triggerResync) {
-        exec(`node dist/fill-from-anilist.js --id=${id}`, { cwd: path.join(process.cwd(), 'backend') });
+        execFile('node', ['dist/fill-from-anilist.js', `--id=${id}`], { cwd: path.join(process.cwd(), 'backend') });
         await addSystemLog(`Updated mappings for anime ID ${id} and triggered background resync.`);
       } else {
         await addSystemLog(`Updated mappings for anime ID ${id}.`);
@@ -264,7 +264,7 @@ export async function triggerScraper(scriptName: string) {
   try {
     // Jalankan perintah di folder backend secara asynchronous (background)
     // Supaya Vercel/Next.js tidak timeout menunggu scraper selesai
-    const child = exec(`npm run ${scriptName}`, { cwd: path.join(process.cwd(), 'backend') });
+    const child = execFile('npm', ['run', scriptName], { cwd: path.join(process.cwd(), 'backend') });
     
     // Kita bisa biarkan jalan di background, atau menyimpan log-nya ke file tertentu
     await addSystemLog(`Started scraper script: ${scriptName}`);
@@ -289,7 +289,7 @@ export async function triggerScrapeSlug(slug: string, correctSlug?: string) {
       stmt.run(targetSlug, slug);
     }
 
-    await execPromise(`node dist/index.js --slug=${targetSlug}`, { cwd: path.join(process.cwd(), 'backend') });
+    await execFilePromise('node', ['dist/index.js', `--slug=${targetSlug}`], { cwd: path.join(process.cwd(), 'backend') });
     revalidatePath('/admin/operations');
     revalidatePath('/');
     await addSystemLog(`Scraped data for slug: ${targetSlug}`, 'success');
@@ -343,9 +343,9 @@ export async function addAnimeMinimal(slug: string, anilistId: number | null) {
 
     if (info.changes > 0) {
       // Trigger background sync
-      exec(`node dist/index.js --slug=${cleanSlug}`, { cwd: path.join(process.cwd(), 'backend') }, (err) => {
+      execFile('node', ['dist/index.js', `--slug=${cleanSlug}`], { cwd: path.join(process.cwd(), 'backend') }, (err) => {
         if (!err && anilistId) {
-          exec(`node dist/fill-from-anilist.js --id=${info.lastInsertRowid}`, { cwd: path.join(process.cwd(), 'backend') });
+          execFile('node', ['dist/fill-from-anilist.js', `--id=${info.lastInsertRowid}`], { cwd: path.join(process.cwd(), 'backend') });
         }
       });
       
@@ -361,7 +361,7 @@ export async function addAnimeMinimal(slug: string, anilistId: number | null) {
   }
 }
 
-export async function addSystemLog(message: string, type: 'info' | 'warning' | 'error' | 'success' = 'info') {
+async function addSystemLog(message: string, type: 'info' | 'warning' | 'error' | 'success' = 'info') {
   try {
     if (!db) return;
     const stmt = db.prepare('INSERT INTO system_logs (message, type, created_at) VALUES (?, ?, datetime("now", "localtime"))');
