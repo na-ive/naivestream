@@ -58,7 +58,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className={`${sans.variable} ${serif.variable} antialiased selection:bg-secondary selection:text-black`}>
+      <body className={`${sans.variable} ${serif.variable} antialiased selection:bg-secondary selection:text-white dark:selection:text-black`}>
         <ThemeProvider
           attribute="class"
           defaultTheme="dark"

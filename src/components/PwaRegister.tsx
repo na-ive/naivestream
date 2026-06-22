@@ -59,7 +59,7 @@ export function PwaRegister() {
          style={{ clipPath: "polygon(5px 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 5px)" }}>
       <button
         onClick={handleInstall}
-        className="flex items-center gap-2 bg-secondary px-3 py-1.5 text-[10px] font-mono uppercase tracking-widest text-black shadow-lg transition-all hover:opacity-90 active:scale-95 cursor-pointer"
+        className="flex items-center gap-2 bg-secondary px-3 py-1.5 text-[10px] font-mono uppercase tracking-widest text-white dark:text-black shadow-lg transition-all hover:opacity-90 active:scale-95 cursor-pointer"
         style={{ clipPath: "polygon(5px 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 5px)" }}
       >
         Install App

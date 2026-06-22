@@ -180,7 +180,7 @@ function AdminDashboardContent() {
                 <button
                   onClick={() => handleTriggerScraper(scraper.id)}
                   disabled={isPending}
-                  className="bg-secondary/10 text-secondary border border-secondary/50 hover:bg-secondary hover:text-black px-4 py-2 text-xs font-bold uppercase tracking-wider transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer w-full"
+                  className="bg-secondary/10 text-secondary border border-secondary/50 hover:bg-secondary hover:text-white dark:hover:text-black px-4 py-2 text-xs font-bold uppercase tracking-wider transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer w-full"
                 >
                   Execute
                 </button>
@@ -298,7 +298,7 @@ function AdminDashboardContent() {
                             <button 
                               type="submit" 
                               disabled={isPending}
-                              className="bg-secondary/10 text-secondary border border-secondary/50 hover:bg-secondary hover:text-black px-4 py-1.5 font-bold uppercase tracking-wider text-[11px] transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                              className="bg-secondary/10 text-secondary border border-secondary/50 hover:bg-secondary hover:text-white dark:hover:text-black px-4 py-1.5 font-bold uppercase tracking-wider text-[11px] transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                             >
                               Inject
                             </button>
@@ -318,14 +318,14 @@ function AdminDashboardContent() {
                     <button
                       onClick={() => setAnomaliesPage(p => Math.max(1, p - 1))}
                       disabled={anomaliesPage === 1 || isPending || isLoading}
-                      className="px-3 py-1 bg-secondary/10 text-secondary border border-secondary/30 disabled:opacity-50 text-xs font-bold uppercase tracking-wider hover:bg-secondary hover:text-black transition-colors"
+                      className="px-3 py-1 bg-secondary/10 text-secondary border border-secondary/30 disabled:opacity-50 text-xs font-bold uppercase tracking-wider hover:bg-secondary hover:text-white dark:hover:text-black transition-colors"
                     >
                       Prev
                     </button>
                     <button
                       onClick={() => setAnomaliesPage(p => Math.min(anomaliesTotalPages, p + 1))}
                       disabled={anomaliesPage === anomaliesTotalPages || isPending || isLoading}
-                      className="px-3 py-1 bg-secondary/10 text-secondary border border-secondary/30 disabled:opacity-50 text-xs font-bold uppercase tracking-wider hover:bg-secondary hover:text-black transition-colors"
+                      className="px-3 py-1 bg-secondary/10 text-secondary border border-secondary/30 disabled:opacity-50 text-xs font-bold uppercase tracking-wider hover:bg-secondary hover:text-white dark:hover:text-black transition-colors"
                     >
                       Next
                     </button>
@@ -384,7 +384,7 @@ function AdminDashboardContent() {
                             <button
                               type="submit"
                               disabled={isPending}
-                              className="bg-secondary/10 text-secondary border border-secondary/50 hover:bg-secondary hover:text-black px-4 py-1.5 font-bold uppercase tracking-wider text-[11px] transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer shrink-0"
+                              className="bg-secondary/10 text-secondary border border-secondary/50 hover:bg-secondary hover:text-white dark:hover:text-black px-4 py-1.5 font-bold uppercase tracking-wider text-[11px] transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer shrink-0"
                             >
                               Fix (Scrape)
                             </button>
@@ -404,14 +404,14 @@ function AdminDashboardContent() {
                     <button
                       onClick={() => setNoEpisodePage(p => Math.max(1, p - 1))}
                       disabled={noEpisodePage === 1 || isPending || isLoading}
-                      className="px-3 py-1 bg-secondary/10 text-secondary border border-secondary/30 disabled:opacity-50 text-xs font-bold uppercase tracking-wider hover:bg-secondary hover:text-black transition-colors"
+                      className="px-3 py-1 bg-secondary/10 text-secondary border border-secondary/30 disabled:opacity-50 text-xs font-bold uppercase tracking-wider hover:bg-secondary hover:text-white dark:hover:text-black transition-colors"
                     >
                       Prev
                     </button>
                     <button
                       onClick={() => setNoEpisodePage(p => Math.min(noEpisodeTotalPages, p + 1))}
                       disabled={noEpisodePage === noEpisodeTotalPages || isPending || isLoading}
-                      className="px-3 py-1 bg-secondary/10 text-secondary border border-secondary/30 disabled:opacity-50 text-xs font-bold uppercase tracking-wider hover:bg-secondary hover:text-black transition-colors"
+                      className="px-3 py-1 bg-secondary/10 text-secondary border border-secondary/30 disabled:opacity-50 text-xs font-bold uppercase tracking-wider hover:bg-secondary hover:text-white dark:hover:text-black transition-colors"
                     >
                       Next
                     </button>

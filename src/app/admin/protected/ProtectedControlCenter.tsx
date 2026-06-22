@@ -148,7 +148,7 @@ export function ProtectedControlCenter({ initialData }: { initialData: any[] }) 
                   <td className="px-4 py-3 text-right">
                     <button
                       onClick={() => handleEditClick(anime)}
-                      className="px-3 py-1.5 bg-secondary/10 hover:bg-secondary text-secondary hover:text-black border border-secondary/50 text-[10px] uppercase tracking-widest transition-colors font-bold inline-flex items-center gap-1.5"
+                      className="px-3 py-1.5 bg-secondary/10 hover:bg-secondary text-secondary hover:text-white dark:hover:text-black border border-secondary/50 text-[10px] uppercase tracking-widest transition-colors font-bold inline-flex items-center gap-1.5"
                     >
                       <Edit className="w-3 h-3" /> Edit
                     </button>
@@ -417,7 +417,7 @@ export function ProtectedControlCenter({ initialData }: { initialData: any[] }) 
                       <button
                         onClick={() => handleAttach(ep.id)}
                         disabled={isPending}
-                        className="px-3 py-1 bg-secondary/10 hover:bg-secondary text-secondary hover:text-black border border-secondary/50 text-[10px] uppercase tracking-widest transition-colors font-bold inline-flex items-center gap-1.5 disabled:opacity-50"
+                        className="px-3 py-1 bg-secondary/10 hover:bg-secondary text-secondary hover:text-white dark:hover:text-black border border-secondary/50 text-[10px] uppercase tracking-widest transition-colors font-bold inline-flex items-center gap-1.5 disabled:opacity-50"
                       >
                         <Link className="w-3 h-3" /> Attach
                       </button>

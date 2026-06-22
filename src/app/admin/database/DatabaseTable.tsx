@@ -219,7 +219,7 @@ export function DatabaseTable({
             <Tooltip content="Add New Anime" position="bottom">
             <button
               onClick={() => setShowAddModal(true)}
-              className="flex items-center justify-center flex-1 sm:flex-none gap-2 px-6 py-2.5 bg-secondary/10 hover:bg-secondary text-secondary hover:text-black border border-secondary/50 text-xs uppercase font-bold tracking-widest transition-colors shadow-[0_0_10px_rgba(34,197,94,0.1)]"
+              className="flex items-center justify-center flex-1 sm:flex-none gap-2 px-6 py-2.5 bg-secondary/10 hover:bg-secondary text-secondary hover:text-white dark:hover:text-black border border-secondary/50 text-xs uppercase font-bold tracking-widest transition-colors shadow-[0_0_10px_rgba(34,197,94,0.1)]"
             >
               <Add className="w-4 h-4" />
               <span>Add Anime</span>
@@ -346,7 +346,7 @@ export function DatabaseTable({
                           <button 
                             onClick={() => saveMapping(anime.id, false)}
                             disabled={isPending}
-                            className="p-1.5 text-secondary bg-secondary/10 hover:bg-secondary hover:text-black transition-colors border border-secondary/30 disabled:opacity-50"
+                            className="p-1.5 text-secondary bg-secondary/10 hover:bg-secondary hover:text-white dark:hover:text-black transition-colors border border-secondary/30 disabled:opacity-50"
                           >
                             <Checkmark className="w-4 h-4" />
                           </button>
@@ -355,7 +355,7 @@ export function DatabaseTable({
                           <button 
                             onClick={() => saveMapping(anime.id, true)}
                             disabled={isPending}
-                            className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-secondary bg-secondary/10 hover:bg-secondary hover:text-black transition-colors border border-secondary/30 flex items-center gap-1 disabled:opacity-50"
+                            className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-secondary bg-secondary/10 hover:bg-secondary hover:text-white dark:hover:text-black transition-colors border border-secondary/30 flex items-center gap-1 disabled:opacity-50"
                           >
                             <Renew className="w-3.5 h-3.5" /> Save & Sync
                           </button>

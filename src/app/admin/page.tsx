@@ -210,7 +210,7 @@ export default async function AdminDashboard() {
                                 href={`/anime/${ep.anime_slug}`} 
                                 target="_blank" 
                                 rel="noopener noreferrer"
-                                className="inline-flex items-center px-3 py-1.5 bg-secondary/10 hover:bg-secondary text-secondary hover:text-black border border-secondary/30 transition-colors text-[10px] uppercase font-bold tracking-widest"
+                                className="inline-flex items-center px-3 py-1.5 bg-secondary/10 hover:bg-secondary text-secondary hover:text-white dark:hover:text-black border border-secondary/30 transition-colors text-[10px] uppercase font-bold tracking-widest"
                               >
                                 View
                               </a>

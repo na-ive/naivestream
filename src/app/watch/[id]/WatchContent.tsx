@@ -395,7 +395,7 @@ export default function WatchContent({ id }: { id: string }) {
               <Tooltip content={isTheaterMode ? 'Default View (T)' : 'Theater Mode (T)'} position="top">
                 <button
                   onClick={toggleTheaterMode}
-                  className={`p-3 transition-all border ${isTheaterMode ? 'bg-secondary text-black border-secondary shadow-[0_0_20px_rgba(34,197,94,0.4)]' : 'bg-secondary/10 text-secondary hover:bg-secondary hover:text-black border-secondary/30 hover:border-secondary shadow-[0_0_10px_rgba(34,197,94,0.1)] hover:shadow-[0_0_20px_rgba(34,197,94,0.4)]'}`}
+                  className={`p-3 transition-all border ${isTheaterMode ? 'bg-secondary text-white dark:text-black border-secondary shadow-[0_0_20px_rgba(34,197,94,0.4)]' : 'bg-secondary/10 text-secondary hover:bg-secondary hover:text-white dark:hover:text-black border-secondary/30 hover:border-secondary shadow-[0_0_10px_rgba(34,197,94,0.1)] hover:shadow-[0_0_20px_rgba(34,197,94,0.4)]'}`}
                   style={{ clipPath: 'polygon(5px 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 5px)' }}
                 >
                   <Theater className="w-4 h-4" />
@@ -404,7 +404,7 @@ export default function WatchContent({ id }: { id: string }) {
               <Tooltip content={isCinemaMode ? 'Exit Focus (F)' : 'Focus Mode (F)'} position="top">
                 <button
                   onClick={() => setIsCinemaMode(!isCinemaMode)}
-                  className={`p-3 transition-all border ${isCinemaMode ? 'bg-secondary text-black border-secondary shadow-[0_0_20px_rgba(34,197,94,0.4)]' : 'bg-secondary/10 text-secondary hover:bg-secondary hover:text-black border-secondary/30 hover:border-secondary shadow-[0_0_10px_rgba(34,197,94,0.1)] hover:shadow-[0_0_20px_rgba(34,197,94,0.4)]'}`}
+                  className={`p-3 transition-all border ${isCinemaMode ? 'bg-secondary text-white dark:text-black border-secondary shadow-[0_0_20px_rgba(34,197,94,0.4)]' : 'bg-secondary/10 text-secondary hover:bg-secondary hover:text-white dark:hover:text-black border-secondary/30 hover:border-secondary shadow-[0_0_10px_rgba(34,197,94,0.1)] hover:shadow-[0_0_20px_rgba(34,197,94,0.4)]'}`}
                   style={{ clipPath: 'polygon(5px 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 5px)' }}
                 >
                   <Screen className="w-4 h-4" />
