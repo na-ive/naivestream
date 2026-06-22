@@ -7,6 +7,7 @@ import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import { Search, ChevronDown, ChevronUp, Renew, Checkmark, Close, ChevronLeft, ChevronRight, TrashCan, Add, Locked } from '@carbon/icons-react';
 import { Modal } from '@/components/ui/Modal';
 import { CustomSelect } from '@/components/ui/CustomSelect';
+import { Checkbox } from '@/components/ui/Checkbox';
 import { Tooltip } from '@/components/ui/Tooltip';
 import { cn } from '@/lib/utils';
 
@@ -271,12 +272,11 @@ export function DatabaseTable({
                 return (
                   <tr key={anime.id} className="hover:bg-card/50 transition-colors">
                     <td className="px-4 py-3 text-center border-r border-border w-12">
-                      <input 
-                        type="checkbox" 
+                      <Checkbox 
                         checked={anime.is_protected === 1}
                         onChange={() => handleToggleProtected(anime.id, anime.is_protected)}
                         disabled={isPending}
-                        className="w-4 h-4 text-secondary bg-background border-border focus:ring-secondary focus:ring-1 cursor-pointer disabled:opacity-50"
+                        className="mx-auto"
                       />
                     </td>
                     <td className="px-4 py-3 font-mono text-xs text-muted-text">#{anime.id}</td>

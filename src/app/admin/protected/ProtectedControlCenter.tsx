@@ -5,6 +5,7 @@ import { updateProtectedAnimeData, getAnimeEpisodes, getOrphanedEpisodes, unlink
 import { toast } from 'sonner';
 import { Modal } from '@/components/ui/Modal';
 import { Edit, Link, Unlink, Checkmark, Close, Add, Renew } from '@carbon/icons-react';
+import { Checkbox } from '@/components/ui/Checkbox';
 
 export function ProtectedControlCenter({ initialData }: { initialData: any[] }) {
   const [isPending, startTransition] = useTransition();
@@ -179,16 +180,12 @@ export function ProtectedControlCenter({ initialData }: { initialData: any[] }) 
             <h3 className="text-sm uppercase tracking-widest font-bold text-secondary border-b border-border pb-2">Metadata Configuration</h3>
             
             <div className="flex items-center gap-3">
-              <input 
-                type="checkbox" 
+              <Checkbox 
                 id="autoSync"
                 checked={autoSync}
                 onChange={(e) => setAutoSync(e.target.checked)}
-                className="w-4 h-4 text-secondary bg-background border-border focus:ring-secondary focus:ring-1 cursor-pointer"
+                label="Auto-Sync Metadata with AniList (Uses AniList ID)"
               />
-              <label htmlFor="autoSync" className="text-sm font-mono cursor-pointer">
-                Auto-Sync Metadata with AniList (Uses AniList ID)
-              </label>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
