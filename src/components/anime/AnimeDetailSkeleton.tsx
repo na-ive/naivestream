@@ -4,7 +4,7 @@ import { CharacterCarouselSkeleton } from '@/components/anime/CharacterCarousel'
 import { ContinueWatchingSkeleton } from '@/components/anime/ContinueWatching';
 import { AnimeCardSkeleton } from '@/components/anime/AnimeCard';
 
-export default function AnimeDetailLoading() {
+export function AnimeDetailSkeleton() {
   return (
     <>
       {/* Mobile Skeleton */}

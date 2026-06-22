@@ -33,13 +33,13 @@ export async function generateMetadata(props: { params: Promise<{ id: string }> 
   const { id } = params;
   
   if (!id || id === 'undefined') {
-    return { title: 'Not Found' };
+    notFound();
   }
 
   const anime = await AnimeService.getAnimeBySlug(id);
   
   if (!anime) {
-    return { title: 'Not Found' };
+    notFound();
   }
 
   return {
@@ -48,14 +48,10 @@ export async function generateMetadata(props: { params: Promise<{ id: string }> 
   };
 }
 
-export default async function AnimeDetailPage(props: { params: Promise<{ id: string }> }) {
-  const params = await props.params;
-  const { id } = params;
-  
-  if (!id || id === 'undefined') {
-    notFound();
-  }
+import { Suspense } from "react";
+import { AnimeDetailSkeleton } from "@/components/anime/AnimeDetailSkeleton";
 
+async function AnimeDetailContent({ id }: { id: string }) {
   const result = await getAnimeDetails(id);
 
   if (!result || !result.data) {
@@ -129,6 +125,28 @@ export default async function AnimeDetailPage(props: { params: Promise<{ id: str
         />
       </div>
     </>
+  );
+}
+
+export default async function AnimeDetailPage(props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
+  const { id } = params;
+  
+  if (!id || id === 'undefined') {
+    notFound();
+  }
+
+  // Fast synchronous check to trigger 404 BEFORE streaming the Suspense boundary.
+  // This guarantees that Next.js will return HTTP 404 instead of HTTP 200, crucial for SEO.
+  const animeExists = await AnimeService.getAnimeBySlug(id);
+  if (!animeExists) {
+    notFound();
+  }
+
+  return (
+    <Suspense fallback={<AnimeDetailSkeleton />}>
+      <AnimeDetailContent id={id} />
+    </Suspense>
   );
 }
 
