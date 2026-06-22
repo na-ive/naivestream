@@ -62,15 +62,14 @@ function checkRateLimit(ip: string): { allowed: boolean; remaining: number; rese
 // ---------------------------------------------------------------------------
 
 function getClientIP(request: NextRequest): string {
-  return (
-    request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
-    request.headers.get('x-real-ip') ||
-    '127.0.0.1'
-  );
+  const cfIp = request.headers.get('cf-connecting-ip');
+  const realIp = request.headers.get('x-real-ip');
+  
+  return cfIp || realIp || request.ip || 'unknown';
 }
 
-function isLocalhost(ip: string): boolean {
-  return LOCALHOST_IPS.has(ip);
+function isLocalhost(ip: string, request: NextRequest): boolean {
+  return request.ip ? LOCALHOST_IPS.has(request.ip) : false;
 }
 
 function addCorsHeaders(response: NextResponse, origin: string | null): NextResponse {
@@ -120,7 +119,7 @@ export async function proxy(request: NextRequest) {
   }
 
   // --- Skip rate limiting for localhost ---
-  if (isLocalhost(ip)) {
+  if (isLocalhost(ip, request)) {
     const response = NextResponse.next();
     return addCorsHeaders(response, origin);
   }
