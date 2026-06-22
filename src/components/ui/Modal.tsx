@@ -13,9 +13,10 @@ export interface ModalProps {
   children: React.ReactNode;
   footer?: React.ReactNode;
   className?: string;
+  size?: 'default' | 'large' | 'xl';
 }
 
-export function Modal({ isOpen, onClose, title, children, footer, className }: ModalProps) {
+export function Modal({ isOpen, onClose, title, children, footer, className, size = 'default' }: ModalProps) {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -67,7 +68,8 @@ export function Modal({ isOpen, onClose, title, children, footer, className }: M
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               transition={{ type: 'spring', damping: 25, stiffness: 300 }}
               className={cn(
-                "relative w-full max-w-lg max-h-[90vh] bg-card/90 backdrop-blur-sm border border-secondary/50 pointer-events-auto flex flex-col shadow-[0_0_30px_rgba(34,197,94,0.15)]",
+                "relative w-full max-h-[90vh] bg-card/90 backdrop-blur-sm border border-secondary/50 pointer-events-auto flex flex-col shadow-[0_0_30px_rgba(34,197,94,0.15)]",
+                size === 'xl' ? 'max-w-5xl' : size === 'large' ? 'max-w-3xl' : 'max-w-lg',
                 className
               )}
               style={{

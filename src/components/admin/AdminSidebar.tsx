@@ -7,6 +7,7 @@ import {
   Dashboard, 
   DataBase, 
   Terminal, 
+  Locked,
   Power,
   ChevronLeft,
   ChevronRight,
@@ -40,6 +41,7 @@ export function AdminSidebar({ initialCollapsed = false }: { initialCollapsed?: 
     { name: 'Dashboard', path: '/admin', icon: Dashboard },
     { name: 'Data Nexus', path: '/admin/database', icon: DataBase },
     { name: 'Operations', path: '/admin/operations', icon: Terminal },
+    { name: 'Protected Center', path: '/admin/protected', icon: Locked },
   ];
 
   const handleLogout = async () => {
