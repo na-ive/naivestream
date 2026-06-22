@@ -57,7 +57,7 @@ CREATE TABLE IF NOT EXISTS anime (
 -- ============================================================
 CREATE TABLE IF NOT EXISTS episodes (
     id                INTEGER PRIMARY KEY AUTOINCREMENT,
-    anime_id          INTEGER NOT NULL,
+    anime_id          INTEGER,
     slug              TEXT UNIQUE NOT NULL,
     title             TEXT NOT NULL,
     eps_number        REAL,
