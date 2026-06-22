@@ -31,6 +31,7 @@ export function Footer() {
               fill
               sizes="240px"
               className="object-contain opacity-90 hover:opacity-100 transition-all duration-300 drop-shadow-[0_0_15px_rgba(34,197,94,0.1)]"
+              priority
             />
           </Link>
           
