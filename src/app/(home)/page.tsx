@@ -25,7 +25,7 @@ export default async function HomePage() {
   const todayAnimeList = scheduleData[todayString] || [];
 
   // Format today's date for display
-  const todayFormatted = new Intl.DateTimeFormat('id-ID', {
+  const todayFormatted = new Intl.DateTimeFormat('en-US', {
     weekday: 'long',
     day: 'numeric',
     month: 'long',
