@@ -141,7 +141,7 @@ export function ProtectedControlCenter({ initialData }: { initialData: any[] }) 
                     </div>
                   </td>
                   <td className="px-4 py-3">
-                    <span className={`font-mono text-xs ${anime.anilist_id ? 'text-secondary' : 'text-red-500'}`}>
+                    <span className={`font-mono text-xs ${anime.anilist_id ? 'text-secondary' : 'text-danger'}`}>
                       {anime.anilist_id || 'NULL'}
                     </span>
                   </td>
@@ -388,7 +388,7 @@ export function ProtectedControlCenter({ initialData }: { initialData: any[] }) 
                       <button
                         onClick={() => handleUnlink(ep.id)}
                         disabled={isPending}
-                        className="p-1.5 text-red-400 hover:text-red-300 hover:bg-red-400/10 border border-transparent hover:border-red-400/30 transition-all disabled:opacity-50 tooltip-trigger"
+                        className="p-1.5 text-danger/80 hover:text-red-300 hover:bg-danger/10 border border-transparent hover:border-danger/30 transition-all disabled:opacity-50 tooltip-trigger"
                         title="Unlink Episode"
                       >
                         <Unlink className="w-4 h-4" />

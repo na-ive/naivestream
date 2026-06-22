@@ -61,7 +61,7 @@ export function useWatchlist() {
     if (item) {
       toast.error('Removed from Watchlist', {
         description: item.animeTitle,
-        icon: <div className="w-8 h-8 bg-red-500/10 border border-red-500 flex items-center justify-center shrink-0 mr-3 shadow-[0_0_10px_rgba(239,68,68,0.3)]"><TrashCan className="w-5 h-5 text-red-500" /></div>,
+        icon: <div className="w-8 h-8 bg-danger/10 border border-danger flex items-center justify-center shrink-0 mr-3 shadow-[0_0_10px_rgba(239,68,68,0.3)]"><TrashCan className="w-5 h-5 text-danger" /></div>,
       });
     }
   }, []);
@@ -77,7 +77,7 @@ export function useWatchlist() {
       updateStorage(currentList.filter(w => w.animeId !== item.animeId));
       toast.error('Removed from Watchlist', {
         description: item.animeTitle,
-        icon: <div className="w-8 h-8 bg-red-500/10 border border-red-500 flex items-center justify-center shrink-0 mr-3 shadow-[0_0_10px_rgba(239,68,68,0.3)]"><TrashCan className="w-5 h-5 text-red-500" /></div>,
+        icon: <div className="w-8 h-8 bg-danger/10 border border-danger flex items-center justify-center shrink-0 mr-3 shadow-[0_0_10px_rgba(239,68,68,0.3)]"><TrashCan className="w-5 h-5 text-danger" /></div>,
       });
     } else {
       updateStorage([{ ...item, addedAt: Date.now() }, ...currentList]);
@@ -92,7 +92,7 @@ export function useWatchlist() {
     const currentList = getLatestWatchlist();
     updateStorage(currentList.filter(w => !animeIds.includes(w.animeId)));
     toast.error(`${animeIds.length} items removed from Watchlist`, {
-      icon: <div className="w-8 h-8 bg-red-500/10 border border-red-500 flex items-center justify-center shrink-0 mr-3 shadow-[0_0_10px_rgba(239,68,68,0.3)]"><TrashCan className="w-5 h-5 text-red-500" /></div>,
+      icon: <div className="w-8 h-8 bg-danger/10 border border-danger flex items-center justify-center shrink-0 mr-3 shadow-[0_0_10px_rgba(239,68,68,0.3)]"><TrashCan className="w-5 h-5 text-danger" /></div>,
     });
   }, []);
 

@@ -65,14 +65,14 @@ export function BookmarkButton({ animeId, animeTitle, animeTitleEnglish, animeIm
         onClick={handleClick}
         className={cn(
           "p-2 bg-background/90 border transition-all relative overflow-hidden group",
-          active ? "border-secondary text-secondary hover:border-red-500 hover:text-red-500 hover:bg-red-500/10" : "border-border text-muted-text hover:border-secondary/50 hover:text-foreground",
+          active ? "border-secondary text-secondary hover:border-danger hover:text-danger hover:bg-danger/10" : "border-border text-muted-text hover:border-secondary/50 hover:text-foreground",
           className
         )}
         style={{ clipPath: 'polygon(5px 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 5px)' }}
       >
         <div className={cn(
           "absolute bottom-0 left-0 h-1 w-full transition-all",
-          active ? "bg-secondary scale-x-100 group-hover:bg-red-500" : "bg-secondary scale-x-0 group-hover:scale-x-100"
+          active ? "bg-secondary scale-x-100 group-hover:bg-danger" : "bg-secondary scale-x-0 group-hover:scale-x-100"
         )} />
         {active ? (
           <BookmarkFilled className="w-4 h-4 relative z-10" />

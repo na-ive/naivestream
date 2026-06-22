@@ -14,7 +14,7 @@ export default function LoginPage() {
       {/* Mobile Blocker */}
       <div className="md:hidden flex h-[100dvh] items-center justify-center p-6 text-center bg-background text-foreground font-sans">
         <div className="space-y-4 max-w-sm">
-          <h1 className="text-2xl font-bold uppercase text-red-500 tracking-widest border border-red-500/50 bg-red-500/10 p-4">
+          <h1 className="text-2xl font-bold uppercase text-danger tracking-widest border border-danger/50 bg-danger/10 p-4">
             Access Denied
           </h1>
           <p className="text-sm text-muted-text uppercase tracking-wider">

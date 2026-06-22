@@ -16,6 +16,7 @@
   --color-border: #C5DACF;
   --color-muted-text: #527A65;
   --color-warning: #EAB308;
+  --color-danger: #DC2626;
 
   --font-sans: 'Exo 2', ui-sans-serif, system-ui, sans-serif;
   --font-serif: 'Orbitron', ui-serif, Georgia, serif;
@@ -33,6 +34,7 @@
   --color-border: #113224;
   --color-muted-text: #A1BBAF;
   --color-warning: #FACC15;
+  --color-danger: #EF4444;
 }
 
 @layer base {

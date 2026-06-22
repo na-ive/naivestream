@@ -75,7 +75,7 @@ export default function RootLayout({
               classNames: {
                 toast: '!bg-card !border !font-mono !rounded-none',
                 success: '!border-secondary !text-secondary !shadow-[0_0_20px_rgba(34,197,94,0.25)]',
-                error: '!border-red-500 !text-red-500 !shadow-[0_0_20px_rgba(239,68,68,0.25)]',
+                error: '!border-danger !text-danger !shadow-[0_0_20px_rgba(239,68,68,0.25)]',
                 info: '!border-blue-500 !text-blue-500 !shadow-[0_0_20px_rgba(59,130,246,0.25)]',
                 description: '!text-muted-text !text-[10px] uppercase tracking-widest',
                 icon: '!w-10 !h-10 !m-0 !static !bg-transparent',

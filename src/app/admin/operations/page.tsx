@@ -224,13 +224,13 @@ function AdminDashboardContent() {
                 className={cn(
                   "flex items-center space-x-2 px-6 py-2.5 transition-all text-xs uppercase font-black tracking-widest relative overflow-hidden group",
                   activeTab === 'noEpisodes' 
-                    ? "bg-red-500/10 text-red-500 border border-red-500/50 shadow-[0_0_15px_rgba(239,68,68,0.1)]" 
-                    : "bg-card/50 text-muted-text border border-border hover:border-red-500/30 hover:text-foreground"
+                    ? "bg-danger/10 text-danger border border-danger/50 shadow-[0_0_15px_rgba(239,68,68,0.1)]" 
+                    : "bg-card/50 text-muted-text border border-border hover:border-danger/30 hover:text-foreground"
                 )}
               >
                 <div className={cn(
                   "absolute bottom-0 left-0 h-1 w-full transition-all",
-                  activeTab === 'noEpisodes' ? "bg-red-500 scale-x-100" : "bg-red-500 scale-x-0 group-hover:scale-x-100"
+                  activeTab === 'noEpisodes' ? "bg-danger scale-x-100" : "bg-danger scale-x-0 group-hover:scale-x-100"
                 )} />
                 <Video className="w-4 h-4" />
                 <span>No Episodes</span>

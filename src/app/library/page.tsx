@@ -90,7 +90,7 @@ function LibraryContent() {
       window.dispatchEvent(new Event('watched_updated'));
       toast.error('History Cleared', {
         description: 'All your watch history has been permanently removed.',
-        icon: <div className="w-8 h-8 bg-red-500/10 border border-red-500 flex items-center justify-center shrink-0 mr-3 shadow-[0_0_10px_rgba(239,68,68,0.3)]"><TrashCan className="w-5 h-5 text-red-500" /></div>,
+        icon: <div className="w-8 h-8 bg-danger/10 border border-danger flex items-center justify-center shrink-0 mr-3 shadow-[0_0_10px_rgba(239,68,68,0.3)]"><TrashCan className="w-5 h-5 text-danger" /></div>,
       });
     } else if (deleteAction === 'bulk') {
       if (selectedIds.length > 0) {
@@ -181,7 +181,7 @@ function LibraryContent() {
                   className={cn(
                     "flex-1 md:flex-none flex items-center justify-center space-x-2 px-6 py-3 transition-all font-black text-[10px] uppercase tracking-[0.2em] shadow-[0_10px_20px_rgba(0,0,0,0.5)] md:shadow-none",
                     selectedIds.length > 0
-                      ? "bg-red-500 hover:bg-red-600 text-white shadow-[0_0_15px_rgba(239,68,68,0.3)]"
+                      ? "bg-danger hover:bg-danger/80 text-white shadow-[0_0_15px_rgba(239,68,68,0.3)]"
                       : "bg-card/90 text-muted-text cursor-not-allowed"
                   )}
                   style={{ clipPath: 'polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px)' }}
@@ -203,10 +203,10 @@ function LibraryContent() {
             ) : (
               <>
                 {activeTab === 'history' && history.length > 0 && (
-                  <Tooltip content="Irreversible Action" position="bottom" className="!border-red-500 !text-red-500 !shadow-[0_0_15px_rgba(239,68,68,0.2)]">
+                  <Tooltip content="Irreversible Action" position="bottom" className="!border-danger !text-danger !shadow-[0_0_15px_rgba(239,68,68,0.2)]">
                     <button 
                       onClick={() => setDeleteAction('all')}
-                      className="flex items-center space-x-2 px-6 py-2.5 bg-red-100 dark:bg-red-950/50 text-red-600 dark:text-red-500 border border-red-300 dark:border-red-900/50 hover:bg-red-200 dark:hover:bg-red-900/80 transition-all font-black text-[10px] uppercase tracking-[0.2em]"
+                      className="flex items-center space-x-2 px-6 py-2.5 bg-danger/10 text-danger border border-danger/30 hover:bg-danger/20 transition-all font-black text-[10px] uppercase tracking-[0.2em]"
                       style={{ clipPath: 'polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px)' }}
                     >
                     <TrashCan className="w-4 h-4 shrink-0" />
@@ -284,13 +284,13 @@ function LibraryContent() {
 
                   {!isSelectionMode && (
                     <div className="absolute top-2 right-2 z-20 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <Tooltip content="Remove Item" position="left" className="!border-red-500 !text-red-500 !text-[9px]">
+                      <Tooltip content="Remove Item" position="left" className="!border-danger !text-danger !text-[9px]">
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
                             removeFromWatchlist(item.animeId);
                           }}
-                          className="w-8 h-8 bg-red-500/80 text-white flex items-center justify-center hover:bg-red-600 border border-border"
+                          className="w-8 h-8 bg-danger/80 text-white flex items-center justify-center hover:bg-danger/80 border border-border"
                           style={{ clipPath: 'polygon(5px 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 5px)' }}
                         >
                           <TrashCan className="w-4 h-4" />
@@ -387,14 +387,14 @@ function LibraryContent() {
                   {/* Delete Button (Top Right) */}
                   {!isSelectionMode && (
                     <div className="absolute top-2 right-2 z-20 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <Tooltip content="Remove Item" position="left" className="!border-red-500 !text-red-500 !text-[9px]">
+                      <Tooltip content="Remove Item" position="left" className="!border-danger !text-danger !text-[9px]">
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
                             resetAnime(item.animeId);
                             removeFromHistory(item.animeId);
                           }}
-                          className="w-8 h-8 bg-red-500/80 text-white flex items-center justify-center hover:bg-red-600 border border-border"
+                          className="w-8 h-8 bg-danger/80 text-white flex items-center justify-center hover:bg-danger/80 border border-border"
                           style={{ clipPath: 'polygon(5px 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 5px)' }}
                         >
                           <TrashCan className="w-4 h-4" />
@@ -414,8 +414,8 @@ function LibraryContent() {
         onClose={() => setDeleteAction(null)}
         title={
           <div className="flex items-center gap-3">
-            <div className="w-1.5 h-6 bg-red-500 shadow-[0_0_10px_rgba(239,68,68,0.5)]" />
-            <h2 className="text-red-500 text-xs font-mono font-black uppercase tracking-[0.4em]">
+            <div className="w-1.5 h-6 bg-danger shadow-[0_0_10px_rgba(239,68,68,0.5)]" />
+            <h2 className="text-danger text-xs font-mono font-black uppercase tracking-[0.4em]">
               Delete <span className="text-foreground/50">//</span> Confirm Action
             </h2>
           </div>
@@ -430,7 +430,7 @@ function LibraryContent() {
             </button>
             <button
               onClick={executeDelete}
-              className="flex items-center space-x-2 px-6 py-2.5 bg-red-500 text-white font-black text-[10px] uppercase tracking-[0.2em] shadow-[0_0_15px_rgba(239,68,68,0.5)] hover:shadow-[0_0_25px_rgba(239,68,68,0.7)] transition-all"
+              className="flex items-center space-x-2 px-6 py-2.5 bg-danger text-white font-black text-[10px] uppercase tracking-[0.2em] shadow-[0_0_15px_rgba(239,68,68,0.5)] hover:shadow-[0_0_25px_rgba(239,68,68,0.7)] transition-all"
               style={{ clipPath: 'polygon(4px 0, 100% 0, 100% calc(100% - 4px), calc(100% - 4px) 100%, 0 100%, 0 4px)' }}
             >
               <TrashCan className="w-4 h-4" />

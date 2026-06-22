@@ -303,7 +303,7 @@ export function DatabaseTable({
                           className="w-24 bg-background border border-secondary/50 px-2 py-1 text-xs font-mono focus:outline-none focus:ring-1 focus:ring-secondary [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                         />
                       ) : (
-                        <span className={`font-mono text-xs ${anime.mal_id ? 'text-secondary' : 'text-red-500'}`}>
+                        <span className={`font-mono text-xs ${anime.mal_id ? 'text-secondary' : 'text-danger'}`}>
                           {anime.mal_id || 'NULL'}
                         </span>
                       )}
@@ -320,7 +320,7 @@ export function DatabaseTable({
                           className="w-24 bg-background border border-secondary/50 px-2 py-1 text-xs font-mono focus:outline-none focus:ring-1 focus:ring-secondary [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                         />
                       ) : (
-                        <span className={`font-mono text-xs ${anime.anilist_id ? 'text-secondary' : 'text-red-500'}`}>
+                        <span className={`font-mono text-xs ${anime.anilist_id ? 'text-secondary' : 'text-danger'}`}>
                           {anime.anilist_id || 'NULL'}
                         </span>
                       )}
@@ -373,7 +373,7 @@ export function DatabaseTable({
                           <button
                             onClick={() => handleDelete(anime.id, anime.title)}
                             disabled={isPending}
-                            className="p-1.5 text-muted-text hover:text-red-500 bg-card hover:bg-red-500/10 transition-colors border border-border hover:border-red-500/50 disabled:opacity-50"
+                            className="p-1.5 text-muted-text hover:text-danger bg-card hover:bg-danger/10 transition-colors border border-border hover:border-danger/50 disabled:opacity-50"
                           >
                             <TrashCan className="w-4 h-4" />
                           </button>
@@ -420,8 +420,8 @@ export function DatabaseTable({
         onClose={() => setAnimeToDelete(null)}
         title={
           <div className="flex items-center gap-3">
-            <div className="w-1.5 h-6 bg-red-500 shadow-[0_0_10px_rgba(239,68,68,0.5)]" />
-            <h2 className="text-red-500 text-xs font-mono font-black uppercase tracking-[0.4em]">
+            <div className="w-1.5 h-6 bg-danger shadow-[0_0_10px_rgba(239,68,68,0.5)]" />
+            <h2 className="text-danger text-xs font-mono font-black uppercase tracking-[0.4em]">
               Delete <span className="text-foreground/50">//</span> Confirm Action
             </h2>
           </div>
@@ -437,7 +437,7 @@ export function DatabaseTable({
             </button>
             <button
               onClick={confirmDelete}
-              className="flex items-center space-x-2 px-6 py-2.5 bg-red-500 text-white font-black text-[10px] uppercase tracking-[0.2em] shadow-[0_0_15px_rgba(239,68,68,0.5)] hover:shadow-[0_0_25px_rgba(239,68,68,0.7)] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex items-center space-x-2 px-6 py-2.5 bg-danger text-white font-black text-[10px] uppercase tracking-[0.2em] shadow-[0_0_15px_rgba(239,68,68,0.5)] hover:shadow-[0_0_25px_rgba(239,68,68,0.7)] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               style={{ clipPath: 'polygon(4px 0, 100% 0, 100% calc(100% - 4px), calc(100% - 4px) 100%, 0 100%, 0 4px)' }}
               disabled={isPending}
             >
@@ -450,7 +450,7 @@ export function DatabaseTable({
         <p className="text-sm text-muted-text">
           WARNING: Are you sure you want to permanently delete <strong className="text-foreground">"{animeToDelete?.title}"</strong> (ID: {animeToDelete?.id})?
         </p>
-        <p className="text-sm text-red-400 mt-4">
+        <p className="text-sm text-danger/80 mt-4">
           This will remove the anime and cascade delete all its episodes and metadata. This action CANNOT be undone.
         </p>
       </Modal>

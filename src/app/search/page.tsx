@@ -538,7 +538,7 @@ function DebouncedSearchInput({ initialValue, onSearch }: { initialValue: string
         <button
           type="button"
           onClick={handleClear}
-          className="absolute right-3 top-1/2 -translate-y-1/2 w-7 h-7 bg-red-100 dark:bg-red-950/50 border border-red-300 dark:border-red-900/50 hover:bg-red-200 dark:hover:bg-red-900/80 text-red-600 dark:text-red-500 flex items-center justify-center transition-all"
+          className="absolute right-3 top-1/2 -translate-y-1/2 w-7 h-7 bg-danger/10 border border-danger/30 hover:bg-danger/20 text-danger flex items-center justify-center transition-all"
           style={{ clipPath: 'polygon(5px 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 5px)' }}
           aria-label="Clear search"
         >

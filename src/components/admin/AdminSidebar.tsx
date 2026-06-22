@@ -190,10 +190,10 @@ export function AdminSidebar({ initialCollapsed = false }: { initialCollapsed?: 
           const logoutContent = (
             <button
               onClick={handleLogout}
-              className="w-full flex items-center py-3 text-red-500 hover:text-red-400 hover:bg-red-500/10 font-bold uppercase tracking-widest text-sm transition-colors cursor-pointer group"
+              className="w-full flex items-center py-3 text-danger hover:text-danger/80 hover:bg-danger/10 font-bold uppercase tracking-widest text-sm transition-colors cursor-pointer group"
             >
               <div className="w-[80px] shrink-0 flex justify-center items-center">
-                <Power className="w-5 h-5 group-hover:text-red-400 transition-colors" />
+                <Power className="w-5 h-5 group-hover:text-danger/80 transition-colors" />
               </div>
               <span className={cn(
                 "whitespace-nowrap transition-all duration-300 overflow-hidden",

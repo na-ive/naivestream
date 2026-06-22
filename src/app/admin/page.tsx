@@ -115,20 +115,20 @@ export default async function AdminDashboard() {
           <div className="space-y-12">
             {/* Warnings */}
             <section className="space-y-6">
-              <h2 className="text-xl font-bold uppercase tracking-wider text-red-500">System Anomalies</h2>
+              <h2 className="text-xl font-bold uppercase tracking-wider text-danger">System Anomalies</h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {warnings.map((warning, idx) => (
                   <Link 
                     href={`/admin/operations?tab=${warning.tab}`} 
                     key={idx} 
-                    className="bg-red-500/5 border border-red-500/20 p-6 flex justify-between items-center hover:bg-red-500/10 hover:border-red-500/50 transition-all cursor-pointer group min-w-0"
+                    className="bg-danger/5 border border-danger/20 p-6 flex justify-between items-center hover:bg-danger/10 hover:border-danger/50 transition-all cursor-pointer group min-w-0"
                   >
                     <div className="flex flex-col min-w-0 shrink">
-                      <span className="text-sm font-bold text-red-500 uppercase tracking-widest truncate" title={warning.label}>{warning.label}</span>
-                      <span className="text-[10px] uppercase text-red-500/40 group-hover:text-red-500/80 font-mono mt-1 transition-colors truncate">Click to resolve &rarr;</span>
+                      <span className="text-sm font-bold text-danger uppercase tracking-widest truncate" title={warning.label}>{warning.label}</span>
+                      <span className="text-[10px] uppercase text-danger/40 group-hover:text-danger/80 font-mono mt-1 transition-colors truncate">Click to resolve &rarr;</span>
                     </div>
                     <span 
-                      className="text-2xl font-mono font-black text-red-500 truncate ml-4 shrink-0 max-w-[50%]"
+                      className="text-2xl font-mono font-black text-danger truncate ml-4 shrink-0 max-w-[50%]"
                       title={warning.value.toLocaleString()}
                     >
                       {warning.value.toLocaleString()}
@@ -151,7 +151,7 @@ export default async function AdminDashboard() {
                     <div key={log.id} className="flex gap-4 group items-start hover:bg-foreground/10 px-2 py-1 -mx-2 rounded transition-colors">
                       <span className="text-gray-500 shrink-0 opacity-80 group-hover:opacity-100 group-hover:text-gray-400 transition-colors">[{new Date(log.created_at).toLocaleTimeString()}]</span>
                       <span className={`
-                        ${log.type === 'error' ? 'text-red-500 font-bold' : ''}
+                        ${log.type === 'error' ? 'text-danger font-bold' : ''}
                         ${log.type === 'warning' ? 'text-yellow-500' : ''}
                         ${log.type === 'success' ? 'text-green-400' : ''}
                         ${log.type === 'info' ? 'text-gray-300 group-hover:text-white' : ''}
