@@ -11,7 +11,16 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ data: [] });
     }
 
-    const recommendations = await AnimeService.getForYouRecommendations(slugs, 6);
+    const MAX_SLUGS = 50;
+    const safeSlugs = slugs
+      .filter((s: unknown) => typeof s === 'string' && s.length < 200)
+      .slice(0, MAX_SLUGS);
+
+    if (safeSlugs.length === 0) {
+      return NextResponse.json({ data: [] });
+    }
+
+    const recommendations = await AnimeService.getForYouRecommendations(safeSlugs, 6);
     return NextResponse.json({ data: sanitizeAnimeList(recommendations) });
   } catch (error) {
     console.error('For You API Error:', error);

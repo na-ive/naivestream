@@ -21,8 +21,13 @@ async function fetchSanka(path: string) {
 }
 
 export async function GET(_req: NextRequest, { params }: { params: Promise<{ slug: string }> }) {
-  const { slug } = await params;
   if (!slug) return NextResponse.json({ error: 'Missing slug' }, { status: 400 });
+
+  // Validate slug format to prevent SSRF or directory traversal
+  const SLUG_REGEX = /^[a-z0-9]([a-z0-9-]*[a-z0-9])?$/;
+  if (!SLUG_REGEX.test(slug)) {
+    return NextResponse.json({ error: 'Invalid slug format' }, { status: 400 });
+  }
 
   // Try direct scraper first
   const direct = await getEpisodeResponse(slug);
