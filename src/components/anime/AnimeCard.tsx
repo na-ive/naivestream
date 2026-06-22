@@ -50,7 +50,7 @@ export function AnimeCard({
         !disableHover && "group",
         isHorizontal 
           ? "flex-row p-3 gap-4 bg-card/50 border border-border hover:border-secondary/30" 
-          : "flex-col bg-transparent"
+          : "flex-col bg-card/0 border border-border/0"
       )}
     >
       {/* Cover Image Container */}
