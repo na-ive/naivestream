@@ -19,6 +19,18 @@ self.addEventListener("activate", (event) => {
 
 self.addEventListener("fetch", (event) => {
   if (event.request.method !== "GET") return;
+  
+  const url = new URL(event.request.url);
+  // Bypass caching for Next.js hot-reloading, internal files, API routes, and non-http protocols
+  if (
+    !url.protocol.startsWith("http") ||
+    url.pathname.startsWith("/api/") ||
+    url.pathname.startsWith("/_next/") ||
+    url.pathname.includes("webpack") ||
+    url.pathname.includes("socket.io")
+  ) {
+    return;
+  }
 
   event.respondWith(
     (async () => {

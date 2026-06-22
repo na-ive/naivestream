@@ -12,7 +12,15 @@ export function PwaRegister() {
     setIsDismissed(localStorage.getItem("pwaPromptDismissed") === "true");
 
     if ("serviceWorker" in navigator) {
-      navigator.serviceWorker.register("/sw.js").catch(() => {});
+      if (process.env.NODE_ENV === "development") {
+        navigator.serviceWorker.getRegistrations().then((registrations) => {
+          for (let registration of registrations) {
+            registration.unregister();
+          }
+        });
+      } else {
+        navigator.serviceWorker.register("/sw.js").catch(() => {});
+      }
     }
 
     if (window.matchMedia("(display-mode: standalone)").matches) {
