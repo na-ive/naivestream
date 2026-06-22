@@ -12,6 +12,7 @@ import os from 'os';
 import { parseIndonesianDate } from '@/lib/utils';
 
 const execFilePromise = promisify(execFile);
+const getScriptPath = (name: string) => ['dist', `${name}.js`].join('/');
 
 async function checkAuth() {
   const session = await getSession();
@@ -69,7 +70,7 @@ export async function injectMetadata(animeId: number, anilistId: number) {
     const info = stmt.run(...params);
 
     if (info.changes > 0) {
-      await execFilePromise('node', ['dist/fill-from-anilist.js', `--id=${animeId}`], { cwd: path.join(process.cwd(), 'backend') });
+      await execFilePromise('node', [getScriptPath('fill-from-anilist'), `--id=${animeId}`], { cwd: path.join(process.cwd(), 'backend') });
       revalidatePath('/admin');
       revalidatePath('/');
       return { success: true };
@@ -223,7 +224,7 @@ export async function updateAnimeMapping(id: number, malId: number | null, anili
 
     if (info.changes > 0) {
       if (triggerResync) {
-        execFile('node', ['dist/fill-from-anilist.js', `--id=${id}`], { cwd: path.join(process.cwd(), 'backend') });
+        execFile('node', [getScriptPath('fill-from-anilist'), `--id=${id}`], { cwd: path.join(process.cwd(), 'backend') });
         await addSystemLog(`Updated mappings for anime ID ${id} and triggered background resync.`);
       } else {
         await addSystemLog(`Updated mappings for anime ID ${id}.`);
@@ -289,7 +290,7 @@ export async function triggerScrapeSlug(slug: string, correctSlug?: string) {
       stmt.run(targetSlug, slug);
     }
 
-    await execFilePromise('node', ['dist/index.js', `--slug=${targetSlug}`], { cwd: path.join(process.cwd(), 'backend') });
+    await execFilePromise('node', [getScriptPath('index'), `--slug=${targetSlug}`], { cwd: path.join(process.cwd(), 'backend') });
     revalidatePath('/admin/operations');
     revalidatePath('/');
     await addSystemLog(`Scraped data for slug: ${targetSlug}`, 'success');
@@ -343,9 +344,9 @@ export async function addAnimeMinimal(slug: string, anilistId: number | null) {
 
     if (info.changes > 0) {
       // Trigger background sync
-      execFile('node', ['dist/index.js', `--slug=${cleanSlug}`], { cwd: path.join(process.cwd(), 'backend') }, (err) => {
+      execFile('node', [getScriptPath('index'), `--slug=${cleanSlug}`], { cwd: path.join(process.cwd(), 'backend') }, (err) => {
         if (!err && anilistId) {
-          execFile('node', ['dist/fill-from-anilist.js', `--id=${info.lastInsertRowid}`], { cwd: path.join(process.cwd(), 'backend') });
+          execFile('node', [getScriptPath('fill-from-anilist'), `--id=${info.lastInsertRowid}`], { cwd: path.join(process.cwd(), 'backend') });
         }
       });
       

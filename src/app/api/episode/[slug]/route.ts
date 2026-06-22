@@ -21,6 +21,7 @@ async function fetchSanka(path: string) {
 }
 
 export async function GET(_req: NextRequest, { params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
   if (!slug) return NextResponse.json({ error: 'Missing slug' }, { status: 400 });
 
   // Validate slug format to prevent SSRF or directory traversal
