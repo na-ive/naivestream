@@ -1,10 +1,10 @@
 'use client';
 
 import { useState, useTransition, useEffect } from 'react';
-import { updateAnimeMapping, deleteAnime, addAnimeMinimal } from '../actions';
+import { updateAnimeMapping, deleteAnime, addAnimeMinimal, toggleProtectedStatus } from '../actions';
 import { toast } from 'sonner';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
-import { Search, ChevronDown, ChevronUp, Renew, Checkmark, Close, ChevronLeft, ChevronRight, TrashCan, Add } from '@carbon/icons-react';
+import { Search, ChevronDown, ChevronUp, Renew, Checkmark, Close, ChevronLeft, ChevronRight, TrashCan, Add, Locked } from '@carbon/icons-react';
 import { Modal } from '@/components/ui/Modal';
 import { CustomSelect } from '@/components/ui/CustomSelect';
 import { Tooltip } from '@/components/ui/Tooltip';
@@ -18,6 +18,7 @@ type AnimeRow = {
   mal_id: number | null;
   anilist_id: number | null;
   is_fully_scraped: number;
+  is_protected: number;
   last_updated: string;
 };
 
@@ -129,6 +130,18 @@ export function DatabaseTable({
     });
   };
 
+  const handleToggleProtected = (id: number, currentStatus: number) => {
+    startTransition(async () => {
+      const newStatus = !currentStatus;
+      const result = await toggleProtectedStatus(id, newStatus);
+      if (result.success) {
+        toast.success(`Anime ${newStatus ? 'protected' : 'unprotected'} successfully`);
+      } else {
+        toast.error(`Error: ${result.error}`);
+      }
+    });
+  };
+
   const handleDelete = (id: number, title: string) => {
     setAnimeToDelete({ id, title });
   };
@@ -220,6 +233,9 @@ export function DatabaseTable({
         <table className="w-full text-left text-sm whitespace-nowrap">
           <thead className="bg-card text-muted-text uppercase tracking-widest text-[11px] border-b border-border">
             <tr>
+              <th className="px-4 py-3 font-normal cursor-pointer hover:text-foreground group w-12 text-center" onClick={() => handleSort('is_protected')}>
+                <div className="flex items-center justify-center gap-2"><Locked className="w-4 h-4 text-secondary" /></div>
+              </th>
               <th className="px-4 py-3 font-normal cursor-pointer hover:text-foreground group" onClick={() => handleSort('id')}>
                 <div className="flex items-center gap-2">ID {renderSortIcon('id')}</div>
               </th>
@@ -244,7 +260,7 @@ export function DatabaseTable({
           <tbody className="divide-y divide-border">
             {initialData.length === 0 ? (
               <tr>
-                <td colSpan={7} className="px-6 py-12 text-center text-muted-text font-mono">
+                <td colSpan={8} className="px-6 py-12 text-center text-muted-text font-mono">
                   No records found matching your query.
                 </td>
               </tr>
@@ -254,6 +270,15 @@ export function DatabaseTable({
                 
                 return (
                   <tr key={anime.id} className="hover:bg-card/50 transition-colors">
+                    <td className="px-4 py-3 text-center border-r border-border w-12">
+                      <input 
+                        type="checkbox" 
+                        checked={anime.is_protected === 1}
+                        onChange={() => handleToggleProtected(anime.id, anime.is_protected)}
+                        disabled={isPending}
+                        className="w-4 h-4 text-secondary bg-background border-border focus:ring-secondary focus:ring-1 cursor-pointer disabled:opacity-50"
+                      />
+                    </td>
                     <td className="px-4 py-3 font-mono text-xs text-muted-text">#{anime.id}</td>
                     <td className="px-4 py-3 font-medium max-w-[300px] truncate" title={anime.title}>
                       <div className="flex flex-col">
