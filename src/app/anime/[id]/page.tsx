@@ -1,7 +1,5 @@
 import { AnimeService } from "@/lib/services/anime";
 import type { Metadata } from 'next';
-import { Information, StarFilled, Grid } from "@carbon/icons-react";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { DesktopAnimeDetail } from "@/components/anime/DesktopAnimeDetail";
 import { MobileAnimeDetail } from "@/components/anime/MobileAnimeDetail";
