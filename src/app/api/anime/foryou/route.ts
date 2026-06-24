@@ -4,7 +4,12 @@ import { sanitizeAnimeList } from '@/lib/sanitize';
 
 export async function POST(req: NextRequest) {
   try {
-    const body = await req.json();
+    let body;
+    try {
+      body = await req.json();
+    } catch {
+      return NextResponse.json({ data: [] });
+    }
     const { slugs } = body;
 
     if (!Array.isArray(slugs) || slugs.length === 0) {
