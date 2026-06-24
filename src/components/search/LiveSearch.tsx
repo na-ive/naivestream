@@ -5,7 +5,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Search, SettingsAdjust } from '@carbon/icons-react';
-import { cn } from '@/lib/utils';
+import { cn, FALLBACK_IMAGE } from '@/lib/utils';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { Tooltip } from '@/components/ui/Tooltip';
 import { useTitleLang } from '@/lib/providers/TitleLangProvider';
@@ -326,7 +326,12 @@ function SearchResultItem({ anime, isActive, onSelect, onHover }: { anime: Searc
             if (img && img.complete) setImgLoaded(true);
           }}
           onLoad={() => setImgLoaded(true)}
-          onError={() => setImgLoaded(true)}
+          onError={(e) => {
+            if (e.currentTarget.src !== FALLBACK_IMAGE) {
+              e.currentTarget.src = FALLBACK_IMAGE;
+            }
+            setImgLoaded(true);
+          }}
           className={cn(
             "w-full h-full object-cover transition-all duration-500",
             isActive ? "scale-110" : "group-hover/item:scale-110",

@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { CaretRight, StarFilled, Terminal, Warning } from '@carbon/icons-react';
 import { BookmarkButton } from './BookmarkButton';
 import { Skeleton } from '@/components/ui/Skeleton';
-import { cn } from '@/lib/utils';
+import { cn, FALLBACK_IMAGE } from '@/lib/utils';
 import { useTitleLang } from '@/lib/providers/TitleLangProvider';
 import { useViewMode } from '@/lib/providers/ViewModeProvider';
 
@@ -81,7 +81,12 @@ export function AnimeCard({
             if (img && img.complete) setImgLoaded(true);
           }}
           onLoad={() => setImgLoaded(true)}
-          onError={() => setImgLoaded(true)}
+          onError={(e) => {
+            if (e.currentTarget.src !== FALLBACK_IMAGE) {
+              e.currentTarget.src = FALLBACK_IMAGE;
+            }
+            setImgLoaded(true);
+          }}
         />
 
         {/* Warning Layer for Empty Episodes */}

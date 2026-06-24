@@ -4,11 +4,10 @@ import React, { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { ChevronLeft, ChevronRight } from '@carbon/icons-react';
 import { motion, AnimatePresence } from 'motion/react';
-import { cn } from '@/lib/utils';
+import { cn, formatNextAiring, FALLBACK_IMAGE } from '@/lib/utils';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { SmartWatchButton } from './SmartWatchButton';
 import { useTitleLang } from '@/lib/providers/TitleLangProvider';
-import { formatNextAiring } from '@/lib/utils';
 import { AnimeTitleDisplay } from './AnimeTitleDisplay';
 
 interface HeroCarouselProps {
@@ -76,7 +75,12 @@ export function HeroCarousel({ items }: HeroCarouselProps) {
                 if (img && img.complete) setImgLoaded(true);
               }}
               onLoad={() => setImgLoaded(true)}
-              onError={() => setImgLoaded(true)}
+              onError={(e) => {
+                if (e.currentTarget.src !== FALLBACK_IMAGE) {
+                  e.currentTarget.src = FALLBACK_IMAGE;
+                }
+                setImgLoaded(true);
+              }}
               className={cn("w-full h-full object-cover object-[center_25%] scale-105 transition-opacity duration-700", (imgLoaded || currentIndex === 0) ? "opacity-100" : "opacity-0")}
             />
             {/* Base dark overlay to compensate for 100% image opacity */}
@@ -119,7 +123,12 @@ export function HeroCarousel({ items }: HeroCarouselProps) {
                   if (img && img.complete) setImgLoaded(true);
                 }}
                 onLoad={() => setImgLoaded(true)}
-                onError={() => setImgLoaded(true)}
+                onError={(e) => {
+                  if (e.currentTarget.src !== FALLBACK_IMAGE) {
+                    e.currentTarget.src = FALLBACK_IMAGE;
+                  }
+                  setImgLoaded(true);
+                }}
                 className="w-full h-full object-cover transition-transform duration-700 group-hover/poster:scale-110"
               />
               {/* Internal border like in /anime */}
