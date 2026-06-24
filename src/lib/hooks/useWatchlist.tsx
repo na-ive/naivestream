@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useCallback, useMemo, useSyncExternalStore } from 'react';
 import { toast } from 'sonner';
 import { CheckboxChecked, TrashCan } from '@carbon/icons-react';
 
@@ -12,27 +12,29 @@ export interface WatchlistItem {
   addedAt: number;
 }
 
+const subscribeWatchlist = (listener: () => void) => {
+  window.addEventListener('watchlist_updated', listener);
+  return () => window.removeEventListener('watchlist_updated', listener);
+};
+
+const getWatchlistSnapshot = () => {
+  if (typeof window === 'undefined') return null;
+  return localStorage.getItem('anime_watchlist');
+};
+
+const getServerSnapshot = () => null;
+
 export function useWatchlist() {
-  const [watchlist, setWatchlist] = useState<WatchlistItem[]>([]);
+  const watchlistStr = useSyncExternalStore(subscribeWatchlist, getWatchlistSnapshot, getServerSnapshot);
 
-  const loadWatchlist = useCallback(() => {
-    const saved = localStorage.getItem('anime_watchlist');
-    if (saved) {
-      try {
-        setWatchlist(JSON.parse(saved));
-      } catch (e) {
-        console.error('Failed to parse watchlist', e);
-      }
-    } else {
-      setWatchlist([]);
+  const watchlist = useMemo<WatchlistItem[]>(() => {
+    if (!watchlistStr) return [];
+    try {
+      return JSON.parse(watchlistStr);
+    } catch {
+      return [];
     }
-  }, []);
-
-  useEffect(() => {
-    loadWatchlist();
-    window.addEventListener('watchlist_updated', loadWatchlist);
-    return () => window.removeEventListener('watchlist_updated', loadWatchlist);
-  }, [loadWatchlist]);
+  }, [watchlistStr]);
 
   const updateStorage = (newList: WatchlistItem[]) => {
     localStorage.setItem('anime_watchlist', JSON.stringify(newList));

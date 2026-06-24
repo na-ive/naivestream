@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useCallback, useMemo, useSyncExternalStore } from 'react';
 import { toast } from 'sonner';
 import { TrashCan } from '@carbon/icons-react';
 
@@ -14,27 +14,29 @@ export interface WatchHistory {
   updatedAt: number;
 }
 
+const subscribeHistory = (listener: () => void) => {
+  window.addEventListener('history_updated', listener);
+  return () => window.removeEventListener('history_updated', listener);
+};
+
+const getHistorySnapshot = () => {
+  if (typeof window === 'undefined') return null;
+  return localStorage.getItem('anime_history');
+};
+
+const getServerSnapshot = () => null;
+
 export function useHistory() {
-  const [history, setHistory] = useState<WatchHistory[]>([]);
+  const historyStr = useSyncExternalStore(subscribeHistory, getHistorySnapshot, getServerSnapshot);
 
-  const loadHistory = useCallback(() => {
-    const saved = localStorage.getItem('anime_history');
-    if (saved) {
-      try {
-        setHistory(JSON.parse(saved));
-      } catch (e) {
-        console.error('Failed to parse history', e);
-      }
-    } else {
-      setHistory([]);
+  const history = useMemo<WatchHistory[]>(() => {
+    if (!historyStr) return [];
+    try {
+      return JSON.parse(historyStr);
+    } catch {
+      return [];
     }
-  }, []);
-
-  useEffect(() => {
-    loadHistory();
-    window.addEventListener('history_updated', loadHistory);
-    return () => window.removeEventListener('history_updated', loadHistory);
-  }, [loadHistory]);
+  }, [historyStr]);
 
   const updateStorage = (newList: WatchHistory[]) => {
     localStorage.setItem('anime_history', JSON.stringify(newList));

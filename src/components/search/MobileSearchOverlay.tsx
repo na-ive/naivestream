@@ -2,7 +2,6 @@
 
 import React, { useEffect, useState } from 'react';
 import { LiveSearch } from './LiveSearch';
-import { cn } from '@/lib/utils';
 import { usePathname } from 'next/navigation';
 
 interface MobileSearchOverlayProps {
@@ -18,6 +17,7 @@ export function MobileSearchOverlay({ isOpen, onClose }: MobileSearchOverlayProp
     if (isOpen) {
       onClose();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname]);
 
   useEffect(() => {

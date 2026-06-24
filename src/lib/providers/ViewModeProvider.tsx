@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useCallback, useSyncExternalStore, ReactNode } from 'react';
 
 export type ViewMode = 'grid' | 'detailed' | 'list';
 
@@ -12,22 +12,32 @@ interface ViewModeContextType {
 
 const ViewModeContext = createContext<ViewModeContextType | null>(null);
 
+const subscribeViewMode = (listener: () => void) => {
+  window.addEventListener('view_mode_updated', listener);
+  return () => window.removeEventListener('view_mode_updated', listener);
+};
+
+const getViewModeSnapshot = () => {
+  if (typeof window === 'undefined') return 'grid';
+  return localStorage.getItem('anime_view_mode') || 'grid';
+};
+
+const getServerViewModeSnapshot = () => 'grid';
+
 export function ViewModeProvider({ children }: { children: ReactNode }) {
-  const [viewMode, setViewMode] = useState<ViewMode>('grid');
-  const [isMounted, setIsMounted] = useState(false);
+  const viewModeStr = useSyncExternalStore(subscribeViewMode, getViewModeSnapshot, getServerViewModeSnapshot);
+  const viewMode = (viewModeStr === 'detailed' || viewModeStr === 'list') ? viewModeStr : 'grid';
+  
+  const isMounted = useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false
+  );
 
-  useEffect(() => {
-    const saved = localStorage.getItem('anime_view_mode') as ViewMode;
-    if (saved === 'grid' || saved === 'detailed' || saved === 'list') {
-      setViewMode(saved);
-    }
-    setIsMounted(true);
-  }, []);
-
-  const changeViewMode = (mode: ViewMode) => {
-    setViewMode(mode);
+  const changeViewMode = useCallback((mode: ViewMode) => {
     localStorage.setItem('anime_view_mode', mode);
-  };
+    window.dispatchEvent(new Event('view_mode_updated'));
+  }, []);
 
   return (
     <ViewModeContext.Provider value={{ viewMode, changeViewMode, isMounted }}>

@@ -103,7 +103,7 @@ export function Pagination({ currentPage, totalPages, baseUrl }: PaginationProps
       
       <div className="flex items-center space-x-2 text-[10px] font-black uppercase tracking-[0.3em] text-foreground/40">
         <span className="w-1.5 h-1.5 bg-secondary" />
-        <span>Page {currentPage} // {totalPages}</span>
+        <span>Page {currentPage} {"//"} {totalPages}</span>
       </div>
     </div>
   );

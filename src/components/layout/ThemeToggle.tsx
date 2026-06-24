@@ -3,7 +3,6 @@
 import React, { useState, useEffect } from 'react';
 import { useTheme } from 'next-themes';
 import { Sun, Moon } from '@carbon/icons-react';
-import { cn } from '@/lib/utils';
 import { Tooltip } from '@/components/ui/Tooltip';
 
 export function ThemeToggle() {
@@ -11,6 +10,7 @@ export function ThemeToggle() {
   const { theme, setTheme } = useTheme();
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true);
   }, []);
 

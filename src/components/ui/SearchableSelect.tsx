@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
-import { ChevronDown, Search, Close } from '@carbon/icons-react';
+import { ChevronDown, Search } from '@carbon/icons-react';
 import { cn } from '@/lib/utils';
 
 interface Option {

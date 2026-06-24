@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useCallback, useMemo, useSyncExternalStore } from 'react';
 
 interface WatchedEpisodesStore {
   [animeSlug: string]: {
@@ -8,31 +8,37 @@ interface WatchedEpisodesStore {
   };
 }
 
+const subscribeWatched = (listener: () => void) => {
+  window.addEventListener('watched_updated', listener);
+  return () => window.removeEventListener('watched_updated', listener);
+};
+
+const getWatchedSnapshot = () => {
+  if (typeof window === 'undefined') return null;
+  return localStorage.getItem('anime_watched_episodes');
+};
+
+const getServerSnapshot = () => null;
+
 export function useWatchedEpisodes() {
-  const [watched, setWatched] = useState<WatchedEpisodesStore>({});
+  const watchedStr = useSyncExternalStore(subscribeWatched, getWatchedSnapshot, getServerSnapshot);
 
-  const load = useCallback(() => {
+  const watched = useMemo<WatchedEpisodesStore>(() => {
+    if (!watchedStr) return {};
     try {
-      const saved = localStorage.getItem('anime_watched_episodes');
-      if (saved) setWatched(JSON.parse(saved));
-    } catch {}
-  }, []);
-
-  useEffect(() => {
-    load();
-    window.addEventListener('watched_updated', load);
-    return () => window.removeEventListener('watched_updated', load);
-  }, [load]);
+      return JSON.parse(watchedStr);
+    } catch {
+      return {};
+    }
+  }, [watchedStr]);
 
   const markAsWatched = useCallback((animeSlug: string, episodeSlug: string) => {
-    setWatched(prev => {
-      const next = { ...prev };
-      if (!next[animeSlug]) next[animeSlug] = {};
-      next[animeSlug][episodeSlug] = Date.now();
-      localStorage.setItem('anime_watched_episodes', JSON.stringify(next));
-      window.dispatchEvent(new Event('watched_updated'));
-      return next;
-    });
+    const currentStr = localStorage.getItem('anime_watched_episodes');
+    const current = currentStr ? JSON.parse(currentStr) : {};
+    if (!current[animeSlug]) current[animeSlug] = {};
+    current[animeSlug][episodeSlug] = Date.now();
+    localStorage.setItem('anime_watched_episodes', JSON.stringify(current));
+    window.dispatchEvent(new Event('watched_updated'));
   }, []);
 
   const isWatched = useCallback((animeSlug: string, episodeSlug: string): boolean => {
@@ -48,13 +54,12 @@ export function useWatchedEpisodes() {
   }, [watched]);
 
   const resetAnime = useCallback((animeSlug: string) => {
-    setWatched(prev => {
-      const next = { ...prev };
-      delete next[animeSlug];
-      localStorage.setItem('anime_watched_episodes', JSON.stringify(next));
-      window.dispatchEvent(new Event('watched_updated'));
-      return next;
-    });
+    const currentStr = localStorage.getItem('anime_watched_episodes');
+    if (!currentStr) return;
+    const current = JSON.parse(currentStr);
+    delete current[animeSlug];
+    localStorage.setItem('anime_watched_episodes', JSON.stringify(current));
+    window.dispatchEvent(new Event('watched_updated'));
   }, []);
 
   return { watched, markAsWatched, isWatched, getWatchedEpisodes, getWatchedCount, resetAnime };

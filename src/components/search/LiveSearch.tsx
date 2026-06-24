@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
@@ -41,7 +42,7 @@ export function LiveSearch({ onClose, dropdownPosition = 'bottom', onQueryChange
   const debounceRef = useRef<NodeJS.Timeout | null>(null);
 
   const isMac = typeof navigator !== 'undefined' && /Mac|iPod|iPhone|iPad/.test(navigator.platform);
-  const shortcutLabel = isMac ? '\u2318K' : 'Ctrl+K';
+  const shortcutLabel = isMac ? '\u2318 + K' : 'Ctrl + K';
 
   // Global keyboard shortcut: Ctrl+K / Cmd+K
   useEffect(() => {
@@ -72,8 +73,11 @@ export function LiveSearch({ onClose, dropdownPosition = 'bottom', onQueryChange
     if (debounceRef.current) clearTimeout(debounceRef.current);
     
     if (query.length < 2) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setResults([]);
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setIsOpen(false);
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setActiveIndex(-1);
       return;
     }
@@ -89,7 +93,7 @@ export function LiveSearch({ onClose, dropdownPosition = 'bottom', onQueryChange
         const fetched = data.data || [];
         setResults(fetched);
         setActiveIndex(-1);
-      } catch (e) {
+      } catch {
         setResults([]);
       } finally {
         setLoading(false);
@@ -184,7 +188,7 @@ export function LiveSearch({ onClose, dropdownPosition = 'bottom', onQueryChange
                 className="px-1.5 h-full flex items-center bg-warning/10 border border-warning/40 text-warning"
                 style={{ clipPath: 'polygon(4px 0, 100% 0, 100% calc(100% - 4px), calc(100% - 4px) 100%, 0 100%, 0 4px)' }}
               >
-                <span className="text-[9px] font-black uppercase tracking-wider">{isMac ? '\u2318 + K' : 'Ctrl + K'}</span>
+                <span className="text-[9px] font-black uppercase tracking-wider">{shortcutLabel}</span>
               </div>
             </div>
           )}
