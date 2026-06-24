@@ -3,6 +3,53 @@ import type { Metadata } from 'next';
 import { AnimeService } from '@/lib/services/anime';
 import { Skeleton } from '@/components/ui/Skeleton';
 import WatchContent from './WatchContent';
+import { getEpisodeResponse } from '@/lib/scrapers/otakudesu';
+import { sanitizeEpisodeList } from '@/lib/sanitize';
+
+const SANKA_EPISODE = 'https://www.sankavollerei.com/anime/episode';
+
+async function fetchSanka(path: string) {
+  try {
+    const res = await fetch(`${SANKA_EPISODE}/${path}`, {
+      next: { revalidate: 3600 },
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+        'Accept': 'application/json',
+      },
+    });
+    if (!res.ok) return null;
+    const json = await res.json();
+    return json?.data || (json?.title ? json : null);
+  } catch {
+    return null;
+  }
+}
+
+async function getEpisodeData(slug: string) {
+  const direct = await getEpisodeResponse(slug);
+  if (direct) return direct;
+  return await fetchSanka(slug);
+}
+
+async function getAnimeData(slug: string) {
+  try {
+    const anime = await AnimeService.getAnimeBySlug(slug);
+    if (!anime) return null;
+    
+    const episodes = await AnimeService.getEpisodes(anime.id);
+    const filteredEpisodes = episodes.filter(ep => ep.eps_number !== null && ep.eps_number !== undefined);
+    
+    return { 
+      animeId: slug, 
+      title: anime.title, 
+      titleEnglish: anime.title_english, 
+      image: anime.poster,
+      episodes: sanitizeEpisodeList(filteredEpisodes)
+    };
+  } catch (e) {
+    return null;
+  }
+}
 
 export async function generateMetadata(
   props: { params: Promise<{ id: string }> }
@@ -27,8 +74,31 @@ export async function generateMetadata(
     description: `Streaming ${cleanEpisodeTitle} on NaiveStream`,
   };
 }
+
 export default async function WatchPage(props: { params: Promise<{ id: string }> }) {
   const params = await props.params;
+  
+  let episodeData = null;
+  let animeData = null;
+  
+  try {
+    // Fetch episode data from scraper/Sanka
+    episodeData = await getEpisodeData(params.id);
+    
+    // Fetch anime data
+    const dbEpisode = await AnimeService.getEpisodeBySlug(params.id);
+    if (dbEpisode) {
+       const dbAnime = await AnimeService.getAnimeById(dbEpisode.anime_id);
+       if (dbAnime) {
+          animeData = await getAnimeData(dbAnime.slug);
+       }
+    } else if (episodeData?.animeId) {
+       animeData = await getAnimeData(episodeData.animeId);
+    }
+  } catch (error) {
+    console.error(error);
+  }
+
   return (
     <Suspense fallback={
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -90,7 +160,7 @@ export default async function WatchPage(props: { params: Promise<{ id: string }>
         <Skeleton className="h-48 w-full mt-6 rounded-none" />
       </div>
     }>
-      <WatchContent id={params.id} />
+      <WatchContent id={params.id} initialEpisodeData={episodeData} initialAnimeData={animeData} />
     </Suspense>
   );
 }

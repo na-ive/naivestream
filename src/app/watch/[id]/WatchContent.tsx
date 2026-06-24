@@ -14,17 +14,48 @@ import { Skeleton } from '@/components/ui/Skeleton';
 import { LazyIframe } from '@/components/ui/LazyIframe';
 import { cn } from '@/lib/utils';
 
-export default function WatchContent({ id }: { id: string }) {
+export default function WatchContent({ 
+  id, 
+  initialEpisodeData, 
+  initialAnimeData 
+}: { 
+  id: string;
+  initialEpisodeData?: any;
+  initialAnimeData?: any;
+}) {
   const router = useRouter();
   const { titleLang } = useTitleLang();
 
-  const [episodeData, setEpisodeData] = useState<any>(null);
-  const [animeData, setAnimeData] = useState<any>(null);
-  const [animeId, setAnimeId] = useState('');
-  const [animeTitle, setAnimeTitle] = useState('');
-  const [animeImg, setAnimeImg] = useState('');
-  const [rawTitle, setRawTitle] = useState('');
-  const [rawTitleEnglish, setRawTitleEnglish] = useState('');
+  const [episodeData, setEpisodeData] = useState<any>(() => {
+    if (!initialEpisodeData) return null;
+    const sanitizedData = { ...initialEpisodeData };
+    if (sanitizedData.nextEpisode && (sanitizedData.nextEpisode.eps === null || sanitizedData.nextEpisode.eps === undefined)) {
+      sanitizedData.nextEpisode = null;
+    }
+    if (sanitizedData.prevEpisode && (sanitizedData.prevEpisode.eps === null || sanitizedData.prevEpisode.eps === undefined)) {
+      sanitizedData.prevEpisode = null;
+    }
+    return sanitizedData;
+  });
+
+  const [animeData, setAnimeData] = useState<any>(() => {
+    if (initialAnimeData?.episodes) {
+      return {
+        episodeList: initialAnimeData.episodes.map((ep: any) => ({
+          episodeId: ep.slug,
+          title: ep.title,
+          eps: ep.eps_number
+        }))
+      };
+    }
+    return null;
+  });
+
+  const [animeId, setAnimeId] = useState(initialAnimeData?.animeId || initialEpisodeData?.animeId || '');
+  const [animeTitle, setAnimeTitle] = useState(initialAnimeData?.title || initialEpisodeData?.animeTitle || '');
+  const [animeImg, setAnimeImg] = useState(initialAnimeData?.image || initialEpisodeData?.animeImage || '');
+  const [rawTitle, setRawTitle] = useState(initialAnimeData?.title || '');
+  const [rawTitleEnglish, setRawTitleEnglish] = useState(initialAnimeData?.titleEnglish || '');
 
   const displayTitle = titleLang === 'en' && rawTitleEnglish ? rawTitleEnglish : (rawTitle || animeTitle);
   const episodeDisplay = React.useMemo(() => {
@@ -32,10 +63,31 @@ export default function WatchContent({ id }: { id: string }) {
     const match = episodeData.title.match(/Episode\s*(\d+(\.\d+)?)/i);
     return match ? `Episode ${match[1]}` : episodeData.title;
   }, [episodeData]);
-  const [currentUrl, setCurrentUrl] = useState<string>('');
-  const [currentResolution, setCurrentResolution] = useState<string>('');
-  const [currentServer, setCurrentServer] = useState<string>('');
-  const [loading, setLoading] = useState(true);
+  const [currentUrl, setCurrentUrl] = useState<string>(() => {
+    return initialEpisodeData?.defaultStreamingUrl || '';
+  });
+  
+  const [currentResolution, setCurrentResolution] = useState<string>(() => {
+    if (initialEpisodeData?.server?.qualities) {
+      for (const quality of initialEpisodeData.server.qualities) {
+        const foundServer = quality.serverList?.find((s: any) => s.url === initialEpisodeData.defaultStreamingUrl);
+        if (foundServer) return quality.title;
+      }
+    }
+    return '';
+  });
+  
+  const [currentServer, setCurrentServer] = useState<string>(() => {
+    if (initialEpisodeData?.server?.qualities) {
+      for (const quality of initialEpisodeData.server.qualities) {
+        const foundServer = quality.serverList?.find((s: any) => s.url === initialEpisodeData.defaultStreamingUrl);
+        if (foundServer) return foundServer.title;
+      }
+    }
+    return '';
+  });
+  
+  const [loading, setLoading] = useState(false); // No initial loading since it's SSR pre-fetched
   const [serverLoading, setServerLoading] = useState(false);
   const [isCinemaMode, setIsCinemaMode] = useState(false);
   const [isTheaterMode, setIsTheaterMode] = useState(false);
@@ -143,82 +195,7 @@ export default function WatchContent({ id }: { id: string }) {
     setHistorySaved(true);
   }, [episodeData, rawTitle, rawTitleEnglish, animeId, displayTitle, animeImg, id, saveToHistory, markAsWatched, historySaved]);
 
-  const fetchEpisode = useCallback(async () => {
-    if (!id || id === 'undefined') return;
-
-    setLoading(true);
-    const res = await AnimeAPI.getEpisode(id);
-
-    const data = res?.data || (res?.title ? res : null);
-
-    if (data) {
-      // Set anime metadata from episode data (clean URLs, no query params needed)
-      if (data.animeId) setAnimeId(data.animeId);
-      if (data.animeTitle) setAnimeTitle(data.animeTitle);
-      if (data.animeImage) setAnimeImg(data.animeImage);
-
-      // Filter next/prev episodes to ensure they aren't anomalies (missing eps_number)
-      const sanitizedData = { ...data };
-      if (sanitizedData.nextEpisode && (sanitizedData.nextEpisode.eps === null || sanitizedData.nextEpisode.eps === undefined)) {
-        sanitizedData.nextEpisode = null;
-      }
-      if (sanitizedData.prevEpisode && (sanitizedData.prevEpisode.eps === null || sanitizedData.prevEpisode.eps === undefined)) {
-        sanitizedData.prevEpisode = null;
-      }
-
-      setEpisodeData(sanitizedData);
-      setCurrentUrl(sanitizedData.defaultStreamingUrl || '');
-
-      // Set initial resolution/server if available from default url
-      if (sanitizedData.server?.qualities) {
-        for (const quality of sanitizedData.server.qualities) {
-          const foundServer = quality.serverList?.find((s: any) => s.url === sanitizedData.defaultStreamingUrl);
-          if (foundServer) {
-            setCurrentResolution(quality.title);
-            setCurrentServer(foundServer.title);
-            break;
-          }
-        }
-      }
-
-      // Save to history (done in separate useEffect after all data loads)
-    }
-    setLoading(false);
-    if (data?.animeId) fetchAnimeDataFrom(data.animeId);
-  }, [id]);
-
-  const fetchAnimeDataFrom = useCallback(async (slug: string) => {
-    if (!slug) return;
-    try {
-      const res = await fetch(`/api/anime/episodes?slug=${slug}`);
-      if (!res.ok) return;
-      const data = await res.json();
-      if (data?.episodes) {
-        const episodes = data.episodes.map((ep: any) => ({
-          episodeId: ep.slug,
-          title: ep.title,
-          eps: ep.eps_number
-        }));
-        
-        setAnimeData({ episodeList: episodes });
-        if (data.title) {
-          setRawTitle(data.title);
-          setRawTitleEnglish(data.titleEnglish || '');
-          // Override scraped title/image with DB data
-          setAnimeTitle(data.title);
-        }
-        if (data.image) {
-          setAnimeImg(data.image);
-        }
-      }
-    } catch (e) {
-      console.error('Failed to fetch anime data for episode list', e);
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchEpisode();
-  }, [fetchEpisode]);
+  // Remove fetchEpisode and fetchAnimeDataFrom since data is now provided directly on mount.
 
   const changeServer = async (serverId: string, resolution: string, serverName: string) => {
     setServerLoading(true);
