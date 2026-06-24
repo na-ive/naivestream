@@ -59,7 +59,7 @@ export function HeroCarousel({ items }: HeroCarouselProps) {
       <AnimatePresence mode="wait">
         <motion.div
           key={current.id}
-          initial={{ opacity: 0 }}
+          initial={currentIndex === 0 ? false : { opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 1 }}
@@ -71,12 +71,13 @@ export function HeroCarousel({ items }: HeroCarouselProps) {
               src={current.banner || current.poster || current.image}
               alt={current.title}
               loading="eager"
+              fetchPriority="high"
               ref={(img) => {
                 if (img && img.complete) setImgLoaded(true);
               }}
               onLoad={() => setImgLoaded(true)}
               onError={() => setImgLoaded(true)}
-              className={cn("w-full h-full object-cover object-[center_25%] scale-105 transition-opacity duration-700", imgLoaded ? "opacity-30" : "opacity-0")}
+              className={cn("w-full h-full object-cover object-[center_25%] scale-105 transition-opacity duration-700", (imgLoaded || currentIndex === 0) ? "opacity-30" : "opacity-0")}
             />
             {/* Cyberpunk Overlays */}
             <div className="absolute inset-0 bg-gradient-to-r from-background via-background/80 to-transparent" />
@@ -102,7 +103,7 @@ export function HeroCarousel({ items }: HeroCarouselProps) {
           <div className="flex flex-col gap-6 items-center md:items-start">
             <motion.div
               key={`poster-${current.id}`}
-              initial={{ x: -30, opacity: 0, scale: 0.95 }}
+              initial={currentIndex === 0 ? false : { x: -30, opacity: 0, scale: 0.95 }}
               animate={{ x: 0, opacity: 1, scale: 1 }}
               transition={{ duration: 0.6, delay: 0.2 }}
               className="relative shrink-0 w-[200px] md:w-[280px] aspect-[2/3] border-4 border-background shadow-2xl overflow-hidden"
@@ -110,7 +111,8 @@ export function HeroCarousel({ items }: HeroCarouselProps) {
               <img
                 src={current.poster || current.image}
                 alt={current.title}
-                loading="lazy"
+                loading={currentIndex === 0 ? "eager" : "lazy"}
+                fetchPriority={currentIndex === 0 ? "high" : "auto"}
                 ref={(img) => {
                   if (img && img.complete) setImgLoaded(true);
                 }}
@@ -134,7 +136,7 @@ export function HeroCarousel({ items }: HeroCarouselProps) {
             
             {/* Author Name with Mono Styling */}
             <motion.div
-              initial={{ opacity: 0 }}
+              initial={currentIndex === 0 ? false : { opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.5 }}
               className="text-muted-text font-mono font-bold text-xs uppercase tracking-widest flex items-center gap-2"
@@ -146,7 +148,7 @@ export function HeroCarousel({ items }: HeroCarouselProps) {
           {/* Content on Right */}
           <motion.div 
             key={`content-${current.id}`}
-            initial={{ y: 20, opacity: 0 }}
+            initial={currentIndex === 0 ? false : { y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.3 }}
             className="flex-1 text-center md:text-left pt-2"
