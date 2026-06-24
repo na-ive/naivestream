@@ -63,7 +63,7 @@ export function parseArrayField(data: any): string[] {
     }
     
     return [strData];
-  } catch (e) {
+  } catch {
     // If JSON parse fails, return as single item array or split by comma if exists
     if (strData.includes(',')) {
       return strData.split(',').map(s => s.trim()).filter(Boolean);

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useTransition, useEffect } from 'react';
+import { useState, useTransition, useEffect, useCallback } from 'react';
 import { updateAnimeMapping, deleteAnime, addAnimeMinimal, toggleProtectedStatus } from '../actions';
 import { toast } from 'sonner';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
@@ -56,17 +56,7 @@ export function DatabaseTable({
   const [showAddModal, setShowAddModal] = useState(false);
   const [newAnime, setNewAnime] = useState<{slug: string, anilistId: string}>({ slug: '', anilistId: '' });
 
-  // Debounced search
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      if (searchValue !== currentSearch) {
-        updateQuery({ search: searchValue, page: 1 });
-      }
-    }, 500);
-    return () => clearTimeout(timer);
-  }, [searchValue]);
-
-  const updateQuery = (updates: Record<string, string | number>) => {
+  const updateQuery = useCallback((updates: Record<string, string | number>) => {
     const params = new URLSearchParams(searchParams.toString());
     Object.entries(updates).forEach(([key, value]) => {
       if (value) {
@@ -76,7 +66,17 @@ export function DatabaseTable({
       }
     });
     router.push(`${pathname}?${params.toString()}`);
-  };
+  }, [searchParams, router, pathname]);
+
+  // Debounced search
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (searchValue !== currentSearch) {
+        updateQuery({ search: searchValue, page: 1 });
+      }
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [searchValue, currentSearch, updateQuery]);
 
   const handleSort = (column: string) => {
     const isAsc = currentSort === column && currentOrder === 'asc';

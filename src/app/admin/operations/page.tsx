@@ -1,10 +1,8 @@
 'use client';
 
 import { useEffect, useState, useTransition, Suspense } from 'react';
-import { getAnomalies, getNoEpisodesAnime, injectMetadata, handleLogout, triggerScraper, triggerScrapeSlug } from '../actions';
-import Link from 'next/link';
+import { getAnomalies, getNoEpisodesAnime, injectMetadata, triggerScraper, triggerScrapeSlug } from '../actions';
 import { toast } from 'sonner';
-import { useTheme } from 'next-themes';
 import { Tooltip } from '@/components/ui/Tooltip';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
@@ -51,7 +49,6 @@ function AdminDashboardContent() {
 
   const [isLoading, setIsLoading] = useState(true);
   const [isPending, startTransition] = useTransition();
-  const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {

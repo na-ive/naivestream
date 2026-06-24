@@ -102,7 +102,7 @@ export async function proxy(request: NextRequest) {
     try {
       const payload = await decrypt(session);
       if (!payload) throw new Error('Invalid session');
-    } catch (error) {
+    } catch {
       return NextResponse.redirect(new URL('/login', request.url));
     }
     return NextResponse.next();
