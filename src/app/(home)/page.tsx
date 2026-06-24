@@ -162,19 +162,19 @@ export default async function HomePage() {
                   >
                     <div className="absolute inset-y-0 left-0 w-1 bg-secondary scale-y-0 group-hover:scale-y-100 transition-transform origin-top" />
                     <div className="flex items-center gap-3 sm:gap-4 pl-2 min-w-0">
-                      <span className="text-[9px] sm:text-[10px] font-mono text-muted-text/50 shrink-0">{(index + 1).toString().padStart(2, '0')}</span>
+                      <span className="text-[9px] sm:text-[10px] font-mono text-muted-text shrink-0">{(index + 1).toString().padStart(2, '0')}</span>
                       <span className="font-bold text-xs sm:text-sm group-hover:text-secondary line-clamp-1 uppercase tracking-wider transition-colors">
                         <AnimeTitleDisplay title={anime.title} titleEnglish={anime.title_english} />
                       </span>
                     </div>
                     <div className="flex items-center gap-2 sm:gap-3 shrink-0">
                       {nextAiring && (
-                        <span className="text-[9px] sm:text-[10px] font-mono font-bold text-secondary/70 uppercase tracking-wider flex items-center gap-1">
-                          <Time className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
-                          {nextAiring}
+                        <span className="text-[9px] sm:text-[10px] font-mono font-bold text-secondary uppercase tracking-wider flex items-center gap-1 leading-none" aria-label={`Next episode airs in ${nextAiring}`}>
+                          <Time className="w-2.5 h-2.5 sm:w-3 sm:h-3" aria-hidden="true" />
+                          <span className="mt-[2px]">{nextAiring}</span>
                         </span>
                       )}
-                      <ChevronRight className="w-3 h-3 sm:w-4 sm:h-4 text-muted-text group-hover:text-secondary transition-transform group-hover:translate-x-1" />
+                      <ChevronRight className="w-3 h-3 sm:w-4 sm:h-4 text-muted-text group-hover:text-secondary transition-transform group-hover:translate-x-1" aria-hidden="true" />
                     </div>
                   </Link>
                 );

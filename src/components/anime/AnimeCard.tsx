@@ -62,7 +62,7 @@ export function AnimeCard({
         isHorizontal 
           ? cn("self-start aspect-[3/4] border border-border", isCompactList ? "w-20 md:w-24" : "w-24 md:w-32")
           : "w-full aspect-[3/4] border-2 border-secondary/20 group-hover:border-secondary",
-        !isHorizontal && isEmpty && "border-[#EAB308]"
+        !isHorizontal && isEmpty && "border-warning"
       )}>
         {!imgLoaded && (
           <div className="absolute inset-0 z-10">
@@ -92,10 +92,10 @@ export function AnimeCard({
         {/* Warning Layer for Empty Episodes */}
         {isEmpty && !isHorizontal && (
           <div className="absolute inset-0 flex flex-col items-center justify-center z-20 bg-black/60">
-            <div className="w-16 h-16 bg-[#EAB308] flex items-center justify-center shadow-[0_0_20px_rgba(234,179,8,0.5)]">
+            <div className="w-16 h-16 bg-warning flex items-center justify-center shadow-[0_0_20px_var(--color-warning)]">
               <Warning className="w-8 h-8 text-black fill-current" />
             </div>
-            <div className="mt-4 bg-[#EAB308] text-black px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.2em] shadow-[0_0_15px_rgba(234,179,8,0.3)]">
+            <div className="mt-4 bg-warning text-black px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.2em] shadow-[0_0_15px_var(--color-warning)]">
               NO EPISODE IN DB
             </div>
           </div>
@@ -117,19 +117,19 @@ export function AnimeCard({
           <div className="absolute top-3 left-3 flex flex-col gap-2 z-20 items-start">
             {rating && (
               <div className={cn(
-                "flex items-center space-x-1.5 px-2 py-1 bg-background/90 border text-[10px] font-black uppercase tracking-tighter",
-                isEmpty ? "border-[#EAB308]/50 text-[#EAB308]" : "border-secondary/50 text-secondary"
+                "flex items-center space-x-1.5 px-2 py-1 bg-background/90 border text-[10px] font-black uppercase tracking-tighter leading-none",
+                isEmpty ? "border-warning/50 text-warning" : "border-secondary/50 text-secondary"
               )}>
-                <StarFilled className="w-3 h-3 fill-current" />
+                <StarFilled className="w-3 h-3 fill-current shrink-0" />
                 <span>{rating}</span>
               </div>
             )}
             {status && (
               <div className={cn(
-                "flex items-center space-x-1.5 px-2 py-1 text-background text-[10px] font-black uppercase tracking-tighter",
-                isEmpty ? "bg-[#EAB308] text-black" : "bg-secondary"
+                "flex items-center space-x-1.5 px-2 py-1 text-background text-[10px] font-black uppercase tracking-tighter leading-none",
+                isEmpty ? "bg-warning text-black" : "bg-secondary"
               )}>
-                <Terminal className="w-3 h-3" />
+                <Terminal className="w-3 h-3 shrink-0" />
                 <span>{status}</span>
               </div>
             )}
@@ -161,7 +161,7 @@ export function AnimeCard({
               isHorizontal 
                 ? "tracking-tight text-foreground group-hover/title:text-secondary text-sm md:text-base lg:text-lg line-clamp-2" 
                 : "font-serif uppercase tracking-widest text-xs line-clamp-2 h-8 group-hover/title:text-secondary",
-              isEmpty && (isHorizontal ? "text-[#EAB308]/70 group-hover/title:text-[#EAB308]" : "text-[#EAB308]/70 group-hover/title:text-[#EAB308]")
+              isEmpty && (isHorizontal ? "text-warning/70 group-hover/title:text-warning" : "text-warning/70 group-hover/title:text-warning")
             )} title={displayTitle}>
               {displayTitle}
             </h3>
