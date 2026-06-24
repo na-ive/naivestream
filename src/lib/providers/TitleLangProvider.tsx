@@ -1,6 +1,7 @@
 'use client';
 
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
 
 type TitleLang = 'jp' | 'en';
 
@@ -17,6 +18,17 @@ const TitleLangContext = createContext<TitleLangContextType>({
 export function TitleLangProvider({ children }: { children: React.ReactNode }) {
   const [titleLang, setTitleLang] = useState<TitleLang>('jp');
   const [mounted, setMounted] = useState(false);
+  const router = useRouter();
+
+  const handleSetTitleLang = useCallback((lang: TitleLang) => {
+    setTitleLang(lang);
+    if (mounted) {
+      localStorage.setItem('titleLang', lang);
+      document.cookie = `titleLang=${lang}; path=/; max-age=31536000`; // 1 year
+      document.documentElement.setAttribute('data-title-lang', lang);
+      router.refresh(); // Crucial for A-Z list & Server Components
+    }
+  }, [mounted, router]);
 
   useEffect(() => {
     setMounted(true);
@@ -35,16 +47,8 @@ export function TitleLangProvider({ children }: { children: React.ReactNode }) {
     document.documentElement.setAttribute('data-title-lang', initialLang);
   }, []);
 
-  useEffect(() => {
-    if (mounted) {
-      localStorage.setItem('titleLang', titleLang);
-      document.cookie = `titleLang=${titleLang}; path=/; max-age=31536000`; // 1 year
-      document.documentElement.setAttribute('data-title-lang', titleLang);
-    }
-  }, [titleLang, mounted]);
-
   return (
-    <TitleLangContext.Provider value={{ titleLang, setTitleLang }}>
+    <TitleLangContext.Provider value={{ titleLang, setTitleLang: handleSetTitleLang }}>
       {children}
     </TitleLangContext.Provider>
   );
