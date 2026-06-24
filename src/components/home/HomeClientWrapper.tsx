@@ -22,11 +22,14 @@ export function HomeClientWrapper({ children }: { children: ReactNode }) {
       
       const slugs = new Set([...h.map((x:any) => x.animeId), ...w.map((x:any) => x.animeId)]);
       
+      if (slugs.size === 0) {
+        if (isMounted) setIsReady(true);
+        return;
+      }
+
       if (slugs.size < 5) {
-        // Minimal delay for smooth visual transition if there is no fetch
-        setTimeout(() => {
-          if (isMounted) setIsReady(true);
-        }, 150);
+        // Render ContinueWatching instantly without For You
+        if (isMounted) setIsReady(true);
         return;
       }
       
