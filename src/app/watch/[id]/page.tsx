@@ -71,7 +71,19 @@ export async function generateMetadata(
   
   return {
     title: cleanEpisodeTitle,
-    description: `Streaming ${cleanEpisodeTitle} on NaiveStream`,
+    description: `Streaming ${cleanEpisodeTitle} on NaiveStream.`,
+    openGraph: {
+      title: cleanEpisodeTitle,
+      description: `Streaming ${cleanEpisodeTitle} on NaiveStream.`,
+      url: `/watch/${episodeSlug}`,
+      siteName: 'NaiveStream',
+      type: 'video.episode',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: cleanEpisodeTitle,
+      description: `Streaming ${cleanEpisodeTitle} on NaiveStream.`,
+    },
   };
 }
 

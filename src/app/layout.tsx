@@ -36,6 +36,18 @@ export const metadata: Metadata = {
   other: {
     "mobile-web-app-capable": "yes",
   },
+  openGraph: {
+    title: "NaiveStream",
+    description: "A personal anime streaming web interface.",
+    url: "/",
+    siteName: "NaiveStream",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "NaiveStream",
+    description: "A personal anime streaming web interface.",
+  },
 };
 
 export default function RootLayout({

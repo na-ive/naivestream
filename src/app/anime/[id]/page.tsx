@@ -46,8 +46,29 @@ export async function generateMetadata(props: { params: Promise<{ id: string }> 
   }
 
   return {
-    title: anime.title || 'Anime Details',
-    description: `Watch ${anime.title} on NaiveStream`,
+    title: anime.title,
+    description: anime.synopsis?.slice(0, 160) || `Watch ${anime.title} on NaiveStream.`,
+    openGraph: {
+      title: anime.title,
+      description: anime.synopsis?.slice(0, 160) || `Watch ${anime.title} on NaiveStream.`,
+      url: `/anime/${id}`,
+      siteName: 'NaiveStream',
+      images: [
+        {
+          url: anime.poster || anime.image || '',
+          width: 800,
+          height: 600,
+          alt: `${anime.title} Poster`,
+        },
+      ],
+      type: 'video.movie',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: anime.title,
+      description: anime.synopsis?.slice(0, 160) || `Watch ${anime.title} on NaiveStream.`,
+      images: [anime.banner || anime.poster || anime.image || ''],
+    },
   };
 }
 
