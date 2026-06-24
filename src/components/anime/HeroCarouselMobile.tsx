@@ -72,8 +72,10 @@ export function HeroCarouselMobile({ items }: HeroCarouselMobileProps) {
               }}
               onLoad={() => setImgLoaded(true)}
               onError={() => setImgLoaded(true)}
-              className={cn("w-full h-full object-cover object-[center_25%] scale-105 transition-opacity duration-700", imgLoaded ? "opacity-40" : "opacity-0")}
+              className={cn("w-full h-full object-cover object-[center_25%] scale-105 transition-opacity duration-700", (imgLoaded || currentIndex === 0) ? "opacity-100" : "opacity-0")}
             />
+            {/* Base dark overlay to compensate for 100% image opacity */}
+            <div className="absolute inset-0 bg-background/60" />
             <div className="absolute inset-0 bg-gradient-to-r from-background via-background/85 to-transparent" />
             <div className="absolute inset-0 bg-gradient-to-t from-background via-background/80 to-transparent" />
             <div className="absolute inset-0 bg-[linear-gradient(rgba(34,197,94,0.04)_1px,transparent_1px)] bg-[size:100%_4px] pointer-events-none opacity-10" />
@@ -101,7 +103,7 @@ export function HeroCarouselMobile({ items }: HeroCarouselMobileProps) {
             className="hidden sm:block relative shrink-0 w-[90px] md:w-[130px] aspect-[2/3] border-4 border-background shadow-2xl overflow-hidden"
           >
             <img
-              src={current.poster || current.image}
+              src={(current.poster || current.image)?.replace('/cover/large/', '/cover/medium/')}
               alt={current.title}
               loading="lazy"
               ref={(img) => {

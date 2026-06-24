@@ -59,7 +59,7 @@ export function HeroCarousel({ items }: HeroCarouselProps) {
       <AnimatePresence mode="wait">
         <motion.div
           key={current.id}
-          initial={currentIndex === 0 ? false : { opacity: 0 }}
+          initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 1 }}
@@ -77,8 +77,10 @@ export function HeroCarousel({ items }: HeroCarouselProps) {
               }}
               onLoad={() => setImgLoaded(true)}
               onError={() => setImgLoaded(true)}
-              className={cn("w-full h-full object-cover object-[center_25%] scale-105 transition-opacity duration-700", (imgLoaded || currentIndex === 0) ? "opacity-30" : "opacity-0")}
+              className={cn("w-full h-full object-cover object-[center_25%] scale-105 transition-opacity duration-700", (imgLoaded || currentIndex === 0) ? "opacity-100" : "opacity-0")}
             />
+            {/* Base dark overlay to compensate for 100% image opacity */}
+            <div className="absolute inset-0 bg-background/60" />
             {/* Cyberpunk Overlays */}
             <div className="absolute inset-0 bg-gradient-to-r from-background via-background/80 to-transparent" />
             <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent" />
@@ -103,13 +105,13 @@ export function HeroCarousel({ items }: HeroCarouselProps) {
           <div className="flex flex-col gap-6 items-center md:items-start">
             <motion.div
               key={`poster-${current.id}`}
-              initial={currentIndex === 0 ? false : { x: -30, opacity: 0, scale: 0.95 }}
+              initial={{ x: -30, opacity: 0, scale: 0.95 }}
               animate={{ x: 0, opacity: 1, scale: 1 }}
               transition={{ duration: 0.6, delay: 0.2 }}
               className="relative shrink-0 w-[200px] md:w-[280px] aspect-[2/3] border-4 border-background shadow-2xl overflow-hidden"
             >
               <img
-                src={current.poster || current.image}
+                src={(current.poster || current.image)?.replace('/cover/large/', '/cover/medium/')}
                 alt={current.title}
                 loading={currentIndex === 0 ? "eager" : "lazy"}
                 fetchPriority={currentIndex === 0 ? "high" : "auto"}
@@ -136,7 +138,7 @@ export function HeroCarousel({ items }: HeroCarouselProps) {
             
             {/* Author Name with Mono Styling */}
             <motion.div
-              initial={currentIndex === 0 ? false : { opacity: 0 }}
+              initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.5 }}
               className="text-muted-text font-mono font-bold text-xs uppercase tracking-widest flex items-center gap-2"
@@ -148,7 +150,7 @@ export function HeroCarousel({ items }: HeroCarouselProps) {
           {/* Content on Right */}
           <motion.div 
             key={`content-${current.id}`}
-            initial={currentIndex === 0 ? false : { y: 20, opacity: 0 }}
+            initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.3 }}
             className="flex-1 text-center md:text-left pt-2"
