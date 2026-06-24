@@ -71,6 +71,9 @@ export function HeroCarousel({ items }: HeroCarouselProps) {
               src={current.banner || current.poster || current.image}
               alt={current.title}
               loading="eager"
+              ref={(img) => {
+                if (img && img.complete) setImgLoaded(true);
+              }}
               onLoad={() => setImgLoaded(true)}
               onError={() => setImgLoaded(true)}
               className={cn("w-full h-full object-cover object-[center_25%] scale-105 transition-opacity duration-700", imgLoaded ? "opacity-30" : "opacity-0")}
@@ -108,6 +111,9 @@ export function HeroCarousel({ items }: HeroCarouselProps) {
                 src={current.poster || current.image}
                 alt={current.title}
                 loading="lazy"
+                ref={(img) => {
+                  if (img && img.complete) setImgLoaded(true);
+                }}
                 onLoad={() => setImgLoaded(true)}
                 onError={() => setImgLoaded(true)}
                 className="w-full h-full object-cover transition-transform duration-700 group-hover/poster:scale-110"

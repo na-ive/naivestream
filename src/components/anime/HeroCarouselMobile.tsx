@@ -67,6 +67,9 @@ export function HeroCarouselMobile({ items }: HeroCarouselMobileProps) {
               src={current.banner || current.poster || current.image}
               alt={current.title}
               loading="eager"
+              ref={(img) => {
+                if (img && img.complete) setImgLoaded(true);
+              }}
               onLoad={() => setImgLoaded(true)}
               onError={() => setImgLoaded(true)}
               className={cn("w-full h-full object-cover object-[center_25%] scale-105 transition-opacity duration-700", imgLoaded ? "opacity-40" : "opacity-0")}
@@ -101,6 +104,9 @@ export function HeroCarouselMobile({ items }: HeroCarouselMobileProps) {
               src={current.poster || current.image}
               alt={current.title}
               loading="lazy"
+              ref={(img) => {
+                if (img && img.complete) setImgLoaded(true);
+              }}
               onLoad={() => setImgLoaded(true)}
               onError={() => setImgLoaded(true)}
               className="w-full h-full object-cover"

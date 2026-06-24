@@ -18,6 +18,9 @@ function CharacterCard({ character, va, charItem }: { character: any; va: any; c
           src={character.images?.webp?.image_url}
           alt={character.name}
           loading="lazy"
+          ref={(img) => {
+            if (img && img.complete) setImgLoaded(true);
+          }}
           onLoad={() => setImgLoaded(true)}
           onError={() => setImgLoaded(true)}
           className={cn(

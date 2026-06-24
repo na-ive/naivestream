@@ -74,6 +74,9 @@ export function AnimeCard({
             imgLoaded ? "opacity-100 group-hover:scale-110" : "opacity-0"
           )}
           loading="lazy"
+          ref={(img) => {
+            if (img && img.complete) setImgLoaded(true);
+          }}
           onLoad={() => setImgLoaded(true)}
           onError={() => setImgLoaded(true)}
         />

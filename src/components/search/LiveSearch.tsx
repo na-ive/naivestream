@@ -318,6 +318,9 @@ function SearchResultItem({ anime, isActive, onSelect, onHover }: { anime: Searc
         <img
           src={anime.poster}
           alt={anime.title}
+          ref={(img) => {
+            if (img && img.complete) setImgLoaded(true);
+          }}
           onLoad={() => setImgLoaded(true)}
           onError={() => setImgLoaded(true)}
           className={cn(
