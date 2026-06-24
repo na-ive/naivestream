@@ -2,7 +2,8 @@
 
 import React from 'react';
 import { useHistory } from '@/lib/hooks/useHistory';
-import { AnimeCard, AnimeCardSkeleton } from './AnimeCard';
+import { AnimeCardSkeleton } from './AnimeCard';
+import { GridAnimeCard } from './GridAnimeCard';
 import { ChevronRight } from '@carbon/icons-react';
 import { Skeleton } from '@/components/ui/Skeleton';
 import Link from 'next/link';
@@ -41,15 +42,13 @@ export function ContinueWatchingHome() {
           const displayEp = epMatch ? `Episode ${epMatch[1]}` : item.lastEpisodeTitle;
 
           return (
-            <AnimeCard
+            <GridAnimeCard
               key={item.animeId}
               id={item.animeId}
               title={item.animeTitle}
               titleEnglish={item.animeTitleEnglish}
               image={item.animeImage}
               episode={displayEp}
-              hideBookmark
-              forceGrid={true}
             />
           );
         })}

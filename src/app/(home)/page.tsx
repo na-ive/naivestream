@@ -1,10 +1,10 @@
 export const revalidate = 60;
 
 import { AnimeService } from "@/lib/services/anime";
-import { AnimeCard } from "@/components/anime/AnimeCard";
+import { GridAnimeCard } from "@/components/anime/GridAnimeCard";
 import { HeroCarousel } from "@/components/anime/HeroCarousel";
 import { HeroCarouselMobile } from "@/components/anime/HeroCarouselMobile";
-import { HomeClientWrapper } from "@/components/home/HomeClientWrapper";
+import { PersonalizedHomeSections } from "@/components/home/PersonalizedHomeSections";
 import { AnimeTitleDisplay } from '@/components/anime/AnimeTitleDisplay';
 import { ChevronRight, Calendar, Time } from "@carbon/icons-react";
 import Link from "next/link";
@@ -56,7 +56,8 @@ export default async function HomePage() {
       </div>
 
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 mt-12 space-y-16">
-        <HomeClientWrapper>
+        <PersonalizedHomeSections />
+        
         {/* Ongoing Section */}
         <section>
           <div className="flex items-center justify-between mb-6 pb-3 border-b border-border">
@@ -75,8 +76,8 @@ export default async function HomePage() {
             </Link>
           </div>
           <div className="mobile-snap-scroll gap-4 md:gap-6">
-            {ongoing.slice(0, 12).map((anime: any) => (
-              <AnimeCard
+            {ongoing.slice(0, 12).map((anime: any, index: number) => (
+              <GridAnimeCard
                 key={anime.slug}
                 id={anime.slug}
                 title={anime.title}
@@ -86,7 +87,7 @@ export default async function HomePage() {
                 episode={`ep ${anime.latest_episode || '??'}`}
                 status={anime.next_episode && anime.next_airing_at ? (formatNextAiring(anime.next_episode, anime.next_airing_at, true) || anime.release_day) : anime.release_day}
                 totalEpisodes={anime.actual_episodes_count}
-                forceGrid={true}
+                priority={index === 0}
               />
             ))}
           </div>
@@ -111,7 +112,7 @@ export default async function HomePage() {
           </div>
           <div className="mobile-snap-scroll gap-4 md:gap-6">
             {completed.slice(0, 12).map((anime: any) => (
-              <AnimeCard
+              <GridAnimeCard
                 key={anime.slug}
                 id={anime.slug}
                 title={anime.title}
@@ -119,13 +120,12 @@ export default async function HomePage() {
                 image={anime.poster}
                 rating={String(anime.score)}
                 episode={`${anime.episodes_count || '??'} eps`}
+                status="Completed"
                 totalEpisodes={anime.actual_episodes_count}
-                forceGrid={true}
               />
             ))}
           </div>
         </section>
-        </HomeClientWrapper>
 
         {/* Today's Schedule Section */}
         {todayAnimeList.length > 0 && (

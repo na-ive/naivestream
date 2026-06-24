@@ -1,4 +1,4 @@
-import { AnimeCard } from './AnimeCard';
+import { GridAnimeCard } from './GridAnimeCard';
 
 export function ForYouHome({ recommendations }: { recommendations: any[] }) {
   if (!recommendations || recommendations.length === 0) {
@@ -15,7 +15,7 @@ export function ForYouHome({ recommendations }: { recommendations: any[] }) {
       </div>
       <div className="mobile-snap-scroll gap-4 md:gap-6">
         {recommendations.map((anime: any) => (
-          <AnimeCard
+          <GridAnimeCard
             key={anime.slug}
             id={anime.slug}
             title={anime.title}
@@ -25,7 +25,6 @@ export function ForYouHome({ recommendations }: { recommendations: any[] }) {
             status={anime.status}
             episode={`${anime.episodes_count || '??'} eps`}
             totalEpisodes={anime.actual_episodes_count}
-            forceGrid={true}
           />
         ))}
       </div>
