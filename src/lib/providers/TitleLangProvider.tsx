@@ -21,21 +21,25 @@ export function TitleLangProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     setMounted(true);
     const stored = localStorage.getItem('titleLang');
+    let initialLang: TitleLang = 'jp';
     if (stored === 'en' || stored === 'jp') {
-      setTitleLang(stored);
+      initialLang = stored;
     } else {
       // If not in localStorage, check cookie (fallback)
       const cookieMatch = document.cookie.match(/(?:^|; )titleLang=([^;]*)/);
       if (cookieMatch && (cookieMatch[1] === 'en' || cookieMatch[1] === 'jp')) {
-        setTitleLang(cookieMatch[1]);
+        initialLang = cookieMatch[1] as TitleLang;
       }
     }
+    setTitleLang(initialLang);
+    document.documentElement.setAttribute('data-title-lang', initialLang);
   }, []);
 
   useEffect(() => {
     if (mounted) {
       localStorage.setItem('titleLang', titleLang);
       document.cookie = `titleLang=${titleLang}; path=/; max-age=31536000`; // 1 year
+      document.documentElement.setAttribute('data-title-lang', titleLang);
     }
   }, [titleLang, mounted]);
 
