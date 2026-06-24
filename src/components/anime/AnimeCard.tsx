@@ -42,6 +42,9 @@ export function AnimeCard({
   const isDetailed = activeMode === 'detailed';
   const isCompactList = activeMode === 'list';
   const isHorizontal = isDetailed || isCompactList;
+  
+  // Optimize AniList image to medium size to save bandwidth
+  const optimizedImage = image ? image.replace('/cover/large/', '/cover/medium/') : image;
 
   return (
     <div
@@ -67,7 +70,7 @@ export function AnimeCard({
           </div>
         )}
         <img
-          src={image}
+          src={optimizedImage}
           alt={title}
           className={cn(
             "w-full h-full object-cover transition-all duration-500",

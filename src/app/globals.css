@@ -282,3 +282,13 @@
     grid-template-columns: repeat(2, 1fr);
   }
 }
+
+/* Zero Hydration Title Toggle */
+html[data-title-lang="en"] .title-jp {
+  display: none !important;
+}
+
+html[data-title-lang="jp"] .title-en,
+html:not([data-title-lang="en"]) .title-en {
+  display: none !important;
+}
