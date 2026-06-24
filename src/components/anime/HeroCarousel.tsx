@@ -229,12 +229,14 @@ export function HeroCarousel({ items }: HeroCarouselProps) {
           <div className="flex items-center gap-4">
             <button 
               onClick={prevSlide}
+              aria-label="Previous slide"
               className="w-12 h-12 flex items-center justify-center bg-card border border-secondary/20 text-secondary hover:bg-secondary hover:text-background transition-all cursor-pointer shadow-lg group"
             >
               <ChevronLeft className="w-6 h-6 transition-transform group-hover:-translate-x-1" />
             </button>
             <button 
               onClick={nextSlide}
+              aria-label="Next slide"
               className="w-12 h-12 flex items-center justify-center bg-card border border-secondary/20 text-secondary hover:bg-secondary hover:text-background transition-all cursor-pointer shadow-lg group"
             >
               <ChevronRight className="w-6 h-6 transition-transform group-hover:translate-x-1" />

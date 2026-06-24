@@ -63,6 +63,7 @@ export function BookmarkButton({ animeId, animeTitle, animeTitleEnglish, animeIm
     <Tooltip content={active ? "Remove from Watchlist" : "Add to Watchlist"} position="top">
       <button
         onClick={handleClick}
+        aria-label={active ? "Remove from Watchlist" : "Add to Watchlist"}
         className={cn(
           "p-2 bg-background/90 border transition-all relative overflow-hidden group",
           active ? "border-secondary text-secondary hover:border-danger hover:text-danger hover:bg-danger/10" : "border-border text-muted-text hover:border-secondary/50 hover:text-foreground",
