@@ -7,6 +7,8 @@ import { AnimeCardSkeleton } from '@/components/anime/AnimeCard';
 import { ViewGridWrapper } from '@/components/layout/ViewGridWrapper';
 import { SearchClient } from './SearchClient';
 
+export const dynamic = 'force-dynamic';
+
 async function getGenres() {
   try {
     const genres = await AnimeService.getAllGenres();
