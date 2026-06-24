@@ -1,6 +1,8 @@
 import React from 'react';
 import Link from 'next/link';
 
+import { cn } from '@/lib/utils';
+
 export default function NotFound() {
   return (
     <div className="min-h-screen flex items-center justify-center pt-20 pb-20 relative overflow-hidden">
@@ -36,15 +38,13 @@ export default function NotFound() {
         {/* Action Button */}
         <Link 
           href="/" 
-          className="group relative inline-flex items-center justify-center px-8 py-4 font-black uppercase tracking-widest text-sm bg-secondary/10 border border-secondary text-secondary overflow-hidden transition-all hover:bg-secondary hover:text-background"
+          className={cn(
+            "px-8 py-3 bg-card border-2 border-secondary/30 text-secondary hover:border-secondary hover:shadow-[0_0_15px_rgba(34,197,94,0.15)]",
+            "font-black uppercase tracking-[0.2em] text-sm transition-all duration-300"
+          )}
+          style={{ clipPath: 'polygon(10% 0, 100% 0, 100% 70%, 90% 100%, 0 100%, 0 30%)' }}
         >
-          {/* Button Cyberpunk Corner Accents */}
-          <span className="absolute top-0 left-0 w-2 h-2 border-t-2 border-l-2 border-secondary group-hover:border-background transition-colors" />
-          <span className="absolute bottom-0 right-0 w-2 h-2 border-b-2 border-r-2 border-secondary group-hover:border-background transition-colors" />
-          
-          <span className="relative z-10 flex items-center gap-2">
-            Return to Base
-          </span>
+          Return to Base
         </Link>
 
       </div>
