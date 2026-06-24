@@ -27,7 +27,9 @@ self.addEventListener("fetch", (event) => {
     url.pathname.startsWith("/api/") ||
     url.pathname.startsWith("/_next/") ||
     url.pathname.includes("webpack") ||
-    url.pathname.includes("socket.io")
+    url.pathname.includes("socket.io") ||
+    self.location.hostname === "localhost" ||
+    self.location.hostname === "127.0.0.1"
   ) {
     return;
   }
