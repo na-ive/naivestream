@@ -1,4 +1,4 @@
-import { getAdminStats, getRecentOngoingEpisodes, getServerMetrics, getTodaysScrapeSummary, getSystemLogs } from './actions';
+import { getAdminStats, getRecentEpisodes, getServerMetrics, getTodaysScrapeSummary, getSystemLogs } from './actions';
 import Link from 'next/link';
 import RefreshButton from './RefreshButton';
 
@@ -7,7 +7,7 @@ export const dynamic = 'force-dynamic';
 export default async function AdminDashboard() {
   const [stats, recentEpisodes, serverMetrics, todaysSummary, systemLogs] = await Promise.all([
     getAdminStats(),
-    getRecentOngoingEpisodes(20),
+    getRecentEpisodes(20),
     getServerMetrics(),
     getTodaysScrapeSummary(),
     getSystemLogs(30)
@@ -172,7 +172,7 @@ export default async function AdminDashboard() {
             <div className="xl:absolute inset-0 flex flex-col">
               <section className="space-y-6 flex-1 flex flex-col min-h-0">
                 <div className="flex items-center justify-between border-b border-border pb-4 shrink-0">
-                  <h2 className="text-xl font-bold uppercase tracking-wider text-secondary">Recently Added Ongoing Episodes</h2>
+                  <h2 className="text-xl font-bold uppercase tracking-wider text-secondary">Recently Added Episodes</h2>
                 </div>
                 
                 <div className="bg-card/30 border border-border overflow-hidden flex flex-col flex-1 min-h-0">
@@ -180,10 +180,10 @@ export default async function AdminDashboard() {
                     <table className="w-full text-left text-sm whitespace-nowrap">
                     <thead className="bg-card text-muted-text uppercase tracking-widest text-[11px] border-b border-border sticky top-0 z-10 shadow-sm">
                       <tr>
-                        <th className="px-6 py-4 font-normal">Anime Title</th>
-                        <th className="px-6 py-4 font-normal">Episode</th>
-                        <th className="px-6 py-4 font-normal">Upload Date</th>
-                        <th className="px-6 py-4 font-normal text-right">Action</th>
+                        <th className="px-4 sm:px-6 py-4 font-normal">Anime Title</th>
+                        <th className="px-4 sm:px-6 py-4 font-normal">Episode</th>
+                        <th className="px-4 sm:px-6 py-4 font-normal">Upload Date</th>
+                        <th className="px-4 sm:px-6 py-4 font-normal text-right">Action</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-border">
@@ -196,16 +196,21 @@ export default async function AdminDashboard() {
                       ) : (
                         recentEpisodes.map((ep) => (
                           <tr key={ep.id} className="hover:bg-card/40 transition-colors">
-                            <td className="px-6 py-4 font-medium text-foreground max-w-[200px] sm:max-w-xs truncate" title={ep.anime_title}>
-                              {ep.anime_title}
+                            <td className="px-4 sm:px-6 py-4 font-medium text-foreground max-w-0 w-full" title={ep.anime_title}>
+                              <div className="flex items-center gap-2">
+                                <span className="truncate">{ep.anime_title}</span>
+                                <span className={`shrink-0 text-[9px] px-1.5 py-0.5 uppercase tracking-widest font-black ${ep.anime_status?.toLowerCase() === 'completed' ? 'bg-secondary text-black' : 'bg-warning text-black'}`}>
+                                  {ep.anime_status}
+                                </span>
+                              </div>
                             </td>
-                            <td className="px-6 py-4 text-secondary font-mono">
+                            <td className="px-4 sm:px-6 py-4 text-secondary font-mono">
                               Episode {ep.eps_number}
                             </td>
-                            <td className="px-6 py-4 text-muted-text font-mono text-xs">
+                            <td className="px-4 sm:px-6 py-4 text-muted-text font-mono text-xs">
                               {ep.uploaded_at || 'Unknown'}
                             </td>
-                            <td className="px-6 py-4 text-right">
+                            <td className="px-4 sm:px-6 py-4 text-right">
                               <a 
                                 href={`/anime/${ep.anime_slug}`} 
                                 target="_blank" 

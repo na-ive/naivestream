@@ -118,7 +118,7 @@ export async function getAdminStats() {
   };
 }
 
-export async function getRecentOngoingEpisodes(limit: number = 10) {
+export async function getRecentEpisodes(limit: number = 10) {
   await checkAuth();
   if (!db) throw new Error("Database connection failed");
 
@@ -129,10 +129,10 @@ export async function getRecentOngoingEpisodes(limit: number = 10) {
       e.eps_number, 
       e.uploaded_at,
       a.title as anime_title, 
-      a.slug as anime_slug
+      a.slug as anime_slug,
+      a.status as anime_status
     FROM episodes e
     JOIN anime a ON e.anime_id = a.id
-    WHERE a.status = 'Ongoing' COLLATE NOCASE
     ORDER BY e.id DESC
     LIMIT 100
   `;
@@ -144,6 +144,7 @@ export async function getRecentOngoingEpisodes(limit: number = 10) {
     uploaded_at: string;
     anime_title: string;
     anime_slug: string;
+    anime_status: string;
   }[];
 
   // Sort by parsed date descending
