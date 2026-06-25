@@ -42,8 +42,11 @@ export function MobileAnimeDetail({ id, data, source, similarAnime, charactersDa
           <img
             src={banner}
             alt="Background"
-            className="w-full h-full object-cover blur-md opacity-40 brightness-75 scale-110"
+            className="w-full h-full object-cover opacity-40 brightness-75 scale-110"
           />
+          {/* Top gradient for Navbar legibility */}
+          <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-background/90 via-background/50 to-transparent" />
+          {/* Bottom gradient for content blending */}
           <div className="absolute inset-0 bg-gradient-to-t from-background via-background/80 to-transparent" />
         </div>
 

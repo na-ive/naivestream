@@ -49,8 +49,11 @@ export function DesktopAnimeDetail({ id, data, source, similarAnime, charactersD
             src={banner}
             alt={data.title}
             loading="eager"
-            className="w-full h-full object-cover object-[center_25%] blur-sm opacity-50 dark:opacity-100 brightness-110 dark:brightness-[0.3]"
+            className="w-full h-full object-cover object-[center_25%] opacity-50 dark:opacity-100 brightness-110 dark:brightness-[0.3]"
           />
+          {/* Top gradient for Navbar legibility */}
+          <div className="absolute top-0 left-0 right-0 h-40 bg-gradient-to-b from-background/90 via-background/50 to-transparent" />
+          {/* Bottom gradient for content blending */}
           <div className="absolute inset-0 bg-gradient-to-t from-background to-transparent" />
         </div>
       </div>
