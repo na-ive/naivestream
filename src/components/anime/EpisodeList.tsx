@@ -188,16 +188,13 @@ export function EpisodeList({
             >
               {/* Episode Number Block */}
               <div className={cn(
-                "relative w-12 h-12 flex items-center justify-center font-black text-lg transition-all shrink-0 z-10",
+                "relative w-12 h-12 flex items-center justify-center font-black text-2xl transition-all shrink-0 z-10",
                 isLastWatched ? "text-secondary" : isWatchedEp ? "text-secondary/60" : "text-muted-text group-hover:text-foreground"
               )}>
                 {isWatchedEp ? (
-                  <Checkmark className="w-5 h-5 fill-current" />
+                  <Checkmark className="w-6 h-6 fill-current" />
                 ) : (
-                  <>
-                    <span className="absolute text-[8px] top-0 left-0 text-secondary/50 font-mono tracking-tighter">EP</span>
-                    {epNum}
-                  </>
+                  epNum
                 )}
               </div>
 
