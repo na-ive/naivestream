@@ -5,7 +5,8 @@ import { useSearchParams, useRouter } from 'next/navigation';
 import { useHistory } from '@/lib/hooks/useHistory';
 import { useWatchlist } from '@/lib/hooks/useWatchlist';
 import { useWatchedEpisodes } from '@/lib/hooks/useWatchedEpisodes';
-import { AnimeCard, AnimeCardSkeleton } from '@/components/anime/AnimeCard';
+import { AnimeCardSkeleton } from '@/components/anime/AnimeCard';
+import { GridAnimeCard } from '@/components/anime/GridAnimeCard';
 import { Bookmark, Time, TrashCan, CaretRight, Grid, CheckboxChecked, Checkmark } from '@carbon/icons-react';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
@@ -256,14 +257,13 @@ function LibraryContent() {
                   }}
                 >
                   <div className={cn("transition-all duration-300", isSelectionMode ? "pointer-events-none opacity-50 group-hover/sel:opacity-80" : "")}>
-                    <AnimeCard
+                    <GridAnimeCard
                       id={item.animeId}
                       title={item.animeTitle}
                       titleEnglish={item.animeTitleEnglish}
                       image={item.animeImage}
                       hideBookmark={true}
                       disableHover={isSelectionMode}
-                      forceGrid={true}
                     />
                   </div>
 
@@ -328,14 +328,13 @@ function LibraryContent() {
                   }}
                 >
                   <div className={cn("transition-all duration-300", isSelectionMode ? "pointer-events-none opacity-50 group-hover/sel:opacity-80" : "")}>
-                    <AnimeCard
+                    <GridAnimeCard
                       id={item.animeId}
                       title={item.animeTitle}
                       titleEnglish={item.animeTitleEnglish}
                       image={item.animeImage}
                       hideBookmark={true}
                       disableHover={isSelectionMode}
-                      forceGrid={true}
                     />
                     
                     <Link 
