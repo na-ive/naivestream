@@ -106,7 +106,7 @@ export function AnimeCard({
         
         {!isEmpty && !isHorizontal && (
           <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-            <div className="w-16 h-16 bg-secondary text-background flex items-center justify-center shadow-[0_0_25px_rgba(34,197,94,0.6)] animate-pulse">
+            <div className="w-16 h-16 bg-secondary text-background flex items-center justify-center shadow-[0_0_25px_rgba(34,197,94,0.6)]">
               <CaretRight className="fill-current w-8 h-8 ml-1" />
             </div>
           </div>
