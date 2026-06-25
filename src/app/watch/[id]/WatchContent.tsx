@@ -68,20 +68,20 @@ export default function WatchContent({
   });
   
   const [currentResolution, setCurrentResolution] = useState<string>(() => {
-    if (initialEpisodeData?.server?.qualities) {
-      for (const quality of initialEpisodeData.server.qualities) {
-        const foundServer = quality.serverList?.find((s: any) => s.url === initialEpisodeData.defaultStreamingUrl);
-        if (foundServer) return quality.title;
-      }
+    if (initialEpisodeData?.server?.qualities && initialEpisodeData.server.qualities.length > 0) {
+      // Default to the first quality available
+      return initialEpisodeData.server.qualities[0].title;
     }
     return '';
   });
   
   const [currentServer, setCurrentServer] = useState<string>(() => {
-    if (initialEpisodeData?.server?.qualities) {
-      for (const quality of initialEpisodeData.server.qualities) {
-        const foundServer = quality.serverList?.find((s: any) => s.url === initialEpisodeData.defaultStreamingUrl);
-        if (foundServer) return foundServer.title;
+    if (initialEpisodeData?.defaultStreamingUrl) return 'Primary';
+    if (initialEpisodeData?.server?.qualities && initialEpisodeData.server.qualities.length > 0) {
+      const firstQuality = initialEpisodeData.server.qualities[0];
+      if (firstQuality.serverList && firstQuality.serverList.length > 0) {
+        // Default to the first server of the first quality
+        return firstQuality.serverList[0].title;
       }
     }
     return '';
@@ -194,6 +194,21 @@ export default function WatchContent({
     markAsWatched(animeId, id);
     setHistorySaved(true);
   }, [episodeData, rawTitle, rawTitleEnglish, animeId, displayTitle, animeImg, id, saveToHistory, markAsWatched, historySaved]);
+
+  // Auto-fetch the first server if no default URL is provided by the scraper
+  useEffect(() => {
+    if (!currentUrl && initialEpisodeData?.server?.qualities && initialEpisodeData.server.qualities.length > 0) {
+      const firstQuality = initialEpisodeData.server.qualities[0];
+      if (firstQuality.serverList && firstQuality.serverList.length > 0) {
+        const firstServer = firstQuality.serverList[0];
+        // Only auto-fetch if we haven't already started loading a server
+        if (!serverLoading) {
+          changeServer(firstServer.serverId, firstQuality.title, firstServer.title);
+        }
+      }
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Remove fetchEpisode and fetchAnimeDataFrom since data is now provided directly on mount.
 
@@ -363,7 +378,7 @@ export default function WatchContent({
                 <h1 className="text-xl font-serif font-black tracking-tighter uppercase leading-tight">{displayTitle}{episodeDisplay ? ` ${episodeDisplay}` : ''}</h1>
                 <p className="text-secondary font-bold text-xs mt-2 tracking-[0.3em] uppercase opacity-60 flex items-center">
                   <ServerDns className="w-3 h-3 mr-2" />
-                  Streaming from {currentServer || 'Primary Server'} {currentResolution && `• ${currentResolution}`}
+                  Streaming from {currentServer.toLowerCase() === 'primary' ? 'primary server' : currentServer} {currentResolution && `• ${currentResolution}`}
                 </p>
               </div>
             </div>
@@ -489,22 +504,51 @@ export default function WatchContent({
               <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-text">Video Servers</h3>
             </div>
             <div className="space-y-6 max-h-[400px] overflow-y-auto pr-2 no-scrollbar">
-              {episodeData.server?.qualities?.map((quality: any) => (
+              {episodeData.server?.qualities?.map((quality: any, index: number) => (
                 <div key={quality.title} className="space-y-3">
                   <div className="flex items-center space-x-2">
                     <div className="w-1.5 h-1.5 bg-secondary shadow-[0_0_5px_rgba(34,197,94,1)]" />
                     <p className="text-[10px] font-black text-foreground uppercase tracking-widest">{quality.title}</p>
                   </div>
                   <div className="flex flex-wrap gap-2">
-                    {quality.serverList?.map((server: any) => (
+                    
+                    {/* Primary Server injected into the first quality list (e.g. 360p) */}
+                    {index === 0 && episodeData?.defaultStreamingUrl && (
                       <button
-                        key={server.serverId}
-                        onClick={() => changeServer(server.serverId, quality.title, server.title)}
-                        className="px-3 py-2 bg-background/50 border-l-2 border-secondary/20 text-[10px] font-bold uppercase tracking-tighter hover:bg-secondary/10 hover:border-secondary hover:text-secondary transition-all cursor-pointer text-left"
+                        onClick={() => {
+                          setCurrentUrl(episodeData.defaultStreamingUrl!);
+                          setCurrentResolution(quality.title);
+                          setCurrentServer('Primary');
+                          setForceLoadIframe(true);
+                        }}
+                        className={cn(
+                          "px-3 py-2 border-l-2 text-[10px] font-bold uppercase tracking-tighter transition-all cursor-pointer text-left flex items-center justify-between",
+                          currentResolution === quality.title && currentServer === 'Primary'
+                            ? "bg-secondary text-background border-secondary shadow-[0_0_15px_rgba(34,197,94,0.3)]"
+                            : "bg-background/50 border-secondary/20 hover:bg-secondary/10 hover:border-secondary hover:text-secondary"
+                        )}
                       >
-                        {server.title}
+                        Primary
                       </button>
-                    ))}
+                    )}
+                    {quality.serverList?.map((server: any) => {
+                      const isActive = currentResolution === quality.title && currentServer === server.title;
+                      
+                      return (
+                        <button
+                          key={server.serverId}
+                          onClick={() => changeServer(server.serverId, quality.title, server.title)}
+                          className={cn(
+                            "px-3 py-2 border-l-2 text-[10px] font-bold uppercase tracking-tighter transition-all cursor-pointer text-left flex items-center justify-between",
+                            isActive
+                              ? "bg-secondary text-background border-secondary shadow-[0_0_15px_rgba(34,197,94,0.3)]"
+                              : "bg-background/50 border-secondary/20 hover:bg-secondary/10 hover:border-secondary hover:text-secondary"
+                          )}
+                        >
+                          {server.title}
+                        </button>
+                      );
+                    })}
                   </div>
                 </div>
               ))}
