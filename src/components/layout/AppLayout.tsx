@@ -18,7 +18,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
       <ViewModeProvider>
         <TooltipProvider delayDuration={0}>
           {/* Global Scanline Effect (Replaces per-card scanlines, hidden in light mode) */}
-          <div className="hidden dark:block fixed inset-0 pointer-events-none bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.08)_50%),linear-gradient(90deg,rgba(255,0,0,0.02),rgba(0,255,0,0.01),rgba(0,0,255,0.02))] bg-[length:100%_4px,100%_100%] z-[100]" />
+          <div className="hidden dark:block fixed inset-0 pointer-events-none bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.08)_50%),linear-gradient(90deg,rgba(255,0,0,0.02),rgba(0,255,0,0.01),rgba(0,0,255,0.02))] bg-[length:100%_4px,100%_100%] z-30" />
           
           {isSystemRoute ? (
             <main className="grow">{children}</main>

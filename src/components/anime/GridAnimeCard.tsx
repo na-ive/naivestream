@@ -15,11 +15,13 @@ export interface GridAnimeCardProps {
   episode?: string;
   totalEpisodes?: number;
   priority?: boolean;
+  hideBookmark?: boolean;
+  disableHover?: boolean;
 }
 
 export function GridAnimeCard({ 
   id, title, titleEnglish, image, status, rating, episode, 
-  totalEpisodes, priority = false
+  totalEpisodes, priority = false, hideBookmark = false, disableHover = false
 }: GridAnimeCardProps) {
   const isEmpty = totalEpisodes === 0;
   const optimizedImage = image ? image.replace('/cover/large/', '/cover/medium/') : image;
@@ -28,7 +30,8 @@ export function GridAnimeCard({
     <div className="relative flex h-full flex-col bg-card/0 border border-border/0 group">
       {/* Cover Image Container */}
       <Link href={`/anime/${id}`} className={cn(
-        "block relative overflow-hidden flex-shrink-0 w-full aspect-[3/4] border-2 border-secondary/20 group-hover:border-secondary",
+        "block relative overflow-hidden flex-shrink-0 w-full aspect-[3/4] border-2 border-secondary/20",
+        !disableHover && "group-hover:border-secondary",
         isEmpty && "border-warning"
       )}>
         <img
@@ -54,8 +57,8 @@ export function GridAnimeCard({
         {/* Overlays */}
         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-300" />
         
-        {!isEmpty && (
-          <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+        {!isEmpty && !disableHover && (
+          <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center z-20">
             <div className="w-16 h-16 bg-secondary text-background flex items-center justify-center shadow-[0_0_25px_rgba(34,197,94,0.6)]">
               <CaretRight className="fill-current w-8 h-8 ml-1" />
             </div>
@@ -107,9 +110,11 @@ export function GridAnimeCard({
           </Link>
 
           {/* Bookmark Button */}
-          <div className="z-40 transition-opacity absolute top-2 right-2 opacity-100 md:opacity-0 md:group-hover:opacity-100">
-            <BookmarkButton animeId={id} animeTitle={title} animeTitleEnglish={titleEnglish} animeImage={image} />
-          </div>
+          {!hideBookmark && (
+            <div className="z-40 transition-opacity absolute top-2 right-2 opacity-100 md:opacity-0 md:group-hover:opacity-100">
+              <BookmarkButton animeId={id} animeTitle={title} animeTitleEnglish={titleEnglish} animeImage={image} />
+            </div>
+          )}
         </div>
       </div>
     </div>

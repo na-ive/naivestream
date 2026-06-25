@@ -330,7 +330,7 @@ export default function WatchContent({
             <p className="text-secondary font-bold text-[10px] mt-2 tracking-[0.2em] uppercase opacity-60">Streaming</p>
           </div>
 
-          <div className={`relative aspect-video bg-black border-b-4 border-secondary/20 shadow-2xl overflow-hidden group transition-all duration-500 ${isCinemaMode ? 'shadow-[0_0_50px_rgba(34,197,94,0.15)] ring-1 ring-secondary/30' : ''}`}>
+          <div className={`relative z-40 aspect-video bg-black border-b-4 border-secondary/20 shadow-2xl overflow-hidden group transition-all duration-500 ${isCinemaMode ? 'shadow-[0_0_50px_rgba(34,197,94,0.15)] ring-1 ring-secondary/30' : ''}`}>
             {serverLoading && (
               <div className="absolute inset-0 z-20 bg-black/60 backdrop-blur-sm flex items-center justify-center">
                 <Renew className="w-10 h-10 text-secondary animate-spin" />
