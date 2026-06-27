@@ -17,8 +17,18 @@ export function PersonalizedHomeSections() {
       const savedHistory = localStorage.getItem('anime_history');
       const savedWatchlist = localStorage.getItem('anime_watchlist');
       
-      const h = savedHistory ? JSON.parse(savedHistory) : [];
-      const w = savedWatchlist ? JSON.parse(savedWatchlist) : [];
+      const parseLocal = (val: string | null) => {
+        if (!val) return [];
+        try {
+          const parsed = JSON.parse(val);
+          return parsed?.data || (Array.isArray(parsed) ? parsed : []);
+        } catch {
+          return [];
+        }
+      };
+
+      const h = parseLocal(savedHistory);
+      const w = parseLocal(savedWatchlist);
       
       const slugs = new Set([...h.map((x:any) => x.animeId), ...w.map((x:any) => x.animeId)]);
       
