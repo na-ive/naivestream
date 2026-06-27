@@ -8,6 +8,22 @@ export const authOptions: NextAuthOptions = {
     DiscordProvider({
       clientId: process.env.AUTH_DISCORD_ID as string,
       clientSecret: process.env.AUTH_DISCORD_SECRET as string,
+      profile(profile) {
+        if (profile.avatar === null) {
+          const defaultAvatarNumber = parseInt(profile.discriminator) % 5
+          profile.image_url = `https://cdn.discordapp.com/embed/avatars/${defaultAvatarNumber}.png`
+        } else {
+          const format = profile.avatar.startsWith("a_") ? "gif" : "png"
+          profile.image_url = `https://cdn.discordapp.com/avatars/${profile.id}/${profile.avatar}.${format}`
+        }
+        return {
+          id: profile.id,
+          name: profile.global_name || profile.username, // NextAuth 'name' becomes Display Name
+          username: profile.username,                    // Custom property for Username
+          email: profile.email,
+          image: profile.image_url,
+        }
+      },
     }),
   ],
   callbacks: {
@@ -53,6 +69,7 @@ export const authOptions: NextAuthOptions = {
           if (row) {
             token.userId = row.id;
           }
+          token.username = (user as any).username;
           db.close();
         } catch (error) {
           console.error("Error fetching user id in JWT callback", error);
@@ -63,6 +80,7 @@ export const authOptions: NextAuthOptions = {
     async session({ session, token }) {
       if (session.user) {
         (session.user as any).id = token.userId;
+        (session.user as any).username = token.username;
       }
       return session;
     }
