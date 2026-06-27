@@ -112,8 +112,8 @@ function getSmartStatus(item: any): string {
  * SQL snippet for smart status filtering.
  */
 const SMART_STATUS_CLAUSES = {
-  Ongoing: `(status IN ('Ongoing', 'Currently Airing')) AND (episodes_count <= 0 OR (SELECT MAX(eps_number) FROM episodes WHERE anime_id = a.id) < episodes_count)`,
-  Completed: `(status IN ('Completed', 'Finished Airing')) OR (episodes_count > 0 AND (SELECT MAX(eps_number) FROM episodes WHERE anime_id = a.id) >= episodes_count)`
+  Ongoing: `(status IN ('Ongoing', 'Currently Airing')) AND (COALESCE(episodes_count, 0) <= 0 OR (SELECT MAX(eps_number) FROM episodes WHERE anime_id = a.id) < COALESCE(episodes_count, 0))`,
+  Completed: `(status IN ('Completed', 'Finished Airing')) OR (COALESCE(episodes_count, 0) > 0 AND (SELECT MAX(eps_number) FROM episodes WHERE anime_id = a.id) >= COALESCE(episodes_count, 0))`
 };
 
 // SQL subqueries for reuse
