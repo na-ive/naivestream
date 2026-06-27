@@ -4,6 +4,9 @@ import { useCallback, useMemo, useSyncExternalStore } from 'react';
 import { toast } from 'sonner';
 import { TrashCan } from '@carbon/icons-react';
 
+import { useSession } from 'next-auth/react';
+import { SyncService } from '../services/sync';
+
 export interface WatchHistory {
   animeId: string;
   animeTitle: string;
@@ -27,29 +30,16 @@ const getHistorySnapshot = () => {
 const getServerSnapshot = () => null;
 
 export function useHistory() {
+  const { data: session } = useSession();
+  const ownerId = (session?.user as any)?.id || 'anonymous';
   const historyStr = useSyncExternalStore(subscribeHistory, getHistorySnapshot, getServerSnapshot);
 
   const history = useMemo<WatchHistory[]>(() => {
-    if (!historyStr) return [];
-    try {
-      return JSON.parse(historyStr);
-    } catch {
-      return [];
-    }
-  }, [historyStr]);
-
-  const updateStorage = (newList: WatchHistory[]) => {
-    localStorage.setItem('anime_history', JSON.stringify(newList));
-    window.dispatchEvent(new Event('history_updated'));
-  };
-
-  const getLatestHistory = (): WatchHistory[] => {
-    const saved = localStorage.getItem('anime_history');
-    return saved ? JSON.parse(saved) : [];
-  };
+    return SyncService.load<WatchHistory[]>('anime_history', ownerId, []);
+  }, [historyStr, ownerId]);
 
   const saveToHistory = useCallback((item: Omit<WatchHistory, 'updatedAt'>) => {
-    const currentList = getLatestHistory();
+    const currentList = SyncService.load<WatchHistory[]>('anime_history', ownerId, []);
     const newHistory = [...currentList];
     const index = newHistory.findIndex((h) => h.animeId === item.animeId);
     
@@ -64,28 +54,33 @@ export function useHistory() {
       .sort((a, b) => b.updatedAt - a.updatedAt)
       .slice(0, 50);
 
-    updateStorage(limitedHistory);
-  }, []);
+    SyncService.save('anime_history', ownerId, limitedHistory);
+    window.dispatchEvent(new Event('history_updated'));
+  }, [ownerId]);
 
   const removeFromHistory = useCallback((animeId: string) => {
-    const currentList = getLatestHistory();
+    const currentList = SyncService.load<WatchHistory[]>('anime_history', ownerId, []);
     const item = currentList.find(h => h.animeId === animeId);
-    updateStorage(currentList.filter((h) => h.animeId !== animeId));
     if (item) {
+      const newList = currentList.filter((h) => h.animeId !== animeId);
+      SyncService.save('anime_history', ownerId, newList);
+      window.dispatchEvent(new Event('history_updated'));
       toast.error('Removed from History', {
         description: item.animeTitle,
         icon: <div className="w-8 h-8 bg-danger/10 border border-danger flex items-center justify-center shrink-0 mr-3 shadow-[0_0_10px_rgba(239,68,68,0.3)]"><TrashCan className="w-5 h-5 text-danger" /></div>,
       });
     }
-  }, []);
+  }, [ownerId]);
 
   const removeMultipleFromHistory = useCallback((animeIds: string[]) => {
-    const currentList = getLatestHistory();
-    updateStorage(currentList.filter((h) => !animeIds.includes(h.animeId)));
+    const currentList = SyncService.load<WatchHistory[]>('anime_history', ownerId, []);
+    const newList = currentList.filter((h) => !animeIds.includes(h.animeId));
+    SyncService.save('anime_history', ownerId, newList);
+    window.dispatchEvent(new Event('history_updated'));
     toast.error(`${animeIds.length} items removed from History`, {
       icon: <div className="w-8 h-8 bg-danger/10 border border-danger flex items-center justify-center shrink-0 mr-3 shadow-[0_0_10px_rgba(239,68,68,0.3)]"><TrashCan className="w-5 h-5 text-danger" /></div>,
     });
-  }, []);
+  }, [ownerId]);
 
   return { history, saveToHistory, removeFromHistory, removeMultipleFromHistory };
 }

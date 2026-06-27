@@ -2,6 +2,9 @@
 
 import { useCallback, useMemo, useSyncExternalStore } from 'react';
 
+import { useSession } from 'next-auth/react';
+import { SyncService } from '../services/sync';
+
 interface WatchedEpisodesStore {
   [animeSlug: string]: {
     [episodeSlug: string]: number;
@@ -21,25 +24,21 @@ const getWatchedSnapshot = () => {
 const getServerSnapshot = () => null;
 
 export function useWatchedEpisodes() {
+  const { data: session } = useSession();
+  const ownerId = (session?.user as any)?.id || 'anonymous';
   const watchedStr = useSyncExternalStore(subscribeWatched, getWatchedSnapshot, getServerSnapshot);
 
   const watched = useMemo<WatchedEpisodesStore>(() => {
-    if (!watchedStr) return {};
-    try {
-      return JSON.parse(watchedStr);
-    } catch {
-      return {};
-    }
-  }, [watchedStr]);
+    return SyncService.load<WatchedEpisodesStore>('anime_watched_episodes', ownerId, {});
+  }, [watchedStr, ownerId]);
 
   const markAsWatched = useCallback((animeSlug: string, episodeSlug: string) => {
-    const currentStr = localStorage.getItem('anime_watched_episodes');
-    const current = currentStr ? JSON.parse(currentStr) : {};
+    const current = SyncService.load<WatchedEpisodesStore>('anime_watched_episodes', ownerId, {});
     if (!current[animeSlug]) current[animeSlug] = {};
     current[animeSlug][episodeSlug] = Date.now();
-    localStorage.setItem('anime_watched_episodes', JSON.stringify(current));
+    SyncService.save('anime_watched_episodes', ownerId, current);
     window.dispatchEvent(new Event('watched_updated'));
-  }, []);
+  }, [ownerId]);
 
   const isWatched = useCallback((animeSlug: string, episodeSlug: string): boolean => {
     return !!watched[animeSlug]?.[episodeSlug];
@@ -54,13 +53,11 @@ export function useWatchedEpisodes() {
   }, [watched]);
 
   const resetAnime = useCallback((animeSlug: string) => {
-    const currentStr = localStorage.getItem('anime_watched_episodes');
-    if (!currentStr) return;
-    const current = JSON.parse(currentStr);
+    const current = SyncService.load<WatchedEpisodesStore>('anime_watched_episodes', ownerId, {});
     delete current[animeSlug];
-    localStorage.setItem('anime_watched_episodes', JSON.stringify(current));
+    SyncService.save('anime_watched_episodes', ownerId, current);
     window.dispatchEvent(new Event('watched_updated'));
-  }, []);
+  }, [ownerId]);
 
   return { watched, markAsWatched, isWatched, getWatchedEpisodes, getWatchedCount, resetAnime };
 }

@@ -61,17 +61,18 @@ export async function POST(req: Request) {
     // UPSERT Watched Episodes
     if (watched_episodes.length > 0) {
       const stmt = db.prepare(`
-        INSERT INTO user_watched_episodes (user_id, episode_slug, watched_at)
-        VALUES (@userId, @episodeSlug, CURRENT_TIMESTAMP)
+        INSERT INTO user_watched_episodes (user_id, anime_slug, episode_slug, watched_at)
+        VALUES (@userId, @animeSlug, @episodeSlug, CURRENT_TIMESTAMP)
         ON CONFLICT(user_id, episode_slug) DO UPDATE SET
           watched_at = CURRENT_TIMESTAMP
       `);
       db.transaction(() => {
-        for (const episodeSlug of watched_episodes) {
-          if (!episodeSlug) continue;
+        for (const item of watched_episodes) {
+          if (!item.episodeSlug || !item.animeSlug) continue;
           stmt.run({
             userId,
-            episodeSlug,
+            animeSlug: item.animeSlug,
+            episodeSlug: item.episodeSlug,
           });
         }
       })();
@@ -109,21 +110,21 @@ export async function POST(req: Request) {
     `).all(userId);
 
     const watchedRows = db.prepare(`
-      SELECT episode_slug
+      SELECT anime_slug as animeSlug, episode_slug as episodeSlug, strftime('%s', watched_at) * 1000 as watchedAt
       FROM user_watched_episodes
       WHERE user_id = ?
-    `).all(userId) as { episode_slug: string }[];
-    const watchedArray = watchedRows.map(r => r.episode_slug);
+    `).all(userId);
 
     db.close();
 
     return NextResponse.json({
       success: true,
+      userId,
       serverTime: new Date().toISOString(),
       data: {
         history: historyRows,
         watchlist: watchlistRows,
-        watched_episodes: watchedArray,
+        watched_episodes: watchedRows,
       }
     });
 
