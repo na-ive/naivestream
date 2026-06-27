@@ -4,6 +4,8 @@
 </br>
 
 [![Live Demo](https://img.shields.io/badge/Live_Demo-naivestream.vercel.app-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://naivestream.vercel.app)
+<br/>
+<sub align="center"><i>(Note: The live demo uses a static example database. OAuth login and cross-device syncing are disabled, but local progress tracking still works perfectly in your browser)</i></sub>
 
 </br>
 
@@ -25,6 +27,7 @@
 - **Anime Detail Pages:** Synopsis, genres, characters & voice actors, episode list, and similar recommendations.
 - **Video Player:** Integrated episode watching with multiple server source switching.
 - **Continue Watching:** Pick up where you left off. Progress saved locally in your browser.
+- **OAuth & Sync:** Login via Discord to seamlessly sync your watch history and library across multiple devices.
 - **Library:** Local watchlist and watch history management (no account required).
 - **Operator Panel:** Secure admin dashboard with server metrics, system logs, and database statistics.
 - **Dark Theme:** Cyberpunk-inspired visual design with subtle neon accents.
