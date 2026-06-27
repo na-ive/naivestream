@@ -117,16 +117,25 @@ export default function WatchContent({
     return { prevEp: prev, nextEp: next };
   }, [animeData, id]);
 
-  // Auto-scroll to active episode
+  // Auto-scroll to active episode within the container only (prevent page scroll)
   useEffect(() => {
     let timeoutId: NodeJS.Timeout;
     if (activeEpisodeRef.current && scrollContainerRef.current && !loading) {
       timeoutId = setTimeout(() => {
-        activeEpisodeRef.current?.scrollIntoView({
-          behavior: 'smooth',
-          block: 'center',
-          inline: 'nearest'
-        });
+        const container = scrollContainerRef.current;
+        const active = activeEpisodeRef.current;
+        if (container && active) {
+          const containerRect = container.getBoundingClientRect();
+          const activeRect = active.getBoundingClientRect();
+          
+          // Calculate if out of view and scroll only the container
+          if (activeRect.top < containerRect.top || activeRect.bottom > containerRect.bottom) {
+            container.scrollBy({
+              top: activeRect.top - containerRect.top - (containerRect.height / 2) + (activeRect.height / 2),
+              behavior: 'smooth'
+            });
+          }
+        }
       }, 300);
     }
     return () => {
