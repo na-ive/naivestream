@@ -73,5 +73,18 @@ export const authOptions: NextAuthOptions = {
   secret: process.env.NEXTAUTH_SECRET || process.env.AUTH_SECRET,
 };
 
-const handler = NextAuth(authOptions);
-export { handler as GET, handler as POST };
+const authHandler = NextAuth(authOptions);
+
+export async function GET(req: Request, ctx: any) {
+  const host = req.headers.get("x-forwarded-host") || req.headers.get("host");
+  const protocol = req.headers.get("x-forwarded-proto") || (host?.includes("localhost") ? "http" : "https");
+  if (host) process.env.NEXTAUTH_URL = `${protocol}://${host}`;
+  return authHandler(req, ctx);
+}
+
+export async function POST(req: Request, ctx: any) {
+  const host = req.headers.get("x-forwarded-host") || req.headers.get("host");
+  const protocol = req.headers.get("x-forwarded-proto") || (host?.includes("localhost") ? "http" : "https");
+  if (host) process.env.NEXTAUTH_URL = `${protocol}://${host}`;
+  return authHandler(req, ctx);
+}

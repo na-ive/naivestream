@@ -6,13 +6,19 @@ import path from 'path';
 
 export async function POST(req: Request) {
   try {
+    const host = req.headers.get("x-forwarded-host") || req.headers.get("host");
+    const protocol = req.headers.get("x-forwarded-proto") || (host?.includes("localhost") ? "http" : "https");
+    if (host) process.env.NEXTAUTH_URL = `${protocol}://${host}`;
+
     const session = await getServerSession(authOptions);
+
     if (!session || !session.user || !(session.user as any).id) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const userId = (session.user as any).id;
     const body = await req.json();
+    
     const { history = [], watchlist = [], watched_episodes = [] } = body;
 
     const dbPath = path.join(process.cwd(), 'anime.db');
@@ -79,7 +85,6 @@ export async function POST(req: Request) {
     }
 
     // SELECT all data to return
-    // Note: To return full metadata like title and image, we join with the anime and episodes tables
     const historyRows = db.prepare(`
       SELECT 
         uh.anime_slug as animeId, 
