@@ -27,8 +27,8 @@ class SyncServiceClass {
       if (parsed && typeof parsed === 'object' && 'version' in parsed && 'data' in parsed) {
         const structure = parsed as StorageStructure<T>;
         // Account Switch Protection
-        if (structure.local_owner !== currentOwner) {
-          if (structure.local_owner !== 'anonymous' && currentOwner !== 'anonymous') {
+        if (String(structure.local_owner) !== String(currentOwner)) {
+          if (String(structure.local_owner) !== 'anonymous' && String(currentOwner) !== 'anonymous') {
             // Changed from User A to User B
             this.clearAll();
             return defaultData;
@@ -73,7 +73,7 @@ class SyncServiceClass {
     }, 1000); // 1 second debounce
   }
 
-  public async sync() {
+  public async sync(pullOnly: boolean = false) {
     if (this.syncState === 'syncing') return;
     
     // Abort previous sync if any to prevent stale response overwriting new data
@@ -85,10 +85,9 @@ class SyncServiceClass {
     this.syncState = 'syncing';
 
     try {
-      // Gather payload
-      const history = this.getRawData('anime_history') || [];
-      const watchlist = this.getRawData('anime_watchlist') || [];
-      const watchedMap = this.getRawData('anime_watched_episodes') || {};
+      const history = pullOnly ? [] : (this.getRawData('anime_history') || []);
+      const watchlist = pullOnly ? [] : (this.getRawData('anime_watchlist') || []);
+      const watchedMap = pullOnly ? {} : (this.getRawData('anime_watched_episodes') || {});
       const watched = [];
       for (const animeSlug in watchedMap) {
         for (const episodeSlug in watchedMap[animeSlug]) {
