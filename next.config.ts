@@ -8,6 +8,7 @@ const nextConfig: NextConfig = {
       { protocol: 'https', hostname: 'cdn.myanimelist.net' },
       { protocol: 'https', hostname: '*.sankavollerei.com' },
       { protocol: 'https', hostname: '*.otakudesu.blog' },
+      { protocol: 'https', hostname: 'cdn.discordapp.com' },
     ],
   },
   outputFileTracingIncludes: {

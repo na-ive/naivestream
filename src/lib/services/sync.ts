@@ -21,17 +21,28 @@ class SyncServiceClass {
     if (!str) return defaultData;
 
     try {
-      const parsed: StorageStructure<T> = JSON.parse(str);
-      // Account Switch Protection
-      if (parsed.local_owner !== currentOwner) {
-        if (parsed.local_owner !== 'anonymous' && currentOwner !== 'anonymous') {
-          // Changed from User A to User B
-          // Clear LocalStorage for safety and return default
-          this.clearAll();
-          return defaultData;
+      const parsed = JSON.parse(str);
+      
+      // Check if it is the new StorageStructure format
+      if (parsed && typeof parsed === 'object' && 'version' in parsed && 'data' in parsed) {
+        const structure = parsed as StorageStructure<T>;
+        // Account Switch Protection
+        if (structure.local_owner !== currentOwner) {
+          if (structure.local_owner !== 'anonymous' && currentOwner !== 'anonymous') {
+            // Changed from User A to User B
+            this.clearAll();
+            return defaultData;
+          }
         }
+        return structure.data ?? defaultData;
       }
-      return parsed.data;
+      
+      // Legacy format fallback
+      if (parsed !== null && parsed !== undefined) {
+        return parsed as unknown as T;
+      }
+      
+      return defaultData;
     } catch {
       return defaultData;
     }

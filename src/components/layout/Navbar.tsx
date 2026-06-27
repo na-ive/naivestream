@@ -12,6 +12,7 @@ import { SettingsAdjust, Asleep, AsleepFilled, Light, LightFilled } from '@carbo
 import { useTitleLang } from '@/lib/providers/TitleLangProvider';
 
 import { PreferenceMenu } from './PreferenceMenu';
+import { UserMenu } from './UserMenu';
 import { LiveSearch } from '@/components/search/LiveSearch';
 import { MobileSearchOverlay } from '@/components/search/MobileSearchOverlay';
 
@@ -255,6 +256,9 @@ export function Navbar() {
               
               {/* Preference Menu */}
               <PreferenceMenu />
+              
+              {/* User Menu */}
+              <UserMenu />
             </div>
           </div>
 
@@ -268,6 +272,9 @@ export function Navbar() {
             >
               <Shuffle className={cn("w-5 h-5", isRandomLoading && "animate-spin")} />
             </button>
+            
+            <UserMenu />
+
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               className={cn(
