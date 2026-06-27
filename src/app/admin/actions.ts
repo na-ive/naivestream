@@ -508,3 +508,9 @@ export async function getOrphanedEpisodes() {
   return stmt.all() as any[];
 }
 
+export async function triggerRevalidateHome() {
+  await checkAuth();
+  revalidatePath('/');
+  revalidatePath('/admin');
+  return { success: true };
+}
