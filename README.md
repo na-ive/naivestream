@@ -157,6 +157,44 @@ CREATE TABLE IF NOT EXISTS stream_cache (
     iframe_url        TEXT,
     created_at        DATETIME DEFAULT CURRENT_TIMESTAMP
 );
+-- Users & Sync
+CREATE TABLE IF NOT EXISTS users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    discord_id TEXT UNIQUE NOT NULL,
+    username TEXT,
+    display_name TEXT,
+    email TEXT,
+    avatar TEXT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    last_login DATETIME
+);
+
+CREATE TABLE IF NOT EXISTS user_history (
+    user_id INTEGER NOT NULL,
+    anime_slug TEXT NOT NULL,
+    last_episode_slug TEXT,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (user_id, anime_slug),
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS user_watchlist (
+    user_id INTEGER NOT NULL,
+    anime_slug TEXT NOT NULL,
+    added_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (user_id, anime_slug),
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS user_watched_episodes (
+    user_id INTEGER NOT NULL,
+    anime_slug TEXT NOT NULL,
+    episode_slug TEXT NOT NULL,
+    watched_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (user_id, episode_slug),
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
 ```
 </details>
  
@@ -177,6 +215,16 @@ npm install
 
 **Note:** This demo version comes pre-configured with `example-anime.db` which contains a sample of 100 anime. It does not include the automated scraper (`backend/` folder). You do not need to provide your own database to run the demo.
 
+### Environment Variables
+
+Copy the provided example file to create your local environment configuration:
+
+```bash
+cp .env.example .env.local
+```
+
+Open `.env.local` and fill in the required values. The file contains detailed comments and terminal commands to help you generate the necessary secrets (`AUTH_SECRET`, `ADMIN_PASSWORD`, etc.).
+
 ### Development
 
 ```bash
@@ -191,17 +239,6 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 npm run build
 npm start
 ```
-
-## Environment Variables
-
-Create a `.env` file in the project root with the following variables:
-
-| Variable | Default | Description |
-| :--- | :--- | :--- |
-| `DATABASE_PATH` | *(Auto-resolves)* | Path to SQLite DB. Automatically falls back to `example-anime.db` in the demo. |
-| `AUTH_SECRET` | *(Required)* | 32-byte base64 string for session encryption. Generate with: <br/>`node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"` |
-| `ADMIN_USERNAME` | `admin` | Username for the Operator Panel. |
-| `ADMIN_PASSWORD` | *(Required)* | bcrypt hash of your password. Generate with: <br/>`node -e "console.log(require('bcrypt').hashSync('YourPassword', 12).replaceAll('$', '\\\\$'))"` |
 
 ## Screenshots
 

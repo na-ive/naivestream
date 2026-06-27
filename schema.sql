@@ -137,6 +137,48 @@ CREATE TABLE IF NOT EXISTS stream_cache (
 );
 
 -- ============================================================
+-- USERS & SYNC
+-- Stores user accounts and their synced data (history, watchlist)
+-- ============================================================
+CREATE TABLE IF NOT EXISTS users (
+    id                INTEGER PRIMARY KEY AUTOINCREMENT,
+    discord_id        TEXT UNIQUE NOT NULL,
+    username          TEXT,
+    display_name      TEXT,
+    email             TEXT,
+    avatar            TEXT,
+    created_at        DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at        DATETIME DEFAULT CURRENT_TIMESTAMP,
+    last_login        DATETIME
+);
+
+CREATE TABLE IF NOT EXISTS user_history (
+    user_id           INTEGER NOT NULL,
+    anime_slug        TEXT NOT NULL,
+    last_episode_slug TEXT,
+    updated_at        DATETIME DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (user_id, anime_slug),
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS user_watchlist (
+    user_id           INTEGER NOT NULL,
+    anime_slug        TEXT NOT NULL,
+    added_at          DATETIME DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (user_id, anime_slug),
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS user_watched_episodes (
+    user_id           INTEGER NOT NULL,
+    anime_slug        TEXT NOT NULL,
+    episode_slug      TEXT NOT NULL,
+    watched_at        DATETIME DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (user_id, episode_slug),
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+-- ============================================================
 -- INDEXES
 -- Performance indexes for common query patterns.
 -- ============================================================
