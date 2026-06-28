@@ -14,7 +14,7 @@ import { parseIndonesianDate } from '@/lib/utils';
 const execFilePromise = promisify(execFile);
 const getScriptPath = (name: string) => ['dist', `${name}.js`].join('/');
 
-async function checkAuth() {
+export async function checkAuth() {
   const session = await getSession();
   if (!session) {
     redirect('/login');
@@ -91,6 +91,7 @@ export async function getAdminStats() {
   const totalEpisodes = (db.prepare('SELECT COUNT(*) as count FROM episodes').get() as any).count;
   const totalCharacters = (db.prepare('SELECT COUNT(*) as count FROM characters').get() as any).count;
   const totalVoiceActors = (db.prepare('SELECT COUNT(*) as count FROM voice_actors').get() as any).count;
+  const totalUsers = (db.prepare('SELECT COUNT(*) as count FROM users').get() as any).count;
   const noEpisodes = (db.prepare('SELECT COUNT(*) as count FROM anime WHERE id NOT IN (SELECT DISTINCT anime_id FROM episodes)').get() as any).count;
   const missingAnilistId = (db.prepare('SELECT COUNT(*) as count FROM anime WHERE anilist_id IS NULL OR anilist_id = 0').get() as any).count;
 
@@ -111,6 +112,7 @@ export async function getAdminStats() {
     totalEpisodes,
     totalCharacters,
     totalVoiceActors,
+    totalUsers,
     noEpisodes,
     missingAnilistId,
     lastSync,

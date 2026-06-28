@@ -12,11 +12,11 @@ export default async function AdminDashboard() {
     getTodaysScrapeSummary(),
     getSystemLogs(30)
   ]);
-
   const metrics = [
-    { label: 'Total Anime', value: stats.totalAnime, color: 'text-secondary' },
+    { label: 'Total Anime', value: stats.totalAnime, color: 'text-foreground' },
     { label: 'Total Episodes', value: stats.totalEpisodes, color: 'text-foreground' },
     { label: 'Total Characters', value: stats.totalCharacters, color: 'text-foreground' },
+    { label: 'Total Users', value: stats.totalUsers, color: 'text-foreground' },
     { label: 'Database Size', value: `${stats.dbSizeMB} MB`, color: 'text-foreground' },
   ];
 
@@ -51,7 +51,7 @@ export default async function AdminDashboard() {
         {/* Metrics Grid */}
         <section className="space-y-6">
           <h2 className="text-xl font-bold uppercase tracking-wider">Global Databanks</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
             {metrics.map((metric, idx) => (
               <div key={idx} className="bg-card border border-border p-6 hover:border-secondary transition-colors relative overflow-hidden group">
                 <div className="absolute inset-0 bg-secondary/5 opacity-0 group-hover:opacity-100 transition-opacity" />

@@ -13,7 +13,8 @@ import {
   ChevronRight,
   Home,
   Moon,
-  Sun
+  Sun,
+  UserMultiple
 } from '@carbon/icons-react';
 import { cn } from '@/lib/utils';
 import { useRouter } from 'next/navigation';
@@ -41,6 +42,7 @@ export function AdminSidebar({ initialCollapsed = false }: { initialCollapsed?: 
     { name: 'Dashboard', path: '/admin', icon: Dashboard },
     { name: 'Data Nexus', path: '/admin/database', icon: DataBase },
     { name: 'Operations', path: '/admin/operations', icon: Terminal },
+    { name: 'Users', path: '/admin/users', icon: UserMultiple },
     { name: 'Protected Center', path: '/admin/protected', icon: Locked },
   ];
 
