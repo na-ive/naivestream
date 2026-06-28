@@ -32,6 +32,7 @@ if (!global.db) {
   global.db = new Database(dbPath, {
     readonly: false,
     fileMustExist: true,
+    timeout: 5000,
   });
 
   global.db.pragma('journal_mode = WAL');
