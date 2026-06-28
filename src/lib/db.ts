@@ -36,6 +36,7 @@ if (!global.db) {
 
   global.db.pragma('journal_mode = WAL');
   global.db.pragma('synchronous = NORMAL');
+  global.db.pragma('foreign_keys = ON');
 
   const indexStmts = [
     `CREATE INDEX IF NOT EXISTS idx_anime_status_last_updated ON anime(status, last_updated DESC)`,
