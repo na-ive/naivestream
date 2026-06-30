@@ -37,7 +37,7 @@ async function getAnimeData(slug: string) {
     if (!anime) return null;
     
     const episodes = await AnimeService.getEpisodes(anime.id);
-    const filteredEpisodes = episodes.filter(ep => ep.eps_number !== null && ep.eps_number !== undefined);
+    const filteredEpisodes = episodes;
     
     return { 
       animeId: slug, 

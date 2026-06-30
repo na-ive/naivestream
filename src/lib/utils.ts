@@ -94,3 +94,32 @@ export function formatNextAiring(nextEpisode: number, nextAiringAt: number, deta
 }
 
 export const FALLBACK_IMAGE = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MDAiIGhlaWdodD0iNjAwIiB2aWV3Qm94PSIwIDAgNDAwIDYwMCI+PGRlZnM+PHBhdHRlcm4gaWQ9ImciIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTTQwIDBMMCAwIDAgNDAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzIyYzU1ZSIgc3Ryb2tlLXdpZHRoPSIwLjUiIHN0cm9rZS1vcGFjaXR5PSIwLjEiLz48L3BhdHRlcm4+PHBhdHRlcm4gaWQ9InMiIHdpZHRoPSI0IiBoZWlnaHQ9IjQiIHBhdHRlcm5Vbml0cz0idXNlclNwYWNlT25Vc2UiPjxyZWN0IHdpZHRoPSI0IiBoZWlnaHQ9IjEiIGZpbGw9IiMwMDAiIG9wYWNpdHk9IjAuMyIvPjwvcGF0dGVybj48L2RlZnM+PHJlY3Qgd2lkdGg9IjQwMCIgaGVpZ2h0PSI2MDAiIGZpbGw9IiMwYzBlMGMiLz48cmVjdCB3aWR0aD0iNDAwIiBoZWlnaHQ9IjYwMCIgZmlsbD0idXJsKCNnKSIvPjxwYXRoIGQ9Ik0yMCw0MEwyMCwyMEw0MCwyME0zODAsNDBMMzgwLDIwTDM2MCwyME0yMCw1NjBMMjAsNTgwTDQwLDU4ME0zODAsNTYwTDM4MCw1ODBMMzYwLDU4MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMjJjNTVlIiBzdHJva2Utd2lkdGg9IjMiIG9wYWNpdHk9IjAuNSIvPjxwYXRoIGQ9Ik0yMDAsMjQwTDIzMCwyOTBMMTcwLDI5MFoiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzIyYzU1ZSIgc3Ryb2tlLXdpZHRoPSIyIiBvcGFjaXR5PSIwLjQiLz48dGV4dCB4PSIyMDAiIHk9IjI4MiIgZmlsbD0iIzIyYzU1ZSIgZm9udC1mYW1pbHk9Im1vbm9zcGFjZSIgZm9udC1zaXplPSIyMCIgZm9udC13ZWlnaHQ9ImJvbGQiIHRleHQtYW5jaG9yPSJtaWRkbGUiIG9wYWNpdHk9IjAuNCI+ITwvdGV4dD48dGV4dCB4PSIxOTgiIHk9IjM0MCIgZmlsbD0iI2VmNDQ0NCIgZm9udC1mYW1pbHk9Im1vbm9zcGFjZSIgZm9udC1zaXplPSIyNCIgZm9udC13ZWlnaHQ9IjkwMCIgbGV0dGVyLXNwYWNpbmc9IjQiIHRleHQtYW5jaG9yPSJtaWRkbGUiIG9wYWNpdHk9IjAuNiI+Tk9fSU1BR0VfREFUQTwvdGV4dD48dGV4dCB4PSIyMDIiIHk9IjM0MCIgZmlsbD0iIzA2YjZkNCIgZm9udC1mYW1pbHk9Im1vbm9zcGFjZSIgZm9udC1zaXplPSIyNCIgZm9udC13ZWlnaHQ9IjkwMCIgbGV0dGVyLXNwYWNpbmc9IjQiIHRleHQtYW5jaG9yPSJtaWRkbGUiIG9wYWNpdHk9IjAuNiI+Tk9fSU1BR0VfREFUQTwvdGV4dD48dGV4dCB4PSIyMDAiIHk9IjM0MCIgZmlsbD0iIzIyYzU1ZSIgZm9udC1mYW1pbHk9Im1vbm9zcGFjZSIgZm9udC1zaXplPSIyNCIgZm9udC13ZWlnaHQ9IjkwMCIgbGV0dGVyLXNwYWNpbmc9IjQiIHRleHQtYW5jaG9yPSJtaWRkbGUiPk5PX0lNQUdFX0RBVEE8L3RleHQ+PHRleHQgeD0iMjAwIiB5PSIzNjUiIGZpbGw9IiMyMmM1NWUiIGZvbnQtZmFtaWx5PSJtb25vc3BhY2UiIGZvbnQtc2l6ZT0iMTAiIGZvbnQtd2VpZ2h0PSJib2xkIiBsZXR0ZXItc3BhY2luZz0iMiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgb3BhY2l0eT0iMC41Ij5EQVRBX1VOQVZBSUxBQkxFPC90ZXh0PjxyZWN0IHdpZHRoPSI0MDAiIGhlaWdodD0iNjAwIiBmaWxsPSJ1cmwoI3MpIi8+PC9zdmc+';
+
+/**
+ * Parses episode titles to extract concise formats like "Episode 1", "OVA", "Movie", etc.
+ */
+export function parseEpisodeTitle(title: string): string {
+  if (!title) return 'Episode ??';
+  
+  const epMatch = title.match(/(?:Episode|Ep\.?)\s*(\d+)/i);
+  if (epMatch) return `Episode ${epMatch[1]}`;
+  
+  const ovaMatch = title.match(/OVA\s*(\d+)?/i);
+  if (ovaMatch) return ovaMatch[0].trim().toUpperCase();
+  
+  const movieMatch = title.match(/Movie\s*(\d+)?/i);
+  if (movieMatch) return movieMatch[0].trim().toUpperCase();
+  
+  const specialMatch = title.match(/Special\s*(\d+)?/i);
+  if (specialMatch) return specialMatch[0].trim().toUpperCase();
+  
+  const numMatch = title.match(/(?:^|\s)(\d+)(?:\s|$)/);
+  if (numMatch) return `Episode ${numMatch[1]}`;
+  
+  const anyNumMatch = title.match(/(\d+)/);
+  if (anyNumMatch) return `Episode ${anyNumMatch[1]}`;
+  
+  if (title.length > 15) return 'Special';
+  
+  return title;
+}

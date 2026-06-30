@@ -470,22 +470,39 @@ export default function WatchContent({
                   className="grid grid-cols-5 gap-2 max-h-[130px] overflow-y-auto pr-2 custom-scrollbar"
                 >
                   {[...animeData.episodeList].reverse().map((ep: any, index: number) => {
-                    const epMatch = ep.title.match(/Episode\s+(\d+(\.\d+)?)/i);
-                    const epNum = epMatch ? epMatch[1] : (index + 1);
+                    let displayNum = String(index + 1);
+                    if (typeof ep.title === 'string') {
+                      const epMatch = ep.title.match(/Episode\s+(\d+(\.\d+)?)/i);
+                      if (epMatch) {
+                        displayNum = epMatch[1];
+                      } else {
+                        const ovaMatch = ep.title.match(/OVA\s*(\d+)?/i);
+                        if (ovaMatch) displayNum = ovaMatch[1] ? `OVA ${ovaMatch[1]}` : 'OVA';
+                        else {
+                          const spcMatch = ep.title.match(/Special\s*(\d+)?/i);
+                          if (spcMatch) displayNum = spcMatch[1] ? `SPC ${spcMatch[1]}` : 'SPC';
+                          else {
+                            const movMatch = ep.title.match(/Movie\s*(\d+)?/i);
+                            if (movMatch) displayNum = movMatch[1] ? `MOV ${movMatch[1]}` : 'MOV';
+                          }
+                        }
+                      }
+                    }
                     const isActive = ep.episodeId === id;
+                    const textClass = displayNum.length > 3 ? 'text-[9px] leading-[1.1]' : 'text-xs';
 
                     return (
                       <Link
                         key={ep.episodeId}
                         ref={isActive ? activeEpisodeRef : null}
                         href={`/watch/${ep.episodeId}`}
-                        className={`w-full aspect-square flex items-center justify-center text-xs font-bold transition-all ${isActive
+                        className={`w-full aspect-square flex flex-col items-center justify-center font-bold transition-all ${textClass} ${isActive
                             ? 'bg-secondary text-background shadow-[0_0_10px_rgba(34,197,94,0.3)] pointer-events-none'
                             : 'bg-background hover:bg-secondary/20 border border-border hover:border-secondary/50 text-foreground/70 hover:text-secondary'
                           }`}
                         title={ep.title}
                       >
-                        {epNum}
+                        {displayNum.split(' ').map((line, i) => <span key={i}>{line}</span>)}
                       </Link>
                     );
                   })}

@@ -167,7 +167,30 @@ export function EpisodeList({
         {currentEpisodes.map((ep: any, index: number) => {
           // Calculate actual index in the global episodes array
           const globalIndex = (currentPage - 1) * itemsPerPage + index;
-          const epNum = ep.eps || (typeof ep.title === 'number' ? ep.title : null) || episodes.length - globalIndex;
+          
+          let epType = 'Episode';
+          let epNumberStr: string | number = ep.eps || (typeof ep.title === 'number' ? ep.title : null) || episodes.length - globalIndex;
+          
+          if (typeof ep.title === 'string') {
+            const ovaMatch = ep.title.match(/OVA\s*(\d+)?/i);
+            const specialMatch = ep.title.match(/Special\s*(\d+)?/i);
+            const movieMatch = ep.title.match(/Movie\s*(\d+)?/i);
+            
+            if (ovaMatch) {
+              epType = 'OVA';
+              epNumberStr = ovaMatch[1] || '';
+            } else if (specialMatch) {
+              epType = 'Special';
+              epNumberStr = specialMatch[1] || '';
+            } else if (movieMatch) {
+              epType = 'Movie';
+              epNumberStr = movieMatch[1] || '';
+            }
+          }
+
+          const fullEpTitle = epNumberStr ? `${epType} ${epNumberStr}` : epType;
+          const bigText = epNumberStr || epType;
+          
           const currentEpId = ep.episodeId || ep.id;
           const isLastWatched = lastEpId === currentEpId;
           const isWatchedEp = isWatched(animeId, currentEpId);
@@ -188,13 +211,14 @@ export function EpisodeList({
             >
               {/* Episode Number Block */}
               <div className={cn(
-                "relative w-12 h-12 flex items-center justify-center font-black text-2xl transition-all shrink-0 z-10",
+                "relative w-12 h-12 flex items-center justify-center font-black transition-all shrink-0 z-10",
+                String(bigText).length > 3 ? "text-xs" : String(bigText).length > 2 ? "text-base" : "text-2xl",
                 isLastWatched ? "text-secondary" : isWatchedEp ? "text-secondary/60" : "text-muted-text group-hover:text-foreground"
               )}>
                 {isWatchedEp ? (
                   <Checkmark className="w-6 h-6 fill-current" />
                 ) : (
-                  epNum
+                  bigText
                 )}
               </div>
 
@@ -204,7 +228,7 @@ export function EpisodeList({
                   <p className={cn(
                     "text-sm font-bold truncate uppercase tracking-widest transition-colors",
                     isLastWatched ? "text-secondary" : "group-hover:text-secondary"
-                  )}>Episode {epNum}</p>
+                  )}>{fullEpTitle}</p>
                 </div>
                 <div className="flex items-center gap-2 mt-0.5">
                   <p className="text-[10px] text-muted-text font-mono uppercase tracking-wider">{ep.date || ep.uploaded_on || 'Released'}</p>

@@ -7,6 +7,7 @@ import { GridAnimeCard } from './GridAnimeCard';
 import { ChevronRight } from '@carbon/icons-react';
 import { Skeleton } from '@/components/ui/Skeleton';
 import Link from 'next/link';
+import { parseEpisodeTitle } from '@/lib/utils';
 
 export function ContinueWatchingHome() {
   const { history } = useHistory();
@@ -37,9 +38,8 @@ export function ContinueWatchingHome() {
 
       <div className="mobile-snap-scroll gap-4 md:gap-6">
         {displayItems.map((item) => {
-          // Extract episode number if possible from title for cleaner display
-          const epMatch = item.lastEpisodeTitle.match(/Episode\s+(\d+)/i);
-          const displayEp = epMatch ? `Episode ${epMatch[1]}` : item.lastEpisodeTitle;
+          // Extract episode number or OVA/Movie for cleaner display
+          const displayEp = parseEpisodeTitle(item.lastEpisodeTitle);
 
           return (
             <GridAnimeCard
