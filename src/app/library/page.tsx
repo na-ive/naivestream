@@ -9,10 +9,11 @@ import { AnimeCardSkeleton } from '@/components/anime/AnimeCard';
 import { GridAnimeCard } from '@/components/anime/GridAnimeCard';
 import { Bookmark, Time, TrashCan, CaretRight, Grid, CheckboxChecked, Checkmark } from '@carbon/icons-react';
 import Link from 'next/link';
-import { cn } from '@/lib/utils';
+import { cn, parseEpisodeTitle } from '@/lib/utils';
 import { toast } from 'sonner';
 import { Tooltip } from '@/components/ui/Tooltip';
 import { Modal } from '@/components/ui/Modal';
+import { SyncService } from '@/lib/services/sync';
 
 type TabType = 'watchlist' | 'history';
 type DeleteActionType = 'all' | 'bulk' | null;
@@ -87,6 +88,12 @@ function LibraryContent() {
     if (deleteAction === 'all') {
       localStorage.removeItem('anime_history');
       localStorage.removeItem('anime_watched_episodes');
+      
+      const { data: session } = (window as any).__NEXT_DATA__?.props?.pageProps?.session || { data: null };
+      // Or we can just call deleteFromServer unconditionally, if user is not logged in it just gets ignored/fails gracefully
+      SyncService.deleteFromServer('history');
+      SyncService.deleteFromServer('watched_episodes');
+
       window.dispatchEvent(new Event('history_updated'));
       window.dispatchEvent(new Event('watched_updated'));
       toast.error('History Cleared', {
@@ -359,7 +366,7 @@ function LibraryContent() {
                       </div>
                       <div className="flex items-center justify-between relative z-10">
                         <span className="text-[11px] font-bold truncate pr-3 group-hover/card:text-secondary transition-colors uppercase tracking-widest leading-relaxed">
-                          Episode {item.lastEpisodeTitle.match(/Episode\s*(\d+)/i)?.[1] || item.lastEpisodeTitle.match(/(\d+)/)?.[0] || '??'}
+                          {parseEpisodeTitle(item.lastEpisodeTitle)}
                         </span>
                         <div className="w-6 h-6 bg-secondary/10 flex items-center justify-center group-hover/card:bg-secondary/20 transition-colors shrink-0">
                           <CaretRight className="w-3 h-3 text-secondary fill-current" />
