@@ -506,7 +506,7 @@ export const AnimeService = {
   },
 
   async getEpisodes(animeId: number) {
-    return getPreparedStatement('SELECT * FROM episodes WHERE anime_id = ? ORDER BY eps_number DESC').all(animeId) as Episode[];
+    return getPreparedStatement('SELECT * FROM episodes WHERE anime_id = ? ORDER BY COALESCE(eps_number, 9999) DESC, id ASC').all(animeId) as Episode[];
   },
 
   async getEpisodeBySlug(slug: string) {
