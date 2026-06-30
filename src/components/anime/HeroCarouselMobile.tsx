@@ -19,6 +19,8 @@ export function HeroCarouselMobile({ items }: HeroCarouselMobileProps) {
   const [imgLoaded, setImgLoaded] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
 
+  const [timerKey, setTimerKey] = useState(0);
+
   useEffect(() => {
     setIsMounted(true);
   }, []);
@@ -33,11 +35,21 @@ export function HeroCarouselMobile({ items }: HeroCarouselMobileProps) {
     setImgLoaded(false);
   }, [items.length]);
 
+  const handleManualNext = useCallback(() => {
+    nextSlide();
+    setTimerKey(prev => prev + 1);
+  }, [nextSlide]);
+
+  const handleManualPrev = useCallback(() => {
+    prevSlide();
+    setTimerKey(prev => prev + 1);
+  }, [prevSlide]);
+
   useEffect(() => {
     if (!isAutoPlaying) return;
     const interval = setInterval(nextSlide, 8000);
     return () => clearInterval(interval);
-  }, [isAutoPlaying, nextSlide]);
+  }, [isAutoPlaying, nextSlide, timerKey]);
 
   if (!items.length) return null;
 
@@ -79,8 +91,8 @@ export function HeroCarouselMobile({ items }: HeroCarouselMobileProps) {
               className={cn("w-full h-full object-cover object-[center_25%] scale-105 transition-opacity duration-700", (imgLoaded || currentIndex === 0) ? "opacity-100" : "opacity-0")}
             />
             {/* Base dark overlay to compensate for 100% image opacity */}
-            <div className="absolute inset-0 bg-background/60" />
-            <div className="absolute inset-0 bg-gradient-to-r from-background via-background/85 to-transparent" />
+            <div className="absolute inset-0 bg-background/40" />
+            <div className="absolute inset-0 bg-gradient-to-r from-background via-background/70 to-transparent" />
             <div className="absolute inset-0 bg-gradient-to-t from-background via-background/80 to-transparent" />
             <div className="absolute inset-0 bg-[linear-gradient(rgba(34,197,94,0.04)_1px,transparent_1px)] bg-[size:100%_4px] pointer-events-none opacity-10" />
           </div>
@@ -237,14 +249,14 @@ export function HeroCarouselMobile({ items }: HeroCarouselMobileProps) {
           </div>
           <div className="flex items-center gap-1">
             <button
-              onClick={prevSlide}
+              onClick={handleManualPrev}
               aria-label="Previous slide"
               className="w-6 h-6 flex items-center justify-center bg-background/60 border border-secondary/20 text-secondary/70 hover:bg-secondary hover:text-background hover:border-secondary transition-all cursor-pointer"
             >
               <ChevronLeft className="w-3 h-3" />
             </button>
             <button
-              onClick={nextSlide}
+              onClick={handleManualNext}
               aria-label="Next slide"
               className="w-6 h-6 flex items-center justify-center bg-background/60 border border-secondary/20 text-secondary/70 hover:bg-secondary hover:text-background hover:border-secondary transition-all cursor-pointer"
             >

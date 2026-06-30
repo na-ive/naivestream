@@ -20,6 +20,8 @@ export function HeroCarousel({ items }: HeroCarouselProps) {
   const [imgLoaded, setImgLoaded] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
 
+  const [timerKey, setTimerKey] = useState(0);
+
   useEffect(() => {
     setIsMounted(true);
   }, []);
@@ -34,11 +36,21 @@ export function HeroCarousel({ items }: HeroCarouselProps) {
     setImgLoaded(false);
   }, [items.length]);
 
+  const handleManualNext = useCallback(() => {
+    nextSlide();
+    setTimerKey(prev => prev + 1);
+  }, [nextSlide]);
+
+  const handleManualPrev = useCallback(() => {
+    prevSlide();
+    setTimerKey(prev => prev + 1);
+  }, [prevSlide]);
+
   useEffect(() => {
     if (!isAutoPlaying) return;
     const interval = setInterval(nextSlide, 8000);
     return () => clearInterval(interval);
-  }, [isAutoPlaying, nextSlide]);
+  }, [isAutoPlaying, nextSlide, timerKey]);
 
   const { titleLang } = useTitleLang();
 
@@ -237,14 +249,14 @@ export function HeroCarousel({ items }: HeroCarouselProps) {
           
           <div className="flex items-center gap-4">
             <button 
-              onClick={prevSlide}
+              onClick={handleManualPrev}
               aria-label="Previous slide"
               className="w-12 h-12 flex items-center justify-center bg-card border border-secondary/20 text-secondary hover:bg-secondary hover:text-background transition-all cursor-pointer shadow-lg group"
             >
               <ChevronLeft className="w-6 h-6 transition-transform group-hover:-translate-x-1" />
             </button>
             <button 
-              onClick={nextSlide}
+              onClick={handleManualNext}
               aria-label="Next slide"
               className="w-12 h-12 flex items-center justify-center bg-card border border-secondary/20 text-secondary hover:bg-secondary hover:text-background transition-all cursor-pointer shadow-lg group"
             >
