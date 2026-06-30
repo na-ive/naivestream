@@ -155,25 +155,38 @@ export async function DELETE(req: Request) {
       db.prepare('DELETE FROM user_history WHERE user_id = ?').run(userId);
       db.prepare('DELETE FROM user_watchlist WHERE user_id = ?').run(userId);
       db.prepare('DELETE FROM user_watched_episodes WHERE user_id = ?').run(userId);
-    } else if (type === 'history' && Array.isArray(ids) && ids.length > 0) {
-      const stmt = db.prepare(`DELETE FROM user_history WHERE user_id = ? AND anime_slug = ?`);
-      db.transaction(() => {
-        for (const id of ids) stmt.run(userId, id);
-      })();
-      const stmtWatched = db.prepare(`DELETE FROM user_watched_episodes WHERE user_id = ? AND anime_slug = ?`);
-      db.transaction(() => {
-        for (const id of ids) stmtWatched.run(userId, id);
-      })();
-    } else if (type === 'watchlist' && Array.isArray(ids) && ids.length > 0) {
-      const stmt = db.prepare(`DELETE FROM user_watchlist WHERE user_id = ? AND anime_slug = ?`);
-      db.transaction(() => {
-        for (const id of ids) stmt.run(userId, id);
-      })();
-    } else if (type === 'watched_episodes' && Array.isArray(ids) && ids.length > 0) {
-      const stmt = db.prepare(`DELETE FROM user_watched_episodes WHERE user_id = ? AND anime_slug = ?`);
-      db.transaction(() => {
-        for (const id of ids) stmt.run(userId, id);
-      })();
+    } else if (type === 'history') {
+      if (Array.isArray(ids) && ids.length > 0) {
+        const stmt = db.prepare(`DELETE FROM user_history WHERE user_id = ? AND anime_slug = ?`);
+        const stmtWatched = db.prepare(`DELETE FROM user_watched_episodes WHERE user_id = ? AND anime_slug = ?`);
+        db.transaction(() => {
+          for (const id of ids) {
+            stmt.run(userId, id);
+            stmtWatched.run(userId, id);
+          }
+        })();
+      } else {
+        db.prepare('DELETE FROM user_history WHERE user_id = ?').run(userId);
+        db.prepare('DELETE FROM user_watched_episodes WHERE user_id = ?').run(userId);
+      }
+    } else if (type === 'watchlist') {
+      if (Array.isArray(ids) && ids.length > 0) {
+        const stmt = db.prepare(`DELETE FROM user_watchlist WHERE user_id = ? AND anime_slug = ?`);
+        db.transaction(() => {
+          for (const id of ids) stmt.run(userId, id);
+        })();
+      } else {
+        db.prepare('DELETE FROM user_watchlist WHERE user_id = ?').run(userId);
+      }
+    } else if (type === 'watched_episodes') {
+      if (Array.isArray(ids) && ids.length > 0) {
+        const stmt = db.prepare(`DELETE FROM user_watched_episodes WHERE user_id = ? AND anime_slug = ?`);
+        db.transaction(() => {
+          for (const id of ids) stmt.run(userId, id);
+        })();
+      } else {
+        db.prepare('DELETE FROM user_watched_episodes WHERE user_id = ?').run(userId);
+      }
     }
     
     db.close();
