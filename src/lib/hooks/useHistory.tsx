@@ -64,6 +64,7 @@ export function useHistory() {
     if (item) {
       const newList = currentList.filter((h) => h.animeId !== animeId);
       SyncService.save('anime_history', ownerId, newList);
+      if (ownerId !== 'anonymous') SyncService.deleteFromServer('history', [animeId]);
       window.dispatchEvent(new Event('history_updated'));
       toast.error('Removed from History', {
         description: item.animeTitle,
@@ -76,6 +77,7 @@ export function useHistory() {
     const currentList = SyncService.load<WatchHistory[]>('anime_history', ownerId, []);
     const newList = currentList.filter((h) => !animeIds.includes(h.animeId));
     SyncService.save('anime_history', ownerId, newList);
+    if (ownerId !== 'anonymous') SyncService.deleteFromServer('history', animeIds);
     window.dispatchEvent(new Event('history_updated'));
     toast.error(`${animeIds.length} items removed from History`, {
       icon: <div className="w-8 h-8 bg-danger/10 border border-danger flex items-center justify-center shrink-0 mr-3 shadow-[0_0_10px_rgba(239,68,68,0.3)]"><TrashCan className="w-5 h-5 text-danger" /></div>,

@@ -54,6 +54,7 @@ export function useWatchlist() {
     const item = currentList.find(w => w.animeId === animeId);
     if (item) {
       SyncService.save('anime_watchlist', ownerId, currentList.filter(w => w.animeId !== animeId));
+      if (ownerId !== 'anonymous') SyncService.deleteFromServer('watchlist', [animeId]);
       window.dispatchEvent(new Event('watchlist_updated'));
       toast.error('Removed from Watchlist', {
         description: item.animeTitle,
@@ -72,6 +73,7 @@ export function useWatchlist() {
     
     if (exists) {
       SyncService.save('anime_watchlist', ownerId, currentList.filter(w => w.animeId !== item.animeId));
+      if (ownerId !== 'anonymous') SyncService.deleteFromServer('watchlist', [item.animeId]);
       window.dispatchEvent(new Event('watchlist_updated'));
       toast.error('Removed from Watchlist', {
         description: item.animeTitle,
@@ -90,6 +92,7 @@ export function useWatchlist() {
   const removeMultipleFromWatchlist = useCallback((animeIds: string[]) => {
     const currentList = SyncService.load<WatchlistItem[]>('anime_watchlist', ownerId, []);
     SyncService.save('anime_watchlist', ownerId, currentList.filter(w => !animeIds.includes(w.animeId)));
+    if (ownerId !== 'anonymous') SyncService.deleteFromServer('watchlist', animeIds);
     window.dispatchEvent(new Event('watchlist_updated'));
     toast.error(`${animeIds.length} items removed from Watchlist`, {
       icon: <div className="w-8 h-8 bg-danger/10 border border-danger flex items-center justify-center shrink-0 mr-3 shadow-[0_0_10px_rgba(239,68,68,0.3)]"><TrashCan className="w-5 h-5 text-danger" /></div>,

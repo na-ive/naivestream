@@ -56,6 +56,7 @@ export function useWatchedEpisodes() {
     const current = SyncService.load<WatchedEpisodesStore>('anime_watched_episodes', ownerId, {});
     delete current[animeSlug];
     SyncService.save('anime_watched_episodes', ownerId, current);
+    if (ownerId !== 'anonymous') SyncService.deleteFromServer('watched_episodes', [animeSlug]);
     window.dispatchEvent(new Event('watched_updated'));
   }, [ownerId]);
 

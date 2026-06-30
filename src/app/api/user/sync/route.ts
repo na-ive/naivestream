@@ -138,3 +138,48 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }
+export async function DELETE(req: Request) {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session || !session.user || !(session.user as any).id) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+    const userId = (session.user as any).id;
+    const body = await req.json();
+    const { type, ids } = body;
+    
+    const dbPath = path.join(process.cwd(), 'anime.db');
+    const db = new Database(dbPath);
+    
+    if (type === 'all') {
+      db.prepare('DELETE FROM user_history WHERE user_id = ?').run(userId);
+      db.prepare('DELETE FROM user_watchlist WHERE user_id = ?').run(userId);
+      db.prepare('DELETE FROM user_watched_episodes WHERE user_id = ?').run(userId);
+    } else if (type === 'history' && Array.isArray(ids) && ids.length > 0) {
+      const stmt = db.prepare(`DELETE FROM user_history WHERE user_id = ? AND anime_slug = ?`);
+      db.transaction(() => {
+        for (const id of ids) stmt.run(userId, id);
+      })();
+      const stmtWatched = db.prepare(`DELETE FROM user_watched_episodes WHERE user_id = ? AND anime_slug = ?`);
+      db.transaction(() => {
+        for (const id of ids) stmtWatched.run(userId, id);
+      })();
+    } else if (type === 'watchlist' && Array.isArray(ids) && ids.length > 0) {
+      const stmt = db.prepare(`DELETE FROM user_watchlist WHERE user_id = ? AND anime_slug = ?`);
+      db.transaction(() => {
+        for (const id of ids) stmt.run(userId, id);
+      })();
+    } else if (type === 'watched_episodes' && Array.isArray(ids) && ids.length > 0) {
+      const stmt = db.prepare(`DELETE FROM user_watched_episodes WHERE user_id = ? AND anime_slug = ?`);
+      db.transaction(() => {
+        for (const id of ids) stmt.run(userId, id);
+      })();
+    }
+    
+    db.close();
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error('Error in DELETE sync API:', error);
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+  }
+}

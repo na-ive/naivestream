@@ -162,11 +162,28 @@ class SyncServiceClass {
     localStorage.setItem(key, JSON.stringify(structure));
   }
 
+  public async deleteFromServer(type: 'history' | 'watchlist' | 'watched_episodes' | 'all', ids?: string[]) {
+    if (typeof window === 'undefined') return;
+    try {
+      await fetch('/api/user/sync', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type, ids })
+      });
+    } catch (e) {
+      console.error('Failed to delete from server:', e);
+    }
+  }
+
   public clearAll() {
     if (typeof window === 'undefined') return;
     localStorage.removeItem('anime_history');
     localStorage.removeItem('anime_watchlist');
     localStorage.removeItem('anime_watched_episodes');
+    
+    // Attempt to clear from server as well if user is logged in
+    this.deleteFromServer('all');
+
     window.dispatchEvent(new Event('history_updated'));
     window.dispatchEvent(new Event('watchlist_updated'));
     window.dispatchEvent(new Event('watched_updated'));
